@@ -6,17 +6,22 @@ import { PawPrint, Mail, Lock, Eye, EyeOff, Heart, Sparkles } from 'lucide-react
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import ForgotPasswordForm from '@/components/ForgotPasswordForm';
+import SignupForm from '@/components/SignupForm';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
   password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres" })
 });
 
+type FormMode = 'login' | 'signup' | 'forgot-password';
+
 const Index = () => {
   const navigate = useNavigate();
   const { signIn, user, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [formMode, setFormMode] = useState<FormMode>('login');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -96,7 +101,6 @@ const Index = () => {
         toast.error(error.message || 'Erro ao fazer login. Tente novamente.');
       } else {
         toast.success('Login realizado com sucesso!');
-        // Navigate is handled by the auth state change in AuthContext
       }
     } catch (error) {
       console.error('Unexpected error:', error);
@@ -114,42 +118,15 @@ const Index = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen flex relative overflow-hidden">
-      <div className="absolute top-4 right-4 z-30">
-        <ThemeToggle />
-      </div>
-      
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="/lovable-uploads/7a96682a-47a3-4ed0-8036-8a31ad28cb4b.png" 
-          alt="Pet background" 
-          className="w-full h-full object-cover transition-opacity duration-1000 opacity-80"
-        />
-        <div className="absolute inset-0 backdrop-blur-md bg-petshop-blue/30 dark:bg-gray-900/50"></div>
-      </div>
-      
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-10">
-        <div className="absolute top-[10%] left-[5%] w-28 h-28 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-20 animate-float"></div>
-        <div className="absolute bottom-[20%] right-[10%] w-40 h-40 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-10 animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-[40%] right-[20%] w-24 h-24 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-15 animate-float" style={{ animationDelay: '2s' }}></div>
-        
-        <PawPrint className="absolute top-[15%] right-[25%] w-16 h-16 text-white opacity-10 animate-bounce" style={{ animationDelay: '1.5s' }} />
-        <PawPrint className="absolute bottom-[30%] left-[15%] w-20 h-20 text-white opacity-10 animate-float" style={{ animationDelay: '2.5s' }} />
-        <PawPrint className="absolute top-[60%] right-[10%] w-12 h-12 text-petshop-gold dark:text-amber-500 opacity-15 animate-pulse" style={{ animationDelay: '0.5s' }} />
-        <Heart className="absolute top-[25%] left-[30%] w-10 h-10 text-petshop-gold dark:text-amber-500 opacity-15 animate-pulse" style={{ animationDelay: '1.2s' }} />
-        <Sparkles className="absolute bottom-[15%] right-[25%] w-14 h-14 text-white opacity-10 animate-pulse" style={{ animationDelay: '1.8s' }} />
-      </div>
-      
-      <div 
-        className={`m-auto z-20 px-6 py-8 transition-all duration-700 transform ${isPageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-      >
-        <div className="w-full max-w-md mx-auto">
-          <form 
-            onSubmit={handleSubmit} 
-            className="glass-card dark:bg-gray-800/40 rounded-2xl p-8 space-y-6 animate-fade-in"
-            style={{ backdropFilter: "blur(16px)" }}
-          >
+  const renderForm = () => {
+    switch (formMode) {
+      case 'forgot-password':
+        return <ForgotPasswordForm onBack={() => setFormMode('login')} />;
+      case 'signup':
+        return <SignupForm onSuccess={() => setFormMode('login')} />;
+      default:
+        return (
+          <>
             <h1 className="text-2xl font-bold text-white text-center mb-2 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               Bem-vindo ao Pet Paradise!
             </h1>
@@ -203,9 +180,13 @@ const Index = () => {
                   Lembrar-me
                 </label>
               </div>
-              <a href="#" className="text-sm text-petshop-gold hover:text-white transition-colors duration-300">
+              <button 
+                type="button"
+                onClick={() => setFormMode('forgot-password')}
+                className="text-sm text-petshop-gold hover:text-white transition-colors duration-300"
+              >
                 Esqueceu a senha?
-              </a>
+              </button>
             </div>
 
             <button
@@ -221,6 +202,61 @@ const Index = () => {
               )}
               {isLoading ? "Entrando..." : "Login"}
             </button>
+
+            <div className="text-center animate-slide-up" style={{ animationDelay: '0.7s' }}>
+              <p className="text-white/80 text-sm">
+                Não tem uma conta?{' '}
+                <button 
+                  type="button"
+                  onClick={() => setFormMode('signup')}
+                  className="text-petshop-gold hover:text-white transition-colors duration-300"
+                >
+                  Criar conta
+                </button>
+              </p>
+            </div>
+          </>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex relative overflow-hidden">
+      <div className="absolute top-4 right-4 z-30">
+        <ThemeToggle />
+      </div>
+      
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/lovable-uploads/7a96682a-47a3-4ed0-8036-8a31ad28cb4b.png" 
+          alt="Pet background" 
+          className="w-full h-full object-cover transition-opacity duration-1000 opacity-80"
+        />
+        <div className="absolute inset-0 backdrop-blur-md bg-petshop-blue/30 dark:bg-gray-900/50"></div>
+      </div>
+      
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-10">
+        <div className="absolute top-[10%] left-[5%] w-28 h-28 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-20 animate-float"></div>
+        <div className="absolute bottom-[20%] right-[10%] w-40 h-40 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-10 animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-[40%] right-[20%] w-24 h-24 rounded-full bg-petshop-gold dark:bg-amber-500 opacity-15 animate-float" style={{ animationDelay: '2s' }}></div>
+        
+        <PawPrint className="absolute top-[15%] right-[25%] w-16 h-16 text-white opacity-10 animate-bounce" style={{ animationDelay: '1.5s' }} />
+        <PawPrint className="absolute bottom-[30%] left-[15%] w-20 h-20 text-white opacity-10 animate-float" style={{ animationDelay: '2.5s' }} />
+        <PawPrint className="absolute top-[60%] right-[10%] w-12 h-12 text-petshop-gold dark:text-amber-500 opacity-15 animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <Heart className="absolute top-[25%] left-[30%] w-10 h-10 text-petshop-gold dark:text-amber-500 opacity-15 animate-pulse" style={{ animationDelay: '1.2s' }} />
+        <Sparkles className="absolute bottom-[15%] right-[25%] w-14 h-14 text-white opacity-10 animate-pulse" style={{ animationDelay: '1.8s' }} />
+      </div>
+      
+      <div 
+        className={`m-auto z-20 px-6 py-8 transition-all duration-700 transform ${isPageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+      >
+        <div className="w-full max-w-md mx-auto">
+          <form 
+            onSubmit={handleSubmit} 
+            className="glass-card dark:bg-gray-800/40 rounded-2xl p-8 space-y-6 animate-fade-in"
+            style={{ backdropFilter: "blur(16px)" }}
+          >
+            {renderForm()}
           </form>
         </div>
       </div>
