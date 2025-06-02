@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,7 +55,8 @@ export const useClientManagement = () => {
           payments: client.payments,
           status: 'Active',
           notes: '',
-          lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'
+          lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
+          kanbanStage: client.kanban_stage || 'Entraram'
         }));
         
         setContacts(formattedContacts);
@@ -71,6 +71,38 @@ export const useClientManagement = () => {
     } finally {
       setLoadingContacts(false);
       setRefreshing(false);
+    }
+  };
+
+  const handleKanbanStageChange = async (contactId: string, newStage: Contact['kanbanStage']) => {
+    try {
+      const { error } = await supabase
+        .from('dados_cliente')
+        .update({ kanban_stage: newStage })
+        .eq('id', parseInt(contactId));
+
+      if (error) throw error;
+
+      // Update local state
+      setContacts(prevContacts => 
+        prevContacts.map(contact => 
+          contact.id === contactId 
+            ? { ...contact, kanbanStage: newStage }
+            : contact
+        )
+      );
+
+      toast({
+        title: "Etapa atualizada",
+        description: `Cliente movido para ${newStage}.`,
+      });
+    } catch (error) {
+      console.error('Error updating kanban stage:', error);
+      toast({
+        title: "Erro ao atualizar etapa",
+        description: "Não foi possível atualizar a etapa do cliente.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -111,7 +143,8 @@ export const useClientManagement = () => {
             raca_pet: newContact.petBreed,
             cpf_cnpj: newContact.cpfCnpj,
             asaas_customer_id: newContact.asaasCustomerId,
-            payments: newContact.payments || null
+            payments: newContact.payments || null,
+            kanban_stage: 'Entraram'
           }
         ])
         .select();
@@ -370,6 +403,7 @@ export const useClientManagement = () => {
     openEditModal,
     handleMessageClick,
     handleMessageSubmit,
-    handlePauseDurationConfirm
+    handlePauseDurationConfirm,
+    handleKanbanStageChange
   };
 };

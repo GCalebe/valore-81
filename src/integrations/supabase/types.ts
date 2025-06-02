@@ -9,13 +9,241 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      chat_messages: {
+        Row: {
+          active: boolean | null
+          bot_message: string | null
+          conversation_id: string | null
+          created_at: string | null
+          data: string | null
+          id: number
+          message_type: string | null
+          phone: string | null
+          user_message: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          bot_message?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          data?: string | null
+          id?: number
+          message_type?: string | null
+          phone?: string | null
+          user_message?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          bot_message?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          data?: string | null
+          id?: number
+          message_type?: string | null
+          phone?: string | null
+          user_message?: string | null
+        }
+        Relationships: []
+      }
+      chats: {
+        Row: {
+          app: string | null
+          conversation_id: string | null
+          created_at: string | null
+          id: number
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          app?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: number
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          app?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: number
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      dados_cliente: {
+        Row: {
+          asaas_customer_id: string | null
+          cpf_cnpj: string | null
+          created_at: string | null
+          email: string | null
+          id: number
+          kanban_stage: string | null
+          nome: string | null
+          nome_pet: string | null
+          payments: Json | null
+          porte_pet: string | null
+          raca_pet: string | null
+          sessionid: string | null
+          telefone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          asaas_customer_id?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: number
+          kanban_stage?: string | null
+          nome?: string | null
+          nome_pet?: string | null
+          payments?: Json | null
+          porte_pet?: string | null
+          raca_pet?: string | null
+          sessionid?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          asaas_customer_id?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: number
+          kanban_stage?: string | null
+          nome?: string | null
+          nome_pet?: string | null
+          payments?: Json | null
+          porte_pet?: string | null
+          raca_pet?: string | null
+          sessionid?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      n8n_chat_histories: {
+        Row: {
+          data: string | null
+          hora: string | null
+          id: number
+          message: Json | null
+          session_id: string
+        }
+        Insert: {
+          data?: string | null
+          hora?: string | null
+          id?: number
+          message?: Json | null
+          session_id: string
+        }
+        Update: {
+          data?: string | null
+          hora?: string | null
+          id?: number
+          message?: Json | null
+          session_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: string
+      }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

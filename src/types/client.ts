@@ -14,4 +14,5 @@ export interface Contact {
   status: 'Active' | 'Inactive';
   notes?: string;
   lastContact: string;
+  kanbanStage: 'Entraram' | 'Conversaram' | 'Agendaram' | 'Compareceram' | 'Negociaram' | 'Postergaram' | 'Converteram';
 }
