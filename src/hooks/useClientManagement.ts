@@ -42,22 +42,32 @@ export const useClientManagement = () => {
       }
       
       if (data) {
-        const formattedContacts: Contact[] = data.map(client => ({
-          id: client.id.toString(),
-          name: client.nome || 'Cliente sem nome',
-          email: client.email,
-          phone: client.telefone,
-          petName: client.nome_pet,
-          petSize: client.porte_pet,
-          petBreed: client.raca_pet,
-          cpfCnpj: client.cpf_cnpj,
-          asaasCustomerId: client.asaas_customer_id,
-          payments: client.payments,
-          status: 'Active',
-          notes: '',
-          lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-          kanbanStage: client.kanban_stage || 'Entraram'
-        }));
+        const formattedContacts: Contact[] = data.map(client => {
+          // Ensure kanban_stage is a valid kanban stage value, default to 'Entraram' if invalid
+          const validKanbanStages: Contact['kanbanStage'][] = [
+            'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
+          ];
+          const kanbanStage = validKanbanStages.includes(client.kanban_stage as Contact['kanbanStage']) 
+            ? client.kanban_stage as Contact['kanbanStage']
+            : 'Entraram';
+
+          return {
+            id: client.id.toString(),
+            name: client.nome || 'Cliente sem nome',
+            email: client.email,
+            phone: client.telefone,
+            petName: client.nome_pet,
+            petSize: client.porte_pet,
+            petBreed: client.raca_pet,
+            cpfCnpj: client.cpf_cnpj,
+            asaasCustomerId: client.asaas_customer_id,
+            payments: client.payments,
+            status: 'Active',
+            notes: '',
+            lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
+            kanbanStage: kanbanStage
+          };
+        });
         
         setContacts(formattedContacts);
       }

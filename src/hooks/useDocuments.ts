@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 // Document type definition
 export interface Document {
@@ -17,7 +16,7 @@ export interface Document {
 export const useDocuments = () => {
   const { toast } = useToast();
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Safe way to extract values from metadata
@@ -28,46 +27,16 @@ export const useDocuments = () => {
     return defaultValue;
   };
 
-  // Fetch documents from Supabase
+  // Since there's no documents table in Supabase, we'll work with mock data
+  // and only use the webhook functionality for actual document management
   const fetchDocuments = async () => {
     try {
       setIsLoading(true);
-      // Only select titulo column
-      const { data, error } = await supabase
-        .from('documents')
-        .select('titulo');
-
-      if (error) {
-        console.error('Error fetching documents:', error);
-        toast({
-          title: "Erro ao carregar documentos",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Transform the data to match our Document interface
-      const formattedDocs: Document[] = data.map((doc, index) => {
-        // Use titulo from the database if available, otherwise generate a name
-        const documentName = doc.titulo || `Documento ${index + 1}`;
-        
-        // Create dummy data for other required fields since we don't have metadata
-        return {
-          id: index + 1, // Generate dummy id
-          name: documentName,
-          type: 'unknown',
-          size: 'Unknown',
-          category: 'Sem categoria',
-          uploadedAt: new Date().toISOString().split('T')[0],
-          titulo: doc.titulo,
-        };
-      });
-
-      // Filter out duplicates based on the titulo field
-      const uniqueDocs = filterUniqueByTitle(formattedDocs);
       
-      setDocuments(uniqueDocs);
+      // For now, we'll start with an empty array since there's no documents table
+      // The actual documents will be managed through webhooks
+      setDocuments([]);
+      
     } catch (err) {
       console.error('Unexpected error fetching documents:', err);
       toast({
@@ -100,7 +69,7 @@ export const useDocuments = () => {
     fetchDocuments();
     toast({
       title: "Atualizando documentos",
-      description: "Os documentos estão sendo atualizados do banco de dados.",
+      description: "Os documentos estão sendo atualizados.",
     });
   };
 
@@ -198,8 +167,18 @@ export const useDocuments = () => {
       const result = await response.json();
       console.log('Arquivo enviado com sucesso:', result);
       
-      // After successful upload, refresh the document list
-      await fetchDocuments();
+      // After successful upload, add a mock document to the list
+      const newDocument: Document = {
+        id: Date.now(),
+        name: file.name,
+        type: file.type || 'unknown',
+        size: `${Math.round(file.size / 1024)} KB`,
+        uploadedAt: new Date().toISOString().split('T')[0],
+        category: category,
+        titulo: file.name
+      };
+      
+      setDocuments(prev => [...prev, newDocument]);
       
       toast({
         title: "Documento adicionado",
