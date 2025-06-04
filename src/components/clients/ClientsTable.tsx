@@ -26,7 +26,7 @@ const ClientsTable = ({
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.petName && contact.petName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (contact.ChatName && contact.ChatName.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
@@ -38,7 +38,7 @@ const ClientsTable = ({
             <TableHead className="w-[250px]">Nome</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Telefone</TableHead>
-            <TableHead>Nome do Pet</TableHead>
+            <TableHead>Nome do Chat</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Último Contato</TableHead>
           </TableRow>
@@ -48,7 +48,7 @@ const ClientsTable = ({
             <TableRow>
               <TableCell colSpan={6} className="h-24 text-center">
                 <div className="flex justify-center">
-                  <div className="h-8 w-8 border-4 border-t-transparent border-petshop-blue rounded-full animate-spin"></div>
+                  <div className="h-8 w-8 border-4 border-t-transparent border-Valore-blue rounded-full animate-spin"></div>
                 </div>
                 <p className="mt-2 text-gray-500">Carregando clientes...</p>
               </TableCell>
@@ -63,7 +63,7 @@ const ClientsTable = ({
                 <TableCell className="font-medium">{contact.name}</TableCell>
                 <TableCell>{contact.email || '-'}</TableCell>
                 <TableCell>{contact.phone || '-'}</TableCell>
-                <TableCell>{contact.petName || '-'}</TableCell>
+                <TableCell>{contact.ChatName || '-'}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     contact.status === 'Active' 

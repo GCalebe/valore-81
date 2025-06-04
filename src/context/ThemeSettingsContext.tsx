@@ -16,7 +16,7 @@ type ThemeSettingsContextType = {
 };
 
 const defaultSettings: ThemeSettings = {
-  brandName: "Pet Paradise",
+  brandName: "Chat Paradise",
   logo: null,
   primaryColor: "#1a365d",
   secondaryColor: "#fbbf24", 
@@ -27,18 +27,18 @@ const ThemeSettingsContext = createContext<ThemeSettingsContextType | undefined>
 
 export function ThemeSettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<ThemeSettings>(() => {
-    const saved = localStorage.getItem("petparadise-theme-settings");
+    const saved = localStorage.getItem("Chatparadise-theme-settings");
     return saved ? JSON.parse(saved) : defaultSettings;
   });
 
   useEffect(() => {
-    localStorage.setItem("petparadise-theme-settings", JSON.stringify(settings));
+    localStorage.setItem("Chatparadise-theme-settings", JSON.stringify(settings));
     
     // Apply theme colors to CSS variables
     const root = document.documentElement;
-    root.style.setProperty('--petshop-blue', settings.primaryColor);
-    root.style.setProperty('--petshop-gold', settings.secondaryColor);
-    root.style.setProperty('--petshop-navy', settings.accentColor);
+    root.style.setProperty('--Valore-blue', settings.primaryColor);
+    root.style.setProperty('--Valore-gold', settings.secondaryColor);
+    root.style.setProperty('--Valore-navy', settings.accentColor);
   }, [settings]);
 
   const updateSettings = (newSettings: Partial<ThemeSettings>) => {

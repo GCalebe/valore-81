@@ -64,7 +64,7 @@ const ThemeSettings = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Palette className="h-6 w-6 text-petshop-blue dark:text-blue-400" />
+            <Palette className="h-6 w-6 text-Valore-blue dark:text-blue-400" />
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
               Configurações de Tema
             </h1>

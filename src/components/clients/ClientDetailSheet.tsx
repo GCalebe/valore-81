@@ -60,11 +60,11 @@ const ClientDetailSheet = ({
       <SheetContent className="sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="text-xl flex items-center gap-2">
-            <User className="h-5 w-5 text-petshop-blue dark:text-petshop-gold" />
+            <User className="h-5 w-5 text-Valore-blue dark:text-Valore-gold" />
             {selectedContact.name}
           </SheetTitle>
           <SheetDescription>
-            Detalhes do cliente e seu pet
+            Detalhes do cliente e seu Chat
           </SheetDescription>
         </SheetHeader>
         <div className="mt-6 space-y-6">
@@ -107,24 +107,24 @@ const ClientDetailSheet = ({
           
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Informações do Pet
+              Informações do Chat
             </h3>
             <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
               <Dog className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petName || 'Não informado'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Nome do Pet</p>
+                <p className="text-sm font-medium">{selectedContact.ChatName || 'Não informado'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Nome do Chat</p>
               </div>
               
               <Dog className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petBreed || 'Não informado'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Raça</p>
+                <p className="text-sm font-medium">{selectedContact.ChatBreed || 'Não informado'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
               </div>
               
               <Dog className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petSize || 'Não informado'}</p>
+                <p className="text-sm font-medium">{selectedContact.ChatSize || 'Não informado'}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Porte</p>
               </div>
             </div>

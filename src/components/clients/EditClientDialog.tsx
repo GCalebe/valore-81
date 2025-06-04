@@ -113,36 +113,36 @@ const EditClientDialog = ({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-petName" className="text-right">
-                Nome do Pet
+              <Label htmlFor="edit-ChatName" className="text-right">
+                Nome do Chat
               </Label>
               <Input
-                id="edit-petName"
-                value={editContactData.petName || ''}
-                onChange={(e) => setEditContactData({...editContactData, petName: e.target.value})}
+                id="edit-ChatName"
+                value={editContactData.ChatName || ''}
+                onChange={(e) => setEditContactData({...editContactData, ChatName: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-petBreed" className="text-right">
-                Raça do Pet
+              <Label htmlFor="edit-ChatBreed" className="text-right">
+                Tipo do Chat
               </Label>
               <Input
-                id="edit-petBreed"
-                value={editContactData.petBreed || ''}
-                onChange={(e) => setEditContactData({...editContactData, petBreed: e.target.value})}
+                id="edit-ChatBreed"
+                value={editContactData.ChatBreed || ''}
+                onChange={(e) => setEditContactData({...editContactData, ChatBreed: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-petSize" className="text-right">
-                Porte do Pet
+              <Label htmlFor="edit-ChatSize" className="text-right">
+                Porte do Chat
               </Label>
               <Select
-                value={editContactData.petSize || ''}
-                onValueChange={(value) => setEditContactData({...editContactData, petSize: value})}
+                value={editContactData.ChatSize || ''}
+                onValueChange={(value) => setEditContactData({...editContactData, ChatSize: value})}
               >
-                <SelectTrigger id="edit-petSize" className="col-span-3">
+                <SelectTrigger id="edit-ChatSize" className="col-span-3">
                   <SelectValue placeholder="Selecione o porte" />
                 </SelectTrigger>
                 <SelectContent>

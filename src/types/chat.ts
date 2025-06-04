@@ -6,9 +6,9 @@ export interface Client {
   email: string;
   sessionid: string;
   cpf_cnpj?: string;
-  nome_pet?: string;
-  porte_pet?: string;
-  raca_pet?: string;
+  nome_Chat?: string;
+  porte_Chat?: string;
+  raca_Chat?: string;
 }
 
 export interface ChatMessage {
@@ -36,8 +36,8 @@ export interface Conversation {
   phone: string;
   email: string;
   address?: string;
-  petName?: string;
-  petType?: string;
-  petBreed?: string;
+  ChatName?: string;
+  ChatType?: string;
+  ChatBreed?: string;
   sessionId: string;
 }

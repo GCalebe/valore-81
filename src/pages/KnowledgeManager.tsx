@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { PawPrint, LogOut, ArrowLeft } from 'lucide-react';
+import { ShipWhell
+, LogOut, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/hooks/use-toast';
@@ -44,19 +45,20 @@ const KnowledgeManager = () => {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-petshop-blue dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-Valore-blue dark:bg-gray-900">
+        <div className="h-16 w-16 border-4 border-t-transparent border-Valore-gold rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+      <header className="bg-Valore-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <PawPrint className="h-8 w-8 text-petshop-gold" />
-            <h1 className="text-2xl font-bold">Pet Paradise</h1>
+            <ShipWhell
+ className="h-8 w-8 text-Valore-gold" />
+            <h1 className="text-2xl font-bold">Chat Paradise</h1>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">

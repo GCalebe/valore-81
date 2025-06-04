@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Link, PawPrint, Plus, QrCode, Loader2, RefreshCw, Check } from 'lucide-react';
+import { ArrowLeft, Link, ShipWhell
+, Plus, QrCode, Loader2, RefreshCw, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -288,7 +289,7 @@ const Evolution = () => {
   
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+      <header className="bg-Valore-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Button 
@@ -299,8 +300,9 @@ const Evolution = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <PawPrint className="h-8 w-8 text-petshop-gold" />
-            <h1 className="text-2xl font-bold">Pet Paradise</h1>
+            <ShipWhell
+ className="h-8 w-8 text-Valore-gold" />
+            <h1 className="text-2xl font-bold">Chat Paradise</h1>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">

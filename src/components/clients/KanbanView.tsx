@@ -31,7 +31,7 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.petName && contact.petName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (contact.ChatName && contact.ChatName.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
@@ -90,10 +90,10 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
                 </div>
               )}
               
-              {contact.petName && (
+              {contact.ChatName && (
                 <div className="flex items-center gap-2 mb-2">
                   <Heart className="h-3 w-3 text-red-400" />
-                  <span className="text-xs text-gray-600">{contact.petName}</span>
+                  <span className="text-xs text-gray-600">{contact.ChatName}</span>
                 </div>
               )}
               

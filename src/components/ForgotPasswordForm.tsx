@@ -104,14 +104,14 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
 
       <div className="space-y-4">
         <div className="relative group">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-Valore-gold transition-colors duration-300" />
           <Input
             type="email"
             name="email"
             placeholder="Digite seu email"
             value={email}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${error ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+            className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-Valore-gold/50 ${error ? 'border-red-400' : 'focus:border-Valore-gold'}`}
             disabled={isLoading}
           />
           {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
@@ -122,10 +122,10 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-petshop-gold hover:bg-amber-500 text-petshop-blue dark:text-gray-900 font-bold py-3 px-4 rounded-md transition-all duration-300"
+          className="w-full bg-Valore-gold hover:bg-amber-500 text-Valore-blue dark:text-gray-900 font-bold py-3 px-4 rounded-md transition-all duration-300"
         >
           {isLoading ? (
-            <div className="h-5 w-5 border-2 border-petshop-blue dark:border-gray-900 border-t-transparent rounded-full animate-spin mr-2"></div>
+            <div className="h-5 w-5 border-2 border-Valore-blue dark:border-gray-900 border-t-transparent rounded-full animate-spin mr-2"></div>
           ) : (
             <Mail className="mr-2 h-5 w-5" />
           )}
@@ -136,7 +136,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
           type="button"
           onClick={onBack}
           variant="ghost"
-          className="w-full text-white hover:text-petshop-gold hover:bg-white/10 transition-all duration-300"
+          className="w-full text-white hover:text-Valore-gold hover:bg-white/10 transition-all duration-300"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar ao Login

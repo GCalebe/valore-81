@@ -30,7 +30,7 @@ export type AppointmentStatus = 'confirmado' | 'pendente' | 'cancelado';
 
 export type Appointment = {
   id: number;
-  petName: string;
+  ChatName: string;
   ownerName: string;
   phone: string;
   date: Date;

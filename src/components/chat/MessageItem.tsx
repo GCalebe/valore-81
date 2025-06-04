@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { PawPrint, User } from 'lucide-react';
+import { ShipWhell
+, User } from 'lucide-react';
 import { ChatMessage } from '@/types/chat';
 
 interface MessageItemProps {
@@ -49,7 +50,8 @@ const MessageItem = ({ message, index }: MessageItemProps) => {
       
       {isDashboardSent && (
         <div className="w-8 h-8 rounded-full bg-green-200 dark:bg-green-700 flex items-center justify-center ml-2">
-          <PawPrint size={16} className="text-green-700 dark:text-green-200" />
+          <ShipWhell
+ size={16} className="text-green-700 dark:text-green-200" />
         </div>
       )}
     </div>
