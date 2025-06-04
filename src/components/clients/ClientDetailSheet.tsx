@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, Dog, Trash2, Edit2 } from 'lucide-react';
+import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Trash2, Edit2 } from 'lucide-react';
 import { Contact } from '@/types/client';
 import DeleteClientDialog from './DeleteClientDialog';
 import SendMessageDialog from './SendMessageDialog';
@@ -60,11 +60,11 @@ const ClientDetailSheet = ({
       <SheetContent className="sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="text-xl flex items-center gap-2">
-            <User className="h-5 w-5 text-petshop-blue dark:text-petshop-gold" />
+            <User className="h-5 w-5 text-blue-600 dark:text-amber-500" />
             {selectedContact.name}
           </SheetTitle>
           <SheetDescription>
-            Detalhes do cliente e seu pet
+            Detalhes do cliente náutico
           </SheetDescription>
         </SheetHeader>
         <div className="mt-6 space-y-6">
@@ -107,25 +107,25 @@ const ClientDetailSheet = ({
           
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Informações do Pet
+              Informações do Cliente Náutico
             </h3>
             <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
-              <Dog className="h-5 w-5 text-gray-500" />
+              <ShipWheel className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petName || 'Não informado'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Nome do Pet</p>
+                <p className="text-sm font-medium">{selectedContact.clientName || 'Não informado'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Nome do Cliente</p>
               </div>
               
-              <Dog className="h-5 w-5 text-gray-500" />
+              <ShipWheel className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petBreed || 'Não informado'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Raça</p>
+                <p className="text-sm font-medium">{selectedContact.clientType || 'Não informado'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
               </div>
               
-              <Dog className="h-5 w-5 text-gray-500" />
+              <ShipWheel className="h-5 w-5 text-gray-500" />
               <div>
-                <p className="text-sm font-medium">{selectedContact.petSize || 'Não informado'}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Porte</p>
+                <p className="text-sm font-medium">{selectedContact.clientSize || 'Não informado'}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Tamanho</p>
               </div>
             </div>
           </div>

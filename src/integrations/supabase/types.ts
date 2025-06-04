@@ -81,12 +81,12 @@ export type Database = {
           id: number
           kanban_stage: string | null
           nome: string | null
-          nome_pet: string | null
+          nome_cliente: string | null
           payments: Json | null
-          porte_pet: string | null
-          raca_pet: string | null
           sessionid: string | null
+          tamanho_cliente: string | null
           telefone: string | null
+          tipo_cliente: string | null
           updated_at: string | null
         }
         Insert: {
@@ -97,12 +97,12 @@ export type Database = {
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_pet?: string | null
+          nome_cliente?: string | null
           payments?: Json | null
-          porte_pet?: string | null
-          raca_pet?: string | null
           sessionid?: string | null
+          tamanho_cliente?: string | null
           telefone?: string | null
+          tipo_cliente?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -113,12 +113,12 @@ export type Database = {
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_pet?: string | null
+          nome_cliente?: string | null
           payments?: Json | null
-          porte_pet?: string | null
-          raca_pet?: string | null
           sessionid?: string | null
+          tamanho_cliente?: string | null
           telefone?: string | null
+          tipo_cliente?: string | null
           updated_at?: string | null
         }
         Relationships: []

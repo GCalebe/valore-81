@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Contact } from '@/types/client';
-import { User, Phone, Mail, Heart } from 'lucide-react';
+import { User, Phone, Mail, ShipWheel } from 'lucide-react';
 
 interface KanbanViewProps {
   contacts: Contact[];
@@ -31,7 +31,7 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.petName && contact.petName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (contact.clientName && contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
@@ -90,10 +90,10 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
                 </div>
               )}
               
-              {contact.petName && (
+              {contact.clientName && (
                 <div className="flex items-center gap-2 mb-2">
-                  <Heart className="h-3 w-3 text-red-400" />
-                  <span className="text-xs text-gray-600">{contact.petName}</span>
+                  <ShipWheel className="h-3 w-3 text-blue-400" />
+                  <span className="text-xs text-gray-600">{contact.clientName}</span>
                 </div>
               )}
               

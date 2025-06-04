@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -25,8 +26,8 @@ const Dashboard = () => {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-petshop-blue dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-blue-600 dark:bg-gray-900">
+        <div className="h-16 w-16 border-4 border-t-transparent border-amber-500 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -37,7 +38,7 @@ const Dashboard = () => {
       
       <main className="container mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold text-center mb-10 text-gray-800 dark:text-gray-100 transition-colors duration-300">
-          Painel Administrativo
+          Painel Administrativo Valore
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
