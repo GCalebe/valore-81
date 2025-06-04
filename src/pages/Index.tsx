@@ -128,10 +128,10 @@ const Index = () => {
         return (
           <>
             <h1 className="text-2xl font-bold text-white text-center mb-2 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              Bem-vindo ao Pet Paradise!
+              Bem-vindo ao Valore Paradise!
             </h1>
             <p className="text-white/80 text-center mb-6 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-              Entre para gerenciar seu petshop
+              Entre para gerenciar seu assistente
             </p>
 
             <div className="space-y-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
