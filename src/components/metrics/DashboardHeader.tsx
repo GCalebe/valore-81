@@ -5,11 +5,13 @@ import { ArrowLeft, PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const DashboardHeader: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useThemeSettings();
 
   return (
     <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
@@ -23,8 +25,16 @@ const DashboardHeader: React.FC = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <PawPrint className="h-8 w-8 text-petshop-gold" />
-          <h1 className="text-2xl font-bold">Pet Paradise</h1>
+          {settings.logo ? (
+            <img 
+              src={settings.logo} 
+              alt="Logo" 
+              className="h-8 w-8 object-contain"
+            />
+          ) : (
+            <PawPrint className="h-8 w-8 text-petshop-gold" />
+          )}
+          <h1 className="text-2xl font-bold">{settings.brandName}</h1>
         </div>
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">

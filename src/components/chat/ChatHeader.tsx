@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ArrowLeft, LogOut, PawPrint } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
 interface ChatHeaderProps {
   signOut: () => void;
@@ -14,6 +15,7 @@ interface ChatHeaderProps {
 const ChatHeader = ({ signOut }: ChatHeaderProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useThemeSettings();
 
   const goBack = () => {
     navigate('/dashboard');
@@ -31,7 +33,15 @@ const ChatHeader = ({ signOut }: ChatHeaderProps) => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <PawPrint className="h-8 w-8 text-petshop-gold" />
+          {settings.logo ? (
+            <img 
+              src={settings.logo} 
+              alt="Logo" 
+              className="h-8 w-8 object-contain"
+            />
+          ) : (
+            <PawPrint className="h-8 w-8 text-petshop-gold" />
+          )}
           <h1 className="text-2xl font-bold">Chats</h1>
         </div>
         <div className="flex items-center gap-4">

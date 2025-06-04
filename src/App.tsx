@@ -12,35 +12,40 @@ import KnowledgeManager from "./pages/KnowledgeManager";
 import ClientsDashboard from "./pages/ClientsDashboard";
 import Evolution from "./pages/Evolution";
 import Schedule from "./pages/Schedule";
+import ThemeSettings from "./pages/ThemeSettings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeSettingsProvider } from "./context/ThemeSettingsContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/metrics" element={<MetricsDashboard />} />
-              <Route path="/chats" element={<ChatsDashboard />} />
-              <Route path="/knowledge" element={<KnowledgeManager />} />
-              <Route path="/clients" element={<ClientsDashboard />} />
-              <Route path="/evolution" element={<Evolution />} />
-              <Route path="/schedule" element={<Schedule />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeSettingsProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/metrics" element={<MetricsDashboard />} />
+                <Route path="/chats" element={<ChatsDashboard />} />
+                <Route path="/knowledge" element={<KnowledgeManager />} />
+                <Route path="/clients" element={<ClientsDashboard />} />
+                <Route path="/evolution" element={<Evolution />} />
+                <Route path="/schedule" element={<Schedule />} />
+                <Route path="/theme-settings" element={<ThemeSettings />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeSettingsProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
