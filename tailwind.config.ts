@@ -25,7 +25,7 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				petshop: {
+				Valore: {
 					blue: '#1a365d',
 					gold: '#fbbf24',
 					navy: '#172554',
