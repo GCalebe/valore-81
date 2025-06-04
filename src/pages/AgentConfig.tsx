@@ -66,13 +66,13 @@ const predefinedAgents: Agent[] = [
   {
     id: '1',
     name: 'Nina',
-    company: 'Chat Paradise',
-    industry: 'Chat Shop',
-    mainProduct: 'Produtos premium para Chats e serviços de banho e tosa',
+    company: 'Pet Paradise',
+    industry: 'Pet Shop',
+    mainProduct: 'Produtos premium para pets e serviços de banho e tosa',
     strategy: 'Personalizado, prático e voltado para um atendimento premium',
-    personality: 'Amigável, amorosa com os Chats, detalhista e conhecedora de animais',
+    personality: 'Amigável, amorosa com os pets, detalhista e conhecedora de animais',
     objective: 'Aumentar vendas e satisfação dos clientes',
-    thinkingStyle: 'Uma especialista em animais que ama Chats',
+    thinkingStyle: 'Uma especialista em animais que ama pets',
     isActive: true
   },
   {
@@ -444,7 +444,7 @@ const AgentConfig = () => {
                     <FormItem>
                       <FormLabel>Qual é o nicho ou indústria para este prompt?</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: Chat Shop, Imobiliária, Restaurante" {...field} />
+                        <Input placeholder="Ex: Pet Shop, Imobiliária, Restaurante" {...field} />
                       </FormControl>
                       <FormDescription>
                         O setor ou segmento de mercado onde o agente irá atuar.
@@ -461,7 +461,7 @@ const AgentConfig = () => {
                     <FormItem>
                       <FormLabel>Qual é o nome da nova empresa?</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: Chat Paradise, Casa & Lar, Sabor Gourmet" {...field} />
+                        <Input placeholder="Ex: Pet Paradise, Casa & Lar, Sabor Gourmet" {...field} />
                       </FormControl>
                       <FormDescription>
                         O nome da empresa que o agente irá representar.
@@ -479,7 +479,7 @@ const AgentConfig = () => {
                       <FormLabel>Qual é o principal produto ou serviço oferecido?</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Ex: Produtos para Chats, Venda de imóveis, Refeições gourmet" 
+                          placeholder="Ex: Produtos para pets, Venda de imóveis, Refeições gourmet" 
                           {...field} 
                         />
                       </FormControl>
@@ -576,7 +576,7 @@ const AgentConfig = () => {
                       <FormLabel>O agente deve pensar como quem?</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Ex: Uma especialista em animais que ama Chats" 
+                          placeholder="Ex: Uma especialista em animais que ama pets" 
                           {...field} 
                         />
                       </FormControl>

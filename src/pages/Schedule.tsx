@@ -20,7 +20,7 @@ import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
 const mockAppointments: Appointment[] = [
   {
     id: 1,
-    ChatName: 'Max',
+    petName: 'Max',
     ownerName: 'João Silva',
     phone: '(11) 98765-4321',
     date: new Date(2023, 5, 15, 10, 30),
@@ -30,7 +30,7 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: 2,
-    ChatName: 'Luna',
+    petName: 'Luna',
     ownerName: 'Maria Oliveira',
     phone: '(11) 91234-5678',
     date: new Date(2023, 5, 15, 14, 0),
@@ -40,7 +40,7 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: 3,
-    ChatName: 'Toby',
+    petName: 'Toby',
     ownerName: 'Pedro Santos',
     phone: '(11) 99876-5432',
     date: new Date(2023, 5, 16, 9, 0),
@@ -50,17 +50,17 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: 4,
-    ChatName: 'Bella',
+    petName: 'Bella',
     ownerName: 'Ana Costa',
     phone: '(11) 98765-1234',
     date: addDays(new Date(), 1),
     service: 'Banho e Tosa',
     status: 'confirmado',
-    notes: 'Chat alérgico a certos produtos'
+    notes: 'Pet alérgico a certos produtos'
   },
   {
     id: 5,
-    ChatName: 'Thor',
+    petName: 'Thor',
     ownerName: 'Lucas Ferreira',
     phone: '(11) 97654-3210',
     date: addDays(new Date(), 1),
@@ -70,7 +70,7 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: 6,
-    ChatName: 'Nina',
+    petName: 'Nina',
     ownerName: 'Carla Souza',
     phone: '(11) 98888-7777',
     date: addHours(new Date(), 3),
@@ -80,7 +80,7 @@ const mockAppointments: Appointment[] = [
   },
   {
     id: 7,
-    ChatName: 'Rex',
+    petName: 'Rex',
     ownerName: 'Roberto Almeida',
     phone: '(11) 99999-8888',
     date: addMinutes(new Date(), 90),
@@ -113,7 +113,7 @@ const Schedule = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState<Appointment | null>(null);
   const [formData, setFormData] = useState<AppointmentFormData>({
-    ChatName: '',
+    petName: '',
     ownerName: '',
     phone: '',
     date: new Date(),
@@ -139,7 +139,7 @@ const Schedule = () => {
   if (isAuthLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-Valore-gold rounded-full animate-spin"></div>
+        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -154,7 +154,7 @@ const Schedule = () => {
   }).filter(appointment => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
-    return appointment.ChatName.toLowerCase().includes(searchLower) || 
+    return appointment.petName.toLowerCase().includes(searchLower) || 
            appointment.ownerName.toLowerCase().includes(searchLower) || 
            appointment.phone.includes(searchTerm) || 
            appointment.service.toLowerCase().includes(searchLower);
@@ -197,7 +197,7 @@ const Schedule = () => {
       setIsAddDialogOpen(false);
     }
     setFormData({
-      ChatName: '',
+      petName: '',
       ownerName: '',
       phone: '',
       date: new Date(),
@@ -210,7 +210,7 @@ const Schedule = () => {
   const handleEditClick = (appointment: Appointment) => {
     setCurrentAppointment(appointment);
     setFormData({
-      ChatName: appointment.ChatName,
+      petName: appointment.petName,
       ownerName: appointment.ownerName,
       phone: appointment.phone,
       date: appointment.date,

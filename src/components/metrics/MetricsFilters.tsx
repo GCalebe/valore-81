@@ -27,7 +27,7 @@ const MetricsFilters: React.FC<MetricsFiltersProps> = ({ dateFilter, onDateFilte
             onClick={() => onDateFilterChange(option.value)}
             className={`text-xs ${
               dateFilter === option.value 
-                ? 'bg-Valore-blue text-white dark:bg-blue-600' 
+                ? 'bg-petshop-blue text-white dark:bg-blue-600' 
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >

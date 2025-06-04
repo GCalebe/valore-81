@@ -61,15 +61,15 @@ const ClientsDashboard = () => {
   }, [user, isLoading, navigate]);
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-Valore-blue dark:bg-gray-900">
-      <div className="h-16 w-16 border-4 border-t-transparent border-Valore-gold rounded-full animate-spin"></div>
+    return <div className="min-h-screen flex items-center justify-center bg-petshop-blue dark:bg-gray-900">
+      <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
     </div>;
   }
 
   const filteredContactsCount = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.ChatName && contact.ChatName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (contact.petName && contact.petName.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.phone && contact.phone.includes(searchTerm))
   ).length;
 

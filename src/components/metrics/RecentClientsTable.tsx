@@ -18,7 +18,7 @@ interface Client {
   id: number;
   name: string;
   phone: string;
-  Chats: number;
+  pets: number;
   lastVisit: string;
 }
 
@@ -57,7 +57,7 @@ const RecentClientsTable: React.FC<RecentClientsTableProps> = ({ clients, loadin
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Telefone</TableHead>
-                  <TableHead>Chats</TableHead>
+                  <TableHead>Pets</TableHead>
                   <TableHead>Cadastro</TableHead>
                 </TableRow>
               </TableHeader>
@@ -75,7 +75,7 @@ const RecentClientsTable: React.FC<RecentClientsTableProps> = ({ clients, loadin
                       <TableCell>{client.phone}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800/40">
-                          {client.Chats} {client.Chats !== 1 ? 'Chats' : 'Chat'}
+                          {client.pets} {client.pets !== 1 ? 'pets' : 'pet'}
                         </Badge>
                       </TableCell>
                       <TableCell>{client.lastVisit}</TableCell>

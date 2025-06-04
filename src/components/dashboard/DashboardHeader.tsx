@@ -3,8 +3,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, ShipWhell
- } from 'lucide-react';
+import { LogOut, PawPrint } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -13,7 +12,7 @@ const DashboardHeader = () => {
   const { settings } = useThemeSettings();
   
   return (
-    <header className="bg-Valore-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+    <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           {settings.logo ? (
@@ -23,8 +22,7 @@ const DashboardHeader = () => {
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <ShipWhell
- className="h-8 w-8 text-Valore-gold" />
+            <PawPrint className="h-8 w-8 text-petshop-gold" />
           )}
           <h1 className="text-2xl font-bold">{settings.brandName}</h1>
         </div>

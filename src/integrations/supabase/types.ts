@@ -81,10 +81,10 @@ export type Database = {
           id: number
           kanban_stage: string | null
           nome: string | null
-          nome_Chat: string | null
+          nome_pet: string | null
           payments: Json | null
-          porte_Chat: string | null
-          raca_Chat: string | null
+          porte_pet: string | null
+          raca_pet: string | null
           sessionid: string | null
           telefone: string | null
           updated_at: string | null
@@ -97,10 +97,10 @@ export type Database = {
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_Chat?: string | null
+          nome_pet?: string | null
           payments?: Json | null
-          porte_Chat?: string | null
-          raca_Chat?: string | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
           updated_at?: string | null
@@ -113,10 +113,10 @@ export type Database = {
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_Chat?: string | null
+          nome_pet?: string | null
           payments?: Json | null
-          porte_Chat?: string | null
-          raca_Chat?: string | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
           updated_at?: string | null

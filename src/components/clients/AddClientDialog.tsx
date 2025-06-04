@@ -119,34 +119,34 @@ const AddClientDialog = ({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="ChatName" className="text-right">
-                Nome do Chat
+              <Label htmlFor="petName" className="text-right">
+                Nome do Pet
               </Label>
               <Input
-                id="ChatName"
-                value={newContact.ChatName || ''}
-                onChange={(e) => setNewContact({...newContact, ChatName: e.target.value})}
+                id="petName"
+                value={newContact.petName || ''}
+                onChange={(e) => setNewContact({...newContact, petName: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="ChatBreed" className="text-right">
-                Tipo do Chat
+              <Label htmlFor="petBreed" className="text-right">
+                Raça do Pet
               </Label>
               <Input
-                id="ChatBreed"
-                value={newContact.ChatBreed || ''}
-                onChange={(e) => setNewContact({...newContact, ChatBreed: e.target.value})}
+                id="petBreed"
+                value={newContact.petBreed || ''}
+                onChange={(e) => setNewContact({...newContact, petBreed: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="ChatSize" className="text-right">
-                Porte do Chat
+              <Label htmlFor="petSize" className="text-right">
+                Porte do Pet
               </Label>
               <Select
-                value={newContact.ChatSize || ''}
-                onValueChange={(value) => setNewContact({...newContact, ChatSize: value})}
+                value={newContact.petSize || ''}
+                onValueChange={(value) => setNewContact({...newContact, petSize: value})}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Selecione o porte" />

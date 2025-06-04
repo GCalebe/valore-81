@@ -1,29 +1,27 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShipWhell
- } from 'lucide-react';
+import { PawPrint } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-interface ChatType {
+interface PetType {
   name: string;
   value: number;
   color: string;
 }
 
-interface ChatTypesChartProps {
-  data: ChatType[];
+interface PetTypesChartProps {
+  data: PetType[];
   loading?: boolean;
 }
 
-const ChatTypesChart: React.FC<ChatTypesChartProps> = ({ data, loading = false }) => {
+const PetTypesChart: React.FC<PetTypesChartProps> = ({ data, loading = false }) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
-          <ShipWhell
- className="h-5 w-5 text-pink-600 dark:text-pink-400" />
-          Tipos de Chats Atendidos
+          <PawPrint className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+          Tipos de Pets Atendidos
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -50,7 +48,7 @@ const ChatTypesChart: React.FC<ChatTypesChartProps> = ({ data, loading = false }
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value) => [`${value} Chats`, 'Quantidade']}
+                  formatter={(value) => [`${value} pets`, 'Quantidade']}
                   contentStyle={{
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     borderRadius: '8px',
@@ -71,4 +69,4 @@ const ChatTypesChart: React.FC<ChatTypesChartProps> = ({ data, loading = false }
   );
 };
 
-export default ChatTypesChart;
+export default PetTypesChart;

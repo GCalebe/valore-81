@@ -113,9 +113,9 @@ export function useConversations() {
             avatar: '👤',
             phone: client.telefone,
             email: client.email || 'Sem email',
-            ChatName: client.nome_Chat || 'Não informado',
-            ChatType: client.porte_Chat || 'Não informado',
-            ChatBreed: client.raca_Chat || 'Não informado',
+            petName: client.nome_pet || 'Não informado',
+            petType: client.porte_pet || 'Não informado',
+            petBreed: client.raca_pet || 'Não informado',
             sessionId: client.sessionid
           };
         });

@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { ArrowLeft, LogOut, ShipWhell
- } from 'lucide-react';
+import { ArrowLeft, LogOut, PawPrint } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
@@ -23,7 +22,7 @@ const ChatHeader = ({ signOut }: ChatHeaderProps) => {
   };
 
   return (
-    <header className="bg-Valore-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300 z-10">
+    <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300 z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Button 
@@ -41,8 +40,7 @@ const ChatHeader = ({ signOut }: ChatHeaderProps) => {
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <ShipWhell
- className="h-8 w-8 text-Valore-gold" />
+            <PawPrint className="h-8 w-8 text-petshop-gold" />
           )}
           <h1 className="text-2xl font-bold">Chats</h1>
         </div>
