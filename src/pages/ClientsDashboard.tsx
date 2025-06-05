@@ -14,7 +14,7 @@ import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
 import DeleteClientDialog from '@/components/clients/DeleteClientDialog';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
-import { PauseDurationDialog } from '@/components/PauseDurationDialog';
+import PauseDurationDialog from '@/components/PauseDurationDialog';
 
 const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -155,55 +155,66 @@ const ClientsDashboard = () => {
         {viewMode === 'table' ? (
           <ClientsTable
             contacts={filteredContacts}
-            loading={loadingContacts}
+            isLoading={loadingContacts}
             onContactClick={handleContactClick}
           />
         ) : (
           <KanbanView
             contacts={filteredContacts}
-            loading={loadingContacts}
+            isLoading={loadingContacts}
             onContactClick={handleContactClick}
             onStageChange={handleKanbanStageChange}
           />
         )}
 
-        <ClientDetailSheet
-          isOpen={isDetailSheetOpen}
-          onOpenChange={setIsDetailSheetOpen}
-          contact={selectedContact}
-          onEdit={openEditModal}
-          onDelete={() => setIsDeleteDialogOpen(true)}
-          onMessage={handleMessageClick}
-        />
+        {selectedContact && (
+          <ClientDetailSheet
+            isOpen={isDetailSheetOpen}
+            onOpenChange={setIsDetailSheetOpen}
+            selectedContact={selectedContact}
+            onEdit={openEditModal}
+            onDelete={() => setIsDeleteDialogOpen(true)}
+            onMessage={handleMessageClick}
+          />
+        )}
 
-        <EditClientDialog
-          isOpen={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
-          contact={newContact}
-          setContact={setNewContact}
-          onSave={handleEditContact}
-        />
+        {selectedContact && (
+          <EditClientDialog
+            isOpen={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            selectedContact={newContact}
+            setSelectedContact={setNewContact}
+            onSave={handleEditContact}
+          />
+        )}
 
-        <DeleteClientDialog
-          isOpen={isDeleteDialogOpen}
-          onOpenChange={setIsDeleteDialogOpen}
-          contact={selectedContact}
-          onConfirm={handleDeleteContact}
-        />
+        {selectedContact && (
+          <DeleteClientDialog
+            isOpen={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+            selectedContact={selectedContact}
+            onConfirm={handleDeleteContact}
+          />
+        )}
 
-        <SendMessageDialog
-          isOpen={isMessageDialogOpen}
-          onOpenChange={setIsMessageDialogOpen}
-          contact={selectedContact}
-          message={messageText}
-          setMessage={setMessageText}
-          onSend={handleMessageSubmit}
-        />
+        {selectedContact && (
+          <SendMessageDialog
+            selectedContact={selectedContact}
+            messageText={messageText}
+            setMessageText={setMessageText}
+            handleMessageSubmit={handleMessageSubmit}
+            onOpenChange={setIsMessageDialogOpen}
+            isPauseDurationDialogOpen={isPauseDurationDialogOpen}
+            setIsPauseDurationDialogOpen={setIsPauseDurationDialogOpen}
+            handlePauseDurationConfirm={handlePauseDurationConfirm}
+          />
+        )}
 
         <PauseDurationDialog
           isOpen={isPauseDurationDialogOpen}
-          onOpenChange={setIsPauseDurationDialogOpen}
+          onClose={() => setIsPauseDurationDialogOpen(false)}
           onConfirm={handlePauseDurationConfirm}
+          phoneNumber={selectedContact?.phone || ''}
         />
       </main>
     </div>
