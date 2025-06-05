@@ -16,77 +16,77 @@ import { CalendarSidebar } from '@/components/schedule/CalendarSidebar';
 import { EventsCard } from '@/components/schedule/EventsCard';
 import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
 
-// Dados mock para os agendamentos
+// Dados mock para os agendamentos náuticos
 const mockAppointments: Appointment[] = [
   {
     id: 1,
-    petName: 'Max',
+    petName: 'Veleiro Azul',
     ownerName: 'João Silva',
     phone: '(11) 98765-4321',
     date: new Date(2023, 5, 15, 10, 30),
-    service: 'Banho e Tosa',
+    service: 'Manutenção de Casco',
     status: 'confirmado',
-    notes: 'Trazer a coleira nova'
+    notes: 'Verificar sistema de ancoragem'
   },
   {
     id: 2,
-    petName: 'Luna',
+    petName: 'Lancha Luna',
     ownerName: 'Maria Oliveira',
     phone: '(11) 91234-5678',
     date: new Date(2023, 5, 15, 14, 0),
-    service: 'Consulta Veterinária',
+    service: 'Inspeção de Segurança',
     status: 'pendente',
-    notes: 'Verificar vacinas'
+    notes: 'Renovação de licenças'
   },
   {
     id: 3,
-    petName: 'Toby',
+    petName: 'Iate Toby',
     ownerName: 'Pedro Santos',
     phone: '(11) 99876-5432',
     date: new Date(2023, 5, 16, 9, 0),
-    service: 'Exames de Rotina',
+    service: 'Vistoria Completa',
     status: 'confirmado',
-    notes: ''
+    notes: 'Vistoria anual obrigatória'
   },
   {
     id: 4,
-    petName: 'Bella',
+    petName: 'Catamarã Bella',
     ownerName: 'Ana Costa',
     phone: '(11) 98765-1234',
     date: addDays(new Date(), 1),
-    service: 'Banho e Tosa',
+    service: 'Limpeza e Enceramento',
     status: 'confirmado',
-    notes: 'Pet alérgico a certos produtos'
+    notes: 'Preparação para temporada'
   },
   {
     id: 5,
-    petName: 'Thor',
+    petName: 'Barco Thor',
     ownerName: 'Lucas Ferreira',
     phone: '(11) 97654-3210',
     date: addDays(new Date(), 1),
-    service: 'Consulta Veterinária',
+    service: 'Revisão de Motor',
     status: 'pendente',
-    notes: ''
+    notes: 'Motor apresentando ruídos'
   },
   {
     id: 6,
-    petName: 'Nina',
+    petName: 'Jet Ski Nina',
     ownerName: 'Carla Souza',
     phone: '(11) 98888-7777',
     date: addHours(new Date(), 3),
-    service: 'Banho',
+    service: 'Manutenção Preventiva',
     status: 'confirmado',
     notes: 'Chegará 15 minutos antes'
   },
   {
     id: 7,
-    petName: 'Rex',
+    petName: 'Escuna Rex',
     ownerName: 'Roberto Almeida',
     phone: '(11) 99999-8888',
     date: addMinutes(new Date(), 90),
-    service: 'Vacinação',
+    service: 'Vistoria de Segurança',
     status: 'confirmado',
-    notes: ''
+    notes: 'Documentação em dia'
   }
 ];
 
@@ -117,7 +117,7 @@ const Schedule = () => {
     ownerName: '',
     phone: '',
     date: new Date(),
-    service: 'Banho e Tosa',
+    service: 'Manutenção de Casco',
     status: 'pendente',
     notes: ''
   });
@@ -139,7 +139,7 @@ const Schedule = () => {
   if (isAuthLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
+        <div className="h-16 w-16 border-4 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -201,7 +201,7 @@ const Schedule = () => {
       ownerName: '',
       phone: '',
       date: new Date(),
-      service: 'Banho e Tosa',
+      service: 'Manutenção de Casco',
       status: 'pendente',
       notes: ''
     });
@@ -288,7 +288,7 @@ const Schedule = () => {
               Voltar
             </Button>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-              Agenda de Atendimentos
+              Agenda Náutica Valore
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -343,8 +343,8 @@ const Schedule = () => {
         onOpenChange={setIsAddEventDialogOpen}
         onSubmit={handleAddEvent}
         isSubmitting={isSubmitting}
-        title="Adicionar Evento"
-        description="Preencha os campos para adicionar um novo evento ao calendário."
+        title="Adicionar Evento Náutico"
+        description="Preencha os campos para adicionar um novo evento náutico ao calendário."
         submitLabel="Salvar Evento"
       />
 
@@ -354,8 +354,8 @@ const Schedule = () => {
         onSubmit={handleEditEvent}
         isSubmitting={isSubmitting}
         event={selectedEvent || undefined}
-        title="Editar Evento"
-        description="Modifique os campos para atualizar este evento."
+        title="Editar Evento Náutico"
+        description="Modifique os campos para atualizar este evento náutico."
         submitLabel="Salvar Alterações"
       />
 

@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Search, LoaderCircle } from 'lucide-react';
+import { AlertCircle, Search, LoaderCircle, ShipWheel } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EventsTable } from './EventsTable';
 
@@ -49,11 +49,14 @@ export function EventsCard({
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>Agenda PetShop Pet Paradise</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <ShipWheel className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              Agenda Náutica Valore
+            </CardTitle>
             <CardDescription>
               {selectedTab === 'day' 
-                ? `Visualizando ${filteredEvents.length} eventos para ${selectedDate ? format(selectedDate, "dd/MM/yyyy") : 'hoje'}`
-                : `Visualizando todos os ${filteredEvents.length} eventos`
+                ? `Visualizando ${filteredEvents.length} eventos náuticos para ${selectedDate ? format(selectedDate, "dd/MM/yyyy") : 'hoje'}`
+                : `Visualizando todos os ${filteredEvents.length} eventos náuticos`
               }
             </CardDescription>
           </div>
@@ -63,7 +66,7 @@ export function EventsCard({
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input 
                 type="search" 
-                placeholder="Buscar eventos..." 
+                placeholder="Buscar eventos náuticos..." 
                 className="pl-9" 
                 value={searchTerm} 
                 onChange={e => onSearchChange(e.target.value)}
@@ -84,7 +87,7 @@ export function EventsCard({
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Não conseguimos atualizar os eventos, tentando novamente em breve...
+              Não conseguimos atualizar os eventos náuticos, tentando novamente em breve...
             </AlertDescription>
           </Alert>
         )}

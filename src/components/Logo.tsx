@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { ShipWheel } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -25,11 +26,9 @@ const Logo: React.FC<LogoProps> = ({
       animated && 'animate-float',
       className
     )}>
-      <img 
-        src="/lovable-uploads/8697baef-6826-467f-8608-0054aefa260c.png" 
-        alt="Valore Náutico Logo" 
-        className="w-full h-full object-contain" 
-      />
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-700 rounded-full shadow-lg">
+        <ShipWheel className="w-2/3 h-2/3 text-white" />
+      </div>
     </div>
   );
 };

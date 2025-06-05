@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, ShipWheel } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
 interface CalendarSidebarProps {
@@ -17,8 +17,11 @@ export function CalendarSidebar({ selectedDate, onDateChange, onAddEvent }: Cale
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Calendário</CardTitle>
-        <CardDescription>Selecione uma data</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          <ShipWheel className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          Calendário Náutico
+        </CardTitle>
+        <CardDescription>Selecione uma data para visualizar eventos</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
         <Calendar 
@@ -37,10 +40,10 @@ export function CalendarSidebar({ selectedDate, onDateChange, onAddEvent }: Cale
         </p>
         <Button 
           onClick={onAddEvent} 
-          className="w-full flex items-center gap-2"
+          className="w-full flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="h-4 w-4" />
-          Adicionar Evento
+          Adicionar Evento Náutico
         </Button>
       </CardFooter>
     </Card>

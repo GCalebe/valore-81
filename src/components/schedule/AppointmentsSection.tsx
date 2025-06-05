@@ -46,16 +46,16 @@ export function AppointmentsSection({
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Novo Agendamento</DialogTitle>
+            <DialogTitle>Novo Agendamento Náutico</DialogTitle>
             <DialogDescription>
-              Preencha os dados para criar um novo agendamento.
+              Preencha os dados para criar um novo agendamento náutico.
             </DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="petName">Nome do Pet</Label>
+                <Label htmlFor="petName">Nome da Embarcação</Label>
                 <Input id="petName" value={formData.petName} onChange={e => setFormData({
                 ...formData,
                 petName: e.target.value
@@ -92,17 +92,18 @@ export function AppointmentsSection({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="service">Serviço</Label>
+                <Label htmlFor="service">Serviço Náutico</Label>
                 <select id="service" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" value={formData.service} onChange={e => setFormData({
                 ...formData,
                 service: e.target.value
               })} required>
-                  <option value="Banho e Tosa">Banho e Tosa</option>
-                  <option value="Banho">Banho</option>
-                  <option value="Tosa">Tosa</option>
-                  <option value="Consulta Veterinária">Consulta Veterinária</option>
-                  <option value="Vacinação">Vacinação</option>
-                  <option value="Exames de Rotina">Exames de Rotina</option>
+                  <option value="Manutenção de Casco">Manutenção de Casco</option>
+                  <option value="Revisão de Motor">Revisão de Motor</option>
+                  <option value="Inspeção de Segurança">Inspeção de Segurança</option>
+                  <option value="Vistoria Completa">Vistoria Completa</option>
+                  <option value="Limpeza e Enceramento">Limpeza e Enceramento</option>
+                  <option value="Manutenção Preventiva">Manutenção Preventiva</option>
+                  <option value="Vistoria de Segurança">Vistoria de Segurança</option>
                 </select>
               </div>
               
@@ -140,16 +141,16 @@ export function AppointmentsSection({
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Editar Agendamento</DialogTitle>
+            <DialogTitle>Editar Agendamento Náutico</DialogTitle>
             <DialogDescription>
-              Atualize os dados do agendamento.
+              Atualize os dados do agendamento náutico.
             </DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-petName">Nome do Pet</Label>
+                <Label htmlFor="edit-petName">Nome da Embarcação</Label>
                 <Input id="edit-petName" value={formData.petName} onChange={e => setFormData({
                 ...formData,
                 petName: e.target.value
@@ -186,17 +187,18 @@ export function AppointmentsSection({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="edit-service">Serviço</Label>
+                <Label htmlFor="edit-service">Serviço Náutico</Label>
                 <select id="edit-service" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm" value={formData.service} onChange={e => setFormData({
                 ...formData,
                 service: e.target.value
               })} required>
-                  <option value="Banho e Tosa">Banho e Tosa</option>
-                  <option value="Banho">Banho</option>
-                  <option value="Tosa">Tosa</option>
-                  <option value="Consulta Veterinária">Consulta Veterinária</option>
-                  <option value="Vacinação">Vacinação</option>
-                  <option value="Exames de Rotina">Exames de Rotina</option>
+                  <option value="Manutenção de Casco">Manutenção de Casco</option>
+                  <option value="Revisão de Motor">Revisão de Motor</option>
+                  <option value="Inspeção de Segurança">Inspeção de Segurança</option>
+                  <option value="Vistoria Completa">Vistoria Completa</option>
+                  <option value="Limpeza e Enceramento">Limpeza e Enceramento</option>
+                  <option value="Manutenção Preventiva">Manutenção Preventiva</option>
+                  <option value="Vistoria de Segurança">Vistoria de Segurança</option>
                 </select>
               </div>
               
@@ -236,13 +238,13 @@ export function AppointmentsSection({
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir este agendamento? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir este agendamento náutico? Esta ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           
           {currentAppointment && (
             <div className="py-4">
-              <p><strong>Pet:</strong> {currentAppointment.petName}</p>
+              <p><strong>Embarcação:</strong> {currentAppointment.petName}</p>
               <p><strong>Proprietário:</strong> {currentAppointment.ownerName}</p>
               <p><strong>Data/Hora:</strong> {format(currentAppointment.date, "dd/MM/yyyy 'às' HH:mm", {
                 locale: pt
