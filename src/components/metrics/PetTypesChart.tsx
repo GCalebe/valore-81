@@ -1,33 +1,33 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PawPrint } from 'lucide-react';
+import { ShipWheel } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-interface PetType {
+interface ClientType {
   name: string;
   value: number;
   color: string;
 }
 
-interface PetTypesChartProps {
-  data: PetType[];
+interface ClientTypesChartProps {
+  data: ClientType[];
   loading?: boolean;
 }
 
-const PetTypesChart: React.FC<PetTypesChartProps> = ({ data, loading = false }) => {
+const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = false }) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
-          <PawPrint className="h-5 w-5 text-pink-600 dark:text-pink-400" />
-          Tipos de Pets Atendidos
+          <ShipWheel className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          Tipos de Clientes Náuticos
         </CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="h-80 flex items-center justify-center">
-            <div className="w-16 h-16 border-4 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : data.length > 0 ? (
           <div className="h-80 flex items-center justify-center">
@@ -48,7 +48,7 @@ const PetTypesChart: React.FC<PetTypesChartProps> = ({ data, loading = false }) 
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value) => [`${value} pets`, 'Quantidade']}
+                  formatter={(value) => [`${value} clientes`, 'Quantidade']}
                   contentStyle={{
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     borderRadius: '8px',
@@ -69,4 +69,4 @@ const PetTypesChart: React.FC<PetTypesChartProps> = ({ data, loading = false }) 
   );
 };
 
-export default PetTypesChart;
+export default ClientTypesChart;

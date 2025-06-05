@@ -42,9 +42,9 @@ const AddClientDialog = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Adicionar Novo Cliente</DialogTitle>
+          <DialogTitle>Adicionar Novo Cliente Náutico</DialogTitle>
           <DialogDescription>
-            Preencha as informações para adicionar um novo cliente ao seu CRM.
+            Preencha as informações para adicionar um novo cliente náutico ao seu CRM.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -119,37 +119,37 @@ const AddClientDialog = ({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="petName" className="text-right">
-                Nome do Pet
+              <Label htmlFor="clientName" className="text-right">
+                Nome do Cliente
               </Label>
               <Input
-                id="petName"
-                value={newContact.petName || ''}
-                onChange={(e) => setNewContact({...newContact, petName: e.target.value})}
+                id="clientName"
+                value={newContact.clientName || ''}
+                onChange={(e) => setNewContact({...newContact, clientName: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="petBreed" className="text-right">
-                Raça do Pet
+              <Label htmlFor="clientType" className="text-right">
+                Tipo do Cliente
               </Label>
               <Input
-                id="petBreed"
-                value={newContact.petBreed || ''}
-                onChange={(e) => setNewContact({...newContact, petBreed: e.target.value})}
+                id="clientType"
+                value={newContact.clientType || ''}
+                onChange={(e) => setNewContact({...newContact, clientType: e.target.value})}
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="petSize" className="text-right">
-                Porte do Pet
+              <Label htmlFor="clientSize" className="text-right">
+                Tamanho do Cliente
               </Label>
               <Select
-                value={newContact.petSize || ''}
-                onValueChange={(value) => setNewContact({...newContact, petSize: value})}
+                value={newContact.clientSize || ''}
+                onValueChange={(value) => setNewContact({...newContact, clientSize: value})}
               >
                 <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o porte" />
+                  <SelectValue placeholder="Selecione o tamanho" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="pequeno">Pequeno</SelectItem>

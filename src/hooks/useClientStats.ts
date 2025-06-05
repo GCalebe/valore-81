@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,10 +6,10 @@ import { supabase } from '@/integrations/supabase/client';
 export function useClientStats() {
   const [stats, setStats] = useState({
     totalClients: 0,
-    totalPets: 0,
+    totalNauticalClients: 0,
     newClientsThisMonth: 0,
     monthlyGrowth: [],
-    petBreeds: [],
+    clientTypes: [],
     recentClients: []
   });
   const [loading, setLoading] = useState(true);
@@ -23,11 +24,11 @@ export function useClientStats() {
         .from('dados_cliente')
         .select('*', { count: 'exact' });
 
-      // Fetch total pets (assuming each client has at least one pet)
-      const { count: totalPets } = await supabase
+      // Fetch total nautical clients (assuming each client has at least one nautical project)
+      const { count: totalNauticalClients } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
-        .not('nome_pet', 'is', null);
+        .not('nome_cliente', 'is', null);
 
       // Fetch new clients this month (from 1st of current month to today)
       const today = new Date();
@@ -61,16 +62,16 @@ export function useClientStats() {
         });
       }
 
-      // Fetch pet breeds data
-      const { data: petsData } = await supabase
+      // Fetch client types data
+      const { data: clientTypesData } = await supabase
         .from('dados_cliente')
-        .select('raca_pet')
-        .not('raca_pet', 'is', null);
+        .select('tipo_cliente')
+        .not('tipo_cliente', 'is', null);
 
-      const breedCounts = {};
-      petsData?.forEach(pet => {
-        if (pet.raca_pet) {
-          breedCounts[pet.raca_pet] = (breedCounts[pet.raca_pet] || 0) + 1;
+      const typeCounts = {};
+      clientTypesData?.forEach(client => {
+        if (client.tipo_cliente) {
+          typeCounts[client.tipo_cliente] = (typeCounts[client.tipo_cliente] || 0) + 1;
         }
       });
 
@@ -80,7 +81,7 @@ export function useClientStats() {
         '#F97316', '#8B5CF6', '#06B6D4', '#D946EF'
       ];
 
-      const petBreeds = Object.entries(breedCounts).map(([name, value], index) => ({
+      const clientTypes = Object.entries(typeCounts).map(([name, value], index) => ({
         name,
         value,
         color: colors[index % colors.length]
@@ -89,7 +90,7 @@ export function useClientStats() {
       // Fetch recent clients
       const { data: recentClientsData } = await supabase
         .from('dados_cliente')
-        .select('id, nome, telefone, nome_pet, created_at')
+        .select('id, nome, telefone, nome_cliente, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -97,17 +98,17 @@ export function useClientStats() {
         id: client.id,
         name: client.nome,
         phone: client.telefone,
-        pets: client.nome_pet ? 1 : 0,
+        nauticalClients: client.nome_cliente ? 1 : 0,
         lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
       })) || [];
 
       // Update stats
       setStats({
         totalClients: totalClients || 0,
-        totalPets: totalPets || 0,
+        totalNauticalClients: totalNauticalClients || 0,
         newClientsThisMonth: newClientsThisMonth || 0,
         monthlyGrowth: monthlyGrowthData,
-        petBreeds,
+        clientTypes,
         recentClients
       });
 
