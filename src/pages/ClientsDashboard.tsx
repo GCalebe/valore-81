@@ -156,14 +156,15 @@ const ClientsDashboard = () => {
           <ClientsTable
             contacts={filteredContacts}
             isLoading={loadingContacts}
+            searchTerm={searchTerm}
             onContactClick={handleContactClick}
           />
         ) : (
           <KanbanView
             contacts={filteredContacts}
-            isLoading={loadingContacts}
             onContactClick={handleContactClick}
             onStageChange={handleKanbanStageChange}
+            searchTerm={searchTerm}
           />
         )}
 
@@ -172,9 +173,20 @@ const ClientsDashboard = () => {
             isOpen={isDetailSheetOpen}
             onOpenChange={setIsDetailSheetOpen}
             selectedContact={selectedContact}
-            onEdit={openEditModal}
-            onDelete={() => setIsDeleteDialogOpen(true)}
-            onMessage={handleMessageClick}
+            onEditClick={openEditModal}
+            onDeleteClick={() => setIsDeleteDialogOpen(true)}
+            onSendMessageClick={handleMessageClick}
+            isDeleteDialogOpen={isDeleteDialogOpen}
+            setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+            handleDeleteContact={handleDeleteContact}
+            isMessageDialogOpen={isMessageDialogOpen}
+            setIsMessageDialogOpen={setIsMessageDialogOpen}
+            messageText={messageText}
+            setMessageText={setMessageText}
+            handleMessageSubmit={handleMessageSubmit}
+            isPauseDurationDialogOpen={isPauseDurationDialogOpen}
+            setIsPauseDurationDialogOpen={setIsPauseDurationDialogOpen}
+            handlePauseDurationConfirm={handlePauseDurationConfirm}
           />
         )}
 
@@ -182,9 +194,10 @@ const ClientsDashboard = () => {
           <EditClientDialog
             isOpen={isEditModalOpen}
             onOpenChange={setIsEditModalOpen}
-            selectedContact={newContact}
-            setSelectedContact={setNewContact}
-            onSave={handleEditContact}
+            selectedContact={selectedContact}
+            editContactData={newContact}
+            setEditContactData={setNewContact}
+            handleEditContact={handleEditContact}
           />
         )}
 
@@ -193,7 +206,7 @@ const ClientsDashboard = () => {
             isOpen={isDeleteDialogOpen}
             onOpenChange={setIsDeleteDialogOpen}
             selectedContact={selectedContact}
-            onConfirm={handleDeleteContact}
+            handleDeleteContact={handleDeleteContact}
           />
         )}
 
