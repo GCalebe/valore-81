@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Link, PawPrint, Plus, QrCode, Loader2, RefreshCw, Check } from 'lucide-react';
+import { ArrowLeft, Link, ShipWheel, Plus, QrCode, Loader2, RefreshCw, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 const Evolution = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useThemeSettings();
   const { toast } = useToast();
   const [instanceName, setInstanceName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -288,7 +290,10 @@ const Evolution = () => {
   
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+      <header 
+        className="text-white shadow-md transition-colors duration-300"
+        style={{ backgroundColor: settings.primaryColor }}
+      >
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Button 
@@ -299,8 +304,19 @@ const Evolution = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <PawPrint className="h-8 w-8 text-petshop-gold" />
-            <h1 className="text-2xl font-bold">Pet Paradise</h1>
+            {settings.logo ? (
+              <img 
+                src={settings.logo} 
+                alt="Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <ShipWheel 
+                className="h-8 w-8"
+                style={{ color: settings.secondaryColor }}
+              />
+            )}
+            <h1 className="text-2xl font-bold">{settings.brandName}</h1>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">

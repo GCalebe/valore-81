@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Button } from '@/components/ui/button';
-import { PawPrint, LogOut, ArrowLeft } from 'lucide-react';
+import { ShipWheel, LogOut, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +17,7 @@ import { useDocuments } from '@/hooks/useDocuments';
 
 const KnowledgeManager = () => {
   const { user, signOut, isLoading: authLoading } = useAuth();
+  const { settings } = useThemeSettings();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,19 +46,36 @@ const KnowledgeManager = () => {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-petshop-blue dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div 
+          className="h-16 w-16 border-4 border-t-transparent rounded-full animate-spin"
+          style={{ borderColor: `${settings.secondaryColor} transparent ${settings.secondaryColor} ${settings.secondaryColor}` }}
+        ></div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+      <header 
+        className="text-white shadow-md transition-colors duration-300"
+        style={{ backgroundColor: settings.primaryColor }}
+      >
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <PawPrint className="h-8 w-8 text-petshop-gold" />
-            <h1 className="text-2xl font-bold">Pet Paradise</h1>
+            {settings.logo ? (
+              <img 
+                src={settings.logo} 
+                alt="Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <ShipWheel 
+                className="h-8 w-8"
+                style={{ color: settings.secondaryColor }}
+              />
+            )}
+            <h1 className="text-2xl font-bold">{settings.brandName}</h1>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">

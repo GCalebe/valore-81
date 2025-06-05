@@ -40,7 +40,7 @@ const DashboardHeader: React.FC = () => {
               style={{ color: settings.secondaryColor }}
             />
           )}
-          <h1 className="text-2xl font-bold">{settings.brandName || 'Valore Náutico'}</h1>
+          <h1 className="text-2xl font-bold">{settings.brandName}</h1>
         </div>
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
