@@ -12,7 +12,10 @@ const DashboardHeader = () => {
   const { settings } = useThemeSettings();
   
   return (
-    <header className="bg-blue-600 dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+    <header 
+      className="text-white shadow-md transition-colors duration-300"
+      style={{ backgroundColor: settings.primaryColor }}
+    >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           {settings.logo ? (
@@ -22,7 +25,10 @@ const DashboardHeader = () => {
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <ShipWheel className="h-8 w-8 text-amber-500" />
+            <ShipWheel 
+              className="h-8 w-8"
+              style={{ color: settings.secondaryColor }}
+            />
           )}
           <h1 className="text-2xl font-bold">{settings.brandName}</h1>
         </div>
@@ -31,7 +37,11 @@ const DashboardHeader = () => {
             Bem-vindo, {user?.user_metadata?.name || user?.email}
           </Badge>
           <ThemeToggle />
-          <Button variant="outline" onClick={signOut} className="border-white text-white bg-gray-950/50 hover:bg-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600">
+          <Button 
+            variant="outline" 
+            onClick={signOut} 
+            className="border-white text-white bg-gray-950/50 hover:bg-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Sair
           </Button>

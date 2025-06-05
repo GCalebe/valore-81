@@ -14,7 +14,10 @@ const DashboardHeader: React.FC = () => {
   const { settings } = useThemeSettings();
 
   return (
-    <header className="bg-blue-600 dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+    <header 
+      className="text-white shadow-md transition-colors duration-300"
+      style={{ backgroundColor: settings.primaryColor }}
+    >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Button 
@@ -32,7 +35,10 @@ const DashboardHeader: React.FC = () => {
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <ShipWheel className="h-8 w-8 text-amber-500" />
+            <ShipWheel 
+              className="h-8 w-8"
+              style={{ color: settings.secondaryColor }}
+            />
           )}
           <h1 className="text-2xl font-bold">{settings.brandName || 'Valore Náutico'}</h1>
         </div>

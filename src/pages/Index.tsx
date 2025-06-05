@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { PawPrint, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { ShipWheel, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm';
 import SignupForm from '@/components/SignupForm';
@@ -20,6 +21,7 @@ type FormMode = 'login' | 'signup' | 'forgot-password';
 const Index = () => {
   const navigate = useNavigate();
   const { signIn, user, isLoading: authLoading } = useAuth();
+  const { settings } = useThemeSettings();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formMode, setFormMode] = useState<FormMode>('login');
@@ -113,8 +115,8 @@ const Index = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-petshop-blue dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-petshop-gold rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-valore-blue dark:bg-gray-900">
+        <div className="h-16 w-16 border-4 border-t-transparent border-valore-gold rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -129,40 +131,40 @@ const Index = () => {
         return (
           <>
             <h1 className="text-2xl font-bold text-white text-center mb-2 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              Bem-vindo ao Valore Paradise!
+              Bem-vindo ao {settings.brandName}!
             </h1>
             <p className="text-white/80 text-center mb-6 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-              Entre para gerenciar seu assistente
+              Entre para gerenciar seu assistente náutico
             </p>
 
             <div className="space-y-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
               <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-valore-gold transition-colors duration-300" />
                 <Input
                   type="email"
                   name="email"
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${errors.email ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+                  className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.email ? 'border-red-400' : 'focus:border-valore-gold'}`}
                 />
                 {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
               </div>
 
               <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-valore-gold transition-colors duration-300" />
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Senha"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${errors.password ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+                  className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.password ? 'border-red-400' : 'focus:border-valore-gold'}`}
                 />
                 <button 
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 hover:text-petshop-gold transition-colors duration-300"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 hover:text-valore-gold transition-colors duration-300"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -175,7 +177,7 @@ const Index = () => {
                 <input
                   type="checkbox"
                   id="remember"
-                  className="w-4 h-4 bg-white/10 dark:bg-gray-700/50 border-white/20 rounded focus:ring-petshop-gold text-petshop-gold"
+                  className="w-4 h-4 bg-white/10 dark:bg-gray-700/50 border-white/20 rounded focus:ring-valore-gold text-valore-gold"
                 />
                 <label htmlFor="remember" className="ml-2 text-sm text-white/80 hover:text-white transition-colors duration-300">
                   Lembrar-me
@@ -184,7 +186,7 @@ const Index = () => {
               <button 
                 type="button"
                 onClick={() => setFormMode('forgot-password')}
-                className="text-sm text-petshop-gold hover:text-white transition-colors duration-300"
+                className="text-sm text-valore-gold hover:text-white transition-colors duration-300"
               >
                 Esqueceu a senha?
               </button>
@@ -193,13 +195,23 @@ const Index = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full button-hover-effect bg-petshop-gold hover:bg-amber-500 text-petshop-blue dark:text-gray-900 font-bold py-3 px-4 rounded-md flex items-center justify-center transition-all duration-300 animate-slide-up"
-              style={{ animationDelay: '0.6s' }}
+              className="w-full button-hover-effect bg-valore-gold hover:bg-amber-500 text-valore-navy dark:text-gray-900 font-bold py-3 px-4 rounded-md flex items-center justify-center transition-all duration-300 animate-slide-up"
+              style={{ 
+                animationDelay: '0.6s',
+                backgroundColor: settings.secondaryColor,
+                color: settings.accentColor
+              }}
             >
               {isLoading ? (
-                <div className="h-5 w-5 border-2 border-petshop-blue dark:border-gray-900 border-t-transparent rounded-full animate-spin mr-2"></div>
+                <div 
+                  className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin mr-2"
+                  style={{ 
+                    borderColor: settings.accentColor,
+                    borderTopColor: 'transparent'
+                  }}
+                ></div>
               ) : (
-                <PawPrint className="mr-2 h-5 w-5" />
+                <ShipWheel className="mr-2 h-5 w-5" />
               )}
               {isLoading ? "Entrando..." : "Login"}
             </button>
@@ -210,7 +222,8 @@ const Index = () => {
                 <button 
                   type="button"
                   onClick={() => setFormMode('signup')}
-                  className="text-petshop-gold hover:text-white transition-colors duration-300"
+                  className="text-valore-gold hover:text-white transition-colors duration-300"
+                  style={{ color: settings.secondaryColor }}
                 >
                   Criar conta
                 </button>
@@ -230,10 +243,13 @@ const Index = () => {
       <div className="absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/7a96682a-47a3-4ed0-8036-8a31ad28cb4b.png" 
-          alt="Pet background" 
+          alt="Nautical background" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-petshop-blue/30 dark:bg-gray-900/50"></div>
+        <div 
+          className="absolute inset-0 bg-opacity-30 dark:bg-gray-900/50"
+          style={{ backgroundColor: `${settings.primaryColor}4D` }}
+        ></div>
       </div>
       
       <div 

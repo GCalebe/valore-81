@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { PawPrint, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { ShipWheel, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { supabase } from '@/integrations/supabase/client';
 
 const signupSchema = z.object({
@@ -13,6 +14,7 @@ const signupSchema = z.object({
 });
 
 const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { settings } = useThemeSettings();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -113,50 +115,50 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
         Crie sua conta
       </h1>
       <p className="text-white/80 text-center mb-6">
-        Junte-se ao Pet Paradise
+        Junte-se ao {settings.brandName}
       </p>
 
       <div className="space-y-4">
         <div className="relative group">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-valore-gold transition-colors duration-300" />
           <Input
             type="text"
             name="name"
             placeholder="Nome completo"
             value={formData.name}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${errors.name ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.name ? 'border-red-400' : 'focus:border-valore-gold'}`}
           />
           {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
         </div>
 
         <div className="relative group">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-valore-gold transition-colors duration-300" />
           <Input
             type="email"
             name="email"
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${errors.email ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.email ? 'border-red-400' : 'focus:border-valore-gold'}`}
           />
           {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
         </div>
 
         <div className="relative group">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-petshop-gold transition-colors duration-300" />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 group-hover:text-valore-gold transition-colors duration-300" />
           <Input
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Senha"
             value={formData.password}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-petshop-gold/50 ${errors.password ? 'border-red-400' : 'focus:border-petshop-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.password ? 'border-red-400' : 'focus:border-valore-gold'}`}
           />
           <button 
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 hover:text-petshop-gold transition-colors duration-300"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 hover:text-valore-gold transition-colors duration-300"
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
@@ -167,12 +169,22 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full button-hover-effect bg-petshop-gold hover:bg-amber-500 text-petshop-blue font-bold py-3 px-4 rounded-md flex items-center justify-center transition-all duration-300"
+        className="w-full button-hover-effect font-bold py-3 px-4 rounded-md flex items-center justify-center transition-all duration-300"
+        style={{ 
+          backgroundColor: settings.secondaryColor,
+          color: settings.accentColor
+        }}
       >
         {isLoading ? (
-          <div className="h-5 w-5 border-2 border-petshop-blue border-t-transparent rounded-full animate-spin mr-2"></div>
+          <div 
+            className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin mr-2"
+            style={{ 
+              borderColor: settings.accentColor,
+              borderTopColor: 'transparent'
+            }}
+          ></div>
         ) : (
-          <PawPrint className="mr-2 h-5 w-5" />
+          <ShipWheel className="mr-2 h-5 w-5" />
         )}
         {isLoading ? "Criando conta..." : "Criar conta"}
       </button>
