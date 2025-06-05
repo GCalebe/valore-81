@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Conversation } from '@/types/chat';
 import { useToast } from '@/hooks/use-toast';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
 interface MessageInputProps {
   selectedChat: string | null;
@@ -15,6 +16,7 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
+  const { settings } = useThemeSettings();
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,15 +43,15 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
       setNewMessage('');
       
       toast({
-        title: 'Mensagem enviada',
-        description: 'Sua mensagem foi enviada com sucesso.',
+        title: 'Mensagem navegou com sucesso',
+        description: 'Sua mensagem foi enviada pelas águas digitais.',
       });
       
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
-        title: 'Erro ao enviar mensagem',
-        description: 'Não foi possível enviar sua mensagem. Tente novamente.',
+        title: 'Erro na navegação',
+        description: 'Não foi possível enviar sua mensagem. Tente navegar novamente.',
         variant: 'destructive',
       });
     } finally {
@@ -61,7 +63,7 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
     <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Digite uma mensagem"
+          placeholder="Digite sua mensagem para navegar..."
           className="flex-1"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -70,7 +72,8 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
         <Button 
           type="submit" 
           size="icon" 
-          className="bg-green-500 hover:bg-green-600 text-white"
+          className="text-white"
+          style={{ backgroundColor: settings.primaryColor }}
           disabled={isSending}
         >
           <Send size={18} />
@@ -81,4 +84,3 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
 };
 
 export default MessageInput;
-

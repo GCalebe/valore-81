@@ -3,10 +3,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { ArrowLeft, LogOut, PawPrint } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { ShipWheel, LogOut, ArrowLeft } from 'lucide-react';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface ChatHeaderProps {
   signOut: () => void;
@@ -14,22 +13,24 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ signOut }: ChatHeaderProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { settings } = useThemeSettings();
 
-  const goBack = () => {
+  const handleBackToDashboard = () => {
     navigate('/dashboard');
   };
 
   return (
-    <header className="bg-petshop-blue dark:bg-gray-800 text-white shadow-md transition-colors duration-300 z-10">
+    <header 
+      className="text-white shadow-md transition-colors duration-300"
+      style={{ backgroundColor: settings.primaryColor }}
+    >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={goBack} 
-            className="text-white hover:bg-blue-700 dark:hover:bg-gray-700"
+            onClick={handleBackToDashboard}
+            className="text-white hover:bg-white/10"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -40,16 +41,24 @@ const ChatHeader = ({ signOut }: ChatHeaderProps) => {
               className="h-8 w-8 object-contain"
             />
           ) : (
-            <PawPrint className="h-8 w-8 text-petshop-gold" />
+            <ShipWheel 
+              className="h-8 w-8"
+              style={{ color: settings.secondaryColor }}
+            />
           )}
-          <h1 className="text-2xl font-bold">Chats</h1>
+          <h1 className="text-2xl font-bold">{settings.brandName}</h1>
+          <span className="text-lg ml-2">- Conversas</span>
         </div>
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
-            {user?.user_metadata?.name || user?.email}
+            Central de Conversas
           </Badge>
           <ThemeToggle />
-          <Button variant="outline" onClick={signOut} className="border-white text-white bg-gray-950/50 hover:bg-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600">
+          <Button 
+            variant="outline" 
+            onClick={signOut} 
+            className="border-white text-white bg-transparent hover:bg-white/10"
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Sair
           </Button>
