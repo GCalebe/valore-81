@@ -75,83 +75,137 @@ export function useConversations() {
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching conversations from database...');
+      console.log('🔍 Iniciando busca por conversas...');
       
-      // Buscar clientes com sessionid
+      // Primeiro, buscar todos os sessionIds únicos da tabela n8n_chat_histories
+      const { data: historyData, error: historyError } = await supabase
+        .from('n8n_chat_histories')
+        .select('session_id')
+        .order('id', { ascending: false });
+      
+      if (historyError) {
+        console.error('❌ Erro ao buscar histórico de chat:', historyError);
+        throw historyError;
+      }
+      
+      console.log('📊 Dados do histórico encontrados:', historyData?.length || 0, 'registros');
+      
+      if (!historyData || historyData.length === 0) {
+        console.log('⚠️ Nenhum histórico de chat encontrado');
+        setConversations([]);
+        return;
+      }
+      
+      // Extrair sessionIds únicos
+      const uniqueSessionIds = Array.from(new Set(
+        historyData.map(item => item.session_id).filter(Boolean)
+      ));
+      
+      console.log('🔑 SessionIds únicos encontrados:', uniqueSessionIds.length, uniqueSessionIds);
+      
+      if (uniqueSessionIds.length === 0) {
+        console.log('⚠️ Nenhum sessionId válido encontrado');
+        setConversations([]);
+        return;
+      }
+      
+      // Buscar clientes correspondentes aos sessionIds
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
-        .not('sessionid', 'is', null);
+        .in('sessionid', uniqueSessionIds);
       
       if (clientsError) {
-        console.error('Error fetching clients:', clientsError);
+        console.error('❌ Erro ao buscar clientes:', clientsError);
         throw clientsError;
       }
       
-      console.log(`Found ${clientsData?.length || 0} clients with session data`);
+      console.log('👥 Clientes encontrados:', clientsData?.length || 0);
+      console.log('📋 Dados dos clientes:', clientsData);
       
-      let conversationsData: Conversation[] = [];
+      if (!clientsData || clientsData.length === 0) {
+        console.log('⚠️ Nenhum cliente encontrado para os sessionIds');
+        setConversations([]);
+        return;
+      }
       
-      if (clientsData && clientsData.length > 0) {
-        // Criar conversas a partir dos clientes
-        conversationsData = clientsData.map((client: Client) => {
-          return {
-            id: client.sessionid,
-            name: client.nome || 'Cliente sem nome',
-            lastMessage: 'Carregando...',
-            time: 'Recente',
-            unread: 0,
-            avatar: '👤',
-            phone: client.telefone || 'Não informado',
-            email: client.email || 'Sem email',
-            address: 'Não informado',
-            clientName: client.client_name || 'Não informado',
-            clientSize: client.client_size || 'Não informado',
-            clientType: client.client_type || 'Não informado',
-            sessionId: client.sessionid
-          };
-        });
-        
-        // Buscar última mensagem para cada conversa
-        for (const conversation of conversationsData) {
-          try {
-            const { data: historyData, error: historyError } = await supabase
-              .from('n8n_chat_histories')
-              .select('*')
-              .eq('session_id', conversation.sessionId)
-              .order('id', { ascending: false })
-              .limit(1);
+      // Criar conversas a partir dos clientes
+      const conversationsData: Conversation[] = clientsData.map((client: Client) => {
+        console.log('🏗️ Criando conversa para cliente:', client.nome, 'SessionId:', client.sessionid);
+        return {
+          id: client.sessionid,
+          name: client.nome || 'Cliente sem nome',
+          lastMessage: 'Carregando última mensagem...',
+          time: 'Recente',
+          unread: 0,
+          avatar: '👤',
+          phone: client.telefone || 'Não informado',
+          email: client.email || 'Sem email',
+          address: 'Não informado',
+          clientName: client.client_name || 'Não informado',
+          clientSize: client.client_size || 'Não informado',
+          clientType: client.client_type || 'Não informado',
+          sessionId: client.sessionid
+        };
+      });
+      
+      console.log('✅ Conversas criadas:', conversationsData.length);
+      
+      // Buscar última mensagem para cada conversa
+      for (const conversation of conversationsData) {
+        try {
+          console.log('📨 Buscando última mensagem para:', conversation.name, 'SessionId:', conversation.sessionId);
+          
+          const { data: lastMessageData, error: messageError } = await supabase
+            .from('n8n_chat_histories')
+            .select('*')
+            .eq('session_id', conversation.sessionId)
+            .order('id', { ascending: false })
+            .limit(1);
+          
+          if (!messageError && lastMessageData && lastMessageData.length > 0) {
+            const chatHistory = lastMessageData[0] as N8nChatHistory;
+            console.log('💬 Última mensagem encontrada:', chatHistory);
             
-            if (!historyError && historyData && historyData.length > 0) {
-              const chatHistory = historyData[0] as N8nChatHistory;
-              
-              let lastMessageContent = 'Sem mensagem';
-              if (chatHistory.message && typeof chatHistory.message === 'object') {
-                if (chatHistory.message.content) {
-                  lastMessageContent = chatHistory.message.content;
+            let lastMessageContent = 'Sem mensagem';
+            if (chatHistory.message) {
+              if (typeof chatHistory.message === 'object' && chatHistory.message.content) {
+                lastMessageContent = chatHistory.message.content;
+              } else if (typeof chatHistory.message === 'string') {
+                try {
+                  const parsed = JSON.parse(chatHistory.message);
+                  if (parsed.content) {
+                    lastMessageContent = parsed.content;
+                  }
+                } catch (e) {
+                  lastMessageContent = chatHistory.message;
                 }
               }
-              
-              conversation.lastMessage = lastMessageContent || 'Sem mensagem';
-              
-              const messageDate = chatHistory.hora 
-                ? new Date(chatHistory.hora) 
-                : chatHistory.data 
-                  ? new Date(chatHistory.data) 
-                  : new Date();
-              
-              conversation.time = formatMessageTime(messageDate);
             }
-          } catch (error) {
-            console.error(`Error fetching last message for conversation ${conversation.sessionId}:`, error);
+            
+            conversation.lastMessage = lastMessageContent;
+            
+            const messageDate = chatHistory.hora 
+              ? new Date(chatHistory.hora) 
+              : chatHistory.data 
+                ? new Date(chatHistory.data) 
+                : new Date();
+            
+            conversation.time = formatMessageTime(messageDate);
+            console.log('⏰ Horário formatado:', conversation.time);
+          } else {
+            console.log('⚠️ Nenhuma mensagem encontrada para:', conversation.name);
           }
+        } catch (error) {
+          console.error('❌ Erro ao buscar última mensagem:', error);
         }
       }
       
-      console.log(`Successfully created ${conversationsData.length} conversations`);
+      console.log('🎉 Conversas finais:', conversationsData);
       setConversations(conversationsData);
+      
     } catch (error) {
-      console.error('Error fetching conversations:', error);
+      console.error('❌ Erro geral ao buscar conversas:', error);
       toast({
         title: "Erro ao carregar conversas",
         description: "Ocorreu um erro ao carregar as conversas.",
@@ -164,7 +218,7 @@ export function useConversations() {
   }, [toast]);
 
   useEffect(() => {
-    console.log('useConversations: Initial data fetch');
+    console.log('🚀 useConversations: Iniciando carregamento inicial');
     fetchConversations();
   }, [fetchConversations]);
 
