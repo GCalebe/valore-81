@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -24,6 +23,7 @@ const ClientsDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [segmentFilter, setSegmentFilter] = useState('all');
+  const [lastContactFilter, setLastContactFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'grid'>('grid');
 
   const {
@@ -68,10 +68,11 @@ const ClientsDashboard = () => {
   const handleClearFilters = () => {
     setStatusFilter('all');
     setSegmentFilter('all');
+    setLastContactFilter('all');
     setSearchTerm('');
   };
 
-  const hasActiveFilters = statusFilter !== 'all' || segmentFilter !== 'all' || searchTerm !== '';
+  const hasActiveFilters = statusFilter !== 'all' || segmentFilter !== 'all' || lastContactFilter !== 'all' || searchTerm !== '';
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -174,8 +175,10 @@ const ClientsDashboard = () => {
           <ClientFilters
             statusFilter={statusFilter}
             segmentFilter={segmentFilter}
+            lastContactFilter={lastContactFilter}
             onStatusFilterChange={setStatusFilter}
             onSegmentFilterChange={setSegmentFilter}
+            onLastContactFilterChange={setLastContactFilter}
             onClearFilters={handleClearFilters}
             hasActiveFilters={hasActiveFilters}
           />
@@ -188,6 +191,7 @@ const ClientsDashboard = () => {
             searchTerm={searchTerm}
             statusFilter={statusFilter}
             segmentFilter={segmentFilter}
+            lastContactFilter={lastContactFilter}
             onContactClick={handleChatClick}
             onEditClick={openEditModal}
           />
@@ -198,6 +202,7 @@ const ClientsDashboard = () => {
             searchTerm={searchTerm}
             statusFilter={statusFilter}
             segmentFilter={segmentFilter}
+            lastContactFilter={lastContactFilter}
             onContactClick={handleContactClick}
           />
         ) : (

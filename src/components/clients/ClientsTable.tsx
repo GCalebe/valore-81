@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Edit, Phone, Mail } from 'lucide-react';
+import { isDateInPeriod } from '@/utils/dateUtils';
 
 interface ClientsTableProps {
   contacts: Contact[];
@@ -12,6 +13,7 @@ interface ClientsTableProps {
   searchTerm: string;
   statusFilter: string;
   segmentFilter: string;
+  lastContactFilter: string;
   onContactClick: (contact: Contact) => void;
 }
 
@@ -21,6 +23,7 @@ const ClientsTable = ({
   searchTerm,
   statusFilter,
   segmentFilter,
+  lastContactFilter,
   onContactClick 
 }: ClientsTableProps) => {
   const filteredContacts = contacts.filter(contact => {
@@ -37,7 +40,10 @@ const ClientsTable = ({
     // Filtro de segmento (kanban stage)
     const matchesSegment = segmentFilter === 'all' || contact.kanbanStage === segmentFilter;
 
-    return matchesSearch && matchesStatus && matchesSegment;
+    // Filtro de último contato
+    const matchesLastContact = lastContactFilter === 'all' || isDateInPeriod(contact.lastContact, lastContactFilter);
+
+    return matchesSearch && matchesStatus && matchesSegment && matchesLastContact;
   });
 
   if (isLoading) {
@@ -55,7 +61,7 @@ const ClientsTable = ({
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
-          {searchTerm || statusFilter !== 'all' || segmentFilter !== 'all'
+          {searchTerm || statusFilter !== 'all' || segmentFilter !== 'all' || lastContactFilter !== 'all'
             ? 'Nenhum cliente encontrado com os filtros aplicados.' 
             : 'Nenhum cliente disponível. Adicione seu primeiro cliente!'}
         </p>

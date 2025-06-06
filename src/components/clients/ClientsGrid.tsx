@@ -2,6 +2,7 @@
 import React from 'react';
 import { Contact } from '@/types/client';
 import ClientCard from './ClientCard';
+import { isDateInPeriod } from '@/utils/dateUtils';
 
 interface ClientsGridProps {
   contacts: Contact[];
@@ -9,6 +10,7 @@ interface ClientsGridProps {
   searchTerm: string;
   statusFilter: string;
   segmentFilter: string;
+  lastContactFilter: string;
   onContactClick: (contact: Contact) => void;
   onEditClick: (contact: Contact) => void;
 }
@@ -19,6 +21,7 @@ const ClientsGrid = ({
   searchTerm,
   statusFilter,
   segmentFilter,
+  lastContactFilter,
   onContactClick,
   onEditClick
 }: ClientsGridProps) => {
@@ -36,7 +39,10 @@ const ClientsGrid = ({
     // Filtro de segmento (kanban stage)
     const matchesSegment = segmentFilter === 'all' || contact.kanbanStage === segmentFilter;
 
-    return matchesSearch && matchesStatus && matchesSegment;
+    // Filtro de último contato
+    const matchesLastContact = lastContactFilter === 'all' || isDateInPeriod(contact.lastContact, lastContactFilter);
+
+    return matchesSearch && matchesStatus && matchesSegment && matchesLastContact;
   });
 
   if (isLoading) {
@@ -54,7 +60,7 @@ const ClientsGrid = ({
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
-          {searchTerm || statusFilter !== 'all' || segmentFilter !== 'all'
+          {searchTerm || statusFilter !== 'all' || segmentFilter !== 'all' || lastContactFilter !== 'all'
             ? 'Nenhum cliente encontrado com os filtros aplicados.' 
             : 'Nenhum cliente disponível. Adicione seu primeiro cliente!'}
         </p>

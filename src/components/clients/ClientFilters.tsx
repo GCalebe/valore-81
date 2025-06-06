@@ -7,8 +7,10 @@ import { X } from 'lucide-react';
 interface ClientFiltersProps {
   statusFilter: string;
   segmentFilter: string;
+  lastContactFilter: string;
   onStatusFilterChange: (value: string) => void;
   onSegmentFilterChange: (value: string) => void;
+  onLastContactFilterChange: (value: string) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
 }
@@ -16,8 +18,10 @@ interface ClientFiltersProps {
 const ClientFilters = ({
   statusFilter,
   segmentFilter,
+  lastContactFilter,
   onStatusFilterChange,
   onSegmentFilterChange,
+  onLastContactFilterChange,
   onClearFilters,
   hasActiveFilters
 }: ClientFiltersProps) => {
@@ -48,6 +52,19 @@ const ClientFilters = ({
             <SelectItem value="Negociaram">Negociaram</SelectItem>
             <SelectItem value="Postergaram">Postergaram</SelectItem>
             <SelectItem value="Converteram">Converteram</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={lastContactFilter} onValueChange={onLastContactFilterChange}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Último Contato" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os períodos</SelectItem>
+            <SelectItem value="today">Hoje</SelectItem>
+            <SelectItem value="week">Esta semana</SelectItem>
+            <SelectItem value="month">Este mês</SelectItem>
+            <SelectItem value="older">Mais antigo</SelectItem>
           </SelectContent>
         </Select>
       </div>
