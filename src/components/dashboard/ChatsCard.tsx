@@ -3,14 +3,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, Users } from 'lucide-react';
+import { useConversations } from '@/hooks/useConversations';
 
 const ChatsCard = () => {
   const navigate = useNavigate();
+  const { conversations, loading } = useConversations();
   
   const handleClick = () => {
     navigate('/chats');
   };
+  
+  // Calcular conversas não lidas
+  const unreadCount = conversations.reduce((total, conv) => total + conv.unread, 0);
   
   return (
     <Card className="cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl dark:bg-gray-800 dark:border-gray-700 dark:text-white" onClick={handleClick}>
@@ -26,12 +31,42 @@ const ChatsCard = () => {
       <CardContent className="pt-6">
         <div className="mb-4 flex justify-center">
           <div className="bg-green-100 dark:bg-green-900/30 p-6 rounded-full">
-            <MessageSquare className="h-14 w-14 text-green-500 dark:text-green-400 animate-pulse" />
+            <MessageSquare className="h-14 w-14 text-green-500 dark:text-green-400" />
           </div>
         </div>
-        <p className="text-gray-600 dark:text-gray-300 text-center">
-          Visualize e responda mensagens de WhatsApp em tempo real.
-        </p>
+        
+        {loading ? (
+          <p className="text-gray-600 dark:text-gray-300 text-center">
+            Carregando conversas...
+          </p>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
+                <Users className="h-4 w-4" />
+                Conversas ativas:
+              </span>
+              <Badge variant="outline" className="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300">
+                {conversations.length}
+              </Badge>
+            </div>
+            
+            {unreadCount > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-300">Não lidas:</span>
+                <Badge className="bg-red-500 text-white">
+                  {unreadCount}
+                </Badge>
+              </div>
+            )}
+            
+            {conversations.length === 0 && (
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Nenhuma conversa encontrada
+              </p>
+            )}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="bg-gray-50 dark:bg-gray-700/50 rounded-b-lg border-t dark:border-gray-700 flex justify-center py-3">
         <Badge variant="outline" className="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-800/50">

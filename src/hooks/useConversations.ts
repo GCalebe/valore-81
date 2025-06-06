@@ -50,7 +50,6 @@ export function useConversations() {
                 }
               }
               
-              // Use hora field if available, otherwise fall back to data field
               const messageDate = chatHistory.hora 
                 ? new Date(chatHistory.hora) 
                 : chatHistory.data 
@@ -78,6 +77,7 @@ export function useConversations() {
       setLoading(true);
       console.log('Fetching conversations from database...');
       
+      // Buscar sessions únicos do chat
       const { data: chatHistoryData, error: chatHistoryError } = await supabase
         .from('n8n_chat_histories')
         .select('session_id')
@@ -98,15 +98,19 @@ export function useConversations() {
       
       console.log(`Found ${uniqueSessionIds.length} unique sessions:`, uniqueSessionIds);
       
+      // Buscar clientes que correspondem aos session IDs
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
-        .in('sessionid', uniqueSessionIds)
-        .not('telefone', 'is', null);
+        .in('sessionid', uniqueSessionIds);
       
-      if (clientsError) throw clientsError;
+      if (clientsError) {
+        console.error('Error fetching clients:', clientsError);
+        throw clientsError;
+      }
       
       console.log(`Found ${clientsData?.length || 0} clients with session data`);
+      console.log('Clients data:', clientsData);
       
       if (clientsData && clientsData.length > 0) {
         const conversationsData: Conversation[] = clientsData.map((client: Client) => {
@@ -126,7 +130,7 @@ export function useConversations() {
           };
         });
         
-        // Fetch last message for each conversation
+        // Buscar última mensagem para cada conversa
         for (const conversation of conversationsData) {
           const { data: historyData, error: historyError } = await supabase
             .from('n8n_chat_histories')
@@ -163,7 +167,6 @@ export function useConversations() {
             
             conversation.lastMessage = lastMessageContent || 'Sem mensagem';
             
-            // Use hora field if available, otherwise fall back to data field
             const messageDate = chatHistory.hora 
               ? new Date(chatHistory.hora) 
               : chatHistory.data 
@@ -178,7 +181,27 @@ export function useConversations() {
         setConversations(conversationsData);
       } else {
         console.log('No clients found with sessions');
-        setConversations([]);
+        
+        // Se não encontrarmos clientes com sessionid, vamos criar conversas temporárias com os session IDs
+        console.log('Creating temporary conversations from session IDs');
+        const tempConversations: Conversation[] = uniqueSessionIds.map((sessionId) => {
+          return {
+            id: sessionId,
+            name: `Cliente ${sessionId}`,
+            lastMessage: 'Carregando...',
+            time: 'Recente',
+            unread: 0,
+            avatar: '👤',
+            phone: 'Não informado',
+            email: 'Não informado',
+            clientName: 'Não informado',
+            clientSize: 'Não informado',
+            clientType: 'Não informado',
+            sessionId: sessionId
+          };
+        });
+        
+        setConversations(tempConversations);
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
@@ -192,7 +215,6 @@ export function useConversations() {
     }
   }, [toast]);
 
-  // Initial fetch
   useEffect(() => {
     fetchConversations();
   }, [fetchConversations]);
