@@ -76,6 +76,7 @@ export function useConversations() {
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('Fetching conversations from database...');
       
       const { data: chatHistoryData, error: chatHistoryError } = await supabase
         .from('n8n_chat_histories')
@@ -85,6 +86,7 @@ export function useConversations() {
       if (chatHistoryError) throw chatHistoryError;
       
       if (!chatHistoryData || chatHistoryData.length === 0) {
+        console.log('No chat history found');
         setConversations([]);
         setLoading(false);
         return;
@@ -94,6 +96,8 @@ export function useConversations() {
         chatHistoryData.map(item => item.session_id)
       ));
       
+      console.log(`Found ${uniqueSessionIds.length} unique sessions:`, uniqueSessionIds);
+      
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -101,6 +105,8 @@ export function useConversations() {
         .not('telefone', 'is', null);
       
       if (clientsError) throw clientsError;
+      
+      console.log(`Found ${clientsData?.length || 0} clients with session data`);
       
       if (clientsData && clientsData.length > 0) {
         const conversationsData: Conversation[] = clientsData.map((client: Client) => {
@@ -120,6 +126,7 @@ export function useConversations() {
           };
         });
         
+        // Fetch last message for each conversation
         for (const conversation of conversationsData) {
           const { data: historyData, error: historyError } = await supabase
             .from('n8n_chat_histories')
@@ -167,8 +174,10 @@ export function useConversations() {
           }
         }
         
+        console.log(`Successfully created ${conversationsData.length} conversations`);
         setConversations(conversationsData);
       } else {
+        console.log('No clients found with sessions');
         setConversations([]);
       }
     } catch (error) {

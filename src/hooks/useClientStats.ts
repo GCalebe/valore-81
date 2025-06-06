@@ -18,19 +18,24 @@ export function useClientStats() {
   const refetchStats = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('Fetching client statistics...');
       
       // Fetch total clients
       const { count: totalClients } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' });
 
-      // Fetch total marketing clients (assuming each client has a marketing project/service)
+      console.log(`Total clients count: ${totalClients}`);
+
+      // Fetch total marketing clients (clients with nome_cliente filled)
       const { count: totalMarketingClients } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
         .not('nome_cliente', 'is', null);
 
-      // Fetch new clients this month (from 1st of current month to today)
+      console.log(`Marketing clients count: ${totalMarketingClients}`);
+
+      // Fetch new clients this month
       const today = new Date();
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
       
@@ -39,6 +44,8 @@ export function useClientStats() {
         .select('*', { count: 'exact' })
         .gte('created_at', firstDayOfMonth.toISOString())
         .lte('created_at', today.toISOString());
+
+      console.log(`New clients this month: ${newClientsThisMonth}`);
 
       // Fetch monthly growth data
       const currentYear = new Date().getFullYear();
@@ -86,6 +93,8 @@ export function useClientStats() {
         color: colors[index % colors.length]
       }));
 
+      console.log(`Client types:`, clientTypes);
+
       // Fetch recent clients
       const { data: recentClientsData } = await supabase
         .from('dados_cliente')
@@ -101,6 +110,8 @@ export function useClientStats() {
         lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
       })) || [];
 
+      console.log(`Recent clients:`, recentClients);
+
       // Update stats
       setStats({
         totalClients: totalClients || 0,
@@ -110,6 +121,8 @@ export function useClientStats() {
         clientTypes,
         recentClients
       });
+
+      console.log('Client statistics updated successfully');
 
     } catch (error) {
       console.error('Error fetching stats:', error);

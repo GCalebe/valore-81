@@ -23,6 +23,23 @@ export function useDashboardRealtime() {
         async (payload) => {
           console.log('Client data changed:', payload);
           await refetchStats();
+          await fetchConversations();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to changes in chat histories
+    const chatSubscription = supabase
+      .channel('dashboard_chat_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'n8n_chat_histories' 
+        }, 
+        async (payload) => {
+          console.log('Chat history changed:', payload);
+          await fetchConversations();
         }
       )
       .subscribe();
@@ -34,7 +51,7 @@ export function useDashboardRealtime() {
         { 
           event: '*', 
           schema: 'public', 
-          table: 'appointments' 
+          table: 'agendamentos' 
         }, 
         async () => {
           console.log('Schedule data changed');
@@ -43,14 +60,14 @@ export function useDashboardRealtime() {
       )
       .subscribe();
       
-    // Subscribe to changes in services/products
+    // Subscribe to changes in services
     const servicesSubscription = supabase
       .channel('dashboard_services_changes')
       .on('postgres_changes', 
         { 
           event: '*', 
           schema: 'public', 
-          table: 'services' 
+          table: 'servicos' 
         }, 
         async () => {
           console.log('Services data changed');
@@ -62,9 +79,9 @@ export function useDashboardRealtime() {
     return () => {
       console.log('Cleaning up dashboard realtime subscriptions');
       clientsSubscription.unsubscribe();
+      chatSubscription.unsubscribe();
       scheduleSubscription.unsubscribe();
       servicesSubscription.unsubscribe();
     };
   }, [refetchStats, fetchConversations]);
 }
-
