@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
@@ -67,12 +66,51 @@ export const useClientManagement = () => {
             status: 'Active',
             notes: '',
             lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-            kanbanStage: kanbanStage
+            kanbanStage: kanbanStage,
+            sessionId: client.sessionid // Incluir sessionId para associação com conversas
           };
         });
         
         // Generate fictitious conversations for all contacts
         const contactsWithConversations = generateFictitiousConversations(formattedContacts);
+        
+        // Buscar última mensagem para cada contato que tem sessionId
+        for (const contact of contactsWithConversations) {
+          if (contact.sessionId) {
+            try {
+              const { data: historyData, error: historyError } = await supabase
+                .from('n8n_chat_histories')
+                .select('*')
+                .eq('session_id', contact.sessionId)
+                .order('id', { ascending: false })
+                .limit(1);
+              
+              if (!historyError && historyData && historyData.length > 0) {
+                const chatHistory = historyData[0];
+                
+                let lastMessageContent = 'Sem mensagem';
+                if (chatHistory.message && typeof chatHistory.message === 'object') {
+                  if (chatHistory.message.content) {
+                    lastMessageContent = chatHistory.message.content;
+                  }
+                }
+                
+                contact.lastMessage = lastMessageContent || 'Sem mensagem';
+                
+                const messageDate = chatHistory.hora 
+                  ? new Date(chatHistory.hora) 
+                  : chatHistory.data 
+                    ? new Date(chatHistory.data) 
+                    : new Date();
+                
+                contact.lastMessageTime = messageDate.toLocaleString('pt-BR');
+              }
+            } catch (error) {
+              console.error(`Error fetching last message for contact ${contact.id}:`, error);
+            }
+          }
+        }
+        
         setContacts(contactsWithConversations);
       }
     } catch (error) {
