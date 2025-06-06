@@ -6,10 +6,23 @@ import { CalendarEvent, EventFormData } from '@/types/calendar';
 // API base URL
 const API_BASE_URL = 'https://webhook.n8nlabz.com.br/webhook/agenda';
 
+// Add retry mechanism for failed requests
+const retryRequest = async (fn: () => Promise<any>, retries = 3): Promise<any> => {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0) {
+      console.log(`Request failed, retrying... (${retries} attempts left)`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+      return retryRequest(fn, retries - 1);
+    }
+    throw error;
+  }
+};
+
 // Fetch events with GET method
 export async function fetchCalendarEvents(selectedDate?: Date | null) {
-  try {
-    // Format date parameters for the API
+  const fetchWithRetry = () => {
     let url = API_BASE_URL;
     
     // If a date is selected, add query parameters for start and end dates
@@ -21,24 +34,35 @@ export async function fetchCalendarEvents(selectedDate?: Date | null) {
       console.log('Fetching events with date range:', { startDateTime, endDateTime });
     }
     
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    const data = await response.json();
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    });
+  };
+
+  try {
+    const data = await retryRequest(fetchWithRetry);
+    console.log('Successfully fetched calendar events:', data);
     return Array.isArray(data) ? data : [];
   } catch (err) {
-    console.error('Error fetching calendar events:', err);
-    throw err;
+    console.error('Error fetching calendar events after retries:', err);
+    
+    // Return empty array as fallback instead of throwing
+    toast.error("Não foi possível carregar os eventos da agenda. Verifique sua conexão com a internet.");
+    return [];
   }
 }
 
 // Refresh events with POST method
 export async function refreshCalendarEventsPost(selectedDate?: Date | null) {
-  try {
-    // Create payload with selected date if available
+  const refreshWithRetry = () => {
     const payload: any = {};
     
     if (selectedDate) {
@@ -50,32 +74,35 @@ export async function refreshCalendarEventsPost(selectedDate?: Date | null) {
       console.log('Refreshing events with payload:', payload);
     }
     
-    const response = await fetch(API_BASE_URL, {
+    return fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    const data = await response.json();
+  };
+
+  try {
+    const data = await retryRequest(refreshWithRetry);
+    console.log('Successfully refreshed calendar events:', data);
     toast.success("Eventos atualizados com sucesso!");
     return Array.isArray(data) ? data : [];
   } catch (err) {
-    console.error('Error refreshing calendar events:', err);
-    toast.error("Não conseguimos atualizar os eventos, tente novamente.");
+    console.error('Error refreshing calendar events after retries:', err);
+    toast.error("Não conseguimos atualizar os eventos. Verifique sua conexão e tente novamente.");
     throw err;
   }
 }
 
 // Add a new event
 export async function addCalendarEvent(formData: EventFormData) {
-  try {
-    // Format the date and times for the API
+  const addWithRetry = () => {
     const { date, startTime, endTime, summary, description, email } = formData;
     const dateStr = format(date, "yyyy-MM-dd");
     
@@ -92,31 +119,34 @@ export async function addCalendarEvent(formData: EventFormData) {
     
     console.log('Adding event with payload:', payload);
     
-    const response = await fetch(`${API_BASE_URL}/adicionar`, {
+    return fetch(`${API_BASE_URL}/adicionar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
+  };
+
+  try {
+    await retryRequest(addWithRetry);
     toast.success("Evento adicionado com sucesso!");
     return true;
   } catch (err) {
-    console.error('Error adding event:', err);
-    toast.error("Erro ao adicionar evento. Tente novamente.");
+    console.error('Error adding event after retries:', err);
+    toast.error("Erro ao adicionar evento. Verifique sua conexão e tente novamente.");
     return false;
   }
 }
 
 // Edit an existing event
 export async function editCalendarEvent(eventId: string, formData: EventFormData) {
-  try {
-    // Format the date and times for the API
+  const editWithRetry = () => {
     const { date, startTime, endTime, summary, description, email } = formData;
     const dateStr = format(date, "yyyy-MM-dd");
     
@@ -134,53 +164,61 @@ export async function editCalendarEvent(eventId: string, formData: EventFormData
     
     console.log('Updating event with payload:', payload);
     
-    const response = await fetch(`${API_BASE_URL}/alterar`, {
+    return fetch(`${API_BASE_URL}/alterar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
+  };
+
+  try {
+    await retryRequest(editWithRetry);
     toast.success("Evento atualizado com sucesso!");
     return true;
   } catch (err) {
-    console.error('Error updating event:', err);
-    toast.error("Erro ao atualizar evento. Tente novamente.");
+    console.error('Error updating event after retries:', err);
+    toast.error("Erro ao atualizar evento. Verifique sua conexão e tente novamente.");
     return false;
   }
 }
 
 // Delete an event
 export async function deleteCalendarEvent(eventId: string) {
-  try {
+  const deleteWithRetry = () => {
     const payload = {
       id: eventId
     };
     
     console.log('Deleting event with payload:', payload);
     
-    const response = await fetch(`${API_BASE_URL}/excluir`, {
+    return fetch(`${API_BASE_URL}/excluir`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
+  };
+
+  try {
+    await retryRequest(deleteWithRetry);
     toast.success("Evento excluído com sucesso!");
     return true;
   } catch (err) {
-    console.error('Error deleting event:', err);
-    toast.error("Erro ao excluir evento. Tente novamente.");
+    console.error('Error deleting event after retries:', err);
+    toast.error("Erro ao excluir evento. Verifique sua conexão e tente novamente.");
     return false;
   }
 }

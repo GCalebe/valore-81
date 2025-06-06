@@ -26,31 +26,37 @@ export function useChatMessages(selectedChat: string | null) {
         throw historyError;
       }
       
-      console.log(`Fetched ${historyData?.length || 0} history records`);
-      console.log('Sample record with hora:', historyData && historyData.length > 0 ? historyData[0] : 'No records');
+      console.log(`Fetched ${historyData?.length || 0} history records for conversation ${conversationId}`);
       
       let allMessages: ChatMessage[] = [];
       
       if (historyData && historyData.length > 0) {
-        historyData.forEach((chatHistory: N8nChatHistory) => {
-          console.log(`Processing message with hora: ${chatHistory.hora}`);
+        historyData.forEach((chatHistory: N8nChatHistory, index: number) => {
+          console.log(`Processing message ${index + 1} with hora: ${chatHistory.hora}`);
           const parsedMessages = parseMessage(chatHistory);
           if (parsedMessages.length > 0) {
             allMessages = [...allMessages, ...parsedMessages];
           }
         });
         
+        console.log(`Successfully processed ${allMessages.length} messages for conversation ${conversationId}`);
         setMessages(allMessages);
-        console.log("Fetched and processed messages:", allMessages.length);
       } else {
-        console.log("No messages found for this conversation");
+        console.log(`No messages found for conversation ${conversationId}`);
         setMessages([]);
+        
+        // Show a friendly message that this is a new conversation
+        toast({
+          title: "Conversa sem mensagens",
+          description: "Esta conversa ainda não possui mensagens.",
+        });
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
+      setMessages([]);
       toast({
         title: "Erro ao carregar mensagens",
-        description: "Ocorreu um erro ao carregar as mensagens.",
+        description: "Ocorreu um erro ao carregar as mensagens. Verifique sua conexão.",
         variant: "destructive"
       });
     } finally {
@@ -60,7 +66,11 @@ export function useChatMessages(selectedChat: string | null) {
 
   // Set up subscription for real-time message updates for the current chat
   useEffect(() => {
-    if (!selectedChat) return;
+    if (!selectedChat) {
+      setMessages([]);
+      setLoading(false);
+      return;
+    }
     
     console.log(`Setting up realtime listener for specific chat messages: ${selectedChat}`);
     
