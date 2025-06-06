@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -175,7 +174,7 @@ const ClientsDashboard = () => {
             selectedContact={selectedContact}
             onEditClick={openEditModal}
             onDeleteClick={() => setIsDeleteDialogOpen(true)}
-            onSendMessageClick={handleMessageClick}
+            onSendMessageClick={() => setIsMessageDialogOpen(true)}
             isDeleteDialogOpen={isDeleteDialogOpen}
             setIsDeleteDialogOpen={setIsDeleteDialogOpen}
             handleDeleteContact={handleDeleteContact}
@@ -210,7 +209,7 @@ const ClientsDashboard = () => {
           />
         )}
 
-        {selectedContact && (
+        {selectedContact && isMessageDialogOpen && (
           <SendMessageDialog
             selectedContact={selectedContact}
             messageText={messageText}

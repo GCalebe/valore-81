@@ -120,6 +120,47 @@ export type Database = {
         }
         Relationships: []
       }
+      consultas: {
+        Row: {
+          cliente_id: number | null
+          created_at: string | null
+          data_consulta: string
+          id: number
+          observacoes: string | null
+          status: string | null
+          tipo: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_consulta: string
+          id?: number
+          observacoes?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_consulta?: string
+          id?: number
+          observacoes?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dados_cliente: {
         Row: {
           asaas_customer_id: string | null
@@ -192,6 +233,89 @@ export type Database = {
           id?: number
           message?: Json | null
           session_id?: string
+        }
+        Relationships: []
+      }
+      orcamentos: {
+        Row: {
+          cliente_id: number | null
+          created_at: string | null
+          data_expiracao: string | null
+          descricao: string | null
+          id: number
+          procedimentos: Json | null
+          status: string | null
+          titulo: string
+          updated_at: string | null
+          valor_total: number
+        }
+        Insert: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_expiracao?: string | null
+          descricao?: string | null
+          id?: number
+          procedimentos?: Json | null
+          status?: string | null
+          titulo: string
+          updated_at?: string | null
+          valor_total: number
+        }
+        Update: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_expiracao?: string | null
+          descricao?: string | null
+          id?: number
+          procedimentos?: Json | null
+          status?: string | null
+          titulo?: string
+          updated_at?: string | null
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orcamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procedimentos: {
+        Row: {
+          ativo: boolean | null
+          categoria: string | null
+          created_at: string | null
+          descricao: string | null
+          duracao_estimada: number | null
+          id: number
+          nome: string
+          preco: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao_estimada?: number | null
+          id?: number
+          nome: string
+          preco?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao_estimada?: number | null
+          id?: number
+          nome?: string
+          preco?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
