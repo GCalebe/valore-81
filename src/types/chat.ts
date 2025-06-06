@@ -16,6 +16,7 @@ export interface Conversation {
   avatar?: string;
   phone: string;
   email?: string;
+  address?: string;
   clientName?: string;
   clientSize?: string;
   clientType?: string;
@@ -43,13 +44,18 @@ export interface N8nChatHistory {
 }
 
 export interface ChatMessage {
-  id: number;
-  conversation_id: string;
-  phone: string;
+  id?: number;
+  conversation_id?: string;
+  phone?: string;
   user_message?: string;
   bot_message?: string;
-  message_type: string;
-  created_at: string;
-  active: boolean;
+  message_type?: string;
+  created_at?: string;
+  active?: boolean;
   data?: string;
+  // Add properties that components expect
+  content?: string;
+  role?: 'user' | 'assistant' | 'human' | 'ai' | 'unknown';
+  type?: 'text' | 'image' | 'file' | 'human' | 'ai';
+  timestamp?: string;
 }

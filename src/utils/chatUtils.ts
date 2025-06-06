@@ -1,3 +1,4 @@
+
 import { ChatMessage, N8nChatHistory, Conversation } from '@/types/chat';
 
 export const extractHourFromTimestamp = (timestamp: string): string => {
