@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Contact } from '@/types/client';
 import ClientCard from './ClientCard';

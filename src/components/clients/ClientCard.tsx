@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Phone, Mail, Edit2 } from 'lucide-react';
 import { Contact } from '@/types/client';
+import { useNavigate } from 'react-router-dom';
 
 interface ClientCardProps {
   contact: Contact;
@@ -12,6 +13,8 @@ interface ClientCardProps {
 }
 
 const ClientCard = ({ contact, onCardClick, onEditClick }: ClientCardProps) => {
+  const navigate = useNavigate();
+
   const handleCardClick = () => {
     onCardClick(contact);
   };
@@ -19,6 +22,11 @@ const ClientCard = ({ contact, onCardClick, onEditClick }: ClientCardProps) => {
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEditClick(contact);
+  };
+
+  const handleMessageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/chats?contact=${contact.id}`);
   };
 
   return (
@@ -66,7 +74,10 @@ const ClientCard = ({ contact, onCardClick, onEditClick }: ClientCardProps) => {
         <div className="border-t pt-3">
           <div className="flex items-start gap-2">
             <MessageSquare className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
+            <div 
+              className="flex-1 min-w-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded p-1 -m-1 transition-colors"
+              onClick={handleMessageClick}
+            >
               <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
                 {contact.lastMessage || 'Nenhuma conversa ainda'}
               </p>

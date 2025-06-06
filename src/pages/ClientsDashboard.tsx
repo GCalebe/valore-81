@@ -65,6 +65,11 @@ const ClientsDashboard = () => {
     navigate(`/chats?contact=${contact.id}`);
   };
 
+  const handleEditClick = (contact: Contact) => {
+    setSelectedContact(contact);
+    openEditModal();
+  };
+
   const handleClearFilters = () => {
     setStatusFilter('all');
     setSegmentFilter('all');
@@ -193,7 +198,7 @@ const ClientsDashboard = () => {
             segmentFilter={segmentFilter}
             lastContactFilter={lastContactFilter}
             onContactClick={handleChatClick}
-            onEditClick={openEditModal}
+            onEditClick={handleEditClick}
           />
         ) : viewMode === 'table' ? (
           <ClientsTable
