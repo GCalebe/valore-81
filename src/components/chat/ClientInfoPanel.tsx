@@ -1,9 +1,11 @@
 
-import React from 'react';
-import { ShipWheel } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShipWheel, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Conversation } from '@/types/chat';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import TagsField from './TagsField';
@@ -16,6 +18,8 @@ interface ClientInfoPanelProps {
 
 const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanelProps) => {
   const { settings } = useThemeSettings();
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isClientOpen, setIsClientOpen] = useState(false);
 
   if (!selectedChat) {
     return (
@@ -59,42 +63,70 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             </TabsList>
             
             <TabsContent value="info" className="mt-4 space-y-4">
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Email de Contato</h3>
-                <p>{selectedConversation?.email}</p>
-              </Card>
-              
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Linha de Comunicação</h3>
-                <p>{selectedConversation?.phone}</p>
-              </Card>
-              
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porto de Origem</h3>
-                <p>{selectedConversation?.address || 'Porto não informado'}</p>
-              </Card>
-              
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">ID de Navegação</h3>
-                <p className="text-xs break-all">{selectedConversation?.sessionId || 'ID não informado'}</p>
-              </Card>
+              <Collapsible open={isInfoOpen} onOpenChange={setIsInfoOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    Informações
+                    {isInfoOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 mt-4">
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Email de Contato</h3>
+                    <p>{selectedConversation?.email}</p>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Linha de Comunicação</h3>
+                    <p>{selectedConversation?.phone}</p>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porto de Origem</h3>
+                    <p>{selectedConversation?.address || 'Porto não informado'}</p>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">ID de Navegação</h3>
+                    <p className="text-xs break-all">{selectedConversation?.sessionId || 'ID não informado'}</p>
+                  </Card>
+                </CollapsibleContent>
+              </Collapsible>
             </TabsContent>
             
             <TabsContent value="client" className="mt-4 space-y-4">
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Navegador</h3>
-                <p>{selectedConversation?.clientName || 'Não informado'}</p>
-              </Card>
-              
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porte da Embarcação</h3>
-                <p>{selectedConversation?.clientSize || 'Não informado'}</p>
-              </Card>
-              
-              <Card className="p-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de Navegação</h3>
-                <p>{selectedConversation?.clientType || 'Não informado'}</p>
-              </Card>
+              <Collapsible open={isClientOpen} onOpenChange={setIsClientOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    Navegador
+                    {isClientOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 mt-4">
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Navegador</h3>
+                    <p>{selectedConversation?.clientName || 'Não informado'}</p>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porte da Embarcação</h3>
+                    <p>{selectedConversation?.clientSize || 'Não informado'}</p>
+                  </Card>
+                  
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de Navegação</h3>
+                    <p>{selectedConversation?.clientType || 'Não informado'}</p>
+                  </Card>
+                </CollapsibleContent>
+              </Collapsible>
             </TabsContent>
           </Tabs>
           
