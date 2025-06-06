@@ -4,7 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useClientStats } from './useClientStats';
 import { useConversations } from './useConversations';
 
-export function useDashboardRealtime() {
+interface UseDashboardRealtimeProps {
+  refetchScheduleData?: () => Promise<void>;
+}
+
+export function useDashboardRealtime(props?: UseDashboardRealtimeProps) {
   const { fetchConversations } = useConversations();
   const { refetchStats } = useClientStats();
 
@@ -65,6 +69,9 @@ export function useDashboardRealtime() {
           console.log('Schedule data changed:', payload);
           try {
             await refetchStats();
+            if (props?.refetchScheduleData) {
+              await props.refetchScheduleData();
+            }
           } catch (error) {
             console.error('Error refreshing stats after schedule change:', error);
           }
@@ -99,5 +106,5 @@ export function useDashboardRealtime() {
       scheduleSubscription.unsubscribe();
       servicesSubscription.unsubscribe();
     };
-  }, [refetchStats, fetchConversations]);
+  }, [refetchStats, fetchConversations, props?.refetchScheduleData]);
 }
