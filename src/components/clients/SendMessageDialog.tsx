@@ -1,6 +1,7 @@
 
 import React from 'react';
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -22,6 +23,7 @@ interface SendMessageDialogProps {
   isPauseDurationDialogOpen: boolean;
   setIsPauseDurationDialogOpen: (open: boolean) => void;
   handlePauseDurationConfirm: (duration: number | null) => void;
+  isOpen: boolean;
 }
 
 const SendMessageDialog = ({
@@ -33,40 +35,43 @@ const SendMessageDialog = ({
   isPauseDurationDialogOpen,
   setIsPauseDurationDialogOpen,
   handlePauseDurationConfirm,
+  isOpen,
 }: SendMessageDialogProps) => {
   return (
     <>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Enviar Mensagem</DialogTitle>
-          <DialogDescription>
-            Envie uma mensagem para {selectedContact.name} via WhatsApp
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="message" className="text-right">
-              Mensagem
-            </Label>
-            <Textarea
-              id="message"
-              value={messageText}
-              onChange={(e) => setMessageText(e.target.value)}
-              className="col-span-3"
-              placeholder="Digite sua mensagem aqui..."
-              rows={4}
-            />
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Enviar Mensagem</DialogTitle>
+            <DialogDescription>
+              Envie uma mensagem para {selectedContact.name} via WhatsApp
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="message" className="text-right">
+                Mensagem
+              </Label>
+              <Textarea
+                id="message"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                className="col-span-3"
+                placeholder="Digite sua mensagem aqui..."
+                rows={4}
+              />
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button type="button" onClick={handleMessageSubmit}>
-            Prosseguir
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="button" onClick={handleMessageSubmit}>
+              Prosseguir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       <PauseDurationDialog 
         isOpen={isPauseDurationDialogOpen}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Sheet,
@@ -168,6 +169,7 @@ const ClientDetailSheet = ({
       </Sheet>
 
       <SendMessageDialog 
+        isOpen={isMessageDialogOpen}
         selectedContact={selectedContact}
         messageText={messageText}
         setMessageText={setMessageText}
