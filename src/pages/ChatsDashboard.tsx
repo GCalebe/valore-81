@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import ChatHeader from '@/components/chat/ChatHeader';
@@ -11,7 +12,10 @@ import PauseDurationDialog from '@/components/PauseDurationDialog';
 
 const ChatsDashboard = () => {
   const { user, signOut } = useAuth();
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const selectedChatFromUrl = searchParams.get('selectedChat');
+  
+  const [selectedChat, setSelectedChat] = useState<string | null>(selectedChatFromUrl);
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
@@ -37,6 +41,13 @@ const ChatsDashboard = () => {
     updateConversationLastMessage, 
     fetchConversations 
   });
+
+  // Update selectedChat when URL changes
+  useEffect(() => {
+    if (selectedChatFromUrl) {
+      setSelectedChat(selectedChatFromUrl);
+    }
+  }, [selectedChatFromUrl]);
 
   // Find the currently selected conversation
   const selectedConversation = conversations.find(conv => conv.id === selectedChat);

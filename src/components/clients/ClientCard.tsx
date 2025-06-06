@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Phone, Mail, Edit2 } from 'lucide-react';
 import { Contact } from '@/types/client';
-import { useNavigate } from 'react-router-dom';
+import { useClientNavigation } from '@/utils/navigationUtils';
 
 interface ClientCardProps {
   contact: Contact;
@@ -13,7 +13,7 @@ interface ClientCardProps {
 }
 
 const ClientCard = ({ contact, onCardClick, onEditClick }: ClientCardProps) => {
-  const navigate = useNavigate();
+  const { navigateToClientChat } = useClientNavigation();
 
   const handleCardClick = () => {
     onCardClick(contact);
@@ -26,7 +26,9 @@ const ClientCard = ({ contact, onCardClick, onEditClick }: ClientCardProps) => {
 
   const handleMessageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/chats?contact=${contact.id}`);
+    // Use sessionId if available, otherwise fallback to contact id
+    const chatId = contact.sessionId || contact.id.toString();
+    navigateToClientChat(chatId);
   };
 
   return (
