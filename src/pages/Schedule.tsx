@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -15,6 +14,7 @@ import { Appointment, AppointmentFormData } from '@/types/calendar';
 import { CalendarSidebar } from '@/components/schedule/CalendarSidebar';
 import { EventsCard } from '@/components/schedule/EventsCard';
 import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
+import { useScheduleData } from '@/hooks/useScheduleData';
 
 // Dados mock para os agendamentos náuticos
 const mockAppointments: Appointment[] = [
@@ -106,6 +106,13 @@ const Schedule = () => {
     deleteEvent,
     isSubmitting
   } = useCalendarEvents(selectedDate);
+
+  const {
+    events: scheduleEvents,
+    loading: isScheduleLoading,
+    refreshing: isScheduleRefreshing,
+    refetchScheduleData: refreshScheduleData
+  } = useScheduleData();
   
   const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -129,6 +136,26 @@ const Schedule = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('day');
+  
+  const isAnyLoading = isEventsLoading || isScheduleLoading;
+  const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
+  
+  const handleRefreshAll = async () => {
+    console.log('Refreshing all data...');
+    
+    // Refresh both calendar events and schedule data
+    const refreshPromises = [
+      refreshEventsPost(),
+      refreshScheduleData()
+    ];
+    
+    try {
+      await Promise.all(refreshPromises);
+      console.log('All data refreshed successfully');
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    }
+  };
   
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -294,12 +321,12 @@ const Schedule = () => {
           <div className="flex items-center gap-2">
             <Button 
               variant="outline" 
-              onClick={refreshEventsPost} 
+              onClick={handleRefreshAll}
               className="flex items-center gap-2" 
-              disabled={isEventsLoading}
+              disabled={isAnyLoading || isAnyRefreshing}
             >
-              {isEventsLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              Atualizar
+              {isAnyRefreshing ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {isAnyRefreshing ? 'Atualizando...' : 'Atualizar'}
             </Button>
             {lastUpdated && (
               <span className="text-xs text-gray-500 dark:text-gray-400 hidden md:inline-block">
@@ -325,7 +352,7 @@ const Schedule = () => {
               selectedTab={selectedTab}
               searchTerm={searchTerm}
               selectedDate={selectedDate}
-              isLoading={isEventsLoading}
+              isLoading={isAnyLoading}
               error={eventsError}
               lastUpdated={lastUpdated}
               onSearchChange={setSearchTerm}

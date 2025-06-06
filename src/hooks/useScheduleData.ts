@@ -18,11 +18,17 @@ export interface ScheduleEvent {
 export function useScheduleData() {
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { toast } = useToast();
 
-  const fetchScheduleData = useCallback(async () => {
+  const fetchScheduleData = useCallback(async (showRefreshingState = false) => {
     try {
-      setLoading(true);
+      if (showRefreshingState) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      
       console.log('Fetching schedule data...');
       
       // Buscar agendamentos com dados do cliente e serviço
@@ -77,21 +83,40 @@ export function useScheduleData() {
         
         setEvents(scheduleEvents);
         console.log(`Successfully processed ${scheduleEvents.length} schedule events`);
+        
+        if (showRefreshingState) {
+          toast({
+            title: "Dados atualizados",
+            description: `${scheduleEvents.length} agendamentos carregados com sucesso.`,
+          });
+        }
       } else {
         setEvents([]);
         console.log('No appointments found');
+        
+        if (showRefreshingState) {
+          toast({
+            title: "Nenhum agendamento encontrado",
+            description: "Não há agendamentos cadastrados no momento.",
+          });
+        }
       }
     } catch (error) {
       console.error('Error fetching schedule data:', error);
       toast({
         title: "Erro ao carregar agendamentos",
-        description: "Ocorreu um erro ao carregar os agendamentos.",
+        description: "Ocorreu um erro ao carregar os agendamentos. Tente novamente.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, [toast]);
+
+  const refreshScheduleData = useCallback(async () => {
+    await fetchScheduleData(true);
+  }, [fetchScheduleData]);
 
   useEffect(() => {
     fetchScheduleData();
@@ -100,6 +125,7 @@ export function useScheduleData() {
   return {
     events,
     loading,
-    refetchScheduleData: fetchScheduleData
+    refreshing,
+    refetchScheduleData: refreshScheduleData
   };
 }

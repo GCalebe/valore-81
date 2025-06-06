@@ -3,15 +3,21 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock, RefreshCw } from 'lucide-react';
 import { useScheduleData } from '@/hooks/useScheduleData';
 
 const ScheduleCard = () => {
   const navigate = useNavigate();
-  const { events, loading } = useScheduleData();
+  const { events, loading, refreshing, refetchScheduleData } = useScheduleData();
   
   const handleClick = () => {
     navigate('/schedule');
+  };
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    refetchScheduleData();
   };
   
   // Próximos agendamentos hoje
@@ -24,9 +30,20 @@ const ScheduleCard = () => {
   return (
     <Card className="cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl dark:bg-gray-800 dark:border-gray-700 dark:text-white" onClick={handleClick}>
       <CardHeader className="pb-2 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white rounded-t-lg">
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="h-6 w-6" />
-          Agenda
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-6 w-6" />
+            Agenda
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="text-white hover:bg-white/20 h-8 w-8 p-0"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          </Button>
         </CardTitle>
         <CardDescription className="text-blue-100">
           Gerenciamento de agendamentos
@@ -42,6 +59,10 @@ const ScheduleCard = () => {
         {loading ? (
           <p className="text-gray-600 dark:text-gray-300 text-center">
             Carregando agendamentos...
+          </p>
+        ) : refreshing ? (
+          <p className="text-gray-600 dark:text-gray-300 text-center">
+            Atualizando agendamentos...
           </p>
         ) : (
           <div className="space-y-2">
@@ -60,7 +81,7 @@ const ScheduleCard = () => {
           </div>
         )}
         
-        {todayEvents.length > 0 && (
+        {todayEvents.length > 0 && !loading && !refreshing && (
           <div className="mt-4 pt-4 border-t dark:border-gray-700">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Próximo hoje:</p>
             <div className="flex items-center gap-2 text-sm">
