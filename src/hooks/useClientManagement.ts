@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
@@ -57,9 +58,9 @@ export const useClientManagement = () => {
             name: client.nome || 'Cliente sem nome',
             email: client.email,
             phone: client.telefone,
-            clientName: client.nome_cliente,
-            clientSize: client.tamanho_cliente,
-            clientType: client.tipo_cliente,
+            clientName: client.client_name,
+            clientSize: client.client_size,
+            clientType: client.client_type,
             cpfCnpj: client.cpf_cnpj,
             asaasCustomerId: client.asaas_customer_id,
             payments: client.payments,
@@ -151,9 +152,9 @@ export const useClientManagement = () => {
             nome: newContact.name,
             email: newContact.email,
             telefone: newContact.phone,
-            nome_cliente: newContact.clientName,
-            tamanho_cliente: newContact.clientSize,
-            tipo_cliente: newContact.clientType,
+            client_name: newContact.clientName,
+            client_size: newContact.clientSize,
+            client_type: newContact.clientType,
             cpf_cnpj: newContact.cpfCnpj,
             asaas_customer_id: newContact.asaasCustomerId,
             payments: newContact.payments || null,
@@ -220,9 +221,9 @@ export const useClientManagement = () => {
           nome: newContact.name,
           email: newContact.email,
           telefone: newContact.phone,
-          nome_cliente: newContact.clientName,
-          tamanho_cliente: newContact.clientSize,
-          tipo_cliente: newContact.clientType,
+          client_name: newContact.clientName,
+          client_size: newContact.clientSize,
+          client_type: newContact.clientType,
           cpf_cnpj: newContact.cpfCnpj,
           asaas_customer_id: newContact.asaasCustomerId,
           payments: newContact.payments

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -129,9 +128,9 @@ export function useConversations() {
             avatar: '👤',
             phone: client.telefone || 'Não informado',
             email: client.email || 'Sem email',
-            clientName: client.nome_cliente || 'Não informado',
-            clientSize: client.tamanho_cliente || 'Não informado',
-            clientType: client.tipo_cliente || 'Não informado',
+            clientName: client.client_name || 'Não informado',
+            clientSize: client.client_size || 'Não informado',
+            clientType: client.client_type || 'Não informado',
             sessionId: client.sessionid
           };
         });

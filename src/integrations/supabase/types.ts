@@ -45,11 +45,39 @@ export type Database = {
             foreignKeyName: "agendamentos_cliente_id_fkey"
             columns: ["cliente_id"]
             isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
             referencedRelation: "dados_cliente"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "agendamentos_servico_id_fkey"
+            columns: ["servico_id"]
+            isOneToOne: false
+            referencedRelation: "servicos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_servico"
             columns: ["servico_id"]
             isOneToOne: false
             referencedRelation: "servicos"
@@ -156,6 +184,27 @@ export type Database = {
             foreignKeyName: "consultas_cliente_id_fkey"
             columns: ["cliente_id"]
             isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_consultas_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_consultas_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
             referencedRelation: "dados_cliente"
             referencedColumns: ["id"]
           },
@@ -164,50 +213,50 @@ export type Database = {
       dados_cliente: {
         Row: {
           asaas_customer_id: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
           cpf_cnpj: string | null
           created_at: string | null
           email: string | null
           id: number
           kanban_stage: string | null
           nome: string | null
-          nome_cliente: string | null
           payments: Json | null
           sessionid: string | null
-          tamanho_cliente: string | null
           telefone: string | null
-          tipo_cliente: string | null
           updated_at: string | null
         }
         Insert: {
           asaas_customer_id?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_cliente?: string | null
           payments?: Json | null
           sessionid?: string | null
-          tamanho_cliente?: string | null
           telefone?: string | null
-          tipo_cliente?: string | null
           updated_at?: string | null
         }
         Update: {
           asaas_customer_id?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
           kanban_stage?: string | null
           nome?: string | null
-          nome_cliente?: string | null
           payments?: Json | null
           sessionid?: string | null
-          tamanho_cliente?: string | null
           telefone?: string | null
-          tipo_cliente?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -275,6 +324,27 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_orcamentos_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_orcamentos_cliente"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orcamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes_completos"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orcamentos_cliente_id_fkey"
             columns: ["cliente_id"]
             isOneToOne: false
@@ -321,6 +391,7 @@ export type Database = {
       }
       servicos: {
         Row: {
+          ativo: boolean | null
           categoria: string | null
           created_at: string | null
           descricao: string | null
@@ -331,6 +402,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          ativo?: boolean | null
           categoria?: string | null
           created_at?: string | null
           descricao?: string | null
@@ -341,6 +413,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          ativo?: boolean | null
           categoria?: string | null
           created_at?: string | null
           descricao?: string | null
@@ -354,7 +427,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      clientes_completos: {
+        Row: {
+          asaas_customer_id: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
+          cpf_cnpj: string | null
+          created_at: string | null
+          email: string | null
+          id: number | null
+          kanban_stage: string | null
+          nome: string | null
+          payments: Json | null
+          sessionid: string | null
+          telefone: string | null
+          total_agendamentos: number | null
+          total_consultas: number | null
+          total_orcamentos: number | null
+          ultima_consulta: string | null
+          ultimo_agendamento: string | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       binary_quantize: {
@@ -412,6 +508,10 @@ export type Database = {
       l2_normalize: {
         Args: { "": string } | { "": unknown } | { "": unknown }
         Returns: string
+      }
+      limpar_dados_orfaos: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       sparsevec_out: {
         Args: { "": unknown }
