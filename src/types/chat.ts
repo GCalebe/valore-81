@@ -1,29 +1,10 @@
 
-export interface Client {
-  id: number;
-  telefone: string;
-  nome: string;
-  email: string;
-  sessionid: string;
-  cpf_cnpj?: string;
-  nome_cliente?: string;
-  tamanho_cliente?: string;
-  tipo_cliente?: string;
-}
-
-export interface ChatMessage {
-  role: string;
+export interface Message {
+  id: string;
   content: string;
-  timestamp: string;
-  type?: string;
-}
-
-export interface N8nChatHistory {
-  id: number;
-  session_id: string;
-  message: any; // This can be various formats, we'll parse it properly
-  data: string; // Date in string format
-  hora?: string; // This is the field containing the correct time
+  sender: 'user' | 'bot';
+  timestamp: Date;
+  type?: 'text' | 'image' | 'file';
 }
 
 export interface Conversation {
@@ -32,12 +13,43 @@ export interface Conversation {
   lastMessage: string;
   time: string;
   unread: number;
-  avatar: string;
+  avatar?: string;
   phone: string;
-  email: string;
-  address?: string;
+  email?: string;
   clientName?: string;
-  clientType?: string;
   clientSize?: string;
+  clientType?: string;
   sessionId: string;
+}
+
+export interface Client {
+  id: number;
+  nome: string;
+  telefone: string;
+  email?: string;
+  client_name?: string;
+  client_size?: string;
+  client_type?: string;
+  sessionid: string;
+  created_at?: string;
+}
+
+export interface N8nChatHistory {
+  id: number;
+  session_id: string;
+  message: any;
+  data?: string;
+  hora?: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversation_id: string;
+  phone: string;
+  user_message?: string;
+  bot_message?: string;
+  message_type: string;
+  created_at: string;
+  active: boolean;
+  data?: string;
 }

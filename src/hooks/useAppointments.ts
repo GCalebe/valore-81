@@ -36,18 +36,55 @@ export function useAppointments() {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase
+      // Get appointments first
+      const { data: appointmentsData, error: appointmentsError } = await supabase
         .from('agendamentos')
-        .select(`
-          *,
-          cliente:dados_cliente(id, nome, telefone, email),
-          servico:servicos(id, nome, preco, duracao_minutos)
-        `)
+        .select('*')
         .order('data_agendamento', { ascending: true });
       
-      if (error) throw error;
+      if (appointmentsError) throw appointmentsError;
       
-      setAppointments(data || []);
+      if (!appointmentsData) {
+        setAppointments([]);
+        return;
+      }
+
+      // Get related cliente and servico data separately to avoid foreign key conflicts
+      const appointmentsWithRelated = await Promise.all(
+        appointmentsData.map(async (appointment) => {
+          const appointmentWithRelated: Appointment = { ...appointment };
+
+          // Fetch cliente data if cliente_id exists
+          if (appointment.cliente_id) {
+            const { data: clienteData } = await supabase
+              .from('dados_cliente')
+              .select('id, nome, telefone, email')
+              .eq('id', appointment.cliente_id)
+              .single();
+            
+            if (clienteData) {
+              appointmentWithRelated.cliente = clienteData;
+            }
+          }
+
+          // Fetch servico data if servico_id exists
+          if (appointment.servico_id) {
+            const { data: servicoData } = await supabase
+              .from('servicos')
+              .select('id, nome, preco, duracao_minutos')
+              .eq('id', appointment.servico_id)
+              .single();
+            
+            if (servicoData) {
+              appointmentWithRelated.servico = servicoData;
+            }
+          }
+
+          return appointmentWithRelated;
+        })
+      );
+      
+      setAppointments(appointmentsWithRelated);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       toast({
@@ -65,16 +102,13 @@ export function useAppointments() {
       const { data, error } = await supabase
         .from('agendamentos')
         .insert([appointmentData])
-        .select(`
-          *,
-          cliente:dados_cliente(id, nome, telefone, email),
-          servico:servicos(id, nome, preco, duracao_minutos)
-        `);
+        .select();
       
       if (error) throw error;
       
       if (data) {
-        setAppointments(prev => [...prev, ...data]);
+        // Refresh appointments to get the complete data with relations
+        await fetchAppointments();
         toast({
           title: "Agendamento criado",
           description: "O agendamento foi criado com sucesso.",
@@ -99,7 +133,7 @@ export function useAppointments() {
       
       if (error) throw error;
       
-      // Refetch to get updated relationships
+      // Refetch to get updated data
       await fetchAppointments();
       
       toast({

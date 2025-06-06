@@ -32,11 +32,11 @@ export function useClientStats() {
 
       console.log(`Total clients count: ${totalClients}`);
 
-      // Fetch total marketing clients (clients with nome_cliente filled)
+      // Fetch total marketing clients (clients with client_name filled)
       const { count: totalMarketingClients, error: marketingClientsError } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
-        .not('nome_cliente', 'is', null);
+        .not('client_name', 'is', null);
 
       if (marketingClientsError) {
         console.error('Error fetching marketing clients:', marketingClientsError);
@@ -87,11 +87,11 @@ export function useClientStats() {
         });
       }
 
-      // Fetch client types data using tipo_cliente field
+      // Fetch client types data using client_type field
       const { data: clientTypesData, error: clientTypesError } = await supabase
         .from('dados_cliente')
-        .select('tipo_cliente')
-        .not('tipo_cliente', 'is', null);
+        .select('client_type')
+        .not('client_type', 'is', null);
 
       if (clientTypesError) {
         console.error('Error fetching client types:', clientTypesError);
@@ -100,8 +100,8 @@ export function useClientStats() {
 
       const typeCounts = {};
       clientTypesData?.forEach(client => {
-        if (client.tipo_cliente) {
-          typeCounts[client.tipo_cliente] = (typeCounts[client.tipo_cliente] || 0) + 1;
+        if (client.client_type) {
+          typeCounts[client.client_type] = (typeCounts[client.client_type] || 0) + 1;
         }
       });
 
@@ -122,7 +122,7 @@ export function useClientStats() {
       // Fetch recent clients
       const { data: recentClientsData, error: recentClientsError } = await supabase
         .from('dados_cliente')
-        .select('id, nome, telefone, nome_cliente, created_at')
+        .select('id, nome, telefone, client_name, created_at')
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -135,7 +135,7 @@ export function useClientStats() {
         id: client.id,
         name: client.nome || 'Cliente sem nome',
         phone: client.telefone || 'Não informado',
-        marketingClients: client.nome_cliente ? 1 : 0,
+        marketingClients: client.client_name ? 1 : 0,
         lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
       })) || [];
 

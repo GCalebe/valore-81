@@ -31,24 +31,10 @@ export function useScheduleData() {
       
       console.log('Fetching schedule data from agendamentos table...');
       
-      // Buscar agendamentos com dados do cliente e serviço
+      // Fetch appointments first
       const { data: appointmentsData, error: appointmentsError } = await supabase
         .from('agendamentos')
-        .select(`
-          *,
-          dados_cliente (
-            id,
-            nome,
-            telefone,
-            email
-          ),
-          servicos (
-            id,
-            nome,
-            preco,
-            duracao_minutos
-          )
-        `)
+        .select('*')
         .order('data_agendamento', { ascending: true });
       
       if (appointmentsError) {
@@ -60,26 +46,57 @@ export function useScheduleData() {
       console.log('Appointments data:', appointmentsData);
       
       if (appointmentsData && appointmentsData.length > 0) {
-        const scheduleEvents: ScheduleEvent[] = appointmentsData.map((appointment) => {
-          const appointmentDate = new Date(appointment.data_agendamento);
-          const clientName = appointment.dados_cliente?.nome || 'Cliente não identificado';
-          const serviceName = appointment.servicos?.nome || appointment.observacoes || 'Serviço não especificado';
-          
-          return {
-            id: appointment.id,
-            title: `${serviceName} - ${clientName}`,
-            date: appointmentDate,
-            time: appointmentDate.toLocaleTimeString('pt-BR', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            }),
-            clientName: clientName,
-            phone: appointment.dados_cliente?.telefone || 'Não informado',
-            service: serviceName,
-            status: appointment.status || 'agendado',
-            notes: appointment.observacoes
-          };
-        });
+        // Get related data separately to avoid foreign key conflicts
+        const scheduleEvents: ScheduleEvent[] = await Promise.all(
+          appointmentsData.map(async (appointment) => {
+            const appointmentDate = new Date(appointment.data_agendamento);
+            let clientName = 'Cliente não identificado';
+            let clientPhone = 'Não informado';
+            let serviceName = appointment.observacoes || 'Serviço não especificado';
+
+            // Fetch client data if cliente_id exists
+            if (appointment.cliente_id) {
+              const { data: clientData } = await supabase
+                .from('dados_cliente')
+                .select('nome, telefone')
+                .eq('id', appointment.cliente_id)
+                .single();
+              
+              if (clientData) {
+                clientName = clientData.nome || 'Cliente não identificado';
+                clientPhone = clientData.telefone || 'Não informado';
+              }
+            }
+
+            // Fetch service data if servico_id exists
+            if (appointment.servico_id) {
+              const { data: serviceData } = await supabase
+                .from('servicos')
+                .select('nome')
+                .eq('id', appointment.servico_id)
+                .single();
+              
+              if (serviceData) {
+                serviceName = serviceData.nome || serviceName;
+              }
+            }
+            
+            return {
+              id: appointment.id,
+              title: `${serviceName} - ${clientName}`,
+              date: appointmentDate,
+              time: appointmentDate.toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              }),
+              clientName: clientName,
+              phone: clientPhone,
+              service: serviceName,
+              status: appointment.status || 'agendado',
+              notes: appointment.observacoes
+            };
+          })
+        );
         
         setEvents(scheduleEvents);
         console.log(`Successfully processed ${scheduleEvents.length} schedule events`);
