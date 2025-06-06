@@ -7,6 +7,8 @@ interface ClientsGridProps {
   contacts: Contact[];
   isLoading: boolean;
   searchTerm: string;
+  statusFilter: string;
+  segmentFilter: string;
   onContactClick: (contact: Contact) => void;
   onEditClick: (contact: Contact) => void;
 }
@@ -15,16 +17,27 @@ const ClientsGrid = ({
   contacts, 
   isLoading, 
   searchTerm,
+  statusFilter,
+  segmentFilter,
   onContactClick,
   onEditClick
 }: ClientsGridProps) => {
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.clientName && contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.clientType && contact.clientType.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.phone && contact.phone.includes(searchTerm))
-  );
+  const filteredContacts = contacts.filter(contact => {
+    // Filtro de busca por texto
+    const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.clientName && contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.clientType && contact.clientType.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.phone && contact.phone.includes(searchTerm));
+
+    // Filtro de status
+    const matchesStatus = statusFilter === 'all' || contact.status === statusFilter;
+
+    // Filtro de segmento (kanban stage)
+    const matchesSegment = segmentFilter === 'all' || contact.kanbanStage === segmentFilter;
+
+    return matchesSearch && matchesStatus && matchesSegment;
+  });
 
   if (isLoading) {
     return (
@@ -41,8 +54,8 @@ const ClientsGrid = ({
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">
-          {searchTerm 
-            ? 'Nenhum cliente encontrado com esse termo de busca.' 
+          {searchTerm || statusFilter !== 'all' || segmentFilter !== 'all'
+            ? 'Nenhum cliente encontrado com os filtros aplicados.' 
             : 'Nenhum cliente disponível. Adicione seu primeiro cliente!'}
         </p>
       </div>

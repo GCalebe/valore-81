@@ -10,6 +10,7 @@ import ClientsHeader from '@/components/clients/ClientsHeader';
 import ClientsTable from '@/components/clients/ClientsTable';
 import ClientsGrid from '@/components/clients/ClientsGrid';
 import KanbanView from '@/components/clients/KanbanView';
+import ClientFilters from '@/components/clients/ClientFilters';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
@@ -21,6 +22,8 @@ const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [segmentFilter, setSegmentFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'grid'>('grid');
 
   const {
@@ -62,6 +65,14 @@ const ClientsDashboard = () => {
     navigate(`/chats?contact=${contact.id}`);
   };
 
+  const handleClearFilters = () => {
+    setStatusFilter('all');
+    setSegmentFilter('all');
+    setSearchTerm('');
+  };
+
+  const hasActiveFilters = statusFilter !== 'all' || segmentFilter !== 'all' || searchTerm !== '';
+
   useEffect(() => {
     if (!isAuthLoading && !user) {
       navigate('/');
@@ -75,13 +86,6 @@ const ClientsDashboard = () => {
       </div>
     );
   }
-
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.clientName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
@@ -146,44 +150,59 @@ const ClientsDashboard = () => {
           </div>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="relative flex-1 max-w-sm">
-            <Input
-              type="text"
-              placeholder="Buscar clientes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4"
+        <div className="mb-6 space-y-4">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+            <div className="relative flex-1 max-w-sm">
+              <Input
+                type="text"
+                placeholder="Buscar clientes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-4"
+              />
+            </div>
+            
+            <AddClientDialog
+              isOpen={isAddContactOpen}
+              onOpenChange={setIsAddContactOpen}
+              newContact={newContact}
+              setNewContact={setNewContact}
+              handleAddContact={handleAddContact}
             />
           </div>
-          
-          <AddClientDialog
-            isOpen={isAddContactOpen}
-            onOpenChange={setIsAddContactOpen}
-            newContact={newContact}
-            setNewContact={setNewContact}
-            handleAddContact={handleAddContact}
+
+          <ClientFilters
+            statusFilter={statusFilter}
+            segmentFilter={segmentFilter}
+            onStatusFilterChange={setStatusFilter}
+            onSegmentFilterChange={setSegmentFilter}
+            onClearFilters={handleClearFilters}
+            hasActiveFilters={hasActiveFilters}
           />
         </div>
 
         {viewMode === 'grid' ? (
           <ClientsGrid
-            contacts={filteredContacts}
+            contacts={contacts}
             isLoading={loadingContacts}
             searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            segmentFilter={segmentFilter}
             onContactClick={handleChatClick}
             onEditClick={openEditModal}
           />
         ) : viewMode === 'table' ? (
           <ClientsTable
-            contacts={filteredContacts}
+            contacts={contacts}
             isLoading={loadingContacts}
             searchTerm={searchTerm}
+            statusFilter={statusFilter}
+            segmentFilter={segmentFilter}
             onContactClick={handleContactClick}
           />
         ) : (
           <KanbanView
-            contacts={filteredContacts}
+            contacts={contacts}
             onContactClick={handleContactClick}
             onStageChange={handleKanbanStageChange}
             searchTerm={searchTerm}
