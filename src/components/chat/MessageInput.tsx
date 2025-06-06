@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Send, Paperclip, Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Conversation } from '@/types/chat';
@@ -15,8 +15,12 @@ interface MessageInputProps {
 const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps) => {
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { settings } = useThemeSettings();
+
+  // Common emojis for quick access
+  const quickEmojis = ['😊', '👍', '❤️', '😂', '🤔', '👋', '🙏', '✅'];
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,27 +63,103 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
     }
   };
 
+  const handleFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // For now, just show a toast - file upload functionality would need backend implementation
+      toast({
+        title: 'Arquivo selecionado',
+        description: `Arquivo "${file.name}" pronto para envio`,
+      });
+    }
+  };
+
+  const addEmoji = (emoji: string) => {
+    setNewMessage(prev => prev + emoji);
+  };
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   return (
-    <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-      <div className="flex items-center gap-2">
-        <Input
-          placeholder="Digite sua mensagem para navegar..."
-          className="flex-1"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          disabled={isSending}
-        />
-        <Button 
-          type="submit" 
-          size="icon" 
-          className="text-white"
-          style={{ backgroundColor: settings.primaryColor }}
-          disabled={isSending}
-        >
-          <Send size={18} />
-        </Button>
-      </div>
-    </form>
+    <div className="relative">
+      {/* Emoji picker */}
+      {showEmojiPicker && (
+        <div className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg z-10">
+          <div className="grid grid-cols-4 gap-2">
+            {quickEmojis.map((emoji) => (
+              <Button
+                key={emoji}
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  addEmoji(emoji);
+                  setShowEmojiPicker(false);
+                }}
+                className="h-8 w-8 p-0 text-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                {emoji}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            className="hidden"
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+          />
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleFileClick}
+            disabled={isSending}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <Paperclip size={18} />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            disabled={isSending}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <Smile size={18} />
+          </Button>
+          
+          <Input
+            placeholder="Digite sua mensagem para navegar..."
+            className="flex-1"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            disabled={isSending}
+          />
+          
+          <Button 
+            type="submit" 
+            size="icon" 
+            className="text-white"
+            style={{ backgroundColor: settings.primaryColor }}
+            disabled={isSending}
+          >
+            <Send size={18} />
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
 

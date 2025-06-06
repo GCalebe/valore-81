@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Search, Pause, Play } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Pause, Play, RefreshCw } from 'lucide-react';
 import { Conversation } from '@/types/chat';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
@@ -26,122 +26,121 @@ const ConversationList = ({
   startBot,
   loading
 }: ConversationListProps) => {
-  const [searchTerm, setSearchTerm] = useState('');
   const { settings } = useThemeSettings();
 
-  const filteredConversations = conversations.filter(
-    conv => conv.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="flex flex-col h-full">
-      <div 
-        className="p-3 text-white"
-        style={{ backgroundColor: `${settings.primaryColor}dd` }}
-      >
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
-          <Input
-            placeholder="Buscar conversas marítimas..."
-            className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:bg-white/20"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="h-full flex flex-col">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            Conversas
+          </h2>
+          {loading && (
+            <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />
+          )}
         </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {conversations.length} conversas ativas
+        </p>
       </div>
-      
+
       <ScrollArea className="flex-1">
-        {loading ? (
-          <div className="p-4 text-center">
-            <p>Carregando conversas náuticas...</p>
-          </div>
-        ) : (
-          filteredConversations.map((conv) => (
-            <div key={conv.id} className="border-b border-gray-200 dark:border-gray-700">
-              <div
-                className={`flex items-center p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                  selectedChat === conv.id 
-                    ? 'border-l-4 shadow-sm' 
-                    : ''
-                }`}
-                style={selectedChat === conv.id ? { 
-                  backgroundColor: `${settings.primaryColor}10`,
-                  borderLeftColor: settings.primaryColor 
-                } : {}}
-                onClick={() => setSelectedChat(conv.id)}
-              >
-                <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-2xl mr-3"
-                  style={{ 
-                    backgroundColor: `${settings.secondaryColor}20`,
-                    color: settings.primaryColor 
-                  }}
-                >
-                  ⚓
-                </div>
+        <div className="space-y-2 p-2">
+          {conversations.map((conversation) => (
+            <div
+              key={conversation.id}
+              className={`relative p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
+                selectedChat === conversation.id
+                  ? 'border-blue-300 dark:border-blue-600 shadow-sm'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+              } ${
+                selectedChat === conversation.id
+                  ? 'bg-blue-50 dark:bg-blue-900/20'
+                  : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+              onClick={() => setSelectedChat(conversation.id)}
+            >
+              <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium truncate">{conv.name}</h3>
-                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 whitespace-nowrap">
-                      {conv.time}
-                    </span>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {conversation.name}
+                    </h3>
+                    {conversation.unread > 0 && (
+                      <Badge className="bg-red-500 text-white text-xs px-2 py-0.5">
+                        {conversation.unread}
+                      </Badge>
+                    )}
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {conv.lastMessage}
+                  <p className="text-sm text-gray-600 dark:text-gray-400 truncate mb-1">
+                    {conversation.phone}
                   </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 truncate">
+                    {conversation.lastMessage}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {conversation.time}
+                  </span>
                   
-                  <div className="flex space-x-2 mt-2">
+                  {/* Bot control buttons */}
+                  <div className="flex gap-1">
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="rounded-full px-3 flex items-center gap-1 text-xs border-red-300 text-red-600 hover:bg-red-50"
-                      onClick={(e) => openPauseDialog(conv.phone, e)}
-                      disabled={isLoading[`pause-${conv.phone}`]}
-                    >
-                      {isLoading[`pause-${conv.phone}`] ? (
-                        <span className="h-3 w-3 border-2 border-t-transparent border-current rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Pause className="h-3 w-3" />
-                          <span>Pausar Navegação</span>
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="rounded-full px-3 flex items-center gap-1 text-xs"
+                      size="xs"
+                      onClick={(e) => openPauseDialog(conversation.phone, e)}
+                      disabled={isLoading[`pause-${conversation.phone}`]}
+                      className="h-6 px-2 text-xs"
                       style={{ 
                         borderColor: settings.primaryColor,
-                        color: settings.primaryColor,
-                        backgroundColor: `${settings.primaryColor}05`
+                        color: settings.primaryColor 
                       }}
-                      onClick={(e) => startBot(conv.phone, e)}
-                      disabled={isLoading[`start-${conv.phone}`]}
                     >
-                      {isLoading[`start-${conv.phone}`] ? (
-                        <span className="h-3 w-3 border-2 border-t-transparent border-current rounded-full animate-spin" />
+                      {isLoading[`pause-${conversation.phone}`] ? (
+                        <RefreshCw className="h-3 w-3 animate-spin" />
                       ) : (
                         <>
-                          <Play className="h-3 w-3" />
-                          <span>Iniciar Navegação</span>
+                          <Pause className="h-3 w-3 mr-1" />
+                          Pausar Aurora
+                        </>
+                      )}
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={(e) => startBot(conversation.phone, e)}
+                      disabled={isLoading[`start-${conversation.phone}`]}
+                      className="h-6 px-2 text-xs"
+                      style={{ 
+                        borderColor: settings.secondaryColor,
+                        color: settings.secondaryColor 
+                      }}
+                    >
+                      {isLoading[`start-${conversation.phone}`] ? (
+                        <RefreshCw className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>
+                          <Play className="h-3 w-3 mr-1" />
+                          Iniciar Aurora
                         </>
                       )}
                     </Button>
                   </div>
                 </div>
-                {conv.unread > 0 && (
-                  <div 
-                    className="ml-2 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: settings.primaryColor }}
-                  >
-                    {conv.unread}
-                  </div>
-                )}
               </div>
             </div>
-          ))
-        )}
+          ))}
+          
+          {conversations.length === 0 && !loading && (
+            <div className="text-center py-8">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Nenhuma conversa encontrada
+              </p>
+            </div>
+          )}
+        </div>
       </ScrollArea>
     </div>
   );

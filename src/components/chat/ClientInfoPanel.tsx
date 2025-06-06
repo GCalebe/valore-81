@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/types/chat';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import TagsField from './TagsField';
+import NotesField from './NotesField';
 
 interface ClientInfoPanelProps {
   selectedChat: string | null;
@@ -47,6 +49,9 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
       
       <ScrollArea className="flex-1">
         <div className="p-4">
+          {/* Tags Field */}
+          <TagsField selectedChat={selectedChat} />
+          
           <Tabs defaultValue="info">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="info">Informações</TabsTrigger>
@@ -92,6 +97,11 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
               </Card>
             </TabsContent>
           </Tabs>
+          
+          {/* Notes Field */}
+          <div className="mt-4">
+            <NotesField selectedChat={selectedChat} />
+          </div>
         </div>
       </ScrollArea>
     </div>
