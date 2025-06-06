@@ -15,4 +15,7 @@ export interface Contact {
   notes?: string;
   lastContact: string;
   kanbanStage: 'Entraram' | 'Conversaram' | 'Agendaram' | 'Compareceram' | 'Negociaram' | 'Postergaram' | 'Converteram';
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount?: number;
 }

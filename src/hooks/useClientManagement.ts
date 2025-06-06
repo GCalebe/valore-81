@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 
 export const useClientManagement = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -70,7 +70,9 @@ export const useClientManagement = () => {
           };
         });
         
-        setContacts(formattedContacts);
+        // Generate fictitious conversations for all contacts
+        const contactsWithConversations = generateFictitiousConversations(formattedContacts);
+        setContacts(contactsWithConversations);
       }
     } catch (error) {
       console.error('Error fetching clients:', error);
