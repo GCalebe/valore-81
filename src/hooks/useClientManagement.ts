@@ -89,9 +89,10 @@ export const useClientManagement = () => {
                 const chatHistory = historyData[0];
                 
                 let lastMessageContent = 'Sem mensagem';
-                if (chatHistory.message && typeof chatHistory.message === 'object') {
-                  if (chatHistory.message.content) {
-                    lastMessageContent = chatHistory.message.content;
+                if (chatHistory.message && typeof chatHistory.message === 'object' && !Array.isArray(chatHistory.message)) {
+                  const messageObj = chatHistory.message as { [key: string]: any };
+                  if (messageObj.content) {
+                    lastMessageContent = messageObj.content;
                   }
                 }
                 
