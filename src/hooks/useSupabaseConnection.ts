@@ -50,27 +50,77 @@ export function useSupabaseConnection() {
         errors.push(`Auth error: ${authError.message}`);
       }
 
-      // Test each table
-      const tables = ['dados_cliente', 'n8n_chat_histories', 'agendamentos', 'servicos'];
-      
-      for (const table of tables) {
-        try {
-          const { data, error } = await supabase
-            .from(table)
-            .select('*')
-            .limit(1);
-          
-          if (!error) {
-            tableStatus[table as keyof typeof tableStatus] = true;
-            console.log(`✅ Table ${table} is accessible`);
-          } else {
-            errors.push(`Table ${table}: ${error.message}`);
-            console.error(`❌ Table ${table} error:`, error);
-          }
-        } catch (err) {
-          errors.push(`Table ${table}: ${String(err)}`);
-          console.error(`❌ Table ${table} exception:`, err);
+      // Test each table individually with explicit table names
+      try {
+        const { data, error } = await supabase
+          .from('dados_cliente')
+          .select('*')
+          .limit(1);
+        
+        if (!error) {
+          tableStatus.dados_cliente = true;
+          console.log('✅ Table dados_cliente is accessible');
+        } else {
+          errors.push(`Table dados_cliente: ${error.message}`);
+          console.error('❌ Table dados_cliente error:', error);
         }
+      } catch (err) {
+        errors.push(`Table dados_cliente: ${String(err)}`);
+        console.error('❌ Table dados_cliente exception:', err);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('n8n_chat_histories')
+          .select('*')
+          .limit(1);
+        
+        if (!error) {
+          tableStatus.n8n_chat_histories = true;
+          console.log('✅ Table n8n_chat_histories is accessible');
+        } else {
+          errors.push(`Table n8n_chat_histories: ${error.message}`);
+          console.error('❌ Table n8n_chat_histories error:', error);
+        }
+      } catch (err) {
+        errors.push(`Table n8n_chat_histories: ${String(err)}`);
+        console.error('❌ Table n8n_chat_histories exception:', err);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('agendamentos')
+          .select('*')
+          .limit(1);
+        
+        if (!error) {
+          tableStatus.agendamentos = true;
+          console.log('✅ Table agendamentos is accessible');
+        } else {
+          errors.push(`Table agendamentos: ${error.message}`);
+          console.error('❌ Table agendamentos error:', error);
+        }
+      } catch (err) {
+        errors.push(`Table agendamentos: ${String(err)}`);
+        console.error('❌ Table agendamentos exception:', err);
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('servicos')
+          .select('*')
+          .limit(1);
+        
+        if (!error) {
+          tableStatus.servicos = true;
+          console.log('✅ Table servicos is accessible');
+        } else {
+          errors.push(`Table servicos: ${error.message}`);
+          console.error('❌ Table servicos error:', error);
+        }
+      } catch (err) {
+        errors.push(`Table servicos: ${String(err)}`);
+        console.error('❌ Table servicos exception:', err);
       }
 
       // Test realtime connection

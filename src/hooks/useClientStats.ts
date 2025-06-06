@@ -8,6 +8,9 @@ export function useClientStats() {
     totalClients: 0,
     totalMarketingClients: 0,
     newClientsThisMonth: 0,
+    monthlyAppointments: 0,
+    newConversations: 0,
+    activeServices: 0,
     monthlyGrowth: [],
     clientTypes: [],
     recentClients: []
@@ -39,6 +42,25 @@ export function useClientStats() {
         .select('*', { count: 'exact' })
         .gte('created_at', firstDayOfMonth.toISOString())
         .lte('created_at', today.toISOString());
+
+      // Fetch monthly appointments
+      const { count: monthlyAppointments } = await supabase
+        .from('agendamentos')
+        .select('*', { count: 'exact' })
+        .gte('created_at', firstDayOfMonth.toISOString())
+        .lte('created_at', today.toISOString());
+
+      // Fetch new conversations this month
+      const { count: newConversations } = await supabase
+        .from('n8n_chat_histories')
+        .select('*', { count: 'exact' })
+        .gte('data', firstDayOfMonth.toISOString())
+        .lte('data', today.toISOString());
+
+      // Fetch active services
+      const { count: activeServices } = await supabase
+        .from('servicos')
+        .select('*', { count: 'exact' });
 
       // Fetch monthly growth data
       const currentYear = new Date().getFullYear();
@@ -106,6 +128,9 @@ export function useClientStats() {
         totalClients: totalClients || 0,
         totalMarketingClients: totalMarketingClients || 0,
         newClientsThisMonth: newClientsThisMonth || 0,
+        monthlyAppointments: monthlyAppointments || 0,
+        newConversations: newConversations || 0,
+        activeServices: activeServices || 0,
         monthlyGrowth: monthlyGrowthData,
         clientTypes,
         recentClients
