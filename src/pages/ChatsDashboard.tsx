@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +8,7 @@ import { useConversations } from '@/hooks/useConversations';
 import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
 import { useChatMessages } from '@/hooks/useChatMessages';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
+import SimulatedConversationsManager from '@/components/chat/SimulatedConversationsManager';
 
 const ChatsDashboard = () => {
   const { user, signOut } = useAuth();
@@ -145,6 +145,10 @@ const ChatsDashboard = () => {
     );
   };
 
+  const handleConversationsRefresh = () => {
+    fetchConversations();
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <ChatHeader signOut={signOut} />
@@ -155,6 +159,11 @@ const ChatsDashboard = () => {
         onConfirm={pauseBot}
         phoneNumber={selectedPhoneNumber}
       />
+
+      {/* Adicionar o gerenciador de conversas simuladas */}
+      <div className="p-4 bg-white dark:bg-gray-800 border-b dark:border-gray-700">
+        <SimulatedConversationsManager onConversationsGenerated={handleConversationsRefresh} />
+      </div>
 
       <div className="flex-1 overflow-hidden">
         <ChatLayout 

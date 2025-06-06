@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 
 export const useClientManagement = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -71,11 +70,8 @@ export const useClientManagement = () => {
           };
         });
         
-        // Generate fictitious conversations for all contacts
-        const contactsWithConversations = generateFictitiousConversations(formattedContacts);
-        
         // Buscar última mensagem para cada contato que tem sessionId
-        for (const contact of contactsWithConversations) {
+        for (const contact of formattedContacts) {
           if (contact.sessionId) {
             try {
               const { data: historyData, error: historyError } = await supabase
@@ -112,7 +108,7 @@ export const useClientManagement = () => {
           }
         }
         
-        setContacts(contactsWithConversations);
+        setContacts(formattedContacts);
       }
     } catch (error) {
       console.error('Error fetching clients:', error);
