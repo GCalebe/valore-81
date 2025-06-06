@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
@@ -162,8 +163,6 @@ export const useClientManagement = () => {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        const newClientData = data[0];
-        
         fetchClients();
         
         setNewContact({

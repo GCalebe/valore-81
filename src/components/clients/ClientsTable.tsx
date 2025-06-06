@@ -27,6 +27,7 @@ const ClientsTable = ({
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.clientName && contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (contact.clientType && contact.clientType.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
@@ -35,10 +36,12 @@ const ClientsTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[250px]">Nome</TableHead>
+            <TableHead className="w-[200px]">Nome</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Telefone</TableHead>
-            <TableHead>Nome do Cliente</TableHead>
+            <TableHead>Empresa</TableHead>
+            <TableHead>Segmento</TableHead>
+            <TableHead>Porte</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Último Contato</TableHead>
           </TableRow>
@@ -46,7 +49,7 @@ const ClientsTable = ({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={8} className="h-24 text-center">
                 <div className="flex justify-center">
                   <div className="h-8 w-8 border-4 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
                 </div>
@@ -64,6 +67,8 @@ const ClientsTable = ({
                 <TableCell>{contact.email || '-'}</TableCell>
                 <TableCell>{contact.phone || '-'}</TableCell>
                 <TableCell>{contact.clientName || '-'}</TableCell>
+                <TableCell>{contact.clientType || '-'}</TableCell>
+                <TableCell>{contact.clientSize || '-'}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs ${
                     contact.status === 'Active' 
@@ -78,7 +83,7 @@ const ClientsTable = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={8} className="h-24 text-center">
                 {searchTerm 
                   ? 'Nenhum cliente encontrado com esse termo de busca.' 
                   : 'Nenhum cliente disponível. Adicione seu primeiro cliente!'}

@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agendamentos: {
+        Row: {
+          cliente_id: number | null
+          created_at: string | null
+          data_agendamento: string
+          id: number
+          observacoes: string | null
+          servico_id: number | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_agendamento: string
+          id?: number
+          observacoes?: string | null
+          servico_id?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cliente_id?: number | null
+          created_at?: string | null
+          data_agendamento?: string
+          id?: number
+          observacoes?: string | null
+          servico_id?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "dados_cliente"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_servico_id_fkey"
+            columns: ["servico_id"]
+            isOneToOne: false
+            referencedRelation: "servicos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           active: boolean | null
@@ -144,6 +192,39 @@ export type Database = {
           id?: number
           message?: Json | null
           session_id?: string
+        }
+        Relationships: []
+      }
+      servicos: {
+        Row: {
+          categoria: string | null
+          created_at: string | null
+          descricao: string | null
+          duracao_minutos: number | null
+          id: number
+          nome: string
+          preco: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao_minutos?: number | null
+          id?: number
+          nome: string
+          preco?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao_minutos?: number | null
+          id?: number
+          nome?: string
+          preco?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }

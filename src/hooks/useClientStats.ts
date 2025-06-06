@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 export function useClientStats() {
   const [stats, setStats] = useState({
     totalClients: 0,
-    totalNauticalClients: 0,
+    totalMarketingClients: 0,
     newClientsThisMonth: 0,
     monthlyGrowth: [],
     clientTypes: [],
@@ -24,8 +24,8 @@ export function useClientStats() {
         .from('dados_cliente')
         .select('*', { count: 'exact' });
 
-      // Fetch total nautical clients (assuming each client has at least one nautical project)
-      const { count: totalNauticalClients } = await supabase
+      // Fetch total marketing clients (assuming each client has a marketing project/service)
+      const { count: totalMarketingClients } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
         .not('nome_cliente', 'is', null);
@@ -33,7 +33,6 @@ export function useClientStats() {
       // Fetch new clients this month (from 1st of current month to today)
       const today = new Date();
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
       
       const { count: newClientsThisMonth } = await supabase
         .from('dados_cliente')
@@ -62,7 +61,7 @@ export function useClientStats() {
         });
       }
 
-      // Fetch client types data
+      // Fetch client types data using tipo_cliente field
       const { data: clientTypesData } = await supabase
         .from('dados_cliente')
         .select('tipo_cliente')
@@ -98,14 +97,14 @@ export function useClientStats() {
         id: client.id,
         name: client.nome,
         phone: client.telefone,
-        nauticalClients: client.nome_cliente ? 1 : 0,
+        marketingClients: client.nome_cliente ? 1 : 0,
         lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
       })) || [];
 
       // Update stats
       setStats({
         totalClients: totalClients || 0,
-        totalNauticalClients: totalNauticalClients || 0,
+        totalMarketingClients: totalMarketingClients || 0,
         newClientsThisMonth: newClientsThisMonth || 0,
         monthlyGrowth: monthlyGrowthData,
         clientTypes,
