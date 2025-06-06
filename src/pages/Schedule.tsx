@@ -141,9 +141,9 @@ const Schedule = () => {
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
   
   const handleRefreshAll = async () => {
-    console.log('Refreshing all data...');
+    console.log('Atualizando todos os dados náuticos...');
     
-    // Refresh both calendar events and schedule data
+    // Atualizar tanto eventos do calendário quanto dados do Supabase
     const refreshPromises = [
       refreshEventsPost(),
       refreshScheduleData()
@@ -151,9 +151,9 @@ const Schedule = () => {
     
     try {
       await Promise.all(refreshPromises);
-      console.log('All data refreshed successfully');
+      console.log('Todos os dados náuticos atualizados com sucesso');
     } catch (error) {
-      console.error('Error refreshing data:', error);
+      console.error('Erro ao atualizar dados:', error);
     }
   };
   

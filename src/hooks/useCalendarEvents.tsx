@@ -1,14 +1,77 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  fetchCalendarEvents, 
-  refreshCalendarEventsPost, 
-  addCalendarEvent, 
-  editCalendarEvent, 
-  deleteCalendarEvent 
-} from '@/services/calendarApi';
 import { CalendarEvent, EventFormData } from '@/types/calendar';
 import { toast } from 'sonner';
+import { format, parseISO, addDays, addHours } from 'date-fns';
+
+// Dados fictícios para substituir o webhook externo
+const mockCalendarEvents: CalendarEvent[] = [
+  {
+    id: 'mock-1',
+    summary: 'Manutenção de Veleiro - Marina Santos',
+    description: 'Revisão completa do sistema de velas e cordame',
+    start: '2025-06-06T09:00:00-03:00',
+    end: '2025-06-06T11:00:00-03:00',
+    status: 'confirmed',
+    htmlLink: '#',
+    attendees: [{
+      email: 'marina@santos.com',
+      responseStatus: 'accepted'
+    }]
+  },
+  {
+    id: 'mock-2',
+    summary: 'Inspeção de Casco - Yacht Club',
+    description: 'Vistoria anual obrigatória para renovação de licença',
+    start: '2025-06-06T14:00:00-03:00',
+    end: '2025-06-06T16:00:00-03:00',
+    status: 'confirmed',
+    htmlLink: '#',
+    attendees: [{
+      email: 'vistoria@yachtclub.com',
+      responseStatus: 'accepted'
+    }]
+  },
+  {
+    id: 'mock-3',
+    summary: 'Curso de Navegação - Escola Náutica',
+    description: 'Aula prática de navegação costeira',
+    start: '2025-06-07T08:00:00-03:00',
+    end: '2025-06-07T12:00:00-03:00',
+    status: 'confirmed',
+    htmlLink: '#',
+    attendees: [{
+      email: 'cursos@escolanautica.com',
+      responseStatus: 'accepted'
+    }]
+  },
+  {
+    id: 'mock-4',
+    summary: 'Regata de Fim de Semana',
+    description: 'Competição de vela entre embarcações locais',
+    start: '2025-06-08T07:00:00-03:00',
+    end: '2025-06-08T18:00:00-03:00',
+    status: 'tentative',
+    htmlLink: '#',
+    attendees: [{
+      email: 'regata@clubevelico.com',
+      responseStatus: 'tentative'
+    }]
+  },
+  {
+    id: 'mock-5',
+    summary: 'Manutenção de Motor - Oficina Naval',
+    description: 'Revisão e troca de óleo do motor de popa',
+    start: '2025-06-09T10:00:00-03:00',
+    end: '2025-06-09T15:00:00-03:00',
+    status: 'confirmed',
+    htmlLink: '#',
+    attendees: [{
+      email: 'manutencao@oficinanaval.com',
+      responseStatus: 'accepted'
+    }]
+  }
+];
 
 export function useCalendarEvents(selectedDate?: Date | null) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -17,97 +80,155 @@ export function useCalendarEvents(selectedDate?: Date | null) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Function to fetch events
+  // Função para filtrar eventos fictícios baseado na data selecionada
   const fetchEvents = useCallback(async () => {
     try {
-      const fetchedEvents = await fetchCalendarEvents(selectedDate);
-      setEvents(fetchedEvents);
-      setLastUpdated(new Date());
-      setError(null);
-    } catch (err) {
-      console.error('Error in useCalendarEvents:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+      setIsLoading(true);
+      console.log('Carregando eventos náuticos fictícios...');
       
-      // Only show the toast if we don't already have events loaded
-      if (events.length === 0) {
-        toast.error("Não conseguimos atualizar os eventos, tentando novamente em breve...");
+      // Simular delay de carregamento
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      let filteredEvents = mockCalendarEvents;
+      
+      // Filtrar por data se selecionada
+      if (selectedDate) {
+        const dateStr = format(selectedDate, 'yyyy-MM-dd');
+        filteredEvents = mockCalendarEvents.filter(event => {
+          const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+          return eventDate === dateStr;
+        });
+        console.log(`Eventos filtrados para ${dateStr}:`, filteredEvents.length);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [events.length, selectedDate]);
-
-  // Function to refresh events using POST method
-  const refreshEventsPost = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const refreshedEvents = await refreshCalendarEventsPost(selectedDate);
-      setEvents(refreshedEvents);
+      
+      setEvents(filteredEvents);
       setLastUpdated(new Date());
       setError(null);
+      
+      console.log(`${filteredEvents.length} eventos náuticos carregados com sucesso`);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+      console.error('Erro ao carregar eventos fictícios:', err);
+      setError(err instanceof Error ? err : new Error('Erro desconhecido'));
     } finally {
       setIsLoading(false);
     }
   }, [selectedDate]);
 
-  // Add a new event
+  // Função para refresh (mesmo comportamento que fetch para dados fictícios)
+  const refreshEventsPost = useCallback(async () => {
+    console.log('Atualizando eventos náuticos...');
+    await fetchEvents();
+    toast.success("Eventos náuticos atualizados com sucesso!");
+  }, [fetchEvents]);
+
+  // Simular adição de evento (apenas para demonstração)
   const addEvent = async (formData: EventFormData) => {
     setIsSubmitting(true);
     try {
-      const success = await addCalendarEvent(formData);
-      if (success) {
-        await fetchEvents(); // Refresh events
-      }
-      return success;
+      console.log('Simulando adição de evento:', formData);
+      
+      // Simular delay de processamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const newEvent: CalendarEvent = {
+        id: `mock-new-${Date.now()}`,
+        summary: formData.summary,
+        description: formData.description,
+        start: `${format(formData.date, 'yyyy-MM-dd')}T${formData.startTime}:00-03:00`,
+        end: `${format(formData.date, 'yyyy-MM-dd')}T${formData.endTime}:00-03:00`,
+        status: 'confirmed',
+        htmlLink: '#',
+        attendees: formData.email ? [{
+          email: formData.email,
+          responseStatus: 'accepted'
+        }] : []
+      };
+      
+      mockCalendarEvents.push(newEvent);
+      await fetchEvents(); // Refresh events
+      
+      toast.success("Evento náutico adicionado com sucesso!");
+      return true;
+    } catch (err) {
+      console.error('Erro ao adicionar evento:', err);
+      toast.error("Erro ao adicionar evento náutico. Tente novamente.");
+      return false;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Edit an existing event
+  // Simular edição de evento
   const editEvent = async (eventId: string, formData: EventFormData) => {
     setIsSubmitting(true);
     try {
-      const success = await editCalendarEvent(eventId, formData);
-      if (success) {
-        await fetchEvents(); // Refresh events
+      console.log('Simulando edição de evento:', eventId, formData);
+      
+      // Simular delay de processamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const eventIndex = mockCalendarEvents.findIndex(e => e.id === eventId);
+      if (eventIndex >= 0) {
+        mockCalendarEvents[eventIndex] = {
+          ...mockCalendarEvents[eventIndex],
+          summary: formData.summary,
+          description: formData.description,
+          start: `${format(formData.date, 'yyyy-MM-dd')}T${formData.startTime}:00-03:00`,
+          end: `${format(formData.date, 'yyyy-MM-dd')}T${formData.endTime}:00-03:00`,
+          attendees: formData.email ? [{
+            email: formData.email,
+            responseStatus: 'accepted'
+          }] : []
+        };
       }
-      return success;
+      
+      await fetchEvents(); // Refresh events
+      
+      toast.success("Evento náutico atualizado com sucesso!");
+      return true;
+    } catch (err) {
+      console.error('Erro ao atualizar evento:', err);
+      toast.error("Erro ao atualizar evento náutico. Tente novamente.");
+      return false;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Delete an event
+  // Simular exclusão de evento
   const deleteEvent = async (eventId: string) => {
     setIsSubmitting(true);
     try {
-      const success = await deleteCalendarEvent(eventId);
-      if (success) {
-        await fetchEvents(); // Refresh events
+      console.log('Simulando exclusão de evento:', eventId);
+      
+      // Simular delay de processamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const eventIndex = mockCalendarEvents.findIndex(e => e.id === eventId);
+      if (eventIndex >= 0) {
+        mockCalendarEvents.splice(eventIndex, 1);
       }
-      return success;
+      
+      await fetchEvents(); // Refresh events
+      
+      toast.success("Evento náutico excluído com sucesso!");
+      return true;
+    } catch (err) {
+      console.error('Erro ao excluir evento:', err);
+      toast.error("Erro ao excluir evento náutico. Tente novamente.");
+      return false;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Initial fetch on mount or when selected date changes
+  // Carregar eventos inicialmente e quando a data mudar
   useEffect(() => {
     fetchEvents();
-  }, [fetchEvents, selectedDate]);
-
-  // Setup polling every 30 seconds
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      console.log('Polling for calendar events...');
-      fetchEvents();
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(intervalId);
   }, [fetchEvents]);
+
+  // Remover polling automático para evitar requests desnecessários
+  // O usuário pode usar o botão de refresh quando precisar
 
   return { 
     events, 
@@ -123,5 +244,5 @@ export function useCalendarEvents(selectedDate?: Date | null) {
   };
 }
 
-// Re-export types for backward compatibility
+// Re-exportar tipos para compatibilidade
 export type { CalendarEvent, EventFormData } from '@/types/calendar';
