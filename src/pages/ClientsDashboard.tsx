@@ -265,6 +265,7 @@ const ClientsDashboard = () => {
 
         {selectedContact && isMessageDialogOpen && (
           <SendMessageDialog
+            isOpen={isMessageDialogOpen}
             selectedContact={selectedContact}
             messageText={messageText}
             setMessageText={setMessageText}
