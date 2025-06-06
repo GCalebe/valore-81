@@ -18,4 +18,5 @@ export interface Contact {
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;
+  sessionId?: string;
 }
