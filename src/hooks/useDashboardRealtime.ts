@@ -22,8 +22,12 @@ export function useDashboardRealtime() {
         }, 
         async (payload) => {
           console.log('Client data changed:', payload);
-          await refetchStats();
-          await fetchConversations();
+          try {
+            await refetchStats();
+            await fetchConversations();
+          } catch (error) {
+            console.error('Error refreshing data after client change:', error);
+          }
         }
       )
       .subscribe();
@@ -39,7 +43,11 @@ export function useDashboardRealtime() {
         }, 
         async (payload) => {
           console.log('Chat history changed:', payload);
-          await fetchConversations();
+          try {
+            await fetchConversations();
+          } catch (error) {
+            console.error('Error refreshing conversations after chat change:', error);
+          }
         }
       )
       .subscribe();
@@ -53,9 +61,13 @@ export function useDashboardRealtime() {
           schema: 'public', 
           table: 'agendamentos' 
         }, 
-        async () => {
-          console.log('Schedule data changed');
-          await refetchStats();
+        async (payload) => {
+          console.log('Schedule data changed:', payload);
+          try {
+            await refetchStats();
+          } catch (error) {
+            console.error('Error refreshing stats after schedule change:', error);
+          }
         }
       )
       .subscribe();
@@ -69,9 +81,13 @@ export function useDashboardRealtime() {
           schema: 'public', 
           table: 'servicos' 
         }, 
-        async () => {
-          console.log('Services data changed');
-          await refetchStats();
+        async (payload) => {
+          console.log('Services data changed:', payload);
+          try {
+            await refetchStats();
+          } catch (error) {
+            console.error('Error refreshing stats after services change:', error);
+          }
         }
       )
       .subscribe();

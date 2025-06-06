@@ -29,7 +29,7 @@ export function useScheduleData() {
         setLoading(true);
       }
       
-      console.log('Fetching schedule data...');
+      console.log('Fetching schedule data from agendamentos table...');
       
       // Buscar agendamentos com dados do cliente e serviço
       const { data: appointmentsData, error: appointmentsError } = await supabase
@@ -56,7 +56,7 @@ export function useScheduleData() {
         throw appointmentsError;
       }
       
-      console.log(`Found ${appointmentsData?.length || 0} appointments`);
+      console.log(`Found ${appointmentsData?.length || 0} appointments from database`);
       console.log('Appointments data:', appointmentsData);
       
       if (appointmentsData && appointmentsData.length > 0) {
@@ -91,8 +91,8 @@ export function useScheduleData() {
           });
         }
       } else {
+        console.log('No appointments found in database');
         setEvents([]);
-        console.log('No appointments found');
         
         if (showRefreshingState) {
           toast({
@@ -108,6 +108,8 @@ export function useScheduleData() {
         description: "Ocorreu um erro ao carregar os agendamentos. Tente novamente.",
         variant: "destructive"
       });
+      // Em caso de erro, definir array vazio para evitar estados indefinidos
+      setEvents([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -115,10 +117,12 @@ export function useScheduleData() {
   }, [toast]);
 
   const refreshScheduleData = useCallback(async () => {
+    console.log('Manual refresh of schedule data requested');
     await fetchScheduleData(true);
   }, [fetchScheduleData]);
 
   useEffect(() => {
+    console.log('useScheduleData: Initial data fetch');
     fetchScheduleData();
   }, [fetchScheduleData]);
 

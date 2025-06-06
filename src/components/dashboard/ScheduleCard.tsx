@@ -17,6 +17,7 @@ const ScheduleCard = () => {
 
   const handleRefresh = (e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log('Schedule card refresh clicked');
     refetchScheduleData();
   };
   
@@ -25,6 +26,13 @@ const ScheduleCard = () => {
   const todayEvents = events.filter(event => {
     const eventDate = new Date(event.date);
     return eventDate.toDateString() === today.toDateString();
+  });
+  
+  console.log('ScheduleCard render:', { 
+    eventsCount: events.length, 
+    todayEventsCount: todayEvents.length, 
+    loading, 
+    refreshing 
   });
   
   return (

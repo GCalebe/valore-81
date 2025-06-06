@@ -3,26 +3,50 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, Users } from 'lucide-react';
+import { MessageSquare, Users, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useConversations } from '@/hooks/useConversations';
 
 const ChatsCard = () => {
   const navigate = useNavigate();
-  const { conversations, loading } = useConversations();
+  const { conversations, loading, fetchConversations } = useConversations();
   
   const handleClick = () => {
     navigate('/chats');
+  };
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Chats card refresh clicked');
+    fetchConversations();
   };
   
   // Calcular conversas não lidas
   const unreadCount = conversations.reduce((total, conv) => total + conv.unread, 0);
   
+  console.log('ChatsCard render:', { 
+    conversationsCount: conversations.length, 
+    unreadCount, 
+    loading 
+  });
+  
   return (
     <Card className="cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl dark:bg-gray-800 dark:border-gray-700 dark:text-white" onClick={handleClick}>
       <CardHeader className="pb-2 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 text-white rounded-t-lg">
-        <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-6 w-6" />
-          Chats
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-6 w-6" />
+            Chats
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={loading}
+            className="text-white hover:bg-white/20 h-8 w-8 p-0"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
         </CardTitle>
         <CardDescription className="text-green-100">
           Conversas em tempo real
