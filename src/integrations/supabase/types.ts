@@ -151,6 +151,41 @@ export type Database = {
         }
         Relationships: []
       }
+      client_custom_values: {
+        Row: {
+          client_id: number
+          created_at: string
+          field_id: string | null
+          field_value: Json | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: number
+          created_at?: string
+          field_id?: string | null
+          field_value?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: number
+          created_at?: string
+          field_id?: string | null
+          field_value?: Json | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_custom_values_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultas: {
         Row: {
           cliente_id: number | null
@@ -212,6 +247,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      custom_fields: {
+        Row: {
+          created_at: string
+          field_name: string
+          field_options: Json | null
+          field_type: string
+          id: string
+          is_required: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_name: string
+          field_options?: Json | null
+          field_type: string
+          id?: string
+          is_required?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_name?: string
+          field_options?: Json | null
+          field_type?: string
+          id?: string
+          is_required?: boolean | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       dados_cliente: {
         Row: {
