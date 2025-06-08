@@ -1,14 +1,23 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShipWheel } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const ClientsHeader = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { settings } = useThemeSettings();
 
   return (
-    <header className="bg-blue-600 dark:bg-gray-800 text-white shadow-md transition-colors duration-300">
+    <header 
+      className="text-white shadow-md transition-colors duration-300"
+      style={{ backgroundColor: settings.primaryColor }}
+    >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Button 
@@ -19,10 +28,26 @@ const ClientsHeader = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-bold">CRM de Clientes</h1>
+          {settings.logo ? (
+            <img 
+              src={settings.logo} 
+              alt="Logo" 
+              className="h-8 w-8 object-contain"
+            />
+          ) : (
+            <ShipWheel 
+              className="h-8 w-8"
+              style={{ color: settings.secondaryColor }}
+            />
+          )}
+          <h1 className="text-2xl font-bold">{settings.brandName}</h1>
+          <span className="text-lg ml-2">- Clientes</span>
         </div>
         <div className="flex items-center gap-4">
-          {/* Outros controles podem ser adicionados aqui se necessário */}
+          <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
+            {user?.user_metadata?.name || user?.email}
+          </Badge>
+          <ThemeToggle />
         </div>
       </div>
     </header>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShipWheel, LogOut, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -13,6 +14,7 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ signOut }: ChatHeaderProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { settings } = useThemeSettings();
 
   const handleBackToDashboard = () => {
@@ -51,7 +53,7 @@ const ChatHeader = ({ signOut }: ChatHeaderProps) => {
         </div>
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
-            Central de Conversas
+            {user?.user_metadata?.name || user?.email}
           </Badge>
           <ThemeToggle />
           <Button 

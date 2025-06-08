@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, RefreshCw, Users, Grid, List, LayoutGrid } from 'lucide-react';
+import { RefreshCw, Users, Grid, List, LayoutGrid } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
@@ -101,21 +100,11 @@ const ClientsDashboard = () => {
       
       <main className="flex-1 flex flex-col w-full px-4 py-6 overflow-hidden">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-                Clientes
-              </h1>
-            </div>
+          <div className="flex items-center gap-2">
+            <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+              Clientes
+            </h1>
           </div>
           
           <div className="flex items-center gap-2">
