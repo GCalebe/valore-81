@@ -19,4 +19,18 @@ export interface Contact {
   lastMessageTime?: string;
   unreadCount?: number;
   sessionId?: string;
+  // Novos campos
+  tags?: string[];
+  responsibleUser?: string;
+  sales?: number;
+  clientSector?: string;
+  budget?: number;
+  paymentMethod?: string;
+  clientObjective?: string;
+  lossReason?: string;
+  contractNumber?: string;
+  contractDate?: string;
+  payment?: string;
+  uploadedFiles?: string[];
+  consultationStage?: 'Nova consulta' | 'Qualificado' | 'Chamada agendada' | 'Preparando proposta' | 'Proposta enviada' | 'Acompanhamento' | 'Negociação' | 'Fatura enviada' | 'Fatura paga – ganho' | 'Projeto cancelado – perdido';
 }

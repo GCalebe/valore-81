@@ -28,6 +28,19 @@ export const useClientManagement = () => {
     asaasCustomerId: '',
     status: 'Active',
     notes: '',
+    tags: [],
+    responsibleUser: '',
+    sales: 0,
+    clientSector: '',
+    budget: 0,
+    paymentMethod: '',
+    clientObjective: '',
+    lossReason: '',
+    contractNumber: '',
+    contractDate: '',
+    payment: '',
+    uploadedFiles: [],
+    consultationStage: 'Nova consulta',
   });
 
   const fetchClients = async () => {
@@ -219,6 +232,19 @@ export const useClientManagement = () => {
           asaasCustomerId: '',
           status: 'Active',
           notes: '',
+          tags: [],
+          responsibleUser: '',
+          sales: 0,
+          clientSector: '',
+          budget: 0,
+          paymentMethod: '',
+          clientObjective: '',
+          lossReason: '',
+          contractNumber: '',
+          contractDate: '',
+          payment: '',
+          uploadedFiles: [],
+          consultationStage: 'Nova consulta',
         });
         
         setIsAddContactOpen(false);
@@ -364,6 +390,19 @@ export const useClientManagement = () => {
       payments: selectedContact.payments,
       status: selectedContact.status,
       notes: selectedContact.notes,
+      tags: selectedContact.tags || [],
+      responsibleUser: selectedContact.responsibleUser || '',
+      sales: selectedContact.sales || 0,
+      clientSector: selectedContact.clientSector || '',
+      budget: selectedContact.budget || 0,
+      paymentMethod: selectedContact.paymentMethod || '',
+      clientObjective: selectedContact.clientObjective || '',
+      lossReason: selectedContact.lossReason || '',
+      contractNumber: selectedContact.contractNumber || '',
+      contractDate: selectedContact.contractDate || '',
+      payment: selectedContact.payment || '',
+      uploadedFiles: selectedContact.uploadedFiles || [],
+      consultationStage: selectedContact.consultationStage || 'Nova consulta',
     });
     setIsEditModalOpen(true);
   };
