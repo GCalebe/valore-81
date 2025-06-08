@@ -29,8 +29,8 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           className="mb-4 opacity-50"
           style={{ color: settings.primaryColor }}
         />
-        <h3 className="text-xl font-medium mb-2">Informações do Navegador</h3>
-        <p className="text-sm text-center px-4">Selecione uma conversa para ver as informações do navegador</p>
+        <h3 className="text-xl font-medium mb-2">Informações do Responsável</h3>
+        <p className="text-sm text-center px-4">Selecione uma conversa para ver as informações do Responsável</p>
       </div>
     );
   }
@@ -59,7 +59,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           <Tabs defaultValue="info">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="info">Informações</TabsTrigger>
-              <TabsTrigger value="client">Navegador</TabsTrigger>
+              <TabsTrigger value="client">Responsável</TabsTrigger>
             </TabsList>
             
             <TabsContent value="info" className="mt-4 space-y-4">
@@ -102,7 +102,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
               <Collapsible open={isClientOpen} onOpenChange={setIsClientOpen}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
-                    Navegador
+                    Responsável
                     {isClientOpen ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -112,17 +112,17 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-4 mt-4">
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Navegador</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Responsável</h3>
                     <p>{selectedConversation?.clientName || 'Não informado'}</p>
                   </Card>
                   
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porte da Embarcação</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Dados de atendimento</h3>
                     <p>{selectedConversation?.clientSize || 'Não informado'}</p>
                   </Card>
                   
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de Navegação</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de atendimento</h3>
                     <p>{selectedConversation?.clientType || 'Não informado'}</p>
                   </Card>
                 </CollapsibleContent>

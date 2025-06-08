@@ -17,7 +17,7 @@ const ClientsCard = () => {
       <CardHeader className="pb-2 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
           <Users className="h-6 w-6" />
-          Clientes Náuticos
+          Clientes
         </CardTitle>
         <CardDescription className="text-blue-100">
           CRM e gerenciamento
@@ -30,7 +30,7 @@ const ClientsCard = () => {
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-300 text-center">
-          Gerencie seus clientes náuticos, histórico e relacionamentos.
+          Gerencie seus clientes, histórico e relacionamentos.
         </p>
       </CardContent>
       <CardFooter className="bg-gray-50 dark:bg-gray-700/50 rounded-b-lg border-t dark:border-gray-700 flex justify-center py-3">

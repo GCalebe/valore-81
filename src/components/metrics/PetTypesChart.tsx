@@ -21,7 +21,7 @@ const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = fal
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-gray-800 dark:text-white">
           <ShipWheel className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          Tipos de Clientes Náuticos
+          Tipos de Clientes
         </CardTitle>
       </CardHeader>
       <CardContent>

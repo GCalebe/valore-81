@@ -43,7 +43,7 @@ const ConsultationStageSelector = ({ value, onChange }: ConsultationStageSelecto
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Nova consulta (Hoje)</h3>
+        <h3 className="text-sm font-medium">Funil</h3>
       </div>
       
       <Select value={value} onValueChange={onChange}>

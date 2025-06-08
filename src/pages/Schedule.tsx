@@ -16,7 +16,7 @@ import { EventsCard } from '@/components/schedule/EventsCard';
 import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
 import { useScheduleData } from '@/hooks/useScheduleData';
 
-// Dados mock para os agendamentos náuticos
+// Dados mock para os agendamentos 
 const mockAppointments: Appointment[] = [
   {
     id: 1,
@@ -141,7 +141,7 @@ const Schedule = () => {
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
   
   const handleRefreshAll = async () => {
-    console.log('Atualizando todos os dados náuticos...');
+    console.log('Atualizando todos os dados...');
     
     // Atualizar tanto eventos do calendário quanto dados do Supabase
     const refreshPromises = [
@@ -151,7 +151,7 @@ const Schedule = () => {
     
     try {
       await Promise.all(refreshPromises);
-      console.log('Todos os dados náuticos atualizados com sucesso');
+      console.log('Todos os dados atualizados com sucesso');
     } catch (error) {
       console.error('Erro ao atualizar dados:', error);
     }

@@ -91,7 +91,7 @@ const CustomFieldManager = ({ onClose }: CustomFieldManagerProps) => {
                 id="field_name"
                 value={newField.field_name}
                 onChange={(e) => setNewField({ ...newField, field_name: e.target.value })}
-                placeholder="Ex: Tamanho do Pet"
+                placeholder="Ex: Indicação"
               />
             </div>
 

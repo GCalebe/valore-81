@@ -84,7 +84,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
   const fetchEvents = useCallback(async () => {
     try {
       setIsLoading(true);
-      console.log('Carregando eventos náuticos fictícios...');
+      console.log('Carregando eventos fictícios...');
       
       // Simular delay de carregamento
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -105,7 +105,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       setLastUpdated(new Date());
       setError(null);
       
-      console.log(`${filteredEvents.length} eventos náuticos carregados com sucesso`);
+      console.log(`${filteredEvents.length} eventos carregados com sucesso`);
     } catch (err) {
       console.error('Erro ao carregar eventos fictícios:', err);
       setError(err instanceof Error ? err : new Error('Erro desconhecido'));
@@ -116,9 +116,9 @@ export function useCalendarEvents(selectedDate?: Date | null) {
 
   // Função para refresh (mesmo comportamento que fetch para dados fictícios)
   const refreshEventsPost = useCallback(async () => {
-    console.log('Atualizando eventos náuticos...');
+    console.log('Atualizando eventos...');
     await fetchEvents();
-    toast.success("Eventos náuticos atualizados com sucesso!");
+    toast.success("Eventos atualizados com sucesso!");
   }, [fetchEvents]);
 
   // Simular adição de evento (apenas para demonstração)

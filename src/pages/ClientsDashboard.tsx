@@ -113,7 +113,7 @@ const ClientsDashboard = () => {
             <div className="flex items-center gap-2">
               <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-                Clientes Náuticos
+                Clientes
               </h1>
             </div>
           </div>
