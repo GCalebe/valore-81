@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -14,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Contact } from '@/types/client';
 import { useCustomFields } from '@/hooks/useCustomFields';
 import CustomFieldRenderer from './CustomFieldRenderer';
@@ -43,7 +42,6 @@ const EditClientDialog = ({
   const { getCustomFieldsWithValues, saveClientCustomValues } = useCustomFields();
   const [customFieldsWithValues, setCustomFieldsWithValues] = useState<CustomFieldWithValue[]>([]);
   const [customValues, setCustomValues] = useState<{ [fieldId: string]: any }>({});
-  const [showFieldManager, setShowFieldManager] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -97,37 +95,12 @@ const EditClientDialog = ({
 
   if (!selectedContact) return null;
 
-  if (showFieldManager) {
-    return (
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Configurar Campos Personalizados</DialogTitle>
-            <DialogDescription>
-              Gerencie os campos personalizados para clientes.
-            </DialogDescription>
-          </DialogHeader>
-          <CustomFieldManager onClose={() => setShowFieldManager(false)} />
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between text-lg">
+          <DialogTitle className="text-lg">
             Lead #{selectedContact.id} - {selectedContact.name}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFieldManager(true)}
-              className="flex items-center gap-2"
-            >
-              <Settings className="h-4 w-4" />
-              Configurações
-            </Button>
           </DialogTitle>
         </DialogHeader>
 
@@ -159,7 +132,7 @@ const EditClientDialog = ({
             <TabsTrigger value="estatisticas">Estatísticas</TabsTrigger>
             <TabsTrigger value="midia">Mídia</TabsTrigger>
             <TabsTrigger value="produtos">Produtos</TabsTrigger>
-            <TabsTrigger value="configuracoes">Configurações</TabsTrigger>
+            <TabsTrigger value="mais-informacoes">Mais Informações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="principal" className="space-y-4">
@@ -354,32 +327,36 @@ const EditClientDialog = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="configuracoes" className="space-y-4">
-            {loading ? (
-              <div className="text-center py-8">Carregando campos personalizados...</div>
-            ) : customFieldsWithValues.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {customFieldsWithValues.map((field) => (
-                  <CustomFieldRenderer
-                    key={field.id}
-                    field={field}
-                    value={customValues[field.id]}
-                    onChange={(value) => handleCustomFieldChange(field.id, value)}
-                  />
-                ))}
+          <TabsContent value="mais-informacoes" className="space-y-4">
+            <div className="space-y-6">
+              {/* Campos Personalizados */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Campos Personalizados</h3>
+                {loading ? (
+                  <div className="text-center py-8">Carregando campos personalizados...</div>
+                ) : customFieldsWithValues.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    {customFieldsWithValues.map((field) => (
+                      <CustomFieldRenderer
+                        key={field.id}
+                        field={field}
+                        value={customValues[field.id]}
+                        onChange={(value) => handleCustomFieldChange(field.id, value)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Nenhum campo personalizado configurado.</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>Nenhum campo personalizado configurado.</p>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFieldManager(true)}
-                  className="mt-2"
-                >
-                  Criar Primeiro Campo
-                </Button>
+
+              {/* Gerenciador de Campos Personalizados */}
+              <div>
+                <CustomFieldManager />
               </div>
-            )}
+            </div>
           </TabsContent>
         </Tabs>
 
