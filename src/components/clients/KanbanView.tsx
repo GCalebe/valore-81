@@ -147,22 +147,16 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
         ref={scrollContainerRef}
         className={`overflow-x-auto overflow-y-hidden h-full select-none transition-all duration-200 ${
           isDragging ? 'cursor-grabbing' : 'cursor-grab'
-        }`}
+        } [&::-webkit-scrollbar]:hidden`}
         style={{ 
           scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitScrollbar: { display: 'none' }
+          msOverflowStyle: 'none'
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
         <div className="flex gap-4 min-w-max p-4 kanban-drag-area h-full">
           {KANBAN_STAGES.map((stage) => (
             <div key={stage} className="w-80 flex-shrink-0">
