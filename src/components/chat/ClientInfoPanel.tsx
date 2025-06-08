@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ShipWheel, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -60,7 +59,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             status: 'Active',
             notes: '',
             lastContact: data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-            kanbanStage: data.kanban_stage || 'Entraram',
+            kanbanStage: (data.kanban_stage as "Entraram" | "Conversaram" | "Agendaram" | "Compareceram" | "Negociaram" | "Postergaram" | "Converteram") || 'Entraram',
             sessionId: data.sessionid,
             tags: [],
             responsibleUser: '',
