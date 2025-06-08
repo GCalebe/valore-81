@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +28,11 @@ const STAGE_COLORS = {
 };
 
 const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: KanbanViewProps) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -50,6 +55,35 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
     const newStage = destination.droppableId as Contact['kanbanStage'];
     onStageChange(draggableId, newStage);
   };
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    
+    // Only start drag if clicking on the container itself, not on cards or other elements
+    if (e.target === scrollContainerRef.current || (e.target as Element).closest('.kanban-drag-area')) {
+      setIsDragging(true);
+      setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+      setScrollLeft(scrollContainerRef.current.scrollLeft);
+      e.preventDefault();
+    }
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  }, [isDragging, startX, scrollLeft]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   const ClientCard = ({ contact, index }: { contact: Contact; index: number }) => (
     <Draggable draggableId={contact.id} index={index}>
@@ -109,8 +143,27 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm }: Kan
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="overflow-x-auto">
-        <div className="flex gap-4 min-w-max p-4">
+      <div 
+        ref={scrollContainerRef}
+        className={`overflow-x-auto overflow-y-hidden h-full select-none transition-all duration-200 ${
+          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        }`}
+        style={{ 
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitScrollbar: { display: 'none' }
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+      >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        <div className="flex gap-4 min-w-max p-4 kanban-drag-area h-full">
           {KANBAN_STAGES.map((stage) => (
             <div key={stage} className="w-80 flex-shrink-0">
               <Card className={`h-full ${STAGE_COLORS[stage]}`}>
