@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -16,7 +15,10 @@ export const useCustomFields = () => {
         .order('field_name');
 
       if (error) throw error;
-      setCustomFields(data || []);
+      
+      // Type assertion to ensure compatibility with CustomField interface
+      const typedData = (data || []) as CustomField[];
+      setCustomFields(typedData);
     } catch (error) {
       console.error('Error fetching custom fields:', error);
       toast({
