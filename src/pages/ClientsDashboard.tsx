@@ -212,6 +212,7 @@ const ClientsDashboard = () => {
               segmentFilter={segmentFilter}
               lastContactFilter={lastContactFilter}
               onContactClick={handleContactClick}
+              onEditClick={handleEditClick}
             />
           ) : (
             <KanbanView
@@ -219,6 +220,7 @@ const ClientsDashboard = () => {
               onContactClick={handleContactClick}
               onStageChange={handleKanbanStageChange}
               searchTerm={searchTerm}
+              onEditClick={handleEditClick}
             />
           )}
         </div>
