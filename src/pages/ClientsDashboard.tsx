@@ -89,18 +89,18 @@ const ClientsDashboard = () => {
 
   if (isAuthLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="h-16 w-16 border-4 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div className="h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <ClientsHeader />
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <main className="flex-1 flex flex-col w-full px-4 py-6 overflow-hidden">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Button 
               variant="outline" 
@@ -191,35 +191,37 @@ const ClientsDashboard = () => {
           />
         </div>
 
-        {viewMode === 'grid' ? (
-          <ClientsGrid
-            contacts={contacts}
-            isLoading={loadingContacts}
-            searchTerm={searchTerm}
-            statusFilter={statusFilter}
-            segmentFilter={segmentFilter}
-            lastContactFilter={lastContactFilter}
-            onContactClick={handleChatClick}
-            onEditClick={handleEditClick}
-          />
-        ) : viewMode === 'table' ? (
-          <ClientsTable
-            contacts={contacts}
-            isLoading={loadingContacts}
-            searchTerm={searchTerm}
-            statusFilter={statusFilter}
-            segmentFilter={segmentFilter}
-            lastContactFilter={lastContactFilter}
-            onContactClick={handleContactClick}
-          />
-        ) : (
-          <KanbanView
-            contacts={contacts}
-            onContactClick={handleContactClick}
-            onStageChange={handleKanbanStageChange}
-            searchTerm={searchTerm}
-          />
-        )}
+        <div className="flex-1 overflow-hidden">
+          {viewMode === 'grid' ? (
+            <ClientsGrid
+              contacts={contacts}
+              isLoading={loadingContacts}
+              searchTerm={searchTerm}
+              statusFilter={statusFilter}
+              segmentFilter={segmentFilter}
+              lastContactFilter={lastContactFilter}
+              onContactClick={handleChatClick}
+              onEditClick={handleEditClick}
+            />
+          ) : viewMode === 'table' ? (
+            <ClientsTable
+              contacts={contacts}
+              isLoading={loadingContacts}
+              searchTerm={searchTerm}
+              statusFilter={statusFilter}
+              segmentFilter={segmentFilter}
+              lastContactFilter={lastContactFilter}
+              onContactClick={handleContactClick}
+            />
+          ) : (
+            <KanbanView
+              contacts={contacts}
+              onContactClick={handleContactClick}
+              onStageChange={handleKanbanStageChange}
+              searchTerm={searchTerm}
+            />
+          )}
+        </div>
 
         {selectedContact && (
           <ClientDetailSheet

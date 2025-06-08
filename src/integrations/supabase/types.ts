@@ -19,6 +19,7 @@ export type Database = {
           servico_id: number | null
           status: string | null
           updated_at: string | null
+          valor: number | null
         }
         Insert: {
           cliente_id?: number | null
@@ -29,6 +30,7 @@ export type Database = {
           servico_id?: number | null
           status?: string | null
           updated_at?: string | null
+          valor?: number | null
         }
         Update: {
           cliente_id?: number | null
@@ -39,6 +41,7 @@ export type Database = {
           servico_id?: number | null
           status?: string | null
           updated_at?: string | null
+          valor?: number | null
         }
         Relationships: [
           {
