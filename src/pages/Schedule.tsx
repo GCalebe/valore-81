@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { isSameDay, parseISO, addDays, addHours, addMinutes, format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 import { 
-  ArrowLeft, RefreshCw, LoaderCircle
+  ArrowLeft, RefreshCw, LoaderCircle, ShipWheel
 } from 'lucide-react';
 import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
 import { EventFormDialog } from '@/components/EventFormDialog';
@@ -15,6 +17,7 @@ import { CalendarSidebar } from '@/components/schedule/CalendarSidebar';
 import { EventsCard } from '@/components/schedule/EventsCard';
 import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
 import { useScheduleData } from '@/hooks/useScheduleData';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 // Dados mock para os agendamentos 
 const mockAppointments: Appointment[] = [
@@ -92,6 +95,7 @@ const mockAppointments: Appointment[] = [
 
 const Schedule = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
+  const { settings } = useThemeSettings();
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
@@ -307,6 +311,44 @@ const Schedule = () => {
   
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+      <header 
+        className="text-white shadow-md transition-colors duration-300"
+        style={{ backgroundColor: settings.primaryColor }}
+      >
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate('/dashboard')}
+              className="text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            {settings.logo ? (
+              <img 
+                src={settings.logo} 
+                alt="Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <ShipWheel 
+                className="h-8 w-8"
+                style={{ color: settings.secondaryColor }}
+              />
+            )}
+            <h1 className="text-2xl font-bold">{settings.brandName}</h1>
+            <span className="text-lg ml-2">- Agenda</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
+              {user?.user_metadata?.name || user?.email}
+            </Badge>
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+      
       <div className="container mx-auto px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
