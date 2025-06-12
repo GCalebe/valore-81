@@ -4,77 +4,77 @@ import { addDays, addHours, addMinutes } from 'date-fns';
 import { Appointment, AppointmentFormData } from '@/types/calendar';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 
-// Mock appointments data
+// Mock appointments data for marketing agency
 const mockAppointments: Appointment[] = [
   {
     id: 1,
-    petName: 'Veleiro Azul',
+    petName: 'Estratégia Digital Premium',
     ownerName: 'João Silva',
     phone: '(11) 98765-4321',
     date: new Date(2023, 5, 15, 10, 30),
-    service: 'Manutenção de Casco',
+    service: 'Consultoria de Marketing Digital',
     status: 'confirmado',
-    notes: 'Verificar sistema de ancoragem'
+    notes: 'Reunião para definir estratégia de redes sociais'
   },
   {
     id: 2,
-    petName: 'Lancha Luna',
+    petName: 'Campanha Publicitária Luna',
     ownerName: 'Maria Oliveira',
     phone: '(11) 91234-5678',
     date: new Date(2023, 5, 15, 14, 0),
-    service: 'Inspeção de Segurança',
+    service: 'Criação de Campanha',
     status: 'pendente',
-    notes: 'Renovação de licenças'
+    notes: 'Definir conceito criativo da campanha'
   },
   {
     id: 3,
-    petName: 'Iate Toby',
+    petName: 'Website Corporativo Toby',
     ownerName: 'Pedro Santos',
     phone: '(11) 99876-5432',
     date: new Date(2023, 5, 16, 9, 0),
-    service: 'Vistoria Completa',
+    service: 'Desenvolvimento Web',
     status: 'confirmado',
-    notes: 'Vistoria anual obrigatória'
+    notes: 'Revisão final do layout do site'
   },
   {
     id: 4,
-    petName: 'Catamarã Bella',
+    petName: 'Branding Bella Marine',
     ownerName: 'Ana Costa',
     phone: '(11) 98765-1234',
     date: addDays(new Date(), 1),
-    service: 'Limpeza e Enceramento',
+    service: 'Criação de Identidade Visual',
     status: 'confirmado',
-    notes: 'Preparação para temporada'
+    notes: 'Apresentação das propostas de logo'
   },
   {
     id: 5,
-    petName: 'Barco Thor',
+    petName: 'SEO Optimization Thor',
     ownerName: 'Lucas Ferreira',
     phone: '(11) 97654-3210',
     date: addDays(new Date(), 1),
-    service: 'Revisão de Motor',
+    service: 'Otimização SEO',
     status: 'pendente',
-    notes: 'Motor apresentando ruídos'
+    notes: 'Auditoria técnica do website'
   },
   {
     id: 6,
-    petName: 'Jet Ski Nina',
+    petName: 'Social Media Nina',
     ownerName: 'Carla Souza',
     phone: '(11) 98888-7777',
     date: addHours(new Date(), 3),
-    service: 'Manutenção Preventiva',
+    service: 'Gestão de Redes Sociais',
     status: 'confirmado',
-    notes: 'Chegará 15 minutos antes'
+    notes: 'Planejamento de conteúdo mensal'
   },
   {
     id: 7,
-    petName: 'Escuna Rex',
+    petName: 'E-commerce Rex',
     ownerName: 'Roberto Almeida',
     phone: '(11) 99999-8888',
     date: addMinutes(new Date(), 90),
-    service: 'Vistoria de Segurança',
+    service: 'Desenvolvimento E-commerce',
     status: 'confirmado',
-    notes: 'Documentação em dia'
+    notes: 'Configuração da plataforma de vendas'
   }
 ];
 
@@ -102,7 +102,7 @@ export function useScheduleState() {
     ownerName: '',
     phone: '',
     date: new Date(),
-    service: 'Manutenção de Casco',
+    service: 'Consultoria de Marketing Digital',
     status: 'pendente',
     notes: ''
   });
@@ -130,7 +130,7 @@ export function useScheduleState() {
       ownerName: '',
       phone: '',
       date: new Date(),
-      service: 'Manutenção de Casco',
+      service: 'Consultoria de Marketing Digital',
       status: 'pendente',
       notes: ''
     });

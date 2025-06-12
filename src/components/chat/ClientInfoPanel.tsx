@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { ShipWheel, ChevronDown, ChevronUp } from 'lucide-react';
+import { Anchor, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -58,9 +59,9 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             name: data.nome || 'Cliente sem nome',
             email: data.email,
             phone: data.telefone,
-            clientName: data.client_name, // Using client_name as client name
-            clientSize: data.client_size, // Using client_size as client size
-            clientType: data.client_type, // Using client_type as client type
+            clientName: data.client_name,
+            clientSize: data.client_size,
+            clientType: data.client_type,
             cpfCnpj: data.cpf_cnpj,
             asaasCustomerId: data.asaas_customer_id,
             payments: data.payments,
@@ -99,13 +100,13 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
   if (!selectedChat) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
-        <ShipWheel 
+        <Anchor 
           size={64} 
           className="mb-4 opacity-50"
           style={{ color: settings.primaryColor }}
         />
-        <h3 className="text-xl font-medium mb-2">Informações do Responsável</h3>
-        <p className="text-sm text-center px-4">Selecione uma conversa para ver as informações do Responsável</p>
+        <h3 className="text-xl font-medium mb-2">Informações do Cliente</h3>
+        <p className="text-sm text-center px-4">Selecione uma conversa para ver as informações do cliente</p>
       </div>
     );
   }
