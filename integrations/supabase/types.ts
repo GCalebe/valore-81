@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -72,6 +73,162 @@ export type Database = {
         }
         Relationships: []
       }
+      contacts: {
+        Row: {
+          address: string | null
+          asaas_customer_id: string | null
+          budget: number | null
+          client_name: string | null
+          client_objective: string | null
+          client_sector: string | null
+          client_size: string | null
+          client_type: string | null
+          consultation_stage: string | null
+          contract_date: string | null
+          contract_number: string | null
+          cpf_cnpj: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          kanban_stage: string | null
+          last_contact: string | null
+          last_message: string | null
+          last_message_time: string | null
+          loss_reason: string | null
+          name: string
+          notes: string | null
+          payment: string | null
+          payment_method: string | null
+          phone: string | null
+          responsible_user: string | null
+          sales: number | null
+          session_id: string | null
+          status: string | null
+          tags: string[] | null
+          unread_count: number | null
+          uploaded_files: string[] | null
+        }
+        Insert: {
+          address?: string | null
+          asaas_customer_id?: string | null
+          budget?: number | null
+          client_name?: string | null
+          client_objective?: string | null
+          client_sector?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          consultation_stage?: string | null
+          contract_date?: string | null
+          contract_number?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          kanban_stage?: string | null
+          last_contact?: string | null
+          last_message?: string | null
+          last_message_time?: string | null
+          loss_reason?: string | null
+          name: string
+          notes?: string | null
+          payment?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          responsible_user?: string | null
+          sales?: number | null
+          session_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          unread_count?: number | null
+          uploaded_files?: string[] | null
+        }
+        Update: {
+          address?: string | null
+          asaas_customer_id?: string | null
+          budget?: number | null
+          client_name?: string | null
+          client_objective?: string | null
+          client_sector?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          consultation_stage?: string | null
+          contract_date?: string | null
+          contract_number?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          kanban_stage?: string | null
+          last_contact?: string | null
+          last_message?: string | null
+          last_message_time?: string | null
+          loss_reason?: string | null
+          name?: string
+          notes?: string | null
+          payment?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          responsible_user?: string | null
+          sales?: number | null
+          session_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          unread_count?: number | null
+          uploaded_files?: string[] | null
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          address: string | null
+          avatar: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          last_message: string | null
+          name: string
+          phone: string | null
+          session_id: string
+          time: string | null
+          unread: number | null
+        }
+        Insert: {
+          address?: string | null
+          avatar?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          last_message?: string | null
+          name: string
+          phone?: string | null
+          session_id: string
+          time?: string | null
+          unread?: number | null
+        }
+        Update: {
+          address?: string | null
+          avatar?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          last_message?: string | null
+          name?: string
+          phone?: string | null
+          session_id?: string
+          time?: string | null
+          unread?: number | null
+        }
+        Relationships: []
+      }
       dados_cliente: {
         Row: {
           asaas_customer_id: string | null
@@ -79,15 +236,13 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: number
-          kanban_stage: string | null
           nome: string | null
-          nome_Chat: string | null
+          nome_pet: string | null
           payments: Json | null
-          porte_Chat: string | null
-          raca_Chat: string | null
+          porte_pet: string | null
+          raca_pet: string | null
           sessionid: string | null
           telefone: string | null
-          updated_at: string | null
         }
         Insert: {
           asaas_customer_id?: string | null
@@ -95,15 +250,13 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
-          kanban_stage?: string | null
           nome?: string | null
-          nome_Chat?: string | null
+          nome_pet?: string | null
           payments?: Json | null
-          porte_Chat?: string | null
-          raca_Chat?: string | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
-          updated_at?: string | null
         }
         Update: {
           asaas_customer_id?: string | null
@@ -111,15 +264,58 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
-          kanban_stage?: string | null
           nome?: string | null
-          nome_Chat?: string | null
+          nome_pet?: string | null
           payments?: Json | null
-          porte_Chat?: string | null
-          raca_Chat?: string | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
-          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: string | null
+          embedding: string | null
+          id: number
+          metadata: Json | null
+          titulo: string | null
+        }
+        Insert: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+          titulo?: string | null
+        }
+        Update: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+          titulo?: string | null
+        }
+        Relationships: []
+      }
+      imagens_drive: {
+        Row: {
+          created_at: string | null
+          drive_id: string
+          id: number
+          nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          drive_id: string
+          id?: number
+          nome: string
+        }
+        Update: {
+          created_at?: string | null
+          drive_id?: string
+          id?: number
+          nome?: string
         }
         Relationships: []
       }
@@ -144,6 +340,69 @@ export type Database = {
           id?: number
           message?: Json | null
           session_id?: string
+        }
+        Relationships: []
+      }
+      n8n_chat_history: {
+        Row: {
+          created_at: string | null
+          data: string | null
+          hora: string | null
+          id: number
+          message: Json
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: string | null
+          hora?: string | null
+          id?: number
+          message: Json
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: string | null
+          hora?: string | null
+          id?: number
+          message?: Json
+          session_id?: string
+        }
+        Relationships: []
+      }
+      tokens: {
+        Row: {
+          CachedTokens: string | null
+          CompletionTokens: string | null
+          CostUSD: number | null
+          id: number
+          Input: string | null
+          Output: string | null
+          PromptTokens: string | null
+          Timestamp: string
+          Workflow: string | null
+        }
+        Insert: {
+          CachedTokens?: string | null
+          CompletionTokens?: string | null
+          CostUSD?: number | null
+          id?: number
+          Input?: string | null
+          Output?: string | null
+          PromptTokens?: string | null
+          Timestamp?: string
+          Workflow?: string | null
+        }
+        Update: {
+          CachedTokens?: string | null
+          CompletionTokens?: string | null
+          CostUSD?: number | null
+          id?: number
+          Input?: string | null
+          Output?: string | null
+          PromptTokens?: string | null
+          Timestamp?: string
+          Workflow?: string | null
         }
         Relationships: []
       }
@@ -206,7 +465,16 @@ export type Database = {
       }
       l2_normalize: {
         Args: { "": string } | { "": unknown } | { "": unknown }
-        Returns: string
+        Returns: unknown
+      }
+      match_documents: {
+        Args: { query_embedding: string; match_count?: number; filter?: Json }
+        Returns: {
+          id: number
+          content: string
+          metadata: Json
+          similarity: number
+        }[]
       }
       sparsevec_out: {
         Args: { "": unknown }

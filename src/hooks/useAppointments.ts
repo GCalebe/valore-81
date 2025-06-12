@@ -36,62 +36,19 @@ export function useAppointments() {
     try {
       setLoading(true);
       
-      // Get appointments first
-      const { data: appointmentsData, error: appointmentsError } = await supabase
-        .from('agendamentos')
-        .select('*')
-        .order('data_agendamento', { ascending: true });
+      // Since the agendamentos table doesn't exist, we'll return an empty array
+      // This prevents the application from breaking while the proper table structure is being set up
+      console.log('Agendamentos table not found in database. Returning empty appointments list.');
+      setAppointments([]);
       
-      if (appointmentsError) throw appointmentsError;
-      
-      if (!appointmentsData) {
-        setAppointments([]);
-        return;
-      }
-
-      // Get related cliente and servico data separately to avoid foreign key conflicts
-      const appointmentsWithRelated = await Promise.all(
-        appointmentsData.map(async (appointment) => {
-          const appointmentWithRelated: Appointment = { ...appointment };
-
-          // Fetch cliente data if cliente_id exists
-          if (appointment.cliente_id) {
-            const { data: clienteData } = await supabase
-              .from('dados_cliente')
-              .select('id, nome, telefone, email')
-              .eq('id', appointment.cliente_id)
-              .single();
-            
-            if (clienteData) {
-              appointmentWithRelated.cliente = clienteData;
-            }
-          }
-
-          // Fetch servico data if servico_id exists
-          if (appointment.servico_id) {
-            const { data: servicoData } = await supabase
-              .from('servicos')
-              .select('id, nome, preco, duracao_minutos')
-              .eq('id', appointment.servico_id)
-              .single();
-            
-            if (servicoData) {
-              appointmentWithRelated.servico = servicoData;
-            }
-          }
-
-          return appointmentWithRelated;
-        })
-      );
-      
-      setAppointments(appointmentsWithRelated);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       toast({
         title: "Erro ao carregar agendamentos",
-        description: "Ocorreu um erro ao buscar os agendamentos do banco de dados.",
+        description: "A tabela de agendamentos não foi encontrada no banco de dados.",
         variant: "destructive"
       });
+      setAppointments([]);
     } finally {
       setLoading(false);
     }
@@ -99,21 +56,12 @@ export function useAppointments() {
 
   const addAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_at' | 'updated_at' | 'cliente' | 'servico'>) => {
     try {
-      const { data, error } = await supabase
-        .from('agendamentos')
-        .insert([appointmentData])
-        .select();
-      
-      if (error) throw error;
-      
-      if (data) {
-        // Refresh appointments to get the complete data with relations
-        await fetchAppointments();
-        toast({
-          title: "Agendamento criado",
-          description: "O agendamento foi criado com sucesso.",
-        });
-      }
+      // Since the table doesn't exist, we'll show a message to the user
+      toast({
+        title: "Funcionalidade não disponível",
+        description: "A tabela de agendamentos ainda não foi configurada no banco de dados.",
+        variant: "destructive",
+      });
     } catch (error) {
       console.error('Error adding appointment:', error);
       toast({
@@ -126,19 +74,10 @@ export function useAppointments() {
 
   const updateAppointment = async (id: number, appointmentData: Partial<Appointment>) => {
     try {
-      const { error } = await supabase
-        .from('agendamentos')
-        .update(appointmentData)
-        .eq('id', id);
-      
-      if (error) throw error;
-      
-      // Refetch to get updated data
-      await fetchAppointments();
-      
       toast({
-        title: "Agendamento atualizado",
-        description: "As informações do agendamento foram atualizadas.",
+        title: "Funcionalidade não disponível",
+        description: "A tabela de agendamentos ainda não foi configurada no banco de dados.",
+        variant: "destructive",
       });
     } catch (error) {
       console.error('Error updating appointment:', error);
@@ -152,18 +91,9 @@ export function useAppointments() {
 
   const deleteAppointment = async (id: number) => {
     try {
-      const { error } = await supabase
-        .from('agendamentos')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw error;
-      
-      setAppointments(prev => prev.filter(appointment => appointment.id !== id));
-      
       toast({
-        title: "Agendamento removido",
-        description: "O agendamento foi removido com sucesso.",
+        title: "Funcionalidade não disponível",
+        description: "A tabela de agendamentos ainda não foi configurada no banco de dados.",
         variant: "destructive",
       });
     } catch (error) {
