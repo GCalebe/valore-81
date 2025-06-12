@@ -9,85 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      agendamentos: {
-        Row: {
-          cliente_id: number | null
-          created_at: string | null
-          data_agendamento: string
-          id: number
-          observacoes: string | null
-          servico_id: number | null
-          status: string | null
-          updated_at: string | null
-          valor: number | null
-        }
-        Insert: {
-          cliente_id?: number | null
-          created_at?: string | null
-          data_agendamento: string
-          id?: number
-          observacoes?: string | null
-          servico_id?: number | null
-          status?: string | null
-          updated_at?: string | null
-          valor?: number | null
-        }
-        Update: {
-          cliente_id?: number | null
-          created_at?: string | null
-          data_agendamento?: string
-          id?: number
-          observacoes?: string | null
-          servico_id?: number | null
-          status?: string | null
-          updated_at?: string | null
-          valor?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "agendamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "agendamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "agendamentos_servico_id_fkey"
-            columns: ["servico_id"]
-            isOneToOne: false
-            referencedRelation: "servicos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_agendamentos_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_agendamentos_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_agendamentos_servico"
-            columns: ["servico_id"]
-            isOneToOne: false
-            referencedRelation: "servicos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       chat_messages: {
         Row: {
           active: boolean | null
@@ -151,181 +72,249 @@ export type Database = {
         }
         Relationships: []
       }
-      client_custom_values: {
+      contacts: {
         Row: {
-          client_id: number
-          created_at: string
-          field_id: string | null
-          field_value: Json | null
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          client_id: number
-          created_at?: string
-          field_id?: string | null
-          field_value?: Json | null
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          client_id?: number
-          created_at?: string
-          field_id?: string | null
-          field_value?: Json | null
-          id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "client_custom_values_field_id_fkey"
-            columns: ["field_id"]
-            isOneToOne: false
-            referencedRelation: "custom_fields"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      consultas: {
-        Row: {
-          cliente_id: number | null
+          address: string | null
+          asaas_customer_id: string | null
+          budget: number | null
+          client_name: string | null
+          client_objective: string | null
+          client_sector: string | null
+          client_size: string | null
+          client_type: string | null
+          consultation_stage: string | null
+          contract_date: string | null
+          contract_number: string | null
+          cpf_cnpj: string | null
           created_at: string | null
-          data_consulta: string
-          id: number
-          observacoes: string | null
-          status: string | null
-          tipo: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          cliente_id?: number | null
-          created_at?: string | null
-          data_consulta: string
-          id?: number
-          observacoes?: string | null
-          status?: string | null
-          tipo?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          cliente_id?: number | null
-          created_at?: string | null
-          data_consulta?: string
-          id?: number
-          observacoes?: string | null
-          status?: string | null
-          tipo?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "consultas_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "consultas_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_consultas_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_consultas_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      custom_fields: {
-        Row: {
-          created_at: string
-          field_name: string
-          field_options: Json | null
-          field_type: string
+          email: string | null
           id: string
-          is_required: boolean | null
-          updated_at: string
+          kanban_stage: string | null
+          last_contact: string | null
+          last_message: string | null
+          last_message_time: string | null
+          loss_reason: string | null
+          name: string
+          notes: string | null
+          payment: string | null
+          payment_method: string | null
+          phone: string | null
+          responsible_user: string | null
+          sales: number | null
+          session_id: string | null
+          status: string | null
+          tags: string[] | null
+          unread_count: number | null
+          uploaded_files: string[] | null
         }
         Insert: {
-          created_at?: string
-          field_name: string
-          field_options?: Json | null
-          field_type: string
+          address?: string | null
+          asaas_customer_id?: string | null
+          budget?: number | null
+          client_name?: string | null
+          client_objective?: string | null
+          client_sector?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          consultation_stage?: string | null
+          contract_date?: string | null
+          contract_number?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
           id?: string
-          is_required?: boolean | null
-          updated_at?: string
+          kanban_stage?: string | null
+          last_contact?: string | null
+          last_message?: string | null
+          last_message_time?: string | null
+          loss_reason?: string | null
+          name: string
+          notes?: string | null
+          payment?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          responsible_user?: string | null
+          sales?: number | null
+          session_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          unread_count?: number | null
+          uploaded_files?: string[] | null
         }
         Update: {
-          created_at?: string
-          field_name?: string
-          field_options?: Json | null
-          field_type?: string
+          address?: string | null
+          asaas_customer_id?: string | null
+          budget?: number | null
+          client_name?: string | null
+          client_objective?: string | null
+          client_sector?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          consultation_stage?: string | null
+          contract_date?: string | null
+          contract_number?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string | null
+          email?: string | null
           id?: string
-          is_required?: boolean | null
-          updated_at?: string
+          kanban_stage?: string | null
+          last_contact?: string | null
+          last_message?: string | null
+          last_message_time?: string | null
+          loss_reason?: string | null
+          name?: string
+          notes?: string | null
+          payment?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          responsible_user?: string | null
+          sales?: number | null
+          session_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          unread_count?: number | null
+          uploaded_files?: string[] | null
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          address: string | null
+          avatar: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          last_message: string | null
+          name: string
+          phone: string | null
+          session_id: string
+          time: string | null
+          unread: number | null
+        }
+        Insert: {
+          address?: string | null
+          avatar?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          last_message?: string | null
+          name: string
+          phone?: string | null
+          session_id: string
+          time?: string | null
+          unread?: number | null
+        }
+        Update: {
+          address?: string | null
+          avatar?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          last_message?: string | null
+          name?: string
+          phone?: string | null
+          session_id?: string
+          time?: string | null
+          unread?: number | null
         }
         Relationships: []
       }
       dados_cliente: {
         Row: {
           asaas_customer_id: string | null
-          client_name: string | null
-          client_size: string | null
-          client_type: string | null
           cpf_cnpj: string | null
           created_at: string | null
           email: string | null
           id: number
-          kanban_stage: string | null
           nome: string | null
+          nome_pet: string | null
           payments: Json | null
+          porte_pet: string | null
+          raca_pet: string | null
           sessionid: string | null
           telefone: string | null
-          updated_at: string | null
         }
         Insert: {
           asaas_customer_id?: string | null
-          client_name?: string | null
-          client_size?: string | null
-          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
-          kanban_stage?: string | null
           nome?: string | null
+          nome_pet?: string | null
           payments?: Json | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
-          updated_at?: string | null
         }
         Update: {
           asaas_customer_id?: string | null
-          client_name?: string | null
-          client_size?: string | null
-          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
-          kanban_stage?: string | null
           nome?: string | null
+          nome_pet?: string | null
           payments?: Json | null
+          porte_pet?: string | null
+          raca_pet?: string | null
           sessionid?: string | null
           telefone?: string | null
-          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: string | null
+          embedding: string | null
+          id: number
+          metadata: Json | null
+          titulo: string | null
+        }
+        Insert: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+          titulo?: string | null
+        }
+        Update: {
+          content?: string | null
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+          titulo?: string | null
+        }
+        Relationships: []
+      }
+      imagens_drive: {
+        Row: {
+          created_at: string | null
+          drive_id: string
+          id: number
+          nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          drive_id: string
+          id?: number
+          nome: string
+        }
+        Update: {
+          created_at?: string | null
+          drive_id?: string
+          id?: number
+          nome?: string
         }
         Relationships: []
       }
@@ -353,172 +342,72 @@ export type Database = {
         }
         Relationships: []
       }
-      orcamentos: {
+      n8n_chat_history: {
         Row: {
-          cliente_id: number | null
           created_at: string | null
-          data_expiracao: string | null
-          descricao: string | null
+          data: string | null
+          hora: string | null
           id: number
-          procedimentos: Json | null
-          status: string | null
-          titulo: string
-          updated_at: string | null
-          valor_total: number
+          message: Json
+          session_id: string
         }
         Insert: {
-          cliente_id?: number | null
           created_at?: string | null
-          data_expiracao?: string | null
-          descricao?: string | null
+          data?: string | null
+          hora?: string | null
           id?: number
-          procedimentos?: Json | null
-          status?: string | null
-          titulo: string
-          updated_at?: string | null
-          valor_total: number
+          message: Json
+          session_id: string
         }
         Update: {
-          cliente_id?: number | null
           created_at?: string | null
-          data_expiracao?: string | null
-          descricao?: string | null
+          data?: string | null
+          hora?: string | null
           id?: number
-          procedimentos?: Json | null
-          status?: string | null
-          titulo?: string
-          updated_at?: string | null
-          valor_total?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_orcamentos_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_orcamentos_cliente"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orcamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "clientes_completos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orcamentos_cliente_id_fkey"
-            columns: ["cliente_id"]
-            isOneToOne: false
-            referencedRelation: "dados_cliente"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      procedimentos: {
-        Row: {
-          ativo: boolean | null
-          categoria: string | null
-          created_at: string | null
-          descricao: string | null
-          duracao_estimada: number | null
-          id: number
-          nome: string
-          preco: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          ativo?: boolean | null
-          categoria?: string | null
-          created_at?: string | null
-          descricao?: string | null
-          duracao_estimada?: number | null
-          id?: number
-          nome: string
-          preco?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          ativo?: boolean | null
-          categoria?: string | null
-          created_at?: string | null
-          descricao?: string | null
-          duracao_estimada?: number | null
-          id?: number
-          nome?: string
-          preco?: number | null
-          updated_at?: string | null
+          message?: Json
+          session_id?: string
         }
         Relationships: []
       }
-      servicos: {
+      tokens: {
         Row: {
-          ativo: boolean | null
-          categoria: string | null
-          created_at: string | null
-          descricao: string | null
-          duracao_minutos: number | null
+          CachedTokens: string | null
+          CompletionTokens: string | null
+          CostUSD: number | null
           id: number
-          nome: string
-          preco: number | null
-          updated_at: string | null
+          Input: string | null
+          Output: string | null
+          PromptTokens: string | null
+          Timestamp: string
+          Workflow: string | null
         }
         Insert: {
-          ativo?: boolean | null
-          categoria?: string | null
-          created_at?: string | null
-          descricao?: string | null
-          duracao_minutos?: number | null
+          CachedTokens?: string | null
+          CompletionTokens?: string | null
+          CostUSD?: number | null
           id?: number
-          nome: string
-          preco?: number | null
-          updated_at?: string | null
+          Input?: string | null
+          Output?: string | null
+          PromptTokens?: string | null
+          Timestamp?: string
+          Workflow?: string | null
         }
         Update: {
-          ativo?: boolean | null
-          categoria?: string | null
-          created_at?: string | null
-          descricao?: string | null
-          duracao_minutos?: number | null
+          CachedTokens?: string | null
+          CompletionTokens?: string | null
+          CostUSD?: number | null
           id?: number
-          nome?: string
-          preco?: number | null
-          updated_at?: string | null
+          Input?: string | null
+          Output?: string | null
+          PromptTokens?: string | null
+          Timestamp?: string
+          Workflow?: string | null
         }
         Relationships: []
       }
     }
     Views: {
-      clientes_completos: {
-        Row: {
-          asaas_customer_id: string | null
-          client_name: string | null
-          client_size: string | null
-          client_type: string | null
-          cpf_cnpj: string | null
-          created_at: string | null
-          email: string | null
-          id: number | null
-          kanban_stage: string | null
-          nome: string | null
-          payments: Json | null
-          sessionid: string | null
-          telefone: string | null
-          total_agendamentos: number | null
-          total_consultas: number | null
-          total_orcamentos: number | null
-          ultima_consulta: string | null
-          ultimo_agendamento: string | null
-          updated_at: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       binary_quantize: {
@@ -575,11 +464,16 @@ export type Database = {
       }
       l2_normalize: {
         Args: { "": string } | { "": unknown } | { "": unknown }
-        Returns: string
+        Returns: unknown
       }
-      limpar_dados_orfaos: {
-        Args: Record<PropertyKey, never>
-        Returns: number
+      match_documents: {
+        Args: { query_embedding: string; match_count?: number; filter?: Json }
+        Returns: {
+          id: number
+          content: string
+          metadata: Json
+          similarity: number
+        }[]
       }
       sparsevec_out: {
         Args: { "": unknown }
