@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { CustomField, ClientCustomValue } from '@/types/customFields';
+import { CustomField, ClientCustomValue, CustomFieldWithValue } from '@/types/customFields';
 
 // Stub implementation for custom fields functionality
 export function useCustomFields() {
@@ -15,6 +15,11 @@ export function useCustomFields() {
   const addCustomField = async (field: Omit<CustomField, 'id' | 'created_at' | 'updated_at'>) => {
     // Stub implementation
     return Promise.resolve();
+  };
+
+  const createCustomField = async (field: Omit<CustomField, 'id' | 'created_at' | 'updated_at'>) => {
+    // Stub implementation - alias for addCustomField
+    return addCustomField(field);
   };
 
   const updateCustomField = async (id: string, field: Partial<CustomField>) => {
@@ -32,6 +37,11 @@ export function useCustomFields() {
     return [];
   };
 
+  const getCustomFieldsWithValues = async (clientId: number): Promise<CustomFieldWithValue[]> => {
+    // Stub implementation - return empty array with values
+    return [];
+  };
+
   const saveClientCustomValues = async (clientId: number, values: { fieldId: string; value: any }[]) => {
     // Stub implementation
     return Promise.resolve();
@@ -42,9 +52,11 @@ export function useCustomFields() {
     loading,
     fetchCustomFields,
     addCustomField,
+    createCustomField,
     updateCustomField,
     deleteCustomField,
     fetchClientCustomValues,
+    getCustomFieldsWithValues,
     saveClientCustomValues
   };
 }

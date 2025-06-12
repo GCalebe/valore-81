@@ -77,8 +77,14 @@ const EditClientDialog = ({
       // Save standard contact data
       await handleEditContact();
       
+      // Convert custom values object to array format expected by saveClientCustomValues
+      const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
+        fieldId,
+        value
+      }));
+      
       // Save custom field values
-      await saveClientCustomValues(parseInt(selectedContact.id), customValues);
+      await saveClientCustomValues(parseInt(selectedContact.id), customValuesArray);
       
       onOpenChange(false);
     } catch (error) {
