@@ -80,7 +80,7 @@ export const useClientManagement = () => {
             notes: '',
             lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
             kanbanStage: kanbanStage,
-            sessionId: client.sessionid // Incluir sessionId para associação com conversas
+            sessionId: client.sessionid
           };
         });
         

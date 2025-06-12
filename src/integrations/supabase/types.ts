@@ -231,10 +231,14 @@ export type Database = {
       dados_cliente: {
         Row: {
           asaas_customer_id: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
           cpf_cnpj: string | null
           created_at: string | null
           email: string | null
           id: number
+          kanban_stage: string | null
           nome: string | null
           nome_pet: string | null
           payments: Json | null
@@ -245,10 +249,14 @@ export type Database = {
         }
         Insert: {
           asaas_customer_id?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
+          kanban_stage?: string | null
           nome?: string | null
           nome_pet?: string | null
           payments?: Json | null
@@ -259,10 +267,14 @@ export type Database = {
         }
         Update: {
           asaas_customer_id?: string | null
+          client_name?: string | null
+          client_size?: string | null
+          client_type?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
           email?: string | null
           id?: number
+          kanban_stage?: string | null
           nome?: string | null
           nome_pet?: string | null
           payments?: Json | null

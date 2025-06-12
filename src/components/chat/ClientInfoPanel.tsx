@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ShipWheel, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -51,16 +50,16 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             name: data.nome || 'Cliente sem nome',
             email: data.email,
             phone: data.telefone,
-            clientName: data.nome_pet, // Using nome_pet as client name
-            clientSize: data.porte_pet, // Using porte_pet as client size
-            clientType: data.raca_pet, // Using raca_pet as client type
+            clientName: data.client_name, // Using client_name as client name
+            clientSize: data.client_size, // Using client_size as client size
+            clientType: data.client_type, // Using client_type as client type
             cpfCnpj: data.cpf_cnpj,
             asaasCustomerId: data.asaas_customer_id,
             payments: data.payments,
             status: 'Active',
             notes: '',
             lastContact: data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-            kanbanStage: 'Entraram', // Default stage since kanban_stage doesn't exist in dados_cliente
+            kanbanStage: data.kanban_stage || 'Entraram', // Use kanban_stage from database
             sessionId: data.sessionid,
             tags: [],
             responsibleUser: '',
@@ -169,17 +168,17 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
                   </Card>
                   
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Pet</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Cliente</h3>
                     <p>{clientData?.clientName || 'Não informado'}</p>
                   </Card>
                   
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Raça do Pet</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de Cliente</h3>
                     <p>{clientData?.clientType || 'Não informado'}</p>
                   </Card>
 
                   <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Porte do Pet</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tamanho do Cliente</h3>
                     <p>{clientData?.clientSize || 'Não informado'}</p>
                   </Card>
                   
