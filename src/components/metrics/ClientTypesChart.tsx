@@ -61,7 +61,13 @@ const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = fal
           </div>
         ) : (
           <div className="h-80 flex items-center justify-center text-gray-500">
-            Nenhum dado disponível
+            <div className="text-center">
+              <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>Nenhum tipo de cliente definido</p>
+              <p className="text-sm text-gray-400 mt-2">
+                Os clientes precisam ter o campo "Tipo de Cliente" preenchido
+              </p>
+            </div>
           </div>
         )}
       </CardContent>

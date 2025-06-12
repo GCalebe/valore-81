@@ -20,6 +20,7 @@ interface Client {
   phone: string;
   marketingClients: number;
   lastVisit: string;
+  status?: string;
 }
 
 interface RecentClientsTableProps {
@@ -32,6 +33,27 @@ const RecentClientsTable: React.FC<RecentClientsTableProps> = ({ clients, loadin
   
   const handleViewAllClients = () => {
     navigate('/clients');
+  };
+
+  const getStatusColor = (status?: string) => {
+    if (!status) return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300';
+    
+    switch (status.toLowerCase()) {
+      case 'entraram':
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+      case 'contato feito':
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
+      case 'conversa iniciada':
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+      case 'reunião':
+        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
+      case 'proposta':
+        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+      case 'fechamento':
+        return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300';
+      default:
+        return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300';
+    }
   };
   
   return (
@@ -57,7 +79,7 @@ const RecentClientsTable: React.FC<RecentClientsTableProps> = ({ clients, loadin
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Telefone</TableHead>
-                  <TableHead>Projetos</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Cadastro</TableHead>
                 </TableRow>
               </TableHeader>
@@ -74,8 +96,11 @@ const RecentClientsTable: React.FC<RecentClientsTableProps> = ({ clients, loadin
                       <TableCell className="font-medium">{client.name}</TableCell>
                       <TableCell>{client.phone}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/40">
-                          {client.marketingClients} {client.marketingClients !== 1 ? 'projetos' : 'projeto'}
+                        <Badge 
+                          variant="outline" 
+                          className={`${getStatusColor(client.status)} border-0`}
+                        >
+                          {client.status || 'Entraram'}
                         </Badge>
                       </TableCell>
                       <TableCell>{client.lastVisit}</TableCell>

@@ -18,7 +18,7 @@ export function useClientStats() {
   const refetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching client statistics from dados_cliente table...');
+      console.log('Fetching real client statistics from dados_cliente table...');
       
       // Fetch total clients
       const { count: totalClients, error: totalClientsError } = await supabase
@@ -36,14 +36,14 @@ export function useClientStats() {
       const { count: totalMarketingClients, error: marketingClientsError } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
-        .not('client_name', 'is', null);
+        .not('client_name', 'is', null)
+        .neq('client_name', '');
 
       if (marketingClientsError) {
         console.error('Error fetching marketing clients:', marketingClientsError);
-        // Não lançar erro, continuar com 0
       }
 
-      console.log(`Marketing clients count: ${totalMarketingClients}`);
+      console.log(`Marketing clients count: ${totalMarketingClients || 0}`);
 
       // Fetch new clients this month
       const today = new Date();
@@ -57,12 +57,11 @@ export function useClientStats() {
 
       if (newClientsError) {
         console.error('Error fetching new clients this month:', newClientsError);
-        // Não lançar erro, continuar com 0
       }
 
-      console.log(`New clients this month: ${newClientsThisMonth}`);
+      console.log(`New clients this month: ${newClientsThisMonth || 0}`);
 
-      // Fetch monthly growth data
+      // Fetch monthly growth data for the current year
       const currentYear = new Date().getFullYear();
       const monthlyGrowthData = [];
       
@@ -91,11 +90,11 @@ export function useClientStats() {
       const { data: clientTypesData, error: clientTypesError } = await supabase
         .from('dados_cliente')
         .select('client_type')
-        .not('client_type', 'is', null);
+        .not('client_type', 'is', null)
+        .neq('client_type', '');
 
       if (clientTypesError) {
         console.error('Error fetching client types:', clientTypesError);
-        // Não lançar erro, continuar com array vazio
       }
 
       const typeCounts = {};
@@ -119,16 +118,15 @@ export function useClientStats() {
 
       console.log(`Client types:`, clientTypes);
 
-      // Fetch recent clients
+      // Fetch recent clients with better data handling
       const { data: recentClientsData, error: recentClientsError } = await supabase
         .from('dados_cliente')
-        .select('id, nome, telefone, client_name, created_at')
+        .select('id, nome, telefone, client_name, created_at, kanban_stage')
         .order('created_at', { ascending: false })
         .limit(5);
 
       if (recentClientsError) {
         console.error('Error fetching recent clients:', recentClientsError);
-        // Não lançar erro, continuar com array vazio
       }
 
       const recentClients = recentClientsData?.map(client => ({
@@ -136,12 +134,13 @@ export function useClientStats() {
         name: client.nome || 'Cliente sem nome',
         phone: client.telefone || 'Não informado',
         marketingClients: client.client_name ? 1 : 0,
-        lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
+        lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
+        status: client.kanban_stage || 'Entraram'
       })) || [];
 
       console.log(`Recent clients:`, recentClients);
 
-      // Update stats
+      // Update stats with real data
       setStats({
         totalClients: totalClients || 0,
         totalMarketingClients: totalMarketingClients || 0,
@@ -151,7 +150,7 @@ export function useClientStats() {
         recentClients
       });
 
-      console.log('Client statistics updated successfully');
+      console.log('Client statistics updated successfully with real data');
 
     } catch (error) {
       console.error('Error fetching stats:', error);
