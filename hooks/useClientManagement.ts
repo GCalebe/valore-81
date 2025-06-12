@@ -189,7 +189,7 @@ export const useClientManagement = () => {
         });
         
         try {
-          await fetch('https://webhook.n8nlabz.com.br/webhook/cria_usuario', {
+          await fetch('https://webhook.comercial247.com.br/webhook/cria_usuario', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -241,7 +241,7 @@ export const useClientManagement = () => {
       });
       
       try {
-        await fetch('https://webhook.n8nlabz.com.br/webhook/edita_usuario', {
+        await fetch('https://webhook.comercial247.com.br/webhook/edita_usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -288,7 +288,7 @@ export const useClientManagement = () => {
       });
       
       try {
-        await fetch('https://webhook.n8nlabz.com.br/webhook/exclui_usuario', {
+        await fetch('https://webhook.comercial247.com.br/webhook/exclui_usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -344,7 +344,7 @@ export const useClientManagement = () => {
     if (!selectedContact) return;
     
     try {
-      const response = await fetch('https://webhook.n8nlabz.com.br/webhook/envia_mensagem', {
+      const response = await fetch('https://webhook.comercial247.com.br/webhook/envia_mensagem', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
