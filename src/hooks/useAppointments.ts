@@ -36,8 +36,7 @@ export function useAppointments() {
     try {
       setLoading(true);
       
-      // Since we're adapting to a marketing agency system, we'll use the dados_cliente table
-      // to simulate appointments by showing recent client interactions
+      // Since agendamentos table doesn't exist, we'll simulate appointments using client data
       const { data, error } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -51,11 +50,11 @@ export function useAppointments() {
       }
       
       // Transform client data into appointment-like structure for compatibility
-      const simulatedAppointments: Appointment[] = data?.map((client, index) => ({
+      const simulatedAppointments: Appointment[] = data?.map((client) => ({
         id: client.id,
         cliente_id: client.id,
         data_agendamento: client.created_at || new Date().toISOString(),
-        status: 'Agendado',
+        status: client.kanban_stage || 'Agendado',
         observacoes: `Cliente de marketing digital - ${client.client_type || 'Tipo não definido'}`,
         created_at: client.created_at,
         updated_at: client.created_at,
@@ -64,6 +63,12 @@ export function useAppointments() {
           nome: client.nome || 'Cliente sem nome',
           telefone: client.telefone || 'Não informado',
           email: client.email || 'Não informado'
+        },
+        servico: {
+          id: 1,
+          nome: `Consultoria ${client.client_type || 'Marketing'}`,
+          preco: 500,
+          duracao_minutos: 120
         }
       })) || [];
       

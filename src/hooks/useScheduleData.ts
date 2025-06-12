@@ -29,74 +29,42 @@ export function useScheduleData() {
         setLoading(true);
       }
       
-      console.log('Fetching schedule data from agendamentos table...');
+      console.log('Fetching schedule data from dados_cliente table...');
       
-      // Fetch appointments first
-      const { data: appointmentsData, error: appointmentsError } = await supabase
-        .from('agendamentos')
+      // Since agendamentos table doesn't exist, we'll simulate schedule events using client data
+      const { data: clientsData, error: clientsError } = await supabase
+        .from('dados_cliente')
         .select('*')
-        .order('data_agendamento', { ascending: true });
+        .order('created_at', { ascending: true })
+        .limit(20);
       
-      if (appointmentsError) {
-        console.error('Error fetching appointments:', appointmentsError);
-        throw appointmentsError;
+      if (clientsError) {
+        console.error('Error fetching clients for schedule:', clientsError);
+        throw clientsError;
       }
       
-      console.log(`Found ${appointmentsData?.length || 0} appointments from database`);
-      console.log('Appointments data:', appointmentsData);
+      console.log(`Found ${clientsData?.length || 0} clients for schedule simulation`);
       
-      if (appointmentsData && appointmentsData.length > 0) {
-        // Get related data separately to avoid foreign key conflicts
-        const scheduleEvents: ScheduleEvent[] = await Promise.all(
-          appointmentsData.map(async (appointment) => {
-            const appointmentDate = new Date(appointment.data_agendamento);
-            let clientName = 'Cliente não identificado';
-            let clientPhone = 'Não informado';
-            let serviceName = appointment.observacoes || 'Serviço não especificado';
-
-            // Fetch client data if cliente_id exists
-            if (appointment.cliente_id) {
-              const { data: clientData } = await supabase
-                .from('dados_cliente')
-                .select('nome, telefone')
-                .eq('id', appointment.cliente_id)
-                .single();
-              
-              if (clientData) {
-                clientName = clientData.nome || 'Cliente não identificado';
-                clientPhone = clientData.telefone || 'Não informado';
-              }
-            }
-
-            // Fetch service data if servico_id exists
-            if (appointment.servico_id) {
-              const { data: serviceData } = await supabase
-                .from('servicos')
-                .select('nome')
-                .eq('id', appointment.servico_id)
-                .single();
-              
-              if (serviceData) {
-                serviceName = serviceData.nome || serviceName;
-              }
-            }
-            
-            return {
-              id: appointment.id,
-              title: `${serviceName} - ${clientName}`,
-              date: appointmentDate,
-              time: appointmentDate.toLocaleTimeString('pt-BR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              }),
-              clientName: clientName,
-              phone: clientPhone,
-              service: serviceName,
-              status: appointment.status || 'agendado',
-              notes: appointment.observacoes
-            };
-          })
-        );
+      if (clientsData && clientsData.length > 0) {
+        // Transform client data into schedule events
+        const scheduleEvents: ScheduleEvent[] = clientsData.map((client) => {
+          const clientDate = new Date(client.created_at || new Date());
+          
+          return {
+            id: client.id,
+            title: `Consulta de Marketing - ${client.nome || 'Cliente'}`,
+            date: clientDate,
+            time: clientDate.toLocaleTimeString('pt-BR', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            }),
+            clientName: client.nome || 'Cliente não identificado',
+            phone: client.telefone || 'Não informado',
+            service: `Consultoria ${client.client_type || 'Marketing Digital'}`,
+            status: client.kanban_stage || 'Entraram',
+            notes: `Cliente: ${client.client_name || 'Não especificado'} - Tipo: ${client.client_type || 'Não especificado'}`
+          };
+        });
         
         setEvents(scheduleEvents);
         console.log(`Successfully processed ${scheduleEvents.length} schedule events`);
@@ -104,25 +72,25 @@ export function useScheduleData() {
         if (showRefreshingState) {
           toast({
             title: "Dados atualizados",
-            description: `${scheduleEvents.length} agendamentos carregados com sucesso.`,
+            description: `${scheduleEvents.length} eventos de agenda carregados com sucesso.`,
           });
         }
       } else {
-        console.log('No appointments found in database');
+        console.log('No clients found for schedule simulation');
         setEvents([]);
         
         if (showRefreshingState) {
           toast({
-            title: "Nenhum agendamento encontrado",
-            description: "Não há agendamentos cadastrados no momento.",
+            title: "Nenhum evento encontrado",
+            description: "Não há eventos de agenda no momento.",
           });
         }
       }
     } catch (error) {
       console.error('Error fetching schedule data:', error);
       toast({
-        title: "Erro ao carregar agendamentos",
-        description: "Ocorreu um erro ao carregar os agendamentos. Tente novamente.",
+        title: "Erro ao carregar agenda",
+        description: "Ocorreu um erro ao carregar os eventos da agenda. Tente novamente.",
         variant: "destructive"
       });
       // Em caso de erro, definir array vazio para evitar estados indefinidos

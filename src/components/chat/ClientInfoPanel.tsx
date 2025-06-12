@@ -45,6 +45,14 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
         }
 
         if (data) {
+          // Ensure kanban_stage is a valid kanban stage value, default to 'Entraram' if invalid
+          const validKanbanStages: Contact['kanbanStage'][] = [
+            'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
+          ];
+          const kanbanStage = validKanbanStages.includes(data.kanban_stage as Contact['kanbanStage']) 
+            ? data.kanban_stage as Contact['kanbanStage']
+            : 'Entraram';
+
           const formattedClient: Contact = {
             id: data.id.toString(),
             name: data.nome || 'Cliente sem nome',
@@ -59,7 +67,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             status: 'Active',
             notes: '',
             lastContact: data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-            kanbanStage: data.kanban_stage || 'Entraram', // Use kanban_stage from database
+            kanbanStage: kanbanStage,
             sessionId: data.sessionid,
             tags: [],
             responsibleUser: '',
