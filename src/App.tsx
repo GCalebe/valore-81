@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeSettingsProvider } from "@/context/ThemeSettingsContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Auth from "@/pages/Auth";
 import Index from "./pages/Index";
@@ -25,96 +26,98 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/schedule"
-                element={
-                  <ProtectedRoute>
-                    <Schedule />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/clients"
-                element={
-                  <ProtectedRoute>
-                    <ClientsDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chats"
-                element={
-                  <ProtectedRoute>
-                    <ChatsDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/metrics"
-                element={
-                  <ProtectedRoute>
-                    <MetricsDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/knowledge"
-                element={
-                  <ProtectedRoute>
-                    <KnowledgeManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/evolution"
-                element={
-                  <ProtectedRoute>
-                    <Evolution />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/agent-config"
-                element={
-                  <ProtectedRoute>
-                    <AgentConfig />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/theme-settings"
-                element={
-                  <ProtectedRoute>
-                    <ThemeSettings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+        <ThemeSettingsProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Index />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/schedule"
+                  element={
+                    <ProtectedRoute>
+                      <Schedule />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/clients"
+                  element={
+                    <ProtectedRoute>
+                      <ClientsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chats"
+                  element={
+                    <ProtectedRoute>
+                      <ChatsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/metrics"
+                  element={
+                    <ProtectedRoute>
+                      <MetricsDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/knowledge"
+                  element={
+                    <ProtectedRoute>
+                      <KnowledgeManager />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/evolution"
+                  element={
+                    <ProtectedRoute>
+                      <Evolution />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/agent-config"
+                  element={
+                    <ProtectedRoute>
+                      <AgentConfig />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/theme-settings"
+                  element={
+                    <ProtectedRoute>
+                      <ThemeSettings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </ThemeSettingsProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
