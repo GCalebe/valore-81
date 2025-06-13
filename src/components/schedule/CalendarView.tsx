@@ -62,16 +62,33 @@ export function CalendarView({
     end: displayPeriod.end 
   });
 
-  // Get events for a specific day
+  // Get events for a specific day - buscar em TODOS os eventos disponíveis
   const getEventsForDay = (day: Date) => {
-    return events.filter(event => {
+    console.log(`Buscando eventos para o dia ${format(day, 'yyyy-MM-dd')}...`);
+    
+    const dayEvents = events.filter(event => {
+      if (!event.start) {
+        console.warn('Evento sem data de início:', event);
+        return false;
+      }
+      
       try {
         const eventDate = parseISO(event.start);
-        return isSameDay(eventDate, day);
-      } catch {
+        const isEventOnThisDay = isSameDay(eventDate, day);
+        
+        if (isEventOnThisDay) {
+          console.log(`Evento encontrado para ${format(day, 'yyyy-MM-dd')}:`, event.summary);
+        }
+        
+        return isEventOnThisDay;
+      } catch (error) {
+        console.error('Erro ao processar data do evento:', event.start, error);
         return false;
       }
     });
+    
+    console.log(`Total de eventos encontrados para ${format(day, 'yyyy-MM-dd')}:`, dayEvents.length);
+    return dayEvents;
   };
 
   const weekDays = ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'];
@@ -116,6 +133,15 @@ export function CalendarView({
       onEventClick(event);
     }
   };
+
+  // Log para debug
+  console.log('CalendarView renderizando com:', {
+    totalEvents: events.length,
+    timeFilter,
+    currentMonth: format(currentMonth, 'yyyy-MM'),
+    displayPeriodStart: format(displayPeriod.start, 'yyyy-MM-dd'),
+    displayPeriodEnd: format(displayPeriod.end, 'yyyy-MM-dd')
+  });
 
   return (
     <div className="bg-white dark:bg-gray-800 border rounded-lg">
