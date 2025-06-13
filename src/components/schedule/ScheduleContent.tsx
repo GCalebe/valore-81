@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { isSameDay, parseISO } from 'date-fns';
+import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
@@ -80,8 +80,7 @@ export function ScheduleContent({
         case 'dia':
           return selectedDate ? isSameDay(eventDate, selectedDate) : false;
         case 'semana':
-          // Implementation for week filter can be added
-          return true;
+          return isSameWeek(eventDate, today, { weekStartsOn: 0 }); // Domingo como início da semana
         case 'mes':
         default:
           return true;
@@ -136,6 +135,7 @@ export function ScheduleContent({
           events={filteredEvents}
           currentMonth={currentMonth}
           onMonthChange={setCurrentMonth}
+          timeFilter={timeFilter}
         />
       ) : (
         <div className="bg-white dark:bg-gray-800 border rounded-lg p-6">
