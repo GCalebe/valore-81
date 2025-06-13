@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { isDateInPeriod } from '@/utils/dateUtils';
 
 export function useConversationMetrics() {
   const [metrics, setMetrics] = useState({
@@ -19,10 +20,10 @@ export function useConversationMetrics() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const refetchMetrics = useCallback(async () => {
+  const refetchMetrics = useCallback(async (dateFilter: string = 'week') => {
     try {
       setLoading(true);
-      console.log('Fetching conversation metrics from dados_cliente table...');
+      console.log('Fetching conversation metrics with filter:', dateFilter);
 
       // Fetch all clients to calculate metrics
       const { data: allClients, error: allClientsError } = await supabase
@@ -34,14 +35,45 @@ export function useConversationMetrics() {
         throw allClientsError;
       }
 
-      const totalClients = allClients?.length || 0;
+      // Apply date filter to clients
+      let filteredClients = allClients || [];
+      
+      if (dateFilter !== 'all') {
+        const now = new Date();
+        let startDate: Date;
+        
+        switch (dateFilter) {
+          case 'day':
+            startDate = new Date(now);
+            startDate.setHours(0, 0, 0, 0);
+            break;
+          case 'week':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+          default:
+            startDate = new Date(0); // No filter, include all
+        }
+
+        filteredClients = allClients?.filter(client => {
+          if (!client.created_at) return false;
+          const clientDate = new Date(client.created_at);
+          return clientDate >= startDate;
+        }) || [];
+      }
+
+      const totalClients = filteredClients.length;
       
       // Calculate clients with phone (contacted)
-      const clientsWithPhone = allClients?.filter(client => client.telefone && client.telefone.trim() !== '') || [];
+      const clientsWithPhone = filteredClients.filter(client => client.telefone && client.telefone.trim() !== '');
       const totalConversations = clientsWithPhone.length;
       
       // Calculate clients with marketing project (responded)
-      const clientsWithMarketing = allClients?.filter(client => client.client_name && client.client_name.trim() !== '') || [];
+      const clientsWithMarketing = filteredClients.filter(client => client.client_name && client.client_name.trim() !== '');
       const totalRespondidas = clientsWithMarketing.length;
       
       // Calculate response rate
@@ -50,9 +82,11 @@ export function useConversationMetrics() {
       // Calculate conversion rate (clients with marketing projects / total clients)
       const conversionRate = totalClients > 0 ? Math.round((totalRespondidas / totalClients) * 100) : 0;
 
-      // Generate conversation data for the last 7 days
+      // Generate conversation data based on filter period
       const conversationData = [];
-      for (let i = 6; i >= 0; i--) {
+      const daysToShow = dateFilter === 'day' ? 1 : dateFilter === 'week' ? 7 : 30;
+      
+      for (let i = daysToShow - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dayStart = new Date(date);
@@ -60,11 +94,11 @@ export function useConversationMetrics() {
         const dayEnd = new Date(date);
         dayEnd.setHours(23, 59, 59, 999);
 
-        const dayClients = allClients?.filter(client => {
+        const dayClients = filteredClients.filter(client => {
           if (!client.created_at) return false;
           const clientDate = new Date(client.created_at);
           return clientDate >= dayStart && clientDate <= dayEnd;
-        }) || [];
+        });
 
         const respondidas = dayClients.filter(client => client.client_name && client.client_name.trim() !== '').length;
         const naoRespondidas = dayClients.length - respondidas;
@@ -76,9 +110,9 @@ export function useConversationMetrics() {
         });
       }
 
-      // Calculate funnel data based on kanban stages
+      // Calculate funnel data based on kanban stages (filtered)
       const kanbanCounts = {};
-      allClients?.forEach(client => {
+      filteredClients.forEach(client => {
         const stage = client.kanban_stage || 'Entraram';
         kanbanCounts[stage] = (kanbanCounts[stage] || 0) + 1;
       });
@@ -98,7 +132,7 @@ export function useConversationMetrics() {
         percentage: Math.round((stage.value / maxValue) * 100)
       }));
 
-      // Generate conversion by time data (mock data based on client creation times)
+      // Generate conversion by time data (based on filtered data)
       const conversionByTimeData = [
         { day: 'Segunda', morning: Math.floor(totalRespondidas * 0.12), afternoon: Math.floor(totalRespondidas * 0.18), evening: Math.floor(totalRespondidas * 0.08) },
         { day: 'Terça', morning: Math.floor(totalRespondidas * 0.15), afternoon: Math.floor(totalRespondidas * 0.22), evening: Math.floor(totalRespondidas * 0.10) },
@@ -109,23 +143,16 @@ export function useConversationMetrics() {
         { day: 'Domingo', morning: Math.floor(totalRespondidas * 0.05), afternoon: Math.floor(totalRespondidas * 0.10), evening: Math.floor(totalRespondidas * 0.12) }
       ];
 
-      // Generate leads data from recent clients
-      const { data: recentLeads, error: leadsError } = await supabase
-        .from('dados_cliente')
-        .select('id, nome, created_at, kanban_stage')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (leadsError) {
-        console.error('Error fetching leads:', leadsError);
-      }
-
-      const leadsData = recentLeads?.map(lead => ({
-        id: lead.id,
-        name: lead.nome || 'Cliente sem nome',
-        lastContact: lead.created_at ? new Date(lead.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-        status: lead.kanban_stage || 'Entraram'
-      })) || [];
+      // Generate leads data from filtered recent clients
+      const leadsData = filteredClients
+        .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+        .slice(0, 10)
+        .map(lead => ({
+          id: lead.id,
+          name: lead.nome || 'Cliente sem nome',
+          lastContact: lead.created_at ? new Date(lead.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
+          status: lead.kanban_stage || 'Entraram'
+        }));
 
       setMetrics({
         totalConversations,
@@ -140,7 +167,7 @@ export function useConversationMetrics() {
         leadsData
       });
 
-      console.log('Conversation metrics updated successfully with real data');
+      console.log('Conversation metrics updated successfully with filter:', dateFilter);
 
     } catch (error) {
       console.error('Error fetching conversation metrics:', error);

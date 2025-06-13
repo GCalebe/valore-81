@@ -4,7 +4,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useClientStats } from './useClientStats';
 import { useConversations } from './useConversations';
 
-export function useDashboardRealtime() {
+interface UseDashboardRealtimeProps {
+  refetchScheduleData?: () => void;
+  refetchMetrics?: (dateFilter?: string) => void;
+  currentDateFilter?: string;
+}
+
+export function useDashboardRealtime({ 
+  refetchScheduleData, 
+  refetchMetrics, 
+  currentDateFilter = 'week' 
+}: UseDashboardRealtimeProps = {}) {
   const { fetchConversations } = useConversations();
   const { refetchStats } = useClientStats();
 
@@ -23,6 +33,9 @@ export function useDashboardRealtime() {
         async (payload) => {
           console.log('Client data changed:', payload);
           await refetchStats();
+          if (refetchMetrics) {
+            await refetchMetrics(currentDateFilter);
+          }
         }
       )
       .subscribe();
@@ -39,6 +52,9 @@ export function useDashboardRealtime() {
         async () => {
           console.log('Schedule data changed');
           await refetchStats();
+          if (refetchScheduleData) {
+            await refetchScheduleData();
+          }
         }
       )
       .subscribe();
@@ -55,6 +71,9 @@ export function useDashboardRealtime() {
         async () => {
           console.log('Services data changed');
           await refetchStats();
+          if (refetchMetrics) {
+            await refetchMetrics(currentDateFilter);
+          }
         }
       )
       .subscribe();
@@ -65,6 +84,5 @@ export function useDashboardRealtime() {
       scheduleSubscription.unsubscribe();
       servicesSubscription.unsubscribe();
     };
-  }, [refetchStats, fetchConversations]);
+  }, [refetchStats, fetchConversations, refetchScheduleData, refetchMetrics, currentDateFilter]);
 }
-
