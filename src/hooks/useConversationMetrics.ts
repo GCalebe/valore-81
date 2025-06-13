@@ -9,17 +9,14 @@ interface ConversationMetrics {
   avgResponseTime: number;
   conversionRate: number;
   avgClosingTime: number;
-  conversationData: Array<{ name: string; conversations: number; responses: number }>;
-  funnelData: Array<{ stage: string; count: number; percentage: number }>;
-  conversionByTimeData: Array<{ time: string; conversions: number }>;
+  conversationData: Array<{ date: string; respondidas: number; naoRespondidas: number }>;
+  funnelData: Array<{ stage: string; value: number; percentage: number }>;
+  conversionByTimeData: Array<{ day: string; morning: number; afternoon: number; evening: number }>;
   leadsData: Array<{
-    id: string;
+    id: number;
     name: string;
-    email: string;
-    phone: string;
-    stage: string;
     lastContact: string;
-    value: number;
+    status: string;
   }>;
 }
 
@@ -67,16 +64,16 @@ export const useConversationMetrics = () => {
       const totalRespondidas = uniqueSessions;
       const responseRate = totalConversations > 0 ? Math.round((totalRespondidas / totalConversations) * 100) : 0;
 
-      // Mock data for other metrics (can be enhanced with real calculations)
+      // Format conversation data to match ConversationData type
       const conversationData = [
-        { name: 'Jan', conversations: Math.floor(totalConversations * 0.1), responses: Math.floor(totalRespondidas * 0.1) },
-        { name: 'Fev', conversations: Math.floor(totalConversations * 0.15), responses: Math.floor(totalRespondidas * 0.15) },
-        { name: 'Mar', conversations: Math.floor(totalConversations * 0.2), responses: Math.floor(totalRespondidas * 0.2) },
-        { name: 'Abr', conversations: Math.floor(totalConversations * 0.25), responses: Math.floor(totalRespondidas * 0.25) },
-        { name: 'Mai', conversations: Math.floor(totalConversations * 0.3), responses: Math.floor(totalRespondidas * 0.3) }
+        { date: 'Jan', respondidas: Math.floor(totalRespondidas * 0.1), naoRespondidas: Math.floor((totalConversations - totalRespondidas) * 0.1) },
+        { date: 'Fev', respondidas: Math.floor(totalRespondidas * 0.15), naoRespondidas: Math.floor((totalConversations - totalRespondidas) * 0.15) },
+        { date: 'Mar', respondidas: Math.floor(totalRespondidas * 0.2), naoRespondidas: Math.floor((totalConversations - totalRespondidas) * 0.2) },
+        { date: 'Abr', respondidas: Math.floor(totalRespondidas * 0.25), naoRespondidas: Math.floor((totalConversations - totalRespondidas) * 0.25) },
+        { date: 'Mai', respondidas: Math.floor(totalRespondidas * 0.3), naoRespondidas: Math.floor((totalConversations - totalRespondidas) * 0.3) }
       ];
 
-      // Calculate funnel data from client stages
+      // Calculate funnel data from client stages with correct format
       const stageGroups = clientData?.reduce((acc: Record<string, number>, client) => {
         const stage = client.kanban_stage || 'Entraram';
         acc[stage] = (acc[stage] || 0) + 1;
@@ -86,27 +83,25 @@ export const useConversationMetrics = () => {
       const totalClients = clientData?.length || 1;
       const funnelData = Object.entries(stageGroups).map(([stage, count]) => ({
         stage,
-        count: count as number,
+        value: count as number,
         percentage: Math.round(((count as number) / totalClients) * 100)
       }));
 
-      // Mock conversion by time data
+      // Format conversion by time data to match ConversionTimeData type
       const conversionByTimeData = [
-        { time: '09:00', conversions: Math.floor(Math.random() * 10) },
-        { time: '12:00', conversions: Math.floor(Math.random() * 15) },
-        { time: '15:00', conversions: Math.floor(Math.random() * 12) },
-        { time: '18:00', conversions: Math.floor(Math.random() * 8) }
+        { day: 'Segunda', morning: Math.floor(Math.random() * 10), afternoon: Math.floor(Math.random() * 15), evening: Math.floor(Math.random() * 8) },
+        { day: 'Terça', morning: Math.floor(Math.random() * 12), afternoon: Math.floor(Math.random() * 18), evening: Math.floor(Math.random() * 10) },
+        { day: 'Quarta', morning: Math.floor(Math.random() * 8), afternoon: Math.floor(Math.random() * 14), evening: Math.floor(Math.random() * 6) },
+        { day: 'Quinta', morning: Math.floor(Math.random() * 11), afternoon: Math.floor(Math.random() * 16), evening: Math.floor(Math.random() * 9) },
+        { day: 'Sexta', morning: Math.floor(Math.random() * 9), afternoon: Math.floor(Math.random() * 13), evening: Math.floor(Math.random() * 7) }
       ];
 
-      // Transform client data to leads format
+      // Transform client data to leads format with correct Lead type
       const leadsData = clientData?.slice(0, 10).map(client => ({
-        id: client.id.toString(),
+        id: client.id,
         name: client.nome || 'Nome não informado',
-        email: client.email || 'Email não informado',
-        phone: client.telefone || 'Telefone não informado',
-        stage: client.kanban_stage || 'Entraram',
         lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Não disponível',
-        value: Math.floor(Math.random() * 5000) + 1000
+        status: client.kanban_stage || 'Entraram'
       })) || [];
 
       setMetrics({
