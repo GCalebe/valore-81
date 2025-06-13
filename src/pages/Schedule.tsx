@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -9,7 +10,7 @@ import { ScheduleContent } from '@/components/schedule/ScheduleContent';
 import { ScheduleDialogs } from '@/components/schedule/ScheduleDialogs';
 
 const Schedule = () => {
-  const { user, loading: isAuthLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   
   const {

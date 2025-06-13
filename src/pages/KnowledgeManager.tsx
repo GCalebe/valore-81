@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -15,7 +16,7 @@ import AddDocumentDialog from '@/components/knowledge/AddDocumentDialog';
 import { useDocuments } from '@/hooks/useDocuments';
 
 const KnowledgeManager = () => {
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { user, signOut, isLoading: authLoading } = useAuth();
   const { settings } = useThemeSettings();
   const navigate = useNavigate();
   const { toast } = useToast();

@@ -18,7 +18,7 @@ export const isDateInPeriod = (dateStr: string, period: string): boolean => {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
   switch (period) {
-    case 'day':
+    case 'today':
       const contactDay = new Date(contactDate.getFullYear(), contactDate.getMonth(), contactDate.getDate());
       return contactDay.getTime() === today.getTime();
     
@@ -40,30 +40,4 @@ export const isDateInPeriod = (dateStr: string, period: string): boolean => {
     default:
       return true;
   }
-};
-
-export const getDateFilterPeriod = (filter: string): { startDate: Date; endDate: Date } => {
-  const now = new Date();
-  const endDate = new Date(now);
-  let startDate: Date;
-
-  switch (filter) {
-    case 'day':
-      startDate = new Date(now);
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(23, 59, 59, 999);
-      break;
-    case 'week':
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() - 7);
-      break;
-    case 'month':
-      startDate = new Date(now);
-      startDate.setMonth(now.getMonth() - 1);
-      break;
-    default:
-      startDate = new Date(0); // No filter, include all
-  }
-
-  return { startDate, endDate };
 };

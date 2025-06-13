@@ -23,17 +23,11 @@ const MetricsDashboard = () => {
   // Initialize real-time updates for the metrics dashboard
   useDashboardRealtime();
   
-  // Fetch data when component mounts and when dateFilter changes
+  // Fetch data when component mounts
   useEffect(() => {
     refetchStats();
-    refetchMetrics(dateFilter);
-  }, [refetchStats, refetchMetrics, dateFilter]);
-  
-  // Handle date filter change
-  const handleDateFilterChange = (filter: string) => {
-    setDateFilter(filter);
-    // The useEffect above will automatically trigger refetch when dateFilter changes
-  };
+    refetchMetrics();
+  }, [refetchStats, refetchMetrics]);
   
   const loading = statsLoading || metricsLoading;
 
@@ -51,7 +45,7 @@ const MetricsDashboard = () => {
           </h2>
           <MetricsFilters 
             dateFilter={dateFilter} 
-            onDateFilterChange={handleDateFilterChange} 
+            onDateFilterChange={setDateFilter} 
           />
         </div>
         

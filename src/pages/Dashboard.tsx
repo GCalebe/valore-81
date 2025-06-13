@@ -13,7 +13,7 @@ import EvolutionCard from '@/components/dashboard/EvolutionCard';
 import ScheduleCard from '@/components/dashboard/ScheduleCard';
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { refetchScheduleData } = useScheduleData();
   
@@ -21,12 +21,12 @@ const Dashboard = () => {
   useDashboardRealtime({ refetchScheduleData });
   
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isLoading && !user) {
       navigate('/');
     }
-  }, [user, loading, navigate]);
+  }, [user, isLoading, navigate]);
   
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-blue-600 dark:bg-gray-900">
         <div className="h-16 w-16 border-4 border-t-transparent border-amber-500 rounded-full animate-spin"></div>
