@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { isSameDay, parseISO } from 'date-fns';
-import { CalendarSidebar } from '@/components/schedule/CalendarSidebar';
-import { EventsCard } from '@/components/schedule/EventsCard';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
+import { ScheduleFilters } from './ScheduleFilters';
+import { ScheduleTimeFilter } from './ScheduleTimeFilter';
+import { CalendarView } from './CalendarView';
+import { EventsTable } from './EventsTable';
 
 interface ScheduleContentProps {
   selectedDate: Date | undefined;
@@ -41,31 +43,35 @@ export function ScheduleContent({
   openDeleteEventDialog,
   openEventLink
 }: ScheduleContentProps) {
-  
-  const filteredAppointments = appointments.filter(appointment => {
-    if (selectedTab === 'day' && selectedDate) {
-      return isSameDay(appointment.date, selectedDate);
-    } else if (selectedTab === 'all') {
-      return true;
-    }
-    return false;
-  }).filter(appointment => {
-    if (!searchTerm) return true;
-    const searchLower = searchTerm.toLowerCase();
-    return appointment.petName.toLowerCase().includes(searchLower) || 
-           appointment.ownerName.toLowerCase().includes(searchLower) || 
-           appointment.phone.includes(searchTerm) || 
-           appointment.service.toLowerCase().includes(searchLower);
-  }).sort((a, b) => a.date.getTime() - b.date.getTime());
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [calendarFilter, setCalendarFilter] = useState('all');
+  const [hostFilter, setHostFilter] = useState('all');
+  const [timeFilter, setTimeFilter] = useState<'hoje' | 'mes' | 'semana' | 'dia'>('mes');
+  const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
   
   const filteredEvents = events.filter(event => {
-    if (selectedTab === 'day' && selectedDate) {
-      const eventstart = parseISO(event.start);
-      return isSameDay(eventstart, selectedDate);
-    } else if (selectedTab === 'all') {
-      return true;
+    // Status filter
+    if (statusFilter !== 'all' && event.status !== statusFilter) {
+      return false;
     }
-    return false;
+
+    // Time filter
+    const eventDate = parseISO(event.start);
+    const today = new Date();
+    
+    switch (timeFilter) {
+      case 'hoje':
+        return isSameDay(eventDate, today);
+      case 'dia':
+        return selectedDate ? isSameDay(eventDate, selectedDate) : false;
+      case 'semana':
+        // Implementation for week filter can be added
+        return true;
+      case 'mes':
+      default:
+        return true;
+    }
   }).filter(event => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
@@ -77,32 +83,43 @@ export function ScheduleContent({
   }).sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-3">
-        <CalendarSidebar 
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          onAddEvent={() => setIsAddEventDialogOpen(true)}
-        />
-      </div>
+    <div className="container mx-auto px-4 py-6">
+      <ScheduleFilters
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        calendarFilter={calendarFilter}
+        onCalendarFilterChange={setCalendarFilter}
+        hostFilter={hostFilter}
+        onHostFilterChange={setHostFilter}
+        onAddEvent={() => setIsAddEventDialogOpen(true)}
+      />
 
-      <div className="lg:col-span-9">
-        <EventsCard 
-          events={events}
-          filteredEvents={filteredEvents}
-          selectedTab={selectedTab}
-          searchTerm={searchTerm}
-          selectedDate={selectedDate}
-          isLoading={isAnyLoading}
-          error={eventsError}
-          lastUpdated={lastUpdated}
-          onSearchChange={setSearchTerm}
-          onTabChange={setSelectedTab}
-          onEditEvent={openEditEventDialog}
-          onDeleteEvent={openDeleteEventDialog}
-          onOpenEventLink={openEventLink}
+      <ScheduleTimeFilter
+        activeFilter={timeFilter}
+        onFilterChange={setTimeFilter}
+      />
+
+      {viewMode === 'calendar' ? (
+        <CalendarView
+          selectedDate={selectedDate || new Date()}
+          onDateChange={(date) => setSelectedDate(date)}
+          events={filteredEvents}
+          currentMonth={currentMonth}
+          onMonthChange={setCurrentMonth}
         />
-      </div>
+      ) : (
+        <div className="bg-white dark:bg-gray-800 border rounded-lg p-6">
+          <EventsTable 
+            events={filteredEvents}
+            isLoading={isAnyLoading}
+            onEditEvent={openEditEventDialog}
+            onDeleteEvent={openDeleteEventDialog}
+            onOpenEventLink={openEventLink}
+          />
+        </div>
+      )}
     </div>
   );
 }
