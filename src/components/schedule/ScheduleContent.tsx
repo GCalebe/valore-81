@@ -51,26 +51,44 @@ export function ScheduleContent({
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
   
   const filteredEvents = events.filter(event => {
+    // First, validate that the event has a valid start date
+    if (!event.start || typeof event.start !== 'string') {
+      console.warn('Event with invalid start date found:', event);
+      return false;
+    }
+
     // Status filter
     if (statusFilter !== 'all' && event.status !== statusFilter) {
       return false;
     }
 
     // Time filter
-    const eventDate = parseISO(event.start);
-    const today = new Date();
-    
-    switch (timeFilter) {
-      case 'hoje':
-        return isSameDay(eventDate, today);
-      case 'dia':
-        return selectedDate ? isSameDay(eventDate, selectedDate) : false;
-      case 'semana':
-        // Implementation for week filter can be added
-        return true;
-      case 'mes':
-      default:
-        return true;
+    try {
+      const eventDate = parseISO(event.start);
+      
+      // Check if the parsed date is valid
+      if (isNaN(eventDate.getTime())) {
+        console.warn('Event with invalid date format found:', event.start);
+        return false;
+      }
+      
+      const today = new Date();
+      
+      switch (timeFilter) {
+        case 'hoje':
+          return isSameDay(eventDate, today);
+        case 'dia':
+          return selectedDate ? isSameDay(eventDate, selectedDate) : false;
+        case 'semana':
+          // Implementation for week filter can be added
+          return true;
+        case 'mes':
+        default:
+          return true;
+      }
+    } catch (error) {
+      console.error('Error parsing event date:', event.start, error);
+      return false;
     }
   }).filter(event => {
     if (!searchTerm) return true;
@@ -80,7 +98,17 @@ export function ScheduleContent({
            (event.attendees && event.attendees.some(attendee => 
              attendee?.email && attendee.email.toLowerCase().includes(searchLower)
            ));
-  }).sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+  }).sort((a, b) => {
+    // Add safe date parsing for sorting as well
+    try {
+      const dateA = a.start ? parseISO(a.start) : new Date(0);
+      const dateB = b.start ? parseISO(b.start) : new Date(0);
+      return dateA.getTime() - dateB.getTime();
+    } catch (error) {
+      console.error('Error sorting events by date:', error);
+      return 0;
+    }
+  });
 
   return (
     <div className="container mx-auto px-4 py-6">
