@@ -119,6 +119,7 @@ export function ScheduleContent({
         onCalendarFilterChange={setCalendarFilter}
         hostFilter={hostFilter}
         onHostFilterChange={setHostFilter}
+        onAddEvent={() => setIsAddEventDialogOpen(true)}
       />
 
       <ScheduleTimeFilter
