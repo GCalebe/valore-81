@@ -13,6 +13,7 @@ interface CalendarViewProps {
   currentMonth: Date;
   onMonthChange: (month: Date) => void;
   timeFilter: 'hoje' | 'mes' | 'semana' | 'dia';
+  onEventClick?: (event: CalendarEvent) => void;
 }
 
 export function CalendarView({ 
@@ -21,7 +22,8 @@ export function CalendarView({
   events, 
   currentMonth, 
   onMonthChange,
-  timeFilter
+  timeFilter,
+  onEventClick
 }: CalendarViewProps) {
   // Determinar o período a ser exibido baseado no filtro
   const getDisplayPeriod = () => {
@@ -108,6 +110,13 @@ export function CalendarView({
   // Determinar se devemos mostrar os controles de navegação
   const showMonthNavigation = timeFilter === 'mes';
 
+  const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
+    e.stopPropagation(); // Previne que o clique no evento dispare o clique no dia
+    if (onEventClick) {
+      onEventClick(event);
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 border rounded-lg">
       {/* Calendar Header */}
@@ -180,10 +189,12 @@ export function CalendarView({
                     <div
                       key={event.id}
                       className={`
-                        text-xs p-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded truncate
+                        text-xs p-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded truncate cursor-pointer
+                        hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors
                         ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'p-2 text-sm' : ''}
                       `}
-                      title={event.summary}
+                      title={`${event.summary} - Clique para editar`}
+                      onClick={(e) => handleEventClick(event, e)}
                     >
                       {format(parseISO(event.start), 'HH:mm')} {event.summary}
                     </div>
