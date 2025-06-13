@@ -60,8 +60,8 @@ export function ScheduleContent({
   
   const filteredEvents = events.filter(event => {
     if (selectedTab === 'day' && selectedDate) {
-      const eventStartDate = parseISO(event.start);
-      return isSameDay(eventStartDate, selectedDate);
+      const eventstart = parseISO(event.start);
+      return isSameDay(eventstart, selectedDate);
     } else if (selectedTab === 'all') {
       return true;
     }

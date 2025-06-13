@@ -47,16 +47,16 @@ export function EventFormDialog({
 
   useEffect(() => {
     if (event) {
-      const startDate = new Date(event.start);
-      const endDate = new Date(event.end);
+      const start = new Date(event.start);
+      const end = new Date(event.end);
       
       setFormData({
         summary: event.summary || '',
         description: event.description || '',
         email: event.attendees?.find(a => a !== null && a.email)?.email || '',
-        date: startDate,
-        startTime: format(startDate, 'HH:mm'),
-        endTime: format(endDate, 'HH:mm')
+        date: start,
+        startTime: format(start, 'HH:mm'),
+        endTime: format(end, 'HH:mm')
       });
     } else {
       setFormData(initialFormState);

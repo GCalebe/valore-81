@@ -32,7 +32,7 @@ export function DeleteEventDialog({
 }: DeleteEventDialogProps) {
   if (!event) return null;
 
-  const startDate = new Date(event.start);
+  const start = new Date(event.start);
   
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -47,7 +47,7 @@ export function DeleteEventDialog({
         <div className="py-4">
           <p className="font-medium">{event.summary}</p>
           <p className="text-sm text-muted-foreground">
-            {format(startDate, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: pt })}
+            {format(start, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: pt })}
           </p>
           {event.attendees?.some(a => a?.email) && (
             <p className="text-sm text-muted-foreground">

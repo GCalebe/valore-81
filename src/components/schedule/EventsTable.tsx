@@ -85,8 +85,8 @@ export function EventsTable({
         </TableHeader>
         <TableBody>
           {events.length > 0 ? events.map(event => {
-            const startDate = parseISO(event.start);
-            const endDate = parseISO(event.end);
+            const start = parseISO(event.start);
+            const end = parseISO(event.end);
             const attendee = event.attendees?.find(a => a !== null);
             
             return (
@@ -94,11 +94,11 @@ export function EventsTable({
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    {format(startDate, 'HH:mm')}
-                    {!isSameDay(startDate, endDate) && ' - evento de múltiplos dias'}
+                    {format(start, 'HH:mm')}
+                    {!isSameDay(start, end) && ' - evento de múltiplos dias'}
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {format(startDate, "dd/MM/yyyy")}
+                    {format(start, "dd/MM/yyyy")}
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{event.summary}</TableCell>

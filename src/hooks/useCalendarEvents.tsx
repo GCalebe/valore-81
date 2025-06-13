@@ -19,14 +19,14 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       const dateToUse = targetDate || new Date();
       
       // Formatar datas para o endpoint (início e fim do dia)
-      const startDate = format(dateToUse, 'yyyy-MM-dd') + 'T00:00:00.000-03:00';
-      const endDate = format(dateToUse, 'yyyy-MM-dd') + 'T23:59:59.999-03:00';
+      const start = format(dateToUse, 'yyyy-MM-dd') + 'T00:00:00.000-03:00';
+      const end = format(dateToUse, 'yyyy-MM-dd') + 'T23:59:59.999-03:00';
       
-      console.log('Enviando requisição com datas:', { startDate, endDate });
+      console.log('Enviando requisição com datas:', { start, end });
       
       const url = new URL('https://webhook.comercial247.com.br/webhook/agenda');
-      url.searchParams.append('startDate', startDate);
-      url.searchParams.append('endDate', endDate);
+      url.searchParams.append('start', start);
+      url.searchParams.append('end', end);
       
       const response = await fetch(url.toString(), {
         method: 'GET',
