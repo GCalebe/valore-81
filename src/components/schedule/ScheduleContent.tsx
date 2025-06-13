@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek } from 'date-fns';
+import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
@@ -50,6 +50,64 @@ export function ScheduleContent({
   const [timeFilter, setTimeFilter] = useState<'hoje' | 'mes' | 'semana' | 'dia'>('mes');
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
   
+  // Função para determinar o período de filtro baseado no modo de visualização e filtro de tempo
+  const getFilterPeriod = () => {
+    const today = new Date();
+    
+    // Se estamos no modo calendário, mostrar eventos baseado no timeFilter mas considerando o período visível
+    if (viewMode === 'calendar') {
+      switch (timeFilter) {
+        case 'hoje':
+          return {
+            start: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
+          };
+        case 'dia':
+          if (selectedDate) {
+            return {
+              start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()),
+              end: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59)
+            };
+          }
+          return null; // Mostrar todos se não há data selecionada
+        case 'semana':
+          const weekStart = startOfWeek(today, { weekStartsOn: 0 });
+          const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+          return { start: weekStart, end: weekEnd };
+        case 'mes':
+        default:
+          // Para visualização mensal, mostrar todos os eventos do mês atual
+          const monthStart = startOfMonth(currentMonth);
+          const monthEnd = endOfMonth(currentMonth);
+          return { start: monthStart, end: monthEnd };
+      }
+    } else {
+      // Modo lista - aplicar filtro de tempo tradicional
+      switch (timeFilter) {
+        case 'hoje':
+          return {
+            start: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
+          };
+        case 'dia':
+          if (selectedDate) {
+            return {
+              start: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()),
+              end: new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23, 59, 59)
+            };
+          }
+          return null;
+        case 'semana':
+          const weekStart = startOfWeek(today, { weekStartsOn: 0 });
+          const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+          return { start: weekStart, end: weekEnd };
+        case 'mes':
+        default:
+          return null; // Mostrar todos os eventos
+      }
+    }
+  };
+  
   const filteredEvents = events.filter(event => {
     // First, validate that the event has a valid start date
     if (!event.start || typeof event.start !== 'string') {
@@ -72,20 +130,19 @@ export function ScheduleContent({
         return false;
       }
       
-      const today = new Date();
+      const filterPeriod = getFilterPeriod();
       
-      switch (timeFilter) {
-        case 'hoje':
-          return isSameDay(eventDate, today);
-        case 'dia':
-          // Se há uma data selecionada, filtra por ela. Se não há, mostra todos os eventos
-          return selectedDate ? isSameDay(eventDate, selectedDate) : true;
-        case 'semana':
-          return isSameWeek(eventDate, today, { weekStartsOn: 0 }); // Domingo como início da semana
-        case 'mes':
-        default:
-          return true;
+      // Se não há período definido, mostrar todos os eventos
+      if (!filterPeriod) {
+        return true;
       }
+      
+      // Verificar se o evento está dentro do período
+      return isWithinInterval(eventDate, {
+        start: filterPeriod.start,
+        end: filterPeriod.end
+      });
+      
     } catch (error) {
       console.error('Error parsing event date:', event.start, error);
       return false;
