@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
@@ -120,7 +119,6 @@ export function ScheduleContent({
         onCalendarFilterChange={setCalendarFilter}
         hostFilter={hostFilter}
         onHostFilterChange={setHostFilter}
-        onAddEvent={() => setIsAddEventDialogOpen(true)}
       />
 
       <ScheduleTimeFilter

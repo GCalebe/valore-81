@@ -106,65 +106,148 @@ export function useCalendarEvents(selectedDate?: Date | null) {
     }
   }, [selectedDate, fetchEventsFromN8N]);
 
-  // Simular adição de evento (não implementado para API externa)
+  // Função para adicionar evento
   const addEvent = async (formData: EventFormData) => {
     setIsSubmitting(true);
     try {
-      console.log('Simulando adição de evento:', formData);
+      console.log('Adicionando novo evento:', formData);
       
-      // Para API externa, você precisaria implementar um endpoint POST
-      // Por enquanto, apenas mostramos uma mensagem
-      toast.info("Para adicionar eventos, use o Google Calendar diretamente.");
+      // Formar as datas no formato ISO com timezone
+      const startDateTime = `${format(formData.date, 'yyyy-MM-dd')}T${formData.startTime}:00-03:00`;
+      const endDateTime = `${format(formData.date, 'yyyy-MM-dd')}T${formData.endTime}:00-03:00`;
       
-      // Após adicionar, buscar eventos atualizados
+      const eventData = {
+        summary: formData.summary,
+        description: formData.description,
+        start: startDateTime,
+        end: endDateTime,
+        email: formData.email
+      };
+      
+      console.log('Dados do evento para envio:', eventData);
+      
+      const response = await fetch('https://webhook.comercial247.com.br/webhook/agenda/adicionar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro ao adicionar evento: ${response.status} ${response.statusText}`);
+      }
+      
+      console.log('Evento adicionado com sucesso');
+      toast.success("Evento adicionado com sucesso!");
+      
+      // Atualizar lista de eventos
       await fetchEvents();
       
       return true;
     } catch (err) {
       console.error('Erro ao adicionar evento:', err);
-      toast.error("Erro ao adicionar evento. Use o Google Calendar.");
+      toast.error("Erro ao adicionar evento. Tente novamente.");
       return false;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Simular edição de evento (não implementado para API externa)
+  // Função para editar evento
   const editEvent = async (eventId: string, formData: EventFormData) => {
     setIsSubmitting(true);
     try {
-      console.log('Simulando edição de evento:', eventId, formData);
+      console.log('Editando evento:', eventId, formData);
       
-      toast.info("Para editar eventos, use o Google Calendar diretamente.");
+      // Formar as datas no formato ISO com timezone
+      const startDateTime = `${format(formData.date, 'yyyy-MM-dd')}T${formData.startTime}:00-03:00`;
+      const endDateTime = `${format(formData.date, 'yyyy-MM-dd')}T${formData.endTime}:00-03:00`;
       
-      // Após editar, buscar eventos atualizados
+      const eventData = {
+        id: eventId,
+        summary: formData.summary,
+        description: formData.description,
+        start: startDateTime,
+        end: endDateTime,
+        email: formData.email
+      };
+      
+      console.log('Dados do evento para edição:', eventData);
+      
+      const response = await fetch('https://webhook.n8nlabz.com.br/webhook/agenda/alterar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro ao editar evento: ${response.status} ${response.statusText}`);
+      }
+      
+      console.log('Evento editado com sucesso');
+      toast.success("Evento editado com sucesso!");
+      
+      // Atualizar lista de eventos
       await fetchEvents();
       
       return true;
     } catch (err) {
       console.error('Erro ao editar evento:', err);
-      toast.error("Erro ao editar evento. Use o Google Calendar.");
+      toast.error("Erro ao editar evento. Tente novamente.");
       return false;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Simular exclusão de evento (não implementado para API externa)
+  // Função para excluir evento
   const deleteEvent = async (eventId: string) => {
     setIsSubmitting(true);
     try {
-      console.log('Simulando exclusão de evento:', eventId);
+      console.log('Excluindo evento:', eventId);
       
-      toast.info("Para excluir eventos, use o Google Calendar diretamente.");
+      // Encontrar o evento para obter todos os dados necessários
+      const eventToDelete = events.find(e => e.id === eventId);
+      if (!eventToDelete) {
+        throw new Error('Evento não encontrado');
+      }
       
-      // Após excluir, buscar eventos atualizados
+      const eventData = {
+        id: eventId,
+        summary: eventToDelete.summary,
+        description: eventToDelete.description || '',
+        start: eventToDelete.start,
+        end: eventToDelete.end,
+        email: eventToDelete.attendees?.find(a => a?.email)?.email || ''
+      };
+      
+      console.log('Dados do evento para exclusão:', eventData);
+      
+      const response = await fetch('https://webhook.n8nlabz.com.br/webhook/agenda/excluir', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro ao excluir evento: ${response.status} ${response.statusText}`);
+      }
+      
+      console.log('Evento excluído com sucesso');
+      toast.success("Evento excluído com sucesso!");
+      
+      // Atualizar lista de eventos
       await fetchEvents();
       
       return true;
     } catch (err) {
       console.error('Erro ao excluir evento:', err);
-      toast.error("Erro ao excluir evento. Use o Google Calendar.");
+      toast.error("Erro ao excluir evento. Tente novamente.");
       return false;
     } finally {
       setIsSubmitting(false);
