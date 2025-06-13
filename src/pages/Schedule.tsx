@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
 import { useScheduleData } from '@/hooks/useScheduleData';
 import { useScheduleState } from '@/hooks/useScheduleState';
-import { ScheduleHeader } from '@/components/schedule/ScheduleHeader';
 import { ScheduleContent } from '@/components/schedule/ScheduleContent';
 import { ScheduleDialogs } from '@/components/schedule/ScheduleDialogs';
 
@@ -140,12 +139,7 @@ const Schedule = () => {
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <ScheduleHeader 
-        isAnyLoading={isAnyLoading}
-        isAnyRefreshing={isAnyRefreshing}
-        lastUpdated={lastUpdated}
-        onRefreshAll={handleRefreshAll}
-      />
+
       
       <ScheduleContent 
         selectedDate={selectedDate}
