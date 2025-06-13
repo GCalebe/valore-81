@@ -7,44 +7,24 @@ import { Button } from '@/components/ui/button';
 import { ShipWheel, LogOut, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Import refactored components
-import SearchBar from '@/components/knowledge/SearchBar';
-import DocumentGrid from '@/components/knowledge/DocumentGrid';
-import AddDocumentDialog from '@/components/knowledge/AddDocumentDialog';
-import { useDocuments } from '@/hooks/useDocuments';
+// Import all tab components
+import DocumentsTab from '@/components/knowledge/tabs/DocumentsTab';
+import FAQTab from '@/components/knowledge/tabs/FAQTab';
+import WebsitesTab from '@/components/knowledge/tabs/WebsitesTab';
+import AIPersonalityTab from '@/components/knowledge/tabs/AIPersonalityTab';
+import AIStagesTab from '@/components/knowledge/tabs/AIStagesTab';
+import AIMessagesTab from '@/components/knowledge/tabs/AIMessagesTab';
+import AITestTab from '@/components/knowledge/tabs/AITestTab';
 
 const KnowledgeManager = () => {
   const { user, signOut, isLoading: authLoading } = useAuth();
   const { settings } = useThemeSettings();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
-  
-  // Use the custom hook for document management
-  const { 
-    documents, 
-    isLoading, 
-    isRefreshing, 
-    handleRefresh, 
-    handleDeleteDocument,
-    uploadFileToWebhook,
-    clearAllDocuments
-  } = useDocuments();
+  const [activeTab, setActiveTab] = useState('documents');
 
-  // Navigate back to dashboard
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
-  };
-
-  // Handle adding a new document
-  const handleAddDocument = async (file: File, category: string) => {
-    await uploadFileToWebhook(file, category);
-  };
-
-  if (isLoading || authLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div 
@@ -108,32 +88,53 @@ const KnowledgeManager = () => {
           <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             Gerenciador de Conhecimento
           </h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Gerencie documentos, FAQ, websites e configurações da IA
+          </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
-          {/* Search and Action Buttons */}
-          <SearchBar 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onRefresh={handleRefresh}
-            onAddDocument={() => setIsAddDocumentOpen(true)}
-            onClearAll={clearAllDocuments}
-            isRefreshing={isRefreshing}
-          />
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-7 lg:grid-cols-7 bg-gray-100 dark:bg-gray-700 p-1 rounded-t-lg">
+              <TabsTrigger value="documents" className="text-sm">Documentos</TabsTrigger>
+              <TabsTrigger value="faq" className="text-sm">FAQ</TabsTrigger>
+              <TabsTrigger value="websites" className="text-sm">Websites</TabsTrigger>
+              <TabsTrigger value="ai-personality" className="text-sm">Personalidade</TabsTrigger>
+              <TabsTrigger value="ai-stages" className="text-sm">Etapas</TabsTrigger>
+              <TabsTrigger value="ai-messages" className="text-sm">Mensagens</TabsTrigger>
+              <TabsTrigger value="ai-test" className="text-sm">Teste</TabsTrigger>
+            </TabsList>
 
-          {/* Document Grid */}
-          <DocumentGrid 
-            documents={documents}
-            searchQuery={searchQuery}
-            onDeleteDocument={handleDeleteDocument}
-          />
+            <div className="p-6">
+              <TabsContent value="documents" className="mt-0">
+                <DocumentsTab />
+              </TabsContent>
 
-          {/* Add Document Dialog */}
-          <AddDocumentDialog 
-            isOpen={isAddDocumentOpen}
-            onOpenChange={setIsAddDocumentOpen}
-            onAddDocument={handleAddDocument}
-          />
+              <TabsContent value="faq" className="mt-0">
+                <FAQTab />
+              </TabsContent>
+
+              <TabsContent value="websites" className="mt-0">
+                <WebsitesTab />
+              </TabsContent>
+
+              <TabsContent value="ai-personality" className="mt-0">
+                <AIPersonalityTab />
+              </TabsContent>
+
+              <TabsContent value="ai-stages" className="mt-0">
+                <AIStagesTab />
+              </TabsContent>
+
+              <TabsContent value="ai-messages" className="mt-0">
+                <AIMessagesTab />
+              </TabsContent>
+
+              <TabsContent value="ai-test" className="mt-0">
+                <AITestTab />
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
       </main>
     </div>
