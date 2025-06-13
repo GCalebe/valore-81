@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -132,7 +131,7 @@ const agentFormSchema = z.object({
 type AgentFormValues = z.infer<typeof agentFormSchema>;
 
 const AgentConfig = () => {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -158,12 +157,12 @@ const AgentConfig = () => {
   });
 
   React.useEffect(() => {
-    if (!isLoading && !user) {
+    if (!loading && !user) {
       navigate('/');
     }
-  }, [user, isLoading, navigate]);
+  }, [user, loading, navigate]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="h-16 w-16 border-4 border-t-transparent border-primary rounded-full animate-spin"></div>

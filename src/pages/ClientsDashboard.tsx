@@ -19,7 +19,7 @@ import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
 
 const ClientsDashboard = () => {
-  const { user, isLoading: isAuthLoading } = useAuth();
+  const { user, loading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
