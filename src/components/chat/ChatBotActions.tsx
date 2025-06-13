@@ -8,17 +8,9 @@ interface ChatBotActionsProps {
   selectedPhoneNumber: string;
   selectedChat: string | null;
   isLoading: Record<string, boolean>;
-  onStartBot: (phoneNumber: string, e: React.MouseEvent) => void;
-  onPauseBot: (phoneNumber: string, e: React.MouseEvent) => void;
 }
 
-const ChatBotActions = ({ 
-  selectedPhoneNumber, 
-  selectedChat, 
-  isLoading,
-  onStartBot,
-  onPauseBot
-}: ChatBotActionsProps) => {
+const ChatBotActions = ({ selectedPhoneNumber, selectedChat, isLoading }: ChatBotActionsProps) => {
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const { toast } = useToast();
 
@@ -31,7 +23,7 @@ const ChatBotActions = ({
     setPauseDialogOpen(false);
   };
 
-  const handlePauseBot = async (duration: number | null) => {
+  const pauseBot = async (phoneNumber: string, duration: number | null) => {
     try {
       const response = await fetch('https://webhook.comercial247.com.br/webhook/pausa_bot', {
         method: 'POST',
@@ -39,7 +31,7 @@ const ChatBotActions = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          phoneNumber: selectedPhoneNumber,
+          phoneNumber,
           duration,
           unit: 'seconds'
         }),
@@ -51,7 +43,7 @@ const ChatBotActions = ({
       
       toast({
         title: "Bot pausado",
-        description: duration ? `O bot foi pausado para ${selectedPhoneNumber} por ${duration} segundos` : `O bot não foi pausado para ${selectedPhoneNumber}`,
+        description: duration ? `O bot foi pausado para ${phoneNumber} por ${duration} segundos` : `O bot não foi pausado para ${phoneNumber}`,
       });
       
       closePauseDialog();
@@ -65,36 +57,41 @@ const ChatBotActions = ({
     }
   };
 
-  if (!selectedChat) {
-    return null;
-  }
+  const startBot = async (phoneNumber: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response = await fetch('https://webhook.comercial247.com.br/webhook/inicia_bot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erro ao iniciar o bot');
+      }
+      
+      toast({
+        title: "Bot iniciado",
+        description: `O bot foi iniciado para ${phoneNumber}`,
+      });
+    } catch (error) {
+      console.error('Erro ao iniciar bot:', error);
+      toast({
+        title: "Erro ao iniciar bot",
+        description: "Ocorreu um erro ao tentar iniciar o bot.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <>
-      <div className="flex gap-2 p-3 border-t border-gray-200 dark:border-gray-700">
-        <Button
-          variant="outline"
-          onClick={(e) => openPauseDialog(selectedPhoneNumber, e)}
-          disabled={isLoading[`pause-${selectedPhoneNumber}`]}
-          className="flex-1"
-        >
-          {isLoading[`pause-${selectedPhoneNumber}`] ? 'Pausando...' : 'Pausar Bot'}
-        </Button>
-        
-        <Button
-          variant="default"
-          onClick={(e) => onStartBot(selectedPhoneNumber, e)}
-          disabled={isLoading[`start-${selectedPhoneNumber}`]}
-          className="flex-1"
-        >
-          {isLoading[`start-${selectedPhoneNumber}`] ? 'Iniciando...' : 'Iniciar Bot'}
-        </Button>
-      </div>
-
       <PauseDurationDialog 
         isOpen={pauseDialogOpen}
         onClose={closePauseDialog}
-        onConfirm={handlePauseBot}
+        onConfirm={(duration) => pauseBot(selectedPhoneNumber, duration)}
         phoneNumber={selectedPhoneNumber}
       />
     </>

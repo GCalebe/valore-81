@@ -56,10 +56,55 @@ export function useDashboardRealtime(props?: UseDashboardRealtimeProps) {
       )
       .subscribe();
 
+    // Subscribe to changes in appointments/schedule
+    const scheduleSubscription = supabase
+      .channel('dashboard_schedule_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'agendamentos' 
+        }, 
+        async (payload) => {
+          console.log('Schedule data changed:', payload);
+          try {
+            await refetchStats();
+            if (props?.refetchScheduleData) {
+              await props.refetchScheduleData();
+            }
+          } catch (error) {
+            console.error('Error refreshing stats after schedule change:', error);
+          }
+        }
+      )
+      .subscribe();
+      
+    // Subscribe to changes in services
+    const servicesSubscription = supabase
+      .channel('dashboard_services_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'servicos' 
+        }, 
+        async (payload) => {
+          console.log('Services data changed:', payload);
+          try {
+            await refetchStats();
+          } catch (error) {
+            console.error('Error refreshing stats after services change:', error);
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       console.log('Cleaning up dashboard realtime subscriptions');
       clientsSubscription.unsubscribe();
       chatSubscription.unsubscribe();
+      scheduleSubscription.unsubscribe();
+      servicesSubscription.unsubscribe();
     };
   }, [refetchStats, fetchConversations, props?.refetchScheduleData]);
 }
