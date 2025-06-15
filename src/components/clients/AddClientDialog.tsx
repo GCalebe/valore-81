@@ -55,6 +55,7 @@ const AddClientDialog = ({
   useEffect(() => {
     if (isOpen) {
       loadCustomFields();
+      console.log('AddClientDialog opened, loading custom fields');
     }
   }, [isOpen]);
 
@@ -62,6 +63,7 @@ const AddClientDialog = ({
     try {
       setLoading(true);
       await fetchCustomFields();
+      console.log('Custom fields loaded successfully');
     } catch (error) {
       console.error('Error loading custom fields:', error);
     } finally {
@@ -139,6 +141,8 @@ const AddClientDialog = ({
     }
   };
 
+  console.log('AddClientDialog render - isOpen:', isOpen, 'activeTab:', activeTab);
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -147,8 +151,8 @@ const AddClientDialog = ({
           Novo Cliente
         </Button>
       </DialogTrigger>
-      <DialogContent className="fixed inset-4 max-w-none max-h-none w-auto h-auto flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+      <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] overflow-hidden bg-white border shadow-lg">
+        <DialogHeader className="flex-shrink-0 pb-4">
           <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-green-500" />
             Adicionar Novo Cliente Náutico
@@ -158,44 +162,44 @@ const AddClientDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Indicador de erros globais */}
-        {Object.keys(validationErrors).length > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex-shrink-0">
-            <div className="flex items-center gap-2 text-red-700">
-              <AlertCircle className="h-4 w-4" />
-              <span className="font-medium">Corrija os seguintes erros:</span>
+        <div className="flex-1 overflow-y-auto">
+          {/* Indicador de erros globais */}
+          {Object.keys(validationErrors).length > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+              <div className="flex items-center gap-2 text-red-700">
+                <AlertCircle className="h-4 w-4" />
+                <span className="font-medium">Corrija os seguintes erros:</span>
+              </div>
+              <ul className="list-disc list-inside text-sm text-red-600 mt-2">
+                {Object.values(validationErrors).map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
             </div>
-            <ul className="list-disc list-inside text-sm text-red-600 mt-2">
-              {Object.values(validationErrors).map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
+          )}
+
+          {/* Tags Section */}
+          <div className="mb-4">
+            <Label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+              ADICIONAR TAGS
+            </Label>
+            <TagsManager
+              tags={newContact.tags || []}
+              onChange={(tags) => handleInputChange('tags', tags)}
+            />
           </div>
-        )}
 
-        {/* Tags Section */}
-        <div className="flex-shrink-0">
-          <Label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-            ADICIONAR TAGS
-          </Label>
-          <TagsManager
-            tags={newContact.tags || []}
-            onChange={(tags) => handleInputChange('tags', tags)}
-          />
-        </div>
+          {/* Consultation Stage Section */}
+          <div className="mb-6">
+            <ConsultationStageSelector
+              value={newContact.consultationStage || 'Nova consulta'}
+              onChange={(stage) => handleInputChange('consultationStage', stage)}
+            />
+          </div>
 
-        {/* Consultation Stage Section */}
-        <div className="flex-shrink-0 mb-4">
-          <ConsultationStageSelector
-            value={newContact.consultationStage || 'Nova consulta'}
-            onChange={(stage) => handleInputChange('consultationStage', stage)}
-          />
-        </div>
-
-        {/* Main content with fixed height and scroll */}
-        <div className="flex-1 overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-4 flex-shrink-0">
+          {/* Main content with tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="basico" className="flex items-center gap-2">
                 Informações Básicas
                 {(validationErrors.name || validationErrors.phone || validationErrors.email) && (
@@ -212,228 +216,226 @@ const AddClientDialog = ({
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
             </TabsList>
 
-            <div className="flex-1 overflow-hidden mt-4">
-              <TabsContent value="basico" className="h-full overflow-y-auto space-y-4 m-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Coluna 1 - Dados Pessoais */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Dados Pessoais</h3>
-                    
-                    <ClientFormValidation errors={validationErrors} fieldName="name">
-                      <Label htmlFor="name">Nome Completo *</Label>
-                      <Input
-                        id="name"
-                        value={newContact.name || ''}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        placeholder="Digite o nome completo"
-                        className={validationErrors.name ? 'border-red-500 focus:border-red-500' : ''}
-                      />
-                    </ClientFormValidation>
+            <TabsContent value="basico" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Coluna 1 - Dados Pessoais */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Dados Pessoais</h3>
+                  
+                  <ClientFormValidation errors={validationErrors} fieldName="name">
+                    <Label htmlFor="name">Nome Completo *</Label>
+                    <Input
+                      id="name"
+                      value={newContact.name || ''}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="Digite o nome completo"
+                      className={validationErrors.name ? 'border-red-500 focus:border-red-500' : ''}
+                    />
+                  </ClientFormValidation>
 
-                    <ClientFormValidation errors={validationErrors} fieldName="email">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={newContact.email || ''}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="email@exemplo.com"
-                        className={validationErrors.email ? 'border-red-500 focus:border-red-500' : ''}
-                      />
-                    </ClientFormValidation>
+                  <ClientFormValidation errors={validationErrors} fieldName="email">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newContact.email || ''}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="email@exemplo.com"
+                      className={validationErrors.email ? 'border-red-500 focus:border-red-500' : ''}
+                    />
+                  </ClientFormValidation>
 
-                    <ClientFormValidation errors={validationErrors} fieldName="phone">
-                      <Label htmlFor="phone">Telefone *</Label>
-                      <Input
-                        id="phone"
-                        value={newContact.phone || ''}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        placeholder="(11) 99999-9999"
-                        className={validationErrors.phone ? 'border-red-500 focus:border-red-500' : ''}
-                      />
-                    </ClientFormValidation>
+                  <ClientFormValidation errors={validationErrors} fieldName="phone">
+                    <Label htmlFor="phone">Telefone *</Label>
+                    <Input
+                      id="phone"
+                      value={newContact.phone || ''}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="(11) 99999-9999"
+                      className={validationErrors.phone ? 'border-red-500 focus:border-red-500' : ''}
+                    />
+                  </ClientFormValidation>
 
-                    <div>
-                      <Label htmlFor="address">Endereço</Label>
-                      <Textarea
-                        id="address"
-                        value={newContact.address || ''}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        placeholder="Rua, número, bairro, cidade"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="notes">Observações Iniciais</Label>
-                      <Textarea
-                        id="notes"
-                        value={newContact.notes || ''}
-                        onChange={(e) => handleInputChange('notes', e.target.value)}
-                        placeholder="Adicione observações importantes sobre o cliente..."
-                        rows={3}
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor="address">Endereço</Label>
+                    <Textarea
+                      id="address"
+                      value={newContact.address || ''}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      placeholder="Rua, número, bairro, cidade"
+                      rows={3}
+                    />
                   </div>
 
-                  {/* Coluna 2 - Categorias Dinâmicas */}
-                  <div className="space-y-4 h-full">
-                    <DynamicCategoryManager
-                      tabName="Básica"
-                      categories={basicCategories}
-                      onCategoriesChange={setBasicCategories}
+                  <div>
+                    <Label htmlFor="notes">Observações Iniciais</Label>
+                    <Textarea
+                      id="notes"
+                      value={newContact.notes || ''}
+                      onChange={(e) => handleInputChange('notes', e.target.value)}
+                      placeholder="Adicione observações importantes sobre o cliente..."
+                      rows={3}
                     />
                   </div>
                 </div>
-              </TabsContent>
 
-              <TabsContent value="comercial" className="h-full overflow-y-auto space-y-4 m-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Coluna 1 - Dados Comerciais */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Informações Comerciais</h3>
-                    
-                    <div>
-                      <Label htmlFor="clientName">Nome da Empresa</Label>
-                      <Input
-                        id="clientName"
-                        value={newContact.clientName || ''}
-                        onChange={(e) => handleInputChange('clientName', e.target.value)}
-                        placeholder="Nome da empresa"
-                      />
-                    </div>
+                {/* Coluna 2 - Categorias Dinâmicas */}
+                <div className="space-y-4">
+                  <DynamicCategoryManager
+                    tabName="Básica"
+                    categories={basicCategories}
+                    onCategoriesChange={setBasicCategories}
+                  />
+                </div>
+              </div>
+            </TabsContent>
 
-                    <ClientFormValidation errors={validationErrors} fieldName="cpfCnpj">
-                      <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
-                      <Input
-                        id="cpfCnpj"
-                        value={newContact.cpfCnpj || ''}
-                        onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-                        placeholder="000.000.000-00 ou 00.000.000/0001-00"
-                        className={validationErrors.cpfCnpj ? 'border-red-500 focus:border-red-500' : ''}
-                      />
-                    </ClientFormValidation>
-
-                    <div>
-                      <Label htmlFor="clientType">Tipo de Cliente</Label>
-                      <Select
-                        value={newContact.clientType || ''}
-                        onValueChange={(value) => handleInputChange('clientType', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o tipo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pessoa-fisica">Pessoa Física</SelectItem>
-                          <SelectItem value="pessoa-juridica">Pessoa Jurídica</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <ClientFormValidation errors={validationErrors} fieldName="budget">
-                      <Label htmlFor="budget">Orçamento Estimado</Label>
-                      <Input
-                        id="budget"
-                        type="number"
-                        value={newContact.budget || ''}
-                        onChange={(e) => handleInputChange('budget', parseFloat(e.target.value) || 0)}
-                        placeholder="R$ 0,00"
-                        className={validationErrors.budget ? 'border-red-500 focus:border-red-500' : ''}
-                      />
-                    </ClientFormValidation>
-
-                    <div>
-                      <Label htmlFor="clientObjective">Objetivo do Cliente</Label>
-                      <Textarea
-                        id="clientObjective"
-                        value={newContact.clientObjective || ''}
-                        onChange={(e) => handleInputChange('clientObjective', e.target.value)}
-                        placeholder="Descreva o objetivo do cliente..."
-                        rows={3}
-                      />
-                    </div>
+            <TabsContent value="comercial" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Coluna 1 - Dados Comerciais */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Informações Comerciais</h3>
+                  
+                  <div>
+                    <Label htmlFor="clientName">Nome da Empresa</Label>
+                    <Input
+                      id="clientName"
+                      value={newContact.clientName || ''}
+                      onChange={(e) => handleInputChange('clientName', e.target.value)}
+                      placeholder="Nome da empresa"
+                    />
                   </div>
 
-                  {/* Coluna 2 - Categorias Dinâmicas */}
-                  <div className="space-y-4 h-full">
-                    <DynamicCategoryManager
-                      tabName="Comercial"
-                      categories={commercialCategories}
-                      onCategoriesChange={setCommercialCategories}
+                  <ClientFormValidation errors={validationErrors} fieldName="cpfCnpj">
+                    <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
+                    <Input
+                      id="cpfCnpj"
+                      value={newContact.cpfCnpj || ''}
+                      onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
+                      placeholder="000.000.000-00 ou 00.000.000/0001-00"
+                      className={validationErrors.cpfCnpj ? 'border-red-500 focus:border-red-500' : ''}
+                    />
+                  </ClientFormValidation>
+
+                  <div>
+                    <Label htmlFor="clientType">Tipo de Cliente</Label>
+                    <Select
+                      value={newContact.clientType || ''}
+                      onValueChange={(value) => handleInputChange('clientType', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pessoa-fisica">Pessoa Física</SelectItem>
+                        <SelectItem value="pessoa-juridica">Pessoa Jurídica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <ClientFormValidation errors={validationErrors} fieldName="budget">
+                    <Label htmlFor="budget">Orçamento Estimado</Label>
+                    <Input
+                      id="budget"
+                      type="number"
+                      value={newContact.budget || ''}
+                      onChange={(e) => handleInputChange('budget', parseFloat(e.target.value) || 0)}
+                      placeholder="R$ 0,00"
+                      className={validationErrors.budget ? 'border-red-500 focus:border-red-500' : ''}
+                    />
+                  </ClientFormValidation>
+
+                  <div>
+                    <Label htmlFor="clientObjective">Objetivo do Cliente</Label>
+                    <Textarea
+                      id="clientObjective"
+                      value={newContact.clientObjective || ''}
+                      onChange={(e) => handleInputChange('clientObjective', e.target.value)}
+                      placeholder="Descreva o objetivo do cliente..."
+                      rows={3}
                     />
                   </div>
                 </div>
-              </TabsContent>
 
-              <TabsContent value="personalizados" className="h-full overflow-y-auto space-y-4 m-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Coluna 1 - Campos Personalizados Existentes */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Campos Personalizados</h3>
-                    {loading ? (
-                      <div className="text-center py-8">Carregando campos personalizados...</div>
-                    ) : customFields.length > 0 ? (
-                      <div className="space-y-4">
-                        {customFields.map((field) => (
-                          <CustomFieldRenderer
-                            key={field.id}
-                            field={field}
-                            value={customValues[field.id]}
-                            onChange={(value) => handleCustomFieldChange(field.id, value)}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-500">
-                        <p>Nenhum campo personalizado configurado.</p>
-                        <p className="text-sm mt-2">Use as categorias dinâmicas ao lado para criar novos campos.</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Coluna 2 - Categorias Dinâmicas */}
-                  <div className="space-y-4 h-full">
-                    <DynamicCategoryManager
-                      tabName="Personalizada"
-                      categories={personalizedCategories}
-                      onCategoriesChange={setPersonalizedCategories}
-                    />
-                  </div>
+                {/* Coluna 2 - Categorias Dinâmicas */}
+                <div className="space-y-4">
+                  <DynamicCategoryManager
+                    tabName="Comercial"
+                    categories={commercialCategories}
+                    onCategoriesChange={setCommercialCategories}
+                  />
                 </div>
-              </TabsContent>
+              </div>
+            </TabsContent>
 
-              <TabsContent value="documentos" className="h-full overflow-y-auto space-y-4 m-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Coluna 1 - Upload de Documentos */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Upload de Documentos</h3>
+            <TabsContent value="personalizados" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Coluna 1 - Campos Personalizados Existentes */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Campos Personalizados</h3>
+                  {loading ? (
+                    <div className="text-center py-8">Carregando campos personalizados...</div>
+                  ) : customFields.length > 0 ? (
+                    <div className="space-y-4">
+                      {customFields.map((field) => (
+                        <CustomFieldRenderer
+                          key={field.id}
+                          field={field}
+                          value={customValues[field.id]}
+                          onChange={(value) => handleCustomFieldChange(field.id, value)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
                     <div className="text-center py-8 text-gray-500">
-                      <p className="mb-4">Adicione documentos importantes do cliente</p>
-                      <Button variant="outline" className="mb-4">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Selecionar Arquivos
-                      </Button>
-                      <p className="text-sm text-gray-400">
-                        Formatos aceitos: PDF, DOC, DOCX, JPG, PNG (máx. 5MB por arquivo)
-                      </p>
+                      <p>Nenhum campo personalizado configurado.</p>
+                      <p className="text-sm mt-2">Use as categorias dinâmicas ao lado para criar novos campos.</p>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Coluna 2 - Categorias Dinâmicas */}
-                  <div className="space-y-4 h-full">
-                    <DynamicCategoryManager
-                      tabName="Documentos"
-                      categories={documentsCategories}
-                      onCategoriesChange={setDocumentsCategories}
-                    />
+                {/* Coluna 2 - Categorias Dinâmicas */}
+                <div className="space-y-4">
+                  <DynamicCategoryManager
+                    tabName="Personalizada"
+                    categories={personalizedCategories}
+                    onCategoriesChange={setPersonalizedCategories}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="documentos" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Coluna 1 - Upload de Documentos */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-700 border-b pb-2">Upload de Documentos</h3>
+                  <div className="text-center py-8 text-gray-500">
+                    <p className="mb-4">Adicione documentos importantes do cliente</p>
+                    <Button variant="outline" className="mb-4">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Selecionar Arquivos
+                    </Button>
+                    <p className="text-sm text-gray-400">
+                      Formatos aceitos: PDF, DOC, DOCX, JPG, PNG (máx. 5MB por arquivo)
+                    </p>
                   </div>
                 </div>
-              </TabsContent>
-            </div>
+
+                {/* Coluna 2 - Categorias Dinâmicas */}
+                <div className="space-y-4">
+                  <DynamicCategoryManager
+                    tabName="Documentos"
+                    categories={documentsCategories}
+                    onCategoriesChange={setDocumentsCategories}
+                  />
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
 
-        <DialogFooter className="flex justify-between items-center pt-4 border-t flex-shrink-0">
+        <DialogFooter className="flex justify-between items-center pt-4 border-t flex-shrink-0 mt-6">
           <div className="text-sm text-gray-500">
             * Campos obrigatórios
           </div>

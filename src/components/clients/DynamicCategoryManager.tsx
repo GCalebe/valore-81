@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,8 @@ const DynamicCategoryManager = ({ tabName, categories, onCategoriesChange }: Dyn
     options: [] as string[]
   });
   const [newOption, setNewOption] = useState('');
+
+  console.log(`DynamicCategoryManager for ${tabName}:`, { categories, isAddingCategory });
 
   const addCategory = () => {
     if (!newCategory.name.trim()) {
@@ -125,7 +128,7 @@ const DynamicCategoryManager = ({ tabName, categories, onCategoriesChange }: Dyn
       case 'multi_select':
         const selectedValues = Array.isArray(category.value) ? category.value : [];
         return (
-          <div className="space-y-2 max-h-32 overflow-y-auto">
+          <div className="space-y-2 max-h-24 overflow-y-auto">
             {category.options?.map((option) => (
               <label key={option} className="flex items-center space-x-2">
                 <input
@@ -152,7 +155,7 @@ const DynamicCategoryManager = ({ tabName, categories, onCategoriesChange }: Dyn
   };
 
   return (
-    <div className="space-y-4 h-full flex flex-col">
+    <div className="space-y-4 max-h-96 flex flex-col">
       {/* Header with add button */}
       <div className="flex items-center justify-between flex-shrink-0">
         <h4 className="text-sm font-medium text-gray-600 uppercase tracking-wide">
@@ -240,7 +243,7 @@ const DynamicCategoryManager = ({ tabName, categories, onCategoriesChange }: Dyn
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
-                  <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
+                  <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
                     {newCategory.options.map((option) => (
                       <Badge key={option} variant="secondary" className="text-xs flex items-center gap-1">
                         {option}
