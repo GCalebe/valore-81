@@ -3,6 +3,7 @@ import { Contact } from '@/types/client';
 import { toast } from '@/hooks/use-toast';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 import { useContactsService } from './useContactsService';
+import { supabase } from "@/integrations/supabase/client";
 
 export const useClientManagement = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
