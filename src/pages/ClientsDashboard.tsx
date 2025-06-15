@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -8,7 +9,6 @@ import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import ClientsTable from '@/components/clients/ClientsTable';
 import KanbanView from '@/components/clients/KanbanView';
-import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
 import DeleteClientDialog from '@/components/clients/DeleteClientDialog';
@@ -171,55 +171,7 @@ const ClientsDashboard = () => {
           </div>
         </div>
 
-        <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex flex-1 items-center gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Input
-                type="text"
-                placeholder="Buscar clientes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-4"
-              />
-            </div>
-            
-            <FilterDialog
-              isOpen={isFilterDialogOpen}
-              onOpenChange={setIsFilterDialogOpen}
-              statusFilter={statusFilter}
-              segmentFilter={segmentFilter}
-              lastContactFilter={lastContactFilter}
-              onStatusFilterChange={setStatusFilter}
-              onSegmentFilterChange={setSegmentFilter}
-              onLastContactFilterChange={setLastContactFilter}
-              onClearFilters={() => {
-                handleClearFilters();
-                setIsFilterDialogOpen(false);
-              }}
-              hasActiveFilters={hasActiveFilters}
-            />
-
-            {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearFilters}
-                className="text-muted-foreground"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Limpar
-              </Button>
-            )}
-          </div>
-          
-          <AddClientDialog
-            isOpen={isAddContactOpen}
-            onOpenChange={setIsAddContactOpen}
-            newContact={newContact}
-            setNewContact={setNewContact}
-            handleAddContact={handleAddContact}
-          />
-        </div>
+        {/* Removed the redundant search/filter/add client controls here */}
 
         <div className="flex-1 overflow-hidden">
           {viewMode === 'table' ? (
@@ -313,3 +265,4 @@ const ClientsDashboard = () => {
 };
 
 export default ClientsDashboard;
+
