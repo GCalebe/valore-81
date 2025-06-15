@@ -1,5 +1,6 @@
+
 // Refatorado! Toda lógica de cache e fetch extraída para hooks/utilitários menores
-import { useState, useEffect, useCallback, useRef } from 'react';
+import * as React from 'react';
 import type { CalendarEvent, EventFormData } from '@/types/calendar';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -10,7 +11,7 @@ import { getCacheKey, loadFromCache, saveToCache } from './calendarCache';
 function useDebouncedCallback<T extends (...args: any[]) => void>(callback: T, delay: number) {
   const timeout = React.useRef<NodeJS.Timeout | null>(null);
 
-  const debounced = useCallback((...args: Parameters<T>) => {
+  const debounced = React.useCallback((...args: Parameters<T>) => {
     if (timeout.current) clearTimeout(timeout.current);
     timeout.current = setTimeout(() => callback(...args), delay);
   }, [callback, delay]);
@@ -24,14 +25,14 @@ function useDebouncedCallback<T extends (...args: any[]) => void>(callback: T, d
 type DateRange = { start: Date; end: Date; };
 
 export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRange | null) {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [events, setEvents] = React.useState<CalendarEvent[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<Error | null>(null);
+  const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const cacheKey = getCacheKey(selectedDate || undefined, dateRange || undefined);
-  const lastUpdateRef = useRef<number>(0);
+  const lastUpdateRef = React.useRef<number>(0);
 
   // Usando função isolada
   const fetchEventsDebounced = useDebouncedCallback(async () => {
@@ -67,10 +68,10 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
   }, 400);
 
   // Armazenar o último eventos válidos do cache/disco
-  const lastCacheEvents = useRef<CalendarEvent[]>([]);
+  const lastCacheEvents = React.useRef<CalendarEvent[]>([]);
 
   // Atualização manual mantém lógica atual, mas passa handle do cache
-  const refreshEventsPost = useCallback(async () => {
+  const refreshEventsPost = React.useCallback(async () => {
     setIsLoading(true);
     try {
       const apiEvents = await fetchCalendarEvents(selectedDate || undefined, dateRange || undefined);
@@ -90,7 +91,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
   }, [selectedDate, dateRange, cacheKey]);
 
   // Visibilidade/tab focus
-  useEffect(() => {
+  React.useEffect(() => {
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
         const now = Date.now();
@@ -104,7 +105,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
   }, [fetchEventsDebounced]);
 
   // Carregar eventos ao carregar/mudar data/período (com debounce)
-  useEffect(() => {
+  React.useEffect(() => {
     fetchEventsDebounced();
   }, [fetchEventsDebounced]);
 
@@ -221,3 +222,4 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
 
 // Exportação de tipos 
 export type { CalendarEvent, EventFormData } from '@/types/calendar';
+
