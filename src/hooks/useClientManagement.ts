@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Contact } from '@/types/client';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
+import { useContactsService } from './useContactsService';
 
 export const useClientManagement = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -43,127 +43,18 @@ export const useClientManagement = () => {
     consultationStage: 'Nova consulta',
   });
 
-  const fetchClients = async () => {
+  const contactsService = useContactsService();
+
+  const fetchClients = useCallback(async () => {
     try {
       setLoadingContacts(true);
-      
-      const { data, error } = await supabase
-        .from('contacts')
-        .select('*');
-      
-      if (error) {
-        throw error;
-      }
-      
-      if (data) {
-        const validKanbanStages: Contact['kanbanStage'][] = [
-          'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
-        ];
-        const validConsultationStages: Contact['consultationStage'][] = [
-          'Nova consulta',
-          'Qualificado',
-          'Chamada agendada',
-          'Preparando proposta',
-          'Proposta enviada',
-          'Acompanhamento',
-          'Negociação',
-          'Fatura enviada',
-          'Fatura paga – ganho',
-          'Projeto cancelado – perdido'
-        ];
+      const contactsFetched = await contactsService.fetchAllContacts();
 
-        const formattedContacts: Contact[] = data.map(client => {
-          // Ensure kanban_stage is valid
-          const kanbanStage = validKanbanStages.includes(client.kanban_stage as Contact['kanbanStage'])
-            ? client.kanban_stage as Contact['kanbanStage']
-            : 'Entraram';
+      // Gera conversas fictícias se necessário.
+      let contactsWithConversations = generateFictitiousConversations(contactsFetched);
 
-          // Ensure status is valid
-          let safeStatus: Contact['status'] = client.status === 'Inactive' ? 'Inactive' : 'Active';
-
-          // Ensure consultation_stage is valid
-          const consultationStage = validConsultationStages.includes(client.consultation_stage as Contact['consultationStage'])
-            ? client.consultation_stage as Contact['consultationStage']
-            : 'Nova consulta';
-
-          return {
-            id: client.id,
-            name: client.name || 'Cliente sem nome',
-            email: client.email,
-            phone: client.phone,
-            address: client.address,
-            clientName: client.client_name,
-            clientSize: client.client_size,
-            clientType: client.client_type,
-            cpfCnpj: client.cpf_cnpj,
-            asaasCustomerId: client.asaas_customer_id,
-            status: safeStatus,
-            notes: client.notes,
-            lastContact: client.last_contact ? new Date(client.last_contact).toLocaleDateString('pt-BR') : (client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'),
-            kanbanStage: kanbanStage,
-            sessionId: client.session_id,
-            tags: client.tags || [],
-            responsibleUser: client.responsible_user,
-            sales: client.sales,
-            clientSector: client.client_sector,
-            budget: client.budget,
-            paymentMethod: client.payment_method,
-            clientObjective: client.client_objective,
-            lossReason: client.loss_reason,
-            contractNumber: client.contract_number,
-            contractDate: client.contract_date,
-            payment: client.payment,
-            uploadedFiles: client.uploaded_files || [],
-            consultationStage: consultationStage,
-            lastMessage: client.last_message,
-            lastMessageTime: client.last_message_time,
-            unreadCount: client.unread_count,
-          };
-        });
-        
-        // Generate fictitious conversations for all contacts
-        const contactsWithConversations = generateFictitiousConversations(formattedContacts);
-        
-        // Buscar última mensagem para cada contato que tem sessionId
-        for (const contact of contactsWithConversations) {
-          if (contact.sessionId) {
-            try {
-              const { data: historyData, error: historyError } = await supabase
-                .from('n8n_chat_histories')
-                .select('*')
-                .eq('session_id', contact.sessionId)
-                .order('id', { ascending: false })
-                .limit(1);
-              
-              if (!historyError && historyData && historyData.length > 0) {
-                const chatHistory = historyData[0];
-                
-                let lastMessageContent = 'Sem mensagem';
-                if (chatHistory.message && typeof chatHistory.message === 'object' && !Array.isArray(chatHistory.message)) {
-                  const messageObj = chatHistory.message as { [key: string]: any };
-                  if (messageObj.content) {
-                    lastMessageContent = messageObj.content;
-                  }
-                }
-                
-                contact.lastMessage = lastMessageContent || 'Sem mensagem';
-                
-                const messageDate = chatHistory.hora 
-                  ? new Date(chatHistory.hora) 
-                  : chatHistory.data 
-                    ? new Date(chatHistory.data) 
-                    : new Date();
-                
-                contact.lastMessageTime = messageDate.toLocaleString('pt-BR');
-              }
-            } catch (error) {
-              console.error(`Error fetching last message for contact ${contact.id}:`, error);
-            }
-          }
-        }
-        
-        setContacts(contactsWithConversations);
-      }
+      // Atualização de mensagens será feita no futuro utilizando outro hook/serviço  
+      setContacts(contactsWithConversations);
     } catch (error) {
       console.error('Error fetching clients:', error);
       toast({
@@ -175,16 +66,11 @@ export const useClientManagement = () => {
       setLoadingContacts(false);
       setRefreshing(false);
     }
-  };
+  }, [contactsService]);
 
   const handleKanbanStageChange = async (contactId: string, newStage: string) => {
     try {
-      const { error } = await supabase
-        .from('contacts')
-        .update({ kanban_stage: newStage })
-        .eq('id', contactId);
-
-      if (error) throw error;
+      await contactsService.updateContactKanbanStage(contactId, newStage);
 
       setContacts(prevContacts => 
         prevContacts.map(contact => 
@@ -526,7 +412,7 @@ export const useClientManagement = () => {
   
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [fetchClients]);
 
   return {
     contacts,
