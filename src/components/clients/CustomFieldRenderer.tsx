@@ -34,7 +34,7 @@ const CustomFieldRenderer = ({ field, value, onChange, validationError }: Custom
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Nenhum</SelectItem>
-              {field.field_options?.map((option) => (
+              {field.field_options && Array.isArray(field.field_options) && field.field_options.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
                 </SelectItem>
@@ -47,7 +47,7 @@ const CustomFieldRenderer = ({ field, value, onChange, validationError }: Custom
         const selectedValues = Array.isArray(value) ? value : [];
         return (
           <div className={`space-y-2 ${validationError ? 'p-2 border border-red-500 rounded' : ''}`}>
-            {field.field_options?.map((option) => (
+            {field.field_options && Array.isArray(field.field_options) && field.field_options.map((option) => (
               <label key={option} className="flex items-center space-x-2">
                 <input
                   type="checkbox"

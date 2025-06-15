@@ -66,18 +66,25 @@ export function useDynamicFields(clientId: string | null) {
 
       if (customFields) {
         customFields.forEach(field => {
-          const category = field.category as keyof typeof categorizedFields;
+          // Use the category from the database, defaulting to 'basic' if not set
+          const category = (field.category || 'basic') as keyof typeof categorizedFields;
           const fieldValue = valuesMap.get(field.id);
           
           const dynamicField: DynamicCategory = {
             id: field.id,
             name: field.field_name,
             type: field.field_type as 'text' | 'single_select' | 'multi_select',
-            options: field.field_options ? JSON.parse(JSON.stringify(field.field_options)) : undefined,
+            options: field.field_options ? field.field_options as string[] : undefined,
             value: fieldValue || (field.field_type === 'multi_select' ? [] : '')
           };
 
-          categorizedFields[category].push(dynamicField);
+          // Ensure the category exists in our categorized fields
+          if (categorizedFields[category]) {
+            categorizedFields[category].push(dynamicField);
+          } else {
+            // If category doesn't exist, default to 'basic'
+            categorizedFields.basic.push(dynamicField);
+          }
         });
       }
 

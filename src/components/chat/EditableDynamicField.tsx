@@ -49,7 +49,7 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Nenhum</SelectItem>
-                {field.options?.map((option) => (
+                {field.options && Array.isArray(field.options) && field.options.map((option) => (
                   <SelectItem key={option} value={option}>
                     {option}
                   </SelectItem>
@@ -62,7 +62,7 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
           const selectedValues = Array.isArray(editValue) ? editValue : [];
           return (
             <div className="space-y-2">
-              {field.options?.map((option) => (
+              {field.options && Array.isArray(field.options) && field.options.map((option) => (
                 <label key={option} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
