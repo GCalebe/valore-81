@@ -27,7 +27,7 @@ export function CalendarView({
   onEventClick,
   onPeriodChange
 }: CalendarViewProps) {
-  // Determinar o período a ser exibido baseado no filtro
+  // Ajuste: Semana deve ser baseada na data selecionada, e não na data de hoje!
   const getDisplayPeriod = () => {
     const today = new Date();
     
@@ -42,13 +42,15 @@ export function CalendarView({
           start: startOfDay(selectedDate),
           end: endOfDay(selectedDate)
         };
-      case 'semana':
-        const weekStart = startOfWeek(today, { weekStartsOn: 0 }); // Domingo
-        const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+      case 'semana': {
+        // AGORA: Semana baseada na data selecionada, não mais no "today"
+        const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 }); // Domingo
+        const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
         return {
           start: weekStart,
           end: weekEnd
         };
+      }
       case 'mes':
       default:
         return {
@@ -59,8 +61,8 @@ export function CalendarView({
   };
 
   const displayPeriod = getDisplayPeriod();
-  
-  // Notificar o componente pai sobre mudança de período quando necessário
+
+  // Notificar o pai sobre mudança de período para todas as views que precisam
   React.useEffect(() => {
     if (onPeriodChange && (timeFilter === 'mes' || timeFilter === 'semana')) {
       onPeriodChange(displayPeriod.start, displayPeriod.end);
@@ -74,31 +76,15 @@ export function CalendarView({
 
   // Get events for a specific day - buscar em TODOS os eventos disponíveis
   const getEventsForDay = (day: Date) => {
-    console.log(`Buscando eventos para o dia ${format(day, 'yyyy-MM-dd')}...`);
-    
-    const dayEvents = events.filter(event => {
-      if (!event.start) {
-        console.warn('Evento sem data de início:', event);
-        return false;
-      }
-      
+    return events.filter(event => {
+      if (!event.start) { return false; }
       try {
         const eventDate = parseISO(event.start);
-        const isEventOnThisDay = isSameDay(eventDate, day);
-        
-        if (isEventOnThisDay) {
-          console.log(`Evento encontrado para ${format(day, 'yyyy-MM-dd')}:`, event.summary);
-        }
-        
-        return isEventOnThisDay;
-      } catch (error) {
-        console.error('Erro ao processar data do evento:', event.start, error);
+        return isSameDay(eventDate, day);
+      } catch {
         return false;
       }
     });
-    
-    console.log(`Total de eventos encontrados para ${format(day, 'yyyy-MM-dd')}:`, dayEvents.length);
-    return dayEvents;
   };
 
   const weekDays = ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'];
@@ -118,40 +104,31 @@ export function CalendarView({
   // Personalizar o título baseado no filtro
   const getCalendarTitle = () => {
     const today = new Date();
-    
     switch (timeFilter) {
       case 'hoje':
         return `Hoje - ${format(today, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
       case 'dia':
         return `${format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
-      case 'semana':
-        const weekStart = startOfWeek(today, { weekStartsOn: 0 });
-        const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+      case 'semana': {
+        // AGORA: Semana baseada na data selecionada
+        const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
+        const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
         return `Semana de ${format(weekStart, "dd/MM", { locale: pt })} a ${format(weekEnd, "dd/MM", { locale: pt })}`;
+      }
       case 'mes':
       default:
         return format(currentMonth, 'MMMM \'de\' yyyy', { locale: pt });
     }
   };
 
-  // Determinar se devemos mostrar os controles de navegação
   const showMonthNavigation = timeFilter === 'mes';
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
-    e.stopPropagation(); // Previne que o clique no evento dispare o clique no dia
+    e.stopPropagation();
     if (onEventClick) {
       onEventClick(event);
     }
   };
-
-  // Log para debug
-  console.log('CalendarView renderizando com:', {
-    totalEvents: events.length,
-    timeFilter,
-    currentMonth: format(currentMonth, 'yyyy-MM'),
-    displayPeriodStart: format(displayPeriod.start, 'yyyy-MM-dd'),
-    displayPeriodEnd: format(displayPeriod.end, 'yyyy-MM-dd')
-  });
 
   return (
     <div className="bg-white dark:bg-gray-800 border rounded-lg">
@@ -188,14 +165,16 @@ export function CalendarView({
         {/* Calendar days */}
         <div className={`
           grid gap-1
-          ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'grid-cols-1' : 
-            timeFilter === 'semana' ? 'grid-cols-7' : 'grid-cols-7'}
+          ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'grid-cols-1' : 'grid-cols-7'}
         `}>
           {days.map(day => {
             const dayEvents = getEventsForDay(day);
             const isSelected = isSameDay(day, selectedDate);
             const isCurrentMonth = isSameMonth(day, currentMonth);
             const isToday = isSameDay(day, new Date());
+
+            // No modo semana, mostrar apenas dias da semana vigente, sem opacidade.
+            const dayOpacity = (timeFilter === 'mes' && !isCurrentMonth) ? 'opacity-50' : '';
 
             return (
               <div
@@ -204,7 +183,7 @@ export function CalendarView({
                   ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'min-h-[300px]' : 'min-h-[120px]'} 
                   p-1 border border-gray-200 dark:border-gray-700 cursor-pointer
                   ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}
-                  ${!isCurrentMonth && timeFilter === 'mes' ? 'opacity-50' : ''}
+                  ${dayOpacity}
                   ${isToday ? 'ring-2 ring-blue-400' : ''}
                 `}
                 onClick={() => onDateChange(day)}

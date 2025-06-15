@@ -54,7 +54,7 @@ export function ScheduleContent({
   const [hostFilter, setHostFilter] = useState('all');
   const [timeFilter, setTimeFilter] = useState<'hoje' | 'mes' | 'semana' | 'dia'>('mes');
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
-  
+
   // Função para determinar o período de filtro - APENAS para modo lista
   const getListModeFilterPeriod = () => {
     const today = new Date();
@@ -81,7 +81,7 @@ export function ScheduleContent({
         return null; // Mostrar todos os eventos
     }
   };
-  
+
   const filteredEvents = events.filter(event => {
     if (!event.start || typeof event.start !== 'string') {
       console.warn('Event with invalid start date found:', event);
@@ -142,9 +142,8 @@ export function ScheduleContent({
   // Handler para adicionar evento
   const handleAddEventClick = () => setIsAddEventDialogOpen(true);
 
-  // ** REMOVENDO O CARD DO CABEÇALHO antigo para deixar FULL SCREEN **
-  // O calendário agora ocupa toda a largura/h (exceto cabeçalhos externos da page)
-
+  // ATENÇÃO: NÃO EXISTE MAIS CARD/CABEÇALHO EXTERNO - layout flat só com filtros e calendário/lista.
+  // Garantir full screen sem card/cabeçalho extra da agenda!
   return (
     <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0">
       <CalendarViewSwitcher
@@ -170,6 +169,7 @@ export function ScheduleContent({
         activeFilter={timeFilter}
         onFilterChange={setTimeFilter}
       />
+      {/* Agenda 100% tela, sem Cards/Cabeçalho antigos */}
       <div className="flex-1 w-full flex flex-col min-h-0">       
         {viewMode === 'calendar' ? (
           <CalendarView
