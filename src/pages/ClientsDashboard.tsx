@@ -1,9 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { RefreshCw, Users, Grid, List, Minimize2, Maximize2 } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
@@ -14,7 +11,6 @@ import EditClientDialog from '@/components/clients/EditClientDialog';
 import DeleteClientDialog from '@/components/clients/DeleteClientDialog';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -23,7 +19,7 @@ const ClientsDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [segmentFilter, setSegmentFilter] = useState('all');
   const [lastContactFilter, setLastContactFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
+  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban'); // padrão agora é kanban
   const [isCompactView, setIsCompactView] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
@@ -109,70 +105,16 @@ const ClientsDashboard = () => {
         newContact={newContact}
         setNewContact={setNewContact}
         handleAddContact={handleAddContact}
+        // Novos props para os botões:
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        isCompactView={isCompactView}
+        setIsCompactView={setIsCompactView}
+        refreshing={refreshing}
+        handleRefresh={handleRefresh}
       />
       
       <main className="flex-1 flex flex-col w-full px-4 py-4 overflow-hidden">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
-              Clientes
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {viewMode === 'kanban' && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setIsCompactView(!isCompactView)}
-                      className="h-9 w-9"
-                    >
-                      {isCompactView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{isCompactView ? 'Visão Padrão' : 'Visão Compacta'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            <div className="flex items-center border rounded-lg bg-white dark:bg-gray-800">
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('table')}
-                className="rounded-r-none"
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'kanban' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('kanban')}
-                className="rounded-l-none"
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <Button 
-              variant="outline" 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              Atualizar
-            </Button>
-          </div>
-        </div>
-
-        {/* Removed the redundant search/filter/add client controls here */}
-
         <div className="flex-1 overflow-hidden">
           {viewMode === 'table' ? (
             <ClientsTable
@@ -266,3 +208,4 @@ const ClientsDashboard = () => {
 
 export default ClientsDashboard;
 
+// O arquivo está ficando muito longo (269+ linhas). Considere pedir para eu refatorar em arquivos menores.
