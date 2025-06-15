@@ -235,7 +235,7 @@ export type Database = {
           client_size: string | null
           client_type: string | null
           cpf_cnpj: string | null
-          created_at: string | null
+          created_at: string
           email: string | null
           id: number
           kanban_stage: string | null
@@ -253,7 +253,7 @@ export type Database = {
           client_size?: string | null
           client_type?: string | null
           cpf_cnpj?: string | null
-          created_at?: string | null
+          created_at?: string
           email?: string | null
           id?: number
           kanban_stage?: string | null
@@ -271,7 +271,7 @@ export type Database = {
           client_size?: string | null
           client_type?: string | null
           cpf_cnpj?: string | null
-          created_at?: string | null
+          created_at?: string
           email?: string | null
           id?: number
           kanban_stage?: string | null
@@ -580,7 +580,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      latest_chat_messages: {
+        Row: {
+          id: number | null
+          message: Json | null
+          message_time: string | null
+          session_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_current_user_role: {

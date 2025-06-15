@@ -50,6 +50,7 @@ export function useConversations() {
                 }
               }
               
+              // Use hora field if available, otherwise fall back to data field
               const messageDate = chatHistory.hora 
                 ? new Date(chatHistory.hora) 
                 : chatHistory.data 
@@ -75,68 +76,84 @@ export function useConversations() {
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('🔍 Iniciando busca por conversas...');
-      
-      // Primeiro, buscar todos os sessionIds únicos da tabela n8n_chat_histories
-      const { data: historyData, error: historyError } = await supabase
+      console.log('🔍 Iniciando busca otimizada por conversas...');
+
+      const { data: sessionData, error: sessionError } = await supabase
         .from('n8n_chat_histories')
         .select('session_id')
-        .order('id', { ascending: false });
-      
-      if (historyError) {
-        console.error('❌ Erro ao buscar histórico de chat:', historyError);
-        throw historyError;
-      }
-      
-      console.log('📊 Dados do histórico encontrados:', historyData?.length || 0, 'registros');
-      
-      if (!historyData || historyData.length === 0) {
-        console.log('⚠️ Nenhum histórico de chat encontrado');
+        .not('session_id', 'is', null);
+
+      if (sessionError) throw sessionError;
+      if (!sessionData || sessionData.length === 0) {
         setConversations([]);
+        setLoading(false);
         return;
       }
-      
-      // Extrair sessionIds únicos
-      const uniqueSessionIds = Array.from(new Set(
-        historyData.map(item => item.session_id).filter(Boolean)
-      ));
-      
-      console.log('🔑 SessionIds únicos encontrados:', uniqueSessionIds.length, uniqueSessionIds);
-      
+
+      const uniqueSessionIds = Array.from(new Set(sessionData.map(item => item.session_id)));
       if (uniqueSessionIds.length === 0) {
-        console.log('⚠️ Nenhum sessionId válido encontrado');
         setConversations([]);
+        setLoading(false);
         return;
       }
-      
-      // Buscar clientes correspondentes aos sessionIds
-      const { data: clientsData, error: clientsError } = await supabase
-        .from('dados_cliente')
-        .select('*')
-        .in('sessionid', uniqueSessionIds);
-      
-      if (clientsError) {
-        console.error('❌ Erro ao buscar clientes:', clientsError);
-        throw clientsError;
-      }
-      
-      console.log('👥 Clientes encontrados:', clientsData?.length || 0);
-      console.log('📋 Dados dos clientes:', clientsData);
-      
+
+      console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
+
+      const [clientsResult, latestMessagesResult] = await Promise.all([
+        supabase
+          .from('dados_cliente')
+          .select('*')
+          .in('sessionid', uniqueSessionIds),
+        supabase
+          .from('latest_chat_messages')
+          .select('session_id, message, message_time')
+          .in('session_id', uniqueSessionIds)
+      ]);
+
+      const { data: clientsData, error: clientsError } = clientsResult;
+      const { data: latestMessagesData, error: latestMessagesError } = latestMessagesResult;
+
+      if (clientsError) throw clientsError;
+      if (latestMessagesError) throw latestMessagesError;
       if (!clientsData || clientsData.length === 0) {
-        console.log('⚠️ Nenhum cliente encontrado para os sessionIds');
         setConversations([]);
+        setLoading(false);
         return;
       }
-      
-      // Criar conversas a partir dos clientes
+
+      console.log(`👥 ${clientsData.length} clientes e ${latestMessagesData?.length || 0} últimas mensagens encontradas.`);
+
+      const lastMessagesMap = new Map(
+        latestMessagesData?.map(msg => [msg.session_id, msg]) || []
+      );
+
       const conversationsData: Conversation[] = clientsData.map((client: Client) => {
-        console.log('🏗️ Criando conversa para cliente:', client.nome, 'SessionId:', client.sessionid);
+        const lastMessage = lastMessagesMap.get(client.sessionid);
+        let lastMessageContent = 'Nenhuma mensagem ainda';
+        let messageTime = '...';
+
+        if (lastMessage) {
+          const msgData = lastMessage.message;
+          if (msgData) {
+            if (typeof msgData === 'object' && msgData !== null) {
+              lastMessageContent = msgData.content || (msgData.messages && msgData.messages.length > 0 && msgData.messages[msgData.messages.length - 1].content) || JSON.stringify(msgData);
+            } else if (typeof msgData === 'string') {
+              try {
+                const parsed = JSON.parse(msgData);
+                lastMessageContent = parsed.content || msgData;
+              } catch (e) {
+                lastMessageContent = msgData;
+              }
+            }
+          }
+          messageTime = formatMessageTime(new Date(lastMessage.message_time));
+        }
+
         return {
           id: client.sessionid,
           name: client.nome || 'Cliente sem nome',
-          lastMessage: 'Carregando última mensagem...',
-          time: 'Recente',
+          lastMessage: lastMessageContent,
+          time: messageTime,
           unread: 0,
           avatar: '👤',
           phone: client.telefone || 'Não informado',
@@ -145,75 +162,24 @@ export function useConversations() {
           clientName: client.client_name || 'Não informado',
           clientSize: client.client_size || 'Não informado',
           clientType: client.client_type || 'Não informado',
-          sessionId: client.sessionid
+          sessionId: client.sessionid,
         };
       });
       
-      console.log('✅ Conversas criadas:', conversationsData.length);
-      
-      // Buscar última mensagem para cada conversa
-      for (const conversation of conversationsData) {
-        try {
-          console.log('📨 Buscando última mensagem para:', conversation.name, 'SessionId:', conversation.sessionId);
-          
-          const { data: lastMessageData, error: messageError } = await supabase
-            .from('n8n_chat_histories')
-            .select('*')
-            .eq('session_id', conversation.sessionId)
-            .order('id', { ascending: false })
-            .limit(1);
-          
-          if (!messageError && lastMessageData && lastMessageData.length > 0) {
-            const chatHistory = lastMessageData[0] as N8nChatHistory;
-            console.log('💬 Última mensagem encontrada:', chatHistory);
-            
-            let lastMessageContent = 'Sem mensagem';
-            if (chatHistory.message) {
-              if (typeof chatHistory.message === 'object' && chatHistory.message.content) {
-                lastMessageContent = chatHistory.message.content;
-              } else if (typeof chatHistory.message === 'string') {
-                try {
-                  const parsed = JSON.parse(chatHistory.message);
-                  if (parsed.content) {
-                    lastMessageContent = parsed.content;
-                  }
-                } catch (e) {
-                  lastMessageContent = chatHistory.message;
-                }
-              }
-            }
-            
-            conversation.lastMessage = lastMessageContent;
-            
-            const messageDate = chatHistory.hora 
-              ? new Date(chatHistory.hora) 
-              : chatHistory.data 
-                ? new Date(chatHistory.data) 
-                : new Date();
-            
-            conversation.time = formatMessageTime(messageDate);
-            console.log('⏰ Horário formatado:', conversation.time);
-          } else {
-            console.log('⚠️ Nenhuma mensagem encontrada para:', conversation.name);
-          }
-        } catch (error) {
-          console.error('❌ Erro ao buscar última mensagem:', error);
-        }
-      }
-      
-      console.log('🎉 Conversas finais:', conversationsData);
+      console.log('🎉 Conversas finais montadas:', conversationsData.length);
       setConversations(conversationsData);
-      
+
     } catch (error) {
       console.error('❌ Erro geral ao buscar conversas:', error);
       toast({
         title: "Erro ao carregar conversas",
-        description: "Ocorreu um erro ao carregar as conversas.",
+        description: "Ocorreu um erro ao carregar as conversas. A busca foi otimizada para melhor performance.",
         variant: "destructive"
       });
       setConversations([]);
     } finally {
       setLoading(false);
+      console.log('🏁 Busca de conversas finalizada.');
     }
   }, [toast]);
 
