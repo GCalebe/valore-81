@@ -72,6 +72,41 @@ export type Database = {
         }
         Relationships: []
       }
+      client_custom_values: {
+        Row: {
+          client_id: string
+          created_at: string
+          field_id: string
+          field_value: Json
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          field_id: string
+          field_value: Json
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          field_id?: string
+          field_value?: Json
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_custom_values_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address: string | null
@@ -225,6 +260,39 @@ export type Database = {
           session_id?: string
           time?: string | null
           unread?: number | null
+        }
+        Relationships: []
+      }
+      custom_fields: {
+        Row: {
+          category: string
+          created_at: string
+          field_name: string
+          field_options: Json | null
+          field_type: string
+          id: string
+          is_required: boolean
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          field_name: string
+          field_options?: Json | null
+          field_type: string
+          id?: string
+          is_required?: boolean
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          field_name?: string
+          field_options?: Json | null
+          field_type?: string
+          id?: string
+          is_required?: boolean
+          updated_at?: string
         }
         Relationships: []
       }

@@ -11,7 +11,7 @@ export interface CustomField {
 
 export interface ClientCustomValue {
   id: string;
-  client_id: number;
+  client_id: string;
   field_id: string;
   field_value: any;
   created_at: string;
