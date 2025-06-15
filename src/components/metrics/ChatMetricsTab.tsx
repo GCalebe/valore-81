@@ -12,6 +12,7 @@ interface ChatMetricsTabProps {
   stats: {
     newClientsThisMonth: number;
     monthlyGrowth: any[];
+    isStale?: boolean;
   };
   metrics: {
     totalConversations: number;
@@ -24,6 +25,7 @@ interface ChatMetricsTabProps {
     funnelData: any[];
     conversionByTimeData: any[];
     leadsData: any[];
+    isStale?: boolean;
   };
   loading: boolean;
 }
@@ -33,7 +35,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
     <div className="space-y-8">
       {/* Chat KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard 
+        <StatCard
           title="Total de Conversas"
           value={metrics.totalConversations}
           icon={<MessageCircle />}
@@ -41,9 +43,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-blue-100 dark:bg-blue-900/30"
           iconTextClass="text-blue-600 dark:text-blue-400"
+          isStale={metrics.isStale}
         />
-        
-        <StatCard 
+        <StatCard
           title="Taxa de Resposta"
           value={`${metrics.responseRate}%`}
           icon={<TrendingUp />}
@@ -51,9 +53,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-green-100 dark:bg-green-900/30"
           iconTextClass="text-green-600 dark:text-green-400"
+          isStale={metrics.isStale}
         />
-        
-        <StatCard 
+        <StatCard
           title="Tempo Médio de Resposta"
           value={`${metrics.avgResponseTime}h`}
           icon={<Clock />}
@@ -61,9 +63,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-orange-100 dark:bg-orange-900/30"
           iconTextClass="text-orange-600 dark:text-orange-400"
+          isStale={metrics.isStale}
         />
-        
-        <StatCard 
+        <StatCard
           title="Taxa de Conversão"
           value={`${metrics.conversionRate}%`}
           icon={<Target />}
@@ -71,9 +73,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-purple-100 dark:bg-purple-900/30"
           iconTextClass="text-purple-600 dark:text-purple-400"
+          isStale={metrics.isStale}
         />
-        
-        <StatCard 
+        <StatCard
           title="Tempo Médio de Fechamento"
           value={`${metrics.avgClosingTime} dias`}
           icon={<Clock />}
@@ -81,9 +83,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-pink-100 dark:bg-pink-900/30"
           iconTextClass="text-pink-600 dark:text-pink-400"
+          isStale={metrics.isStale}
         />
-        
-        <StatCard 
+        <StatCard
           title="Novos Leads"
           value={stats.newClientsThisMonth}
           icon={<Users />}
@@ -91,6 +93,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           loading={loading}
           iconBgClass="bg-indigo-100 dark:bg-indigo-900/30"
           iconTextClass="text-indigo-600 dark:text-indigo-400"
+          isStale={stats.isStale}
         />
       </div>
       
@@ -99,12 +102,10 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         <ConversationChart data={metrics.conversationData} loading={loading} />
         <ConversionFunnelChart data={metrics.funnelData} loading={loading} />
       </div>
-      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ClientGrowthChart data={stats.monthlyGrowth} loading={loading} />
         <ConversionByTimeChart data={metrics.conversionByTimeData} loading={loading} />
       </div>
-      
       {/* Chat Tables Section */}
       <div className="grid grid-cols-1 gap-6">
         <LeadsTable leads={metrics.leadsData} loading={loading} />

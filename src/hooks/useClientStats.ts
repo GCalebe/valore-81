@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,10 +10,21 @@ export function useClientStats() {
     newClientsThisMonth: 0,
     monthlyGrowth: [],
     clientTypes: [],
-    recentClients: []
+    recentClients: [],
+    isStale: false,
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  const zeroStats = {
+    totalClients: 0,
+    totalMarketingClients: 0,
+    newClientsThisMonth: 0,
+    monthlyGrowth: [],
+    clientTypes: [],
+    recentClients: [],
+    isStale: true,
+  };
 
   const refetchStats = useCallback(async () => {
     try {
@@ -31,14 +43,12 @@ export function useClientStats() {
           description: "Não foi possível carregar os clientes. Verifique sua conexão ou tente novamente mais tarde.",
           variant: "destructive"
         });
-        // Não zera os dados, apenas retorna para evitar sobrescrever stats bons
+        setStats(zeroStats);
         setLoading(false);
         return;
       }
 
-      console.log(`Total clients count: ${totalClients}`);
-
-      // Fetch total marketing clients (clients with client_name filled)
+      // Fetch total marketing clients
       const { count: totalMarketingClients, error: marketingClientsError } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
@@ -47,14 +57,15 @@ export function useClientStats() {
 
       if (marketingClientsError) {
         console.error('Error fetching marketing clients:', marketingClientsError);
+        setStats(zeroStats);
+        setLoading(false);
+        return;
       }
-
-      console.log(`Marketing clients count: ${totalMarketingClients || 0}`);
 
       // Fetch new clients this month
       const today = new Date();
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      
+
       const { count: newClientsThisMonth, error: newClientsError } = await supabase
         .from('dados_cliente')
         .select('*', { count: 'exact' })
@@ -63,28 +74,30 @@ export function useClientStats() {
 
       if (newClientsError) {
         console.error('Error fetching new clients this month:', newClientsError);
+        setStats(zeroStats);
+        setLoading(false);
+        return;
       }
 
-      console.log(`New clients this month: ${newClientsThisMonth || 0}`);
-
-      // Fetch monthly growth data for the current year
+      // Monthly growth (loop)
       const currentYear = new Date().getFullYear();
       const monthlyGrowthData = [];
-      
       for (let month = 0; month < 12; month++) {
         const startOfMonth = new Date(currentYear, month, 1);
         const endOfMonth = new Date(currentYear, month + 1, 0);
-        
+
         const { count, error } = await supabase
           .from('dados_cliente')
           .select('*', { count: 'exact' })
           .gte('created_at', startOfMonth.toISOString())
           .lte('created_at', endOfMonth.toISOString());
-        
+
         if (error) {
-          console.error(`Error fetching data for month ${month}:`, error);
+          setStats(zeroStats);
+          setLoading(false);
+          return;
         }
-        
+
         const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         monthlyGrowthData.push({
           month: monthNames[month],
@@ -92,7 +105,7 @@ export function useClientStats() {
         });
       }
 
-      // Fetch client types data using client_type field
+      // Client types
       const { data: clientTypesData, error: clientTypesError } = await supabase
         .from('dados_cliente')
         .select('client_type')
@@ -100,7 +113,9 @@ export function useClientStats() {
         .neq('client_type', '');
 
       if (clientTypesError) {
-        console.error('Error fetching client types:', clientTypesError);
+        setStats(zeroStats);
+        setLoading(false);
+        return;
       }
 
       const typeCounts = {};
@@ -111,7 +126,7 @@ export function useClientStats() {
       });
 
       const colors = [
-        '#8B5CF6', '#EC4899', '#10B981', '#3B82F6', 
+        '#8B5CF6', '#EC4899', '#10B981', '#3B82F6',
         '#F59E0B', '#EF4444', '#6366F1', '#14B8A6',
         '#F97316', '#8B5CF6', '#06B6D4', '#D946EF'
       ];
@@ -122,51 +137,37 @@ export function useClientStats() {
         color: colors[index % colors.length]
       }));
 
-      console.log(`Client types:`, clientTypes);
-
-      // Fetch recent clients with melhor tratamento de erro
+      // Recent clients
       const { data: recentClientsData, error: recentClientsError } = await supabase
         .from('dados_cliente')
         .select('id, nome, telefone, client_name, created_at, kanban_stage')
         .order('created_at', { ascending: false })
         .limit(5);
 
-      let recentClients = [];
       if (recentClientsError) {
-        console.error('Error fetching recent clients:', recentClientsError);
-        // Mostra toast mas não zera o array anterior
-        toast({
-          title: "Erro ao buscar clientes recentes",
-          description: "Não foi possível carregar os clientes recentes.",
-          variant: "destructive"
-        });
-        // Não retorna/falha hard, apenas não atualiza recentClients.
-        recentClients = stats.recentClients ?? [];
-      } else {
-        recentClients = recentClientsData?.map(client => ({
-          id: client.id,
-          name: client.nome || 'Cliente sem nome',
-          phone: client.telefone || 'Não informado',
-          marketingClients: client.client_name ? 1 : 0,
-          lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-          status: client.kanban_stage || 'Entraram'
-        })) || [];
+        setStats(zeroStats);
+        setLoading(false);
+        return;
       }
 
-      console.log(`Recent clients:`, recentClients);
+      const recentClients = recentClientsData?.map(client => ({
+        id: client.id,
+        name: client.nome || 'Cliente sem nome',
+        phone: client.telefone || 'Não informado',
+        marketingClients: client.client_name ? 1 : 0,
+        lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
+        status: client.kanban_stage || 'Entraram'
+      })) || [];
 
-      // Update stats normally
       setStats({
         totalClients: totalClients || 0,
         totalMarketingClients: totalMarketingClients || 0,
         newClientsThisMonth: newClientsThisMonth || 0,
         monthlyGrowth: monthlyGrowthData,
         clientTypes,
-        recentClients
+        recentClients,
+        isStale: false,
       });
-
-      console.log('Client statistics updated successfully with real data');
-
     } catch (error) {
       console.error('Error fetching stats:', error);
       toast({
@@ -174,11 +175,11 @@ export function useClientStats() {
         description: "Problema de conexão ou erro inesperado ao atualizar as estatísticas.",
         variant: "destructive"
       });
-      // Não sobrescreve stats: mantém dados anteriores.
+      setStats(zeroStats);
     } finally {
       setLoading(false);
     }
-  }, [toast, stats.recentClients]);
+  }, [toast]);
 
   return { stats, loading, refetchStats };
 }

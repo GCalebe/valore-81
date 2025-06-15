@@ -27,6 +27,7 @@ interface UTMMetrics {
   campaignData: Array<{ name: string; leads: number; conversions: number; value: number }>;
   sourceData: Array<{ name: string; leads: number; conversions: number }>;
   recentTracking: UTMData[];
+  isStale?: boolean;
 }
 
 export function useUTMTracking() {
@@ -39,22 +40,34 @@ export function useUTMTracking() {
     topCampaigns: [],
     campaignData: [],
     sourceData: [],
-    recentTracking: []
+    recentTracking: [],
+    isStale: false,
   });
   const [loading, setLoading] = useState(true);
+
+  const zeroMetrics: UTMMetrics = {
+    totalCampaigns: 0,
+    totalLeads: 0,
+    conversionRate: 0,
+    topSources: [],
+    topCampaigns: [],
+    campaignData: [],
+    sourceData: [],
+    recentTracking: [],
+    isStale: true,
+  };
 
   const fetchUTMData = async () => {
     try {
       setLoading(true);
-      
       const { data, error } = await supabase
         .from('utm_tracking')
         .select('*')
         .order('utm_created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching UTM data:', error);
-        // Não sobrescreve métricas, apenas mostra toast e mantém antigas
+        setMetrics(zeroMetrics);
+        setUtmData([]);
         setLoading(false);
         return;
       }
@@ -62,8 +75,8 @@ export function useUTMTracking() {
       setUtmData(data || []);
       calculateMetrics(data || []);
     } catch (error) {
-      console.error('Error in fetchUTMData:', error);
-      // Mostra toast de erro (progressivo)
+      setMetrics(zeroMetrics);
+      setUtmData([]);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -135,7 +148,8 @@ export function useUTMTracking() {
       topCampaigns,
       campaignData,
       sourceData,
-      recentTracking: data.slice(0, 10)
+      recentTracking: data.slice(0, 10),
+      isStale: false,
     });
   };
 

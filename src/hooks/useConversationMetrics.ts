@@ -13,10 +13,25 @@ export function useConversationMetrics() {
     conversationData: [],
     funnelData: [],
     conversionByTimeData: [],
-    leadsData: []
+    leadsData: [],
+    isStale: false,
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  const zeroMetrics = {
+    totalConversations: 0,
+    responseRate: 0,
+    totalRespondidas: 0,
+    avgResponseTime: 0,
+    conversionRate: 0,
+    avgClosingTime: 0,
+    conversationData: [],
+    funnelData: [],
+    conversionByTimeData: [],
+    leadsData: [],
+    isStale: true,
+  };
 
   const refetchMetrics = useCallback(async () => {
     try {
@@ -29,12 +44,12 @@ export function useConversationMetrics() {
         .select('*');
 
       if (allClientsError) {
-        console.error('Error fetching all clients:', allClientsError);
         toast({
           title: "Erro de conexão",
           description: "Não foi possível carregar as conversas. Verifique sua conexão ou tente novamente mais tarde.",
           variant: "destructive"
         });
+        setMetrics(zeroMetrics);
         setLoading(false);
         return; // Evita sobrescrever métricas anteriores
       }
@@ -123,12 +138,6 @@ export function useConversationMetrics() {
 
       let leadsData = [];
       if (leadsError) {
-        console.error('Error fetching leads:', leadsError);
-        toast({
-          title: "Erro ao buscar leads",
-          description: "Não foi possível carregar os leads recentes.",
-          variant: "destructive"
-        });
         leadsData = metrics.leadsData ?? [];
       } else {
         leadsData = recentLeads?.map(lead => ({
@@ -149,7 +158,8 @@ export function useConversationMetrics() {
         conversationData,
         funnelData,
         conversionByTimeData,
-        leadsData
+        leadsData,
+        isStale: false,
       });
 
       console.log('Conversation metrics updated successfully with real data');

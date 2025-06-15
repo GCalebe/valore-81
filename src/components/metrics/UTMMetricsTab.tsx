@@ -18,6 +18,7 @@ interface UTMMetricsTabProps {
     campaignData: any[];
     sourceData: any[];
     recentTracking: any[];
+    isStale?: boolean;
   };
   utmLoading: boolean;
 }
@@ -58,6 +59,7 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({ utmMetrics, utmLoading })
             loading={utmLoading}
             iconBgClass="bg-cyan-100 dark:bg-cyan-900/30"
             iconTextClass="text-cyan-600 dark:text-cyan-400"
+            isStale={utmMetrics.isStale}
           />
           
           <StatCard 
@@ -68,6 +70,7 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({ utmMetrics, utmLoading })
             loading={utmLoading}
             iconBgClass="bg-emerald-100 dark:bg-emerald-900/30"
             iconTextClass="text-emerald-600 dark:text-emerald-400"
+            isStale={utmMetrics.isStale}
           />
           
           <StatCard 
@@ -78,6 +81,7 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({ utmMetrics, utmLoading })
             loading={utmLoading}
             iconBgClass="bg-amber-100 dark:bg-amber-900/30"
             iconTextClass="text-amber-600 dark:text-amber-400"
+            isStale={utmMetrics.isStale}
           />
         </div>
 
