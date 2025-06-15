@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShipWheel, Users, X } from 'lucide-react';
+import { ArrowLeft, User, Settings, List, Grid2x2, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
@@ -23,7 +23,7 @@ interface ClientsHeaderProps {
   segmentFilter: string;
   lastContactFilter: string;
   onStatusFilterChange: (value: string) => void;
-  onSegmentFilterChange: (value:string) => void;
+  onSegmentFilterChange: (value: string) => void;
   onLastContactFilterChange: (value: string) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
@@ -71,51 +71,51 @@ const ClientsHeader = ({
 
   return (
     <header
-      className="text-white shadow-md transition-colors duration-300"
+      className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
-      <div className="container mx-auto px-2 py-3 flex flex-wrap justify-between items-center gap-4 min-h-[56px]">
-        <div className="flex items-center gap-2">
+      <div className="container max-w-full mx-auto px-3 py-2 flex items-center gap-3 min-h-[56px] w-full">
+        {/* Branding e título */}
+        <div className="flex items-center gap-2 min-w-fit">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/dashboard')}
             className="text-white hover:bg-white/20"
+            aria-label="Voltar ao dashboard"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <Users className="h-6 w-6 text-blue-200/80" />
+          <User className="h-5 w-5 text-white" />
           {settings.logo
             ? (
               <img
                 src={settings.logo}
                 alt="Logo"
-                className="h-8 w-8 object-contain"
+                className="h-7 w-7 object-contain"
               />
             ) : (
-              <ShipWheel
-                className="h-8 w-8"
-                style={{ color: settings.secondaryColor }}
-              />
+              <span>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill={settings.secondaryColor || "#FBBF24"}><circle cx="12" cy="12" r="10" /></svg>
+              </span>
             )}
-          <h1 className="text-2xl font-bold">{settings.brandName}</h1>
-          <span className="text-lg ml-2">- Clientes</span>
+          <h1 className="text-xl font-bold"> {settings.brandName} </h1>
+          <span className="text-base ml-1 opacity-80">- Clientes</span>
         </div>
 
-        {/* BLOCO DE BOTOES/CONTROLES DO CABEÇALHO */}
-        <div className="flex flex-1 sm:flex-initial items-center justify-end gap-2 flex-wrap">
-          {/* Barra de busca */}
-          <div className="relative flex-1 min-w-[180px] sm:flex-initial sm:w-auto sm:max-w-xs">
+        {/* Grupo principal: busca, filtros, novo cliente e controles */}
+        <div className="flex-1 flex items-center justify-end gap-2 w-0 min-w-0 ml-3">
+          {/* Busca */}
+          <div className="relative w-[190px]">
             <Input
               type="text"
               placeholder="Buscar clientes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4 pr-4 py-2 h-9 w-full bg-white/10 text-white placeholder-gray-200 border-0 rounded-md focus:bg-white focus:text-gray-900 focus:placeholder-gray-400 focus:ring-0 focus:border-transparent"
-              style={{ minWidth: 160 }}
+              className="pl-4 pr-4 py-2 h-9 w-full bg-white text-blue-900 placeholder-blue-200 border-0 rounded-md focus:bg-white focus:text-blue-900 focus:ring-2 focus:ring-blue-200 focus:border-transparent"
             />
           </div>
-
+          {/* Filtros */}
           <FilterDialog
             isOpen={isFilterDialogOpen}
             onOpenChange={setIsFilterDialogOpen}
@@ -132,36 +132,55 @@ const ClientsHeader = ({
             hasActiveFilters={hasActiveFilters}
           />
 
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClearFilters}
-              className="text-white hover:bg-white/20"
-            >
-              <X className="h-4 w-4 mr-1" />
-              Limpar
-            </Button>
-          )}
-
+          {/* Add Cliente */}
           <AddClientDialog
             isOpen={isAddContactOpen}
             onOpenChange={onAddContactOpenChange}
             newContact={newContact}
             setNewContact={setNewContact}
             handleAddContact={handleAddContact}
+            trigger={
+              <Button
+                variant="success"
+                className="h-9 px-4 font-bold flex gap-2"
+                type="button"
+              >
+                <User className="h-4 w-4" />
+                Novo Cliente
+              </Button>
+            }
           />
 
-          <div className="h-6 w-px bg-white/30 mx-2 hidden sm:block"></div>
+          {/* Divisor */}
+          <div className="h-7 w-px bg-white/30 mx-2 hidden md:block"></div>
 
-          <ClientsCompactToggler isCompactView={isCompactView} setIsCompactView={setIsCompactView} visible={viewMode === "kanban"} />
+          {/* Controles de Kanban/Table/Compact */}
+          <div className="flex items-center gap-1 bg-white/10 rounded-md px-1">
+            {viewMode === "kanban" && (
+              <ClientsCompactToggler isCompactView={isCompactView} setIsCompactView={setIsCompactView} visible />
+            )}
+            <ClientsViewToggler viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
 
-          <ClientsViewToggler viewMode={viewMode} setViewMode={setViewMode} />
+          {/* Botão atualizar */}
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 h-9 border-white bg-white text-blue-700 font-bold hover:bg-blue-50 hover:text-blue-800 transition-all"
+            style={{ minWidth: 100 }}
+            type="button"
+          >
+            <RefreshCcw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+            <span>Atualizar</span>
+          </Button>
 
-          <ClientsRefreshButton handleRefresh={handleRefresh} refreshing={refreshing} />
+          {/* Divisor */}
+          <div className="h-7 w-px bg-white/30 mx-2 hidden md:block"></div>
 
-          <div className="flex items-center gap-4 ml-2">
-            <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
+          {/* Usuário e config */}
+          <div className="flex items-center gap-2 min-w-fit">
+            <Badge variant="outline" className="bg-blue-800 text-white border-0 px-3 py-1 font-normal rounded-md">
               {user?.user_metadata?.name || user?.email}
             </Badge>
             <ThemeToggle />
@@ -173,3 +192,4 @@ const ClientsHeader = ({
 };
 
 export default ClientsHeader;
+
