@@ -35,52 +35,51 @@ const ScheduleHeader = ({
 
   return (
     <header 
-      className="text-white shadow-md transition-colors duration-300"
+      className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
-      <div className="container mx-auto px-4 py-3 flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
-        {/* Branding e atualização */}
-        <div className="flex items-center gap-4 min-w-0">
+      <div className="container max-w-full mx-auto px-4 py-3 flex flex-row items-center justify-between gap-6 min-h-[60px] w-full">
+        {/* Branding, título e atualização */}
+        <div className="flex items-center gap-4 min-w-0 flex-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/dashboard')}
-            className="text-white hover:bg-white/10"
+            className="text-white hover:bg-white/20"
             aria-label="Voltar para o dashboard"
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>
-          <div className="flex items-center gap-2 min-w-fit">
-            <Calendar 
-              className="h-8 w-8"
-              style={{ color: settings.secondaryColor }}
-            />
-            <h1 className="text-2xl font-bold whitespace-nowrap">Agenda</h1>
-          </div>
+          <Calendar 
+            className="h-8 w-8"
+            style={{ color: settings.secondaryColor }}
+          />
+          <h1 className="text-2xl font-bold whitespace-nowrap">Agenda</h1>
           {lastUpdated && (
-            <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1 ml-4">
+            <Badge 
+              variant="outline" 
+              className="bg-white/10 text-white border border-white/40 px-3 py-1 ml-4 font-mono text-xs min-w-fit"
+            >
               Última atualização: {lastUpdated.toLocaleTimeString('pt-BR')}
             </Badge>
           )}
         </div>
-        {/* Controles */}
-        <div className="flex-1 flex flex-col gap-2 items-end xl:flex-row xl:items-center xl:justify-end">
-          <div className="flex gap-2">
-            {onRefresh && (
-              <Button 
-                variant="outline" 
-                onClick={onRefresh}
-                disabled={isRefreshing}
-                className="border-white text-white bg-transparent hover:bg-white/10 dark:border-gray-600"
-              >
-                <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Atualizando...' : 'Atualizar'}
-              </Button>
-            )}
-          </div>
-          {/* View Switcher (filtros, novo evento, tabs - se disponíveis) */}
+        {/* Controles (refresh, filters, add, views...) */}
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {onRefresh && (
+            <Button 
+              variant="outline" 
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="border-white bg-transparent text-white font-medium hover:bg-white/10 dark:border-white min-w-[110px]"
+              style={{height: 40}}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+          )}
           {(!!view && !!onViewChange) && (
-            <div className="mt-2 xl:mt-0 flex gap-2 w-full max-w-full justify-end">
+            <div className="flex items-center gap-2">
               <CalendarViewSwitcher
                 view={view}
                 onChange={onViewChange}
