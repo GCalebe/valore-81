@@ -25,12 +25,12 @@ const CustomFieldRenderer = ({ field, value, onChange }: CustomFieldRendererProp
 
       case 'single_select':
         return (
-          <Select value={value || ''} onValueChange={onChange}>
+          <Select value={value || 'none'} onValueChange={(val) => onChange(val === 'none' ? null : val)}>
             <SelectTrigger>
               <SelectValue placeholder={`Selecione ${field.field_name.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Nenhum</SelectItem>
+              <SelectItem value="none">Nenhum</SelectItem>
               {field.field_options?.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
