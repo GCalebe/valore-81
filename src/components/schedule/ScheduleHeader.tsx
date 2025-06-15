@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Button } from '@/components/ui/button';
-import { Calendar, Plus, RefreshCw } from 'lucide-react';
+import { Calendar, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface ScheduleHeaderProps {
@@ -49,14 +49,6 @@ const ScheduleHeader = ({ onAddEvent, onRefresh, isRefreshing, lastUpdated }: Sc
               {isRefreshing ? 'Atualizando...' : 'Atualizar'}
             </Button>
           )}
-          
-          <Button 
-            onClick={onAddEvent}
-            className="bg-green-500 hover:bg-green-600 text-white border-0"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Evento
-          </Button>
         </div>
       </div>
     </header>
