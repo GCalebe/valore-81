@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShipWheel } from 'lucide-react';
@@ -6,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientsCompactToggler from './ClientsCompactToggler';
 import ClientsViewToggler from './ClientsViewToggler';
 import ClientsRefreshButton from './ClientsRefreshButton';
+import { KanbanSettings } from './KanbanSettings';
 
 interface ClientsHeaderProps {
   searchTerm: string;
@@ -166,7 +165,7 @@ const ClientsHeader = ({
             <Badge variant="outline" className="bg-white/10 text-white border border-white/40 px-3 py-1 font-normal rounded-md">
               {user?.user_metadata?.name || user?.email}
             </Badge>
-            <ThemeToggle />
+            <KanbanSettings />
           </div>
         </div>
       </div>

@@ -48,7 +48,7 @@ export const useClientManagement = () => {
       setLoadingContacts(true);
       
       const { data, error } = await supabase
-        .from('dados_cliente')
+        .from('contacts')
         .select('*');
       
       if (error) {
@@ -66,21 +66,37 @@ export const useClientManagement = () => {
             : 'Entraram';
 
           return {
-            id: client.id.toString(),
-            name: client.nome || 'Cliente sem nome',
+            id: client.id,
+            name: client.name || 'Cliente sem nome',
             email: client.email,
-            phone: client.telefone,
+            phone: client.phone,
+            address: client.address,
             clientName: client.client_name,
             clientSize: client.client_size,
             clientType: client.client_type,
             cpfCnpj: client.cpf_cnpj,
             asaasCustomerId: client.asaas_customer_id,
-            payments: client.payments,
-            status: 'Active',
-            notes: '',
-            lastContact: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
+            status: client.status,
+            notes: client.notes,
+            lastContact: client.last_contact ? new Date(client.last_contact).toLocaleDateString('pt-BR') : (client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'),
             kanbanStage: kanbanStage,
-            sessionId: client.sessionid
+            sessionId: client.session_id,
+            tags: client.tags || [],
+            responsibleUser: client.responsible_user,
+            sales: client.sales,
+            clientSector: client.client_sector,
+            budget: client.budget,
+            paymentMethod: client.payment_method,
+            clientObjective: client.client_objective,
+            lossReason: client.loss_reason,
+            contractNumber: client.contract_number,
+            contractDate: client.contract_date,
+            payment: client.payment,
+            uploadedFiles: client.uploaded_files || [],
+            consultationStage: client.consultation_stage,
+            lastMessage: client.last_message,
+            lastMessageTime: client.last_message_time,
+            unreadCount: client.unread_count,
           };
         });
         
@@ -143,9 +159,9 @@ export const useClientManagement = () => {
   const handleKanbanStageChange = async (contactId: string, newStage: Contact['kanbanStage']) => {
     try {
       const { error } = await supabase
-        .from('dados_cliente')
+        .from('contacts')
         .update({ kanban_stage: newStage })
-        .eq('id', parseInt(contactId));
+        .eq('id', contactId);
 
       if (error) throw error;
 
@@ -198,18 +214,33 @@ export const useClientManagement = () => {
     
     try {
       const { data, error } = await supabase
-        .from('dados_cliente')
+        .from('contacts')
         .insert([
           {
-            nome: newContact.name,
+            name: newContact.name,
             email: newContact.email,
-            telefone: newContact.phone,
+            phone: newContact.phone,
+            address: newContact.address,
             client_name: newContact.clientName,
             client_size: newContact.clientSize,
             client_type: newContact.clientType,
             cpf_cnpj: newContact.cpfCnpj,
             asaas_customer_id: newContact.asaasCustomerId,
-            payments: newContact.payments || null,
+            status: 'Active',
+            notes: newContact.notes,
+            tags: newContact.tags,
+            responsible_user: newContact.responsibleUser,
+            sales: newContact.sales,
+            client_sector: newContact.clientSector,
+            budget: newContact.budget,
+            payment_method: newContact.paymentMethod,
+            client_objective: newContact.clientObjective,
+            loss_reason: newContact.lossReason,
+            contract_number: newContact.contractNumber,
+            contract_date: newContact.contractDate,
+            payment: newContact.payment,
+            uploaded_files: newContact.uploadedFiles,
+            consultation_stage: newContact.consultationStage,
             kanban_stage: 'Entraram'
           }
         ])
@@ -281,19 +312,34 @@ export const useClientManagement = () => {
     
     try {
       const { error } = await supabase
-        .from('dados_cliente')
+        .from('contacts')
         .update({
-          nome: newContact.name,
+          name: newContact.name,
           email: newContact.email,
-          telefone: newContact.phone,
+          phone: newContact.phone,
+          address: newContact.address,
           client_name: newContact.clientName,
           client_size: newContact.clientSize,
           client_type: newContact.clientType,
           cpf_cnpj: newContact.cpfCnpj,
           asaas_customer_id: newContact.asaasCustomerId,
-          payments: newContact.payments
+          status: newContact.status,
+          notes: newContact.notes,
+          tags: newContact.tags,
+          responsible_user: newContact.responsibleUser,
+          sales: newContact.sales,
+          client_sector: newContact.clientSector,
+          budget: newContact.budget,
+          payment_method: newContact.paymentMethod,
+          client_objective: newContact.clientObjective,
+          loss_reason: newContact.lossReason,
+          contract_number: newContact.contractNumber,
+          contract_date: newContact.contractDate,
+          payment: newContact.payment,
+          uploaded_files: newContact.uploadedFiles,
+          consultation_stage: newContact.consultationStage,
         })
-        .eq('id', parseInt(selectedContact.id));
+        .eq('id', selectedContact.id);
       
       if (error) throw error;
       
@@ -335,9 +381,9 @@ export const useClientManagement = () => {
     
     try {
       const { error } = await supabase
-        .from('dados_cliente')
+        .from('contacts')
         .delete()
-        .eq('id', parseInt(selectedContact.id));
+        .eq('id', selectedContact.id);
       
       if (error) throw error;
       
@@ -387,7 +433,6 @@ export const useClientManagement = () => {
       clientType: selectedContact.clientType,
       cpfCnpj: selectedContact.cpfCnpj,
       asaasCustomerId: selectedContact.asaasCustomerId,
-      payments: selectedContact.payments,
       status: selectedContact.status,
       notes: selectedContact.notes,
       tags: selectedContact.tags || [],

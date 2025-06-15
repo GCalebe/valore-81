@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -77,14 +78,16 @@ const EditClientDialog = ({
       // Save standard contact data
       await handleEditContact();
       
-      // Convert custom values object to array format expected by saveClientCustomValues
+      // TODO: A funcionalidade de salvar campos personalizados foi desativada temporariamente
+      // para corrigir a edição principal do cliente. O hook `useCustomFields` precisa ser
+      // atualizado para suportar IDs de cliente no formato UUID.
+      /*
       const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
         fieldId,
         value
       }));
-      
-      // Save custom field values
       await saveClientCustomValues(parseInt(selectedContact.id), customValuesArray);
+      */
       
       onOpenChange(false);
     } catch (error) {
