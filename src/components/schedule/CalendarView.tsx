@@ -12,24 +12,23 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   currentMonth: Date;
   onMonthChange: (month: Date) => void;
-  view: 'mes' | 'semana' | 'dia' | 'agenda'; // usamos view em vez de timeFilter
+  view: 'mes' | 'semana' | 'dia' | 'agenda';
   onEventClick?: (event: CalendarEvent) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
 }
 
-export function CalendarView({ 
-  selectedDate, 
-  onDateChange, 
-  events, 
-  currentMonth, 
+export function CalendarView({
+  selectedDate,
+  onDateChange,
+  events,
+  currentMonth,
   onMonthChange,
   view,
   onEventClick,
   onPeriodChange
 }: CalendarViewProps) {
-  // Determina o período de exibição conforme Google/Monday/~Calendar padrão
+  // Determinar o período de exibição
   const getDisplayPeriod = () => {
-    const today = new Date();
     switch (view) {
       case 'dia':
         return {
@@ -59,14 +58,14 @@ export function CalendarView({
     if (onPeriodChange && (view === 'mes' || view === 'semana')) {
       onPeriodChange(displayPeriod.start, displayPeriod.end);
     }
-  }, [view, currentMonth, selectedDate, onPeriodChange]);
+  }, [view, currentMonth, selectedDate, onPeriodChange, displayPeriod.start, displayPeriod.end]);
 
   const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
 
-  // Get events for a specific day
+  // Eventos do dia
   const getEventsForDay = (day: Date) => {
     return events.filter(event => {
-      if (!event.start) { return false; }
+      if (!event.start) return false;
       try {
         const eventDate = parseISO(event.start);
         return isSameDay(eventDate, day);
@@ -93,7 +92,7 @@ export function CalendarView({
   const getCalendarTitle = () => {
     switch (view) {
       case 'dia':
-        return `${format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
+        return format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt });
       case 'semana': {
         const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
@@ -114,11 +113,10 @@ export function CalendarView({
     }
   };
 
-  // Layout Google/Monday (só mês/semana com grid), dia/agenda modo lista/único
   const isMonthOrWeekMode = view === 'mes' || view === 'semana';
 
   const buildWeeks = () => {
-    // 7 colunas por semana; em mês pode começar/desalinhado, importante visual Google/Monday!
+    // 7 colunas por semana
     const daysArr = [...days];
     let weeks: Date[][] = [];
     for (let i = 0; i < daysArr.length; i += 7) {
@@ -129,10 +127,9 @@ export function CalendarView({
 
   const weeks = buildWeeks();
 
-  // Garantir flex layout height 100%
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
-      {/* Calendar Header */}
+      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {getCalendarTitle()}
@@ -148,12 +145,11 @@ export function CalendarView({
           </div>
         )}
       </div>
-
-      {/* Calendário Estilo Google/Monday */}
-      <div className={`px-2 pb-2 pt-3 animate-fade-in flex-1 min-h-0`}>
+      {/* Grid principal */}
+      <div className="px-2 pb-2 pt-3 animate-fade-in flex-1 min-h-0">
         {isMonthOrWeekMode && (
           <div className="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700 mb-1">
-            {weekDays.map((day, i) => (
+            {weekDays.map((day) => (
               <div
                 key={day}
                 className="text-xs font-semibold text-gray-700 dark:text-gray-200 text-center uppercase py-2"
@@ -163,8 +159,6 @@ export function CalendarView({
             ))}
           </div>
         )}
-
-        {/* Grid principal das semanas/dias */}
         {isMonthOrWeekMode ? (
           <div className="flex flex-col gap-0 h-full min-h-0">
             {weeks.map((week, weekIdx) => (
@@ -173,7 +167,7 @@ export function CalendarView({
                 className="grid grid-cols-7 border-b last:border-b-0 border-gray-200 dark:border-gray-700 flex-1 min-h-[90px]"
                 style={{ minHeight: 0 }}
               >
-                {week.map((day, i) => {
+                {week.map((day) => {
                   const dayEvents = getEventsForDay(day);
                   const isSelected = isSameDay(day, selectedDate);
                   const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -193,12 +187,9 @@ export function CalendarView({
                       `}
                       style={{ minWidth: 0 }}
                     >
-                      {/* Barra azul vertical para hoje */}
                       {isToday && (
                         <div className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-full z-20 animate-fade-in"></div>
                       )}
-
-                      {/* Número do dia */}
                       <div className={`
                         flex items-center justify-between z-10 relative
                         ${isToday ? 'text-blue-600 font-bold' : (isSelected ? 'text-blue-700 font-bold' : '')}
@@ -209,10 +200,8 @@ export function CalendarView({
                           ${isCurrentMonth ? '' : 'opacity-50'}
                         `}>{day.getDate()}</span>
                       </div>
-
-                      {/* Eventos do dia como barras ocupando largura total */}
                       <div className="flex flex-col gap-1 mt-1">
-                        {dayEvents.slice(0, 4).map((event, idx) => (
+                        {dayEvents.slice(0, 4).map((event) => (
                           <div
                             key={event.id}
                             title={event.summary}
@@ -248,7 +237,7 @@ export function CalendarView({
             ))}
           </div>
         ) : (
-          // Visual "Dia" — lista do dia selecionado
+          // Visual "Dia"
           <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2 flex-1">
             <div className="text-lg font-bold my-2 text-blue-700 dark:text-blue-400">
               {format(selectedDate, "EEEE, dd 'de' MMMM", { locale: pt })}
@@ -285,6 +274,3 @@ export function CalendarView({
     </div>
   );
 }
-
-// O arquivo src/components/schedule/CalendarView.tsx está ficando extenso (mais de 230 linhas).
-// Recomendo refatorar em arquivos menores se desejar evoluir mais o visual ou modularizar por tipo de view.
