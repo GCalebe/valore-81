@@ -40,7 +40,11 @@ const FilterDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="relative h-9 border-white/50 text-white hover:bg-white/10 hover:text-white data-[state=open]:bg-white/10">
+        <Button 
+          variant="outline" 
+          className="relative border-white text-white bg-transparent hover:bg-white/20"
+          style={{ height: 40, borderRadius: 8, borderWidth: 1.4 }}
+        >
           <Filter className="h-4 w-4 mr-2" />
           Filtros
           {hasActiveFilters && (

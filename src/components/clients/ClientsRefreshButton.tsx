@@ -13,12 +13,15 @@ const ClientsRefreshButton: React.FC<ClientsRefreshButtonProps> = ({ handleRefre
     variant="outline"
     onClick={handleRefresh}
     disabled={refreshing}
-    className="flex items-center gap-2 h-9 border-white text-white bg-white/0 font-bold hover:bg-white/20 hover:text-white transition-all"
-    style={{ minWidth: 100 }}
-    type="button"
+    className="border-white text-white bg-transparent hover:bg-white/20 min-w-[110px] transition-all"
+    style={{
+        height: 40,
+        borderRadius: 8,
+        borderWidth: 1.4
+    }}
   >
-    <RefreshCcw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-    <span>Atualizar</span>
+    <RefreshCcw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+    <span>{refreshing ? 'Atualizando...' : 'Atualizar'}</span>
   </Button>
 );
 

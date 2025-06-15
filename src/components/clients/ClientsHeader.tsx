@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User } from 'lucide-react';
@@ -73,14 +74,14 @@ const ClientsHeader = ({
       className="shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
-      <div className="container max-w-full mx-auto px-3 py-2 flex items-center gap-3 min-h-[56px] w-full">
+      <div className="flex flex-row items-center justify-between min-h-[64px] w-full px-6 py-0">
         {/* Branding e título */}
-        <div className="flex items-center gap-2 min-w-fit">
+        <div className="flex items-center gap-4 min-w-0 h-full">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/dashboard')}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 focus-visible:ring-white"
             aria-label="Voltar ao dashboard"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -103,7 +104,7 @@ const ClientsHeader = ({
         </div>
 
         {/* Grupo principal: busca, filtros, novo cliente e controles */}
-        <div className="flex-1 flex items-center justify-end gap-2 w-0 min-w-0 ml-3">
+        <div className="flex flex-row items-center gap-3 h-full">
           {/* Busca */}
           <div className="relative w-[190px]">
             <Input
@@ -111,7 +112,7 @@ const ClientsHeader = ({
               placeholder="Buscar clientes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4 pr-4 py-2 h-9 w-full bg-white text-blue-900 placeholder-blue-200 border-0 rounded-md focus:bg-white focus:text-blue-900 focus:ring-2 focus:ring-blue-200 focus:border-transparent"
+              className="pl-4 pr-4 py-2 h-10 w-full bg-white text-blue-900 placeholder-blue-200 border-0 rounded-md focus:bg-white focus:text-blue-900 focus:ring-2 focus:ring-blue-200 focus:border-transparent"
             />
           </div>
           {/* Filtros */}

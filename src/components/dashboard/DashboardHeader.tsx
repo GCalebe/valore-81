@@ -13,11 +13,11 @@ const DashboardHeader = () => {
   
   return (
     <header 
-      className="text-white shadow-md transition-colors duration-300"
+      className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-row items-center justify-between min-h-[64px] w-full px-6 py-0">
+        <div className="flex items-center gap-4">
           {settings.logo ? (
             <img 
               src={settings.logo} 
@@ -32,7 +32,7 @@ const DashboardHeader = () => {
           )}
           <h1 className="text-2xl font-bold">{settings.brandName}</h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
             Bem-vindo, {user?.user_metadata?.name || user?.email}
           </Badge>
@@ -40,7 +40,8 @@ const DashboardHeader = () => {
           <Button 
             variant="outline" 
             onClick={signOut} 
-            className="border-white text-white bg-gray-950/50 hover:bg-gray-800 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
+            className="border-white text-white bg-transparent hover:bg-white/20"
+            style={{ height: 40, borderRadius: 8, borderWidth: 1.4 }}
           >
             <LogOut className="mr-2 h-4 w-4" />
             Sair
