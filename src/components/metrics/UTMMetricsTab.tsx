@@ -10,6 +10,10 @@ import UTMTrackingTable from './UTMTrackingTable';
 import UTMConfigPanel from './UTMConfigPanel';
 import UTMDeviceDistributionChart from './UTMDeviceDistributionChart';
 import UTMCampaignFilter from './UTMCampaignFilter';
+import UTMDeviceFilter from './UTMDeviceFilter';
+import UTMGeoHeatmap from './UTMGeoHeatmap';
+import UTMCampaignRanking from './UTMCampaignRanking';
+import UTMTimeMetrics from './UTMTimeMetrics';
 
 interface UTMMetricsTabProps {
   utmMetrics: {
@@ -19,6 +23,14 @@ interface UTMMetricsTabProps {
     campaignData: any[];
     sourceData: any[];
     deviceData: any[];
+    geoData: any[];
+    timeToConversion: {
+      average: number;
+      median: number;
+      min: number;
+      max: number;
+    };
+    topCampaigns: any[];
     recentTracking: any[];
     isStale?: boolean;
   };
@@ -34,10 +46,11 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
   onCampaignChange 
 }) => {
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState('all');
 
   return (
     <div className="space-y-8">
-      {/* UTM Header with Config Button and Campaign Filter */}
+      {/* UTM Header with Filters and Config Button */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
           Dashboard UTM Profissional
@@ -46,6 +59,10 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
           <UTMCampaignFilter 
             selectedCampaign={selectedCampaign}
             onCampaignChange={onCampaignChange}
+          />
+          <UTMDeviceFilter 
+            selectedDevice={selectedDevice}
+            onDeviceChange={setSelectedDevice}
           />
           <Button
             onClick={() => setIsConfigPanelOpen(true)}
@@ -100,6 +117,12 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
           />
         </div>
 
+        {/* Métricas de Tempo */}
+        <UTMTimeMetrics 
+          timeToConversion={utmMetrics.timeToConversion}
+          loading={utmLoading}
+        />
+
         {/* Métricas Avançadas */}
         <div className="space-y-4">
           <h5 className="text-lg font-medium text-gray-700 dark:text-gray-300">
@@ -132,6 +155,11 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
           <UTMSourceChart data={utmMetrics.sourceData} loading={utmLoading} />
           <UTMDeviceDistributionChart data={utmMetrics.deviceData} loading={utmLoading} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <UTMGeoHeatmap data={utmMetrics.geoData} loading={utmLoading} />
+          <UTMCampaignRanking data={utmMetrics.topCampaigns} loading={utmLoading} />
         </div>
       </div>
       

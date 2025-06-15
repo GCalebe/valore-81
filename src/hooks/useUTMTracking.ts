@@ -14,8 +14,18 @@ interface UTMData {
   utm_conversion: boolean;
   utm_conversion_value: number;
   utm_conversion_stage: string;
+  utm_conversion_at: string;
   landing_page: string;
   device_type: string;
+  geo_location: any;
+  utm_first_touch: string;
+  utm_last_touch: string;
+  utm_id: string;
+  gclid: string;
+  fbclid: string;
+  referrer: string;
+  user_agent: string;
+  ip_address: string;
 }
 
 interface UTMMetrics {
@@ -23,15 +33,22 @@ interface UTMMetrics {
   totalLeads: number;
   conversionRate: number;
   topSources: Array<{ source: string; count: number; conversions: number }>;
-  topCampaigns: Array<{ campaign: string; count: number; conversions: number; value: number }>;
+  topCampaigns: Array<{ campaign: string; count: number; conversions: number; value: number; ctr: number; roas: number }>;
   campaignData: Array<{ name: string; leads: number; conversions: number; value: number }>;
   sourceData: Array<{ name: string; leads: number; conversions: number }>;
   deviceData: Array<{ name: string; value: number }>;
+  geoData: Array<{ location: string; leads: number; conversions: number }>;
+  timeToConversion: {
+    average: number;
+    median: number;
+    min: number;
+    max: number;
+  };
   recentTracking: UTMData[];
   isStale?: boolean;
 }
 
-export function useUTMTracking(campaignFilter?: string) {
+export function useUTMTracking(campaignFilter?: string, deviceFilter?: string) {
   const [metrics, setMetrics] = useState<UTMMetrics>({
     totalCampaigns: 0,
     totalLeads: 0,
@@ -41,6 +58,13 @@ export function useUTMTracking(campaignFilter?: string) {
     campaignData: [],
     sourceData: [],
     deviceData: [],
+    geoData: [],
+    timeToConversion: {
+      average: 0,
+      median: 0,
+      min: 0,
+      max: 0,
+    },
     recentTracking: [],
     isStale: false,
   });
@@ -55,6 +79,13 @@ export function useUTMTracking(campaignFilter?: string) {
     campaignData: [],
     sourceData: [],
     deviceData: [],
+    geoData: [],
+    timeToConversion: {
+      average: 0,
+      median: 0,
+      min: 0,
+      max: 0,
+    },
     recentTracking: [],
     isStale: true,
   };
@@ -63,112 +94,122 @@ export function useUTMTracking(campaignFilter?: string) {
     try {
       setLoading(true);
       
-      // Construir a query para recent tracking com filtro de campanha
-      let recentTrackingQuery = supabase
+      // Construir query base
+      let baseQuery = supabase
         .from('utm_tracking')
-        .select('*')
-        .order('utm_created_at', { ascending: false })
-        .limit(10);
+        .select('*');
       
-      // Aplicar filtro de campanha se especificado
+      // Aplicar filtros
       if (campaignFilter && campaignFilter !== 'all') {
-        recentTrackingQuery = recentTrackingQuery.eq('utm_campaign', campaignFilter);
+        baseQuery = baseQuery.eq('utm_campaign', campaignFilter);
       }
       
-      const [metricsResult, recentTrackingResult] = await Promise.all([
-        supabase.rpc('get_utm_metrics'),
-        recentTrackingQuery
-      ]);
+      if (deviceFilter && deviceFilter !== 'all') {
+        baseQuery = baseQuery.eq('device_type', deviceFilter);
+      }
       
-      const { data: metricsData, error: metricsError } = metricsResult;
-      const { data: recentTracking, error: recentTrackingError } = recentTrackingResult;
+      // Buscar dados com filtros aplicados
+      const { data: filteredData, error } = await baseQuery.order('utm_created_at', { ascending: false });
       
-      if (metricsError || recentTrackingError) {
-        const err = metricsError || recentTrackingError;
-        console.error('Error fetching UTM metrics:', err);
+      if (error) {
+        console.error('Error fetching UTM data:', error);
         setMetrics(zeroMetrics);
         return;
       }
       
-      let finalMetrics;
+      const totalLeads = filteredData.length;
+      const totalCampaigns = new Set(filteredData.map(item => item.utm_campaign)).size;
+      const totalConversions = filteredData.filter(item => item.utm_conversion).length;
       
-      // Se há filtro de campanha, precisamos filtrar os dados das métricas também
-      if (campaignFilter && campaignFilter !== 'all') {
-        // Buscar dados filtrados manualmente para campanhas específicas
-        const { data: filteredData, error: filteredError } = await supabase
-          .from('utm_tracking')
-          .select('*')
-          .eq('utm_campaign', campaignFilter);
-        
-        if (filteredError) {
-          console.error('Error fetching filtered data:', filteredError);
-          setMetrics(zeroMetrics);
-          return;
+      // Calcular tempo de conversão
+      const conversionTimes = filteredData
+        .filter(item => item.utm_conversion && item.utm_conversion_at && item.utm_first_touch)
+        .map(item => {
+          const conversionTime = new Date(item.utm_conversion_at).getTime();
+          const firstTouchTime = new Date(item.utm_first_touch).getTime();
+          return (conversionTime - firstTouchTime) / (1000 * 60 * 60); // em horas
+        })
+        .filter(time => time > 0);
+      
+      const timeToConversion = {
+        average: conversionTimes.length > 0 ? conversionTimes.reduce((a, b) => a + b, 0) / conversionTimes.length : 0,
+        median: conversionTimes.length > 0 ? conversionTimes.sort((a, b) => a - b)[Math.floor(conversionTimes.length / 2)] : 0,
+        min: conversionTimes.length > 0 ? Math.min(...conversionTimes) : 0,
+        max: conversionTimes.length > 0 ? Math.max(...conversionTimes) : 0,
+      };
+      
+      // Processar top sources
+      const sourceStats = filteredData.reduce((acc: any, item) => {
+        if (item.utm_source) {
+          if (!acc[item.utm_source]) {
+            acc[item.utm_source] = { source: item.utm_source, count: 0, conversions: 0 };
+          }
+          acc[item.utm_source].count++;
+          if (item.utm_conversion) {
+            acc[item.utm_source].conversions++;
+          }
         }
-        
-        const totalLeads = filteredData.length;
-        const totalCampaigns = new Set(filteredData.map(item => item.utm_campaign)).size;
-        const totalConversions = filteredData.filter(item => item.utm_conversion).length;
-        
-        // Processar top sources
-        const sourceStats = filteredData.reduce((acc: any, item) => {
-          if (item.utm_source) {
-            if (!acc[item.utm_source]) {
-              acc[item.utm_source] = { source: item.utm_source, count: 0, conversions: 0 };
-            }
-            acc[item.utm_source].count++;
-            if (item.utm_conversion) {
-              acc[item.utm_source].conversions++;
-            }
-          }
-          return acc;
-        }, {});
-        
-        const topSources = Object.values(sourceStats).slice(0, 5);
-        
-        // Processar top campaigns
-        const campaignStats = filteredData.reduce((acc: any, item) => {
-          if (item.utm_campaign) {
-            if (!acc[item.utm_campaign]) {
-              acc[item.utm_campaign] = { campaign: item.utm_campaign, count: 0, conversions: 0, value: 0 };
-            }
-            acc[item.utm_campaign].count++;
-            if (item.utm_conversion) {
-              acc[item.utm_campaign].conversions++;
-              acc[item.utm_campaign].value += item.utm_conversion_value || 0;
-            }
-          }
-          return acc;
-        }, {});
-        
-        const topCampaigns = Object.values(campaignStats).slice(0, 5);
-        
-        // Processar device data
-        const deviceStats = filteredData.reduce((acc: any, item) => {
-          const deviceType = item.device_type || 'Desconhecido';
-          if (!acc[deviceType]) {
-            acc[deviceType] = { name: deviceType, value: 0 };
-          }
-          acc[deviceType].value++;
-          return acc;
-        }, {});
-        
-        const deviceData = Object.values(deviceStats);
-        
-        finalMetrics = {
-          totalLeads,
-          totalCampaigns,
-          totalConversions,
-          topSources,
-          topCampaigns,
-          deviceData
-        };
-      } else {
-        finalMetrics = metricsData;
-      }
+        return acc;
+      }, {});
       
-      const typedMetricsData = finalMetrics as any;
-      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns, deviceData } = typedMetricsData;
+      const topSources = Object.values(sourceStats).slice(0, 5);
+      
+      // Processar top campaigns com CTR e ROAS
+      const campaignStats = filteredData.reduce((acc: any, item) => {
+        if (item.utm_campaign) {
+          if (!acc[item.utm_campaign]) {
+            acc[item.utm_campaign] = { 
+              campaign: item.utm_campaign, 
+              count: 0, 
+              conversions: 0, 
+              value: 0,
+              clicks: 0
+            };
+          }
+          acc[item.utm_campaign].count++;
+          acc[item.utm_campaign].clicks++; // Assumindo que cada registro é um clique
+          if (item.utm_conversion) {
+            acc[item.utm_campaign].conversions++;
+            acc[item.utm_campaign].value += item.utm_conversion_value || 0;
+          }
+        }
+        return acc;
+      }, {});
+      
+      const topCampaigns = Object.values(campaignStats).map((campaign: any) => ({
+        ...campaign,
+        ctr: campaign.clicks > 0 ? (campaign.conversions / campaign.clicks) * 100 : 0,
+        roas: campaign.conversions > 0 ? (campaign.value / (campaign.conversions * 50)) * 100 : 0, // Assumindo custo médio de R$ 50 por conversão
+      })).slice(0, 5);
+      
+      // Processar device data
+      const deviceStats = filteredData.reduce((acc: any, item) => {
+        const deviceType = item.device_type || 'Desconhecido';
+        if (!acc[deviceType]) {
+          acc[deviceType] = { name: deviceType, value: 0 };
+        }
+        acc[deviceType].value++;
+        return acc;
+      }, {});
+      
+      const deviceData = Object.values(deviceStats);
+      
+      // Processar dados geográficos
+      const geoStats = filteredData.reduce((acc: any, item) => {
+        if (item.geo_location && item.geo_location.city) {
+          const location = `${item.geo_location.city}, ${item.geo_location.state || item.geo_location.country}`;
+          if (!acc[location]) {
+            acc[location] = { location, leads: 0, conversions: 0 };
+          }
+          acc[location].leads++;
+          if (item.utm_conversion) {
+            acc[location].conversions++;
+          }
+        }
+        return acc;
+      }, {});
+      
+      const geoData = Object.values(geoStats).slice(0, 10);
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
 
@@ -194,17 +235,19 @@ export function useUTMTracking(campaignFilter?: string) {
         campaignData,
         sourceData,
         deviceData: deviceData || [],
-        recentTracking: (recentTracking as UTMData[] | null) || [],
+        geoData: geoData || [],
+        timeToConversion,
+        recentTracking: (filteredData as UTMData[] | null) || [],
         isStale: false,
       });
       
     } catch (error) {
-      console.error('Failed to fetch UTM data with optimized function', error);
+      console.error('Failed to fetch UTM data', error);
       setMetrics(zeroMetrics);
     } finally {
       setLoading(false);
     }
-  }, [campaignFilter]);
+  }, [campaignFilter, deviceFilter]);
 
   useEffect(() => {
     refetchUTMData();

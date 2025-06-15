@@ -456,6 +456,7 @@ export type Database = {
           first_utm_term: string | null
           gclid: string | null
           gclientid: string | null
+          geo_location: Json | null
           id: string
           inserted_at: string | null
           ip_address: unknown | null
@@ -479,6 +480,7 @@ export type Database = {
           utm_conversion_value: number | null
           utm_created_at: string | null
           utm_first_touch: string | null
+          utm_id: string | null
           utm_last_touch: string | null
           utm_medium: string | null
           utm_referrer: string | null
@@ -497,6 +499,7 @@ export type Database = {
           first_utm_term?: string | null
           gclid?: string | null
           gclientid?: string | null
+          geo_location?: Json | null
           id?: string
           inserted_at?: string | null
           ip_address?: unknown | null
@@ -520,6 +523,7 @@ export type Database = {
           utm_conversion_value?: number | null
           utm_created_at?: string | null
           utm_first_touch?: string | null
+          utm_id?: string | null
           utm_last_touch?: string | null
           utm_medium?: string | null
           utm_referrer?: string | null
@@ -538,6 +542,7 @@ export type Database = {
           first_utm_term?: string | null
           gclid?: string | null
           gclientid?: string | null
+          geo_location?: Json | null
           id?: string
           inserted_at?: string | null
           ip_address?: unknown | null
@@ -561,6 +566,7 @@ export type Database = {
           utm_conversion_value?: number | null
           utm_created_at?: string | null
           utm_first_touch?: string | null
+          utm_id?: string | null
           utm_last_touch?: string | null
           utm_medium?: string | null
           utm_referrer?: string | null

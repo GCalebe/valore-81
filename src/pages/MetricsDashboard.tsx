@@ -18,18 +18,19 @@ const MetricsDashboard = () => {
   const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics();
   const [dateFilter, setDateFilter] = useState('week');
   const [selectedCampaign, setSelectedCampaign] = useState('all');
+  const [selectedDevice, setSelectedDevice] = useState('all');
   
-  const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking(selectedCampaign);
+  const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking(selectedCampaign, selectedDevice);
   
   // Initialize real-time updates for the metrics dashboard
   useDashboardRealtime();
   
-  // Fetch data when component mounts or campaign filter changes
+  // Fetch data when component mounts or filters change
   useEffect(() => {
     refetchStats();
     refetchMetrics();
     refetchUTMData();
-  }, [refetchStats, refetchMetrics, refetchUTMData, selectedCampaign]);
+  }, [refetchStats, refetchMetrics, refetchUTMData, selectedCampaign, selectedDevice]);
   
   const loading = statsLoading || metricsLoading;
 
