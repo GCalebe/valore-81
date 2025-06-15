@@ -334,30 +334,6 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
     fetchEvents();
   }, [fetchEvents]);
 
-  // Polling automático a cada 30 segundos
-  useEffect(() => {
-    console.log('Iniciando polling automático da agenda (30s)');
-    
-    const intervalId = setInterval(async () => {
-      console.log('Executando atualização automática dos eventos...');
-      try {
-        const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
-        setEvents(fetchedEvents);
-        setLastUpdated(new Date());
-        setError(null);
-        console.log('Atualização automática concluída com sucesso');
-      } catch (err) {
-        console.error('Erro na atualização automática:', err);
-        // Em caso de erro, manter os eventos atuais
-      }
-    }, 30000); // 30 segundos
-
-    return () => {
-      console.log('Parando polling automático da agenda');
-      clearInterval(intervalId);
-    };
-  }, [selectedDate, dateRange, fetchEventsFromN8N]);
-
   return { 
     events, 
     isLoading, 
