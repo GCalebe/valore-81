@@ -135,8 +135,18 @@ export function useConversations() {
         if (lastMessage) {
           const msgData = lastMessage.message;
           if (msgData) {
-            if (typeof msgData === 'object' && msgData !== null) {
-              lastMessageContent = msgData.content || (msgData.messages && msgData.messages.length > 0 && msgData.messages[msgData.messages.length - 1].content) || JSON.stringify(msgData);
+            if (Array.isArray(msgData)) {
+              lastMessageContent = 'Recebida uma lista de mensagens.';
+            } else if (typeof msgData === 'object' && msgData !== null) {
+              const anyMsgData = msgData as any;
+              if (anyMsgData.content) {
+                lastMessageContent = anyMsgData.content;
+              } else if (anyMsgData.messages && Array.isArray(anyMsgData.messages) && anyMsgData.messages.length > 0) {
+                const lastMsg = anyMsgData.messages[anyMsgData.messages.length - 1];
+                lastMessageContent = lastMsg?.content || 'Mensagem sem conteúdo.';
+              } else {
+                lastMessageContent = 'Formato de mensagem desconhecido.';
+              }
             } else if (typeof msgData === 'string') {
               try {
                 const parsed = JSON.parse(msgData);
@@ -144,6 +154,8 @@ export function useConversations() {
               } catch (e) {
                 lastMessageContent = msgData;
               }
+            } else {
+              lastMessageContent = String(msgData);
             }
           }
           messageTime = formatMessageTime(new Date(lastMessage.message_time));
