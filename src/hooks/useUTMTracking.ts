@@ -48,6 +48,11 @@ interface UTMMetrics {
   isStale?: boolean;
 }
 
+// Type guard to check if geo_location is an object with expected properties
+const isGeoLocationObject = (geo: any): geo is { city?: string; state?: string; country?: string } => {
+  return geo && typeof geo === 'object' && !Array.isArray(geo);
+};
+
 export function useUTMTracking(campaignFilter?: string, deviceFilter?: string) {
   const [metrics, setMetrics] = useState<UTMMetrics>({
     totalCampaigns: 0,
@@ -152,7 +157,7 @@ export function useUTMTracking(campaignFilter?: string, deviceFilter?: string) {
         return acc;
       }, {});
       
-      const topSources = Object.values(sourceStats).slice(0, 5);
+      const topSources = Object.values(sourceStats).slice(0, 5) as Array<{ source: string; count: number; conversions: number }>;
       
       // Processar top campaigns com CTR e ROAS
       const campaignStats = filteredData.reduce((acc: any, item) => {
@@ -192,11 +197,11 @@ export function useUTMTracking(campaignFilter?: string, deviceFilter?: string) {
         return acc;
       }, {});
       
-      const deviceData = Object.values(deviceStats);
+      const deviceData = Object.values(deviceStats) as Array<{ name: string; value: number }>;
       
-      // Processar dados geográficos
+      // Processar dados geográficos com type guard
       const geoStats = filteredData.reduce((acc: any, item) => {
-        if (item.geo_location && item.geo_location.city) {
+        if (item.geo_location && isGeoLocationObject(item.geo_location) && item.geo_location.city) {
           const location = `${item.geo_location.city}, ${item.geo_location.state || item.geo_location.country}`;
           if (!acc[location]) {
             acc[location] = { location, leads: 0, conversions: 0 };
@@ -209,7 +214,7 @@ export function useUTMTracking(campaignFilter?: string, deviceFilter?: string) {
         return acc;
       }, {});
       
-      const geoData = Object.values(geoStats).slice(0, 10);
+      const geoData = Object.values(geoStats).slice(0, 10) as Array<{ location: string; leads: number; conversions: number }>;
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
 
