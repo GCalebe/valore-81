@@ -1,14 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RefreshCw, Users, Grid, List, LayoutGrid } from 'lucide-react';
+import { RefreshCw, Users, Grid, List } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import ClientsTable from '@/components/clients/ClientsTable';
-import ClientsGrid from '@/components/clients/ClientsGrid';
 import KanbanView from '@/components/clients/KanbanView';
 import ClientFilters from '@/components/clients/ClientFilters';
 import AddClientDialog from '@/components/clients/AddClientDialog';
@@ -25,7 +25,7 @@ const ClientsDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [segmentFilter, setSegmentFilter] = useState('all');
   const [lastContactFilter, setLastContactFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'table' | 'kanban' | 'grid'>('grid');
+  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
 
   const {
     contacts,
@@ -60,11 +60,6 @@ const ClientsDashboard = () => {
     handlePauseDurationConfirm,
     handleKanbanStageChange
   } = useClientManagement();
-
-  const handleChatClick = (contact: any) => {
-    // Navigate to chat page with the contact
-    navigate(`/chats?contact=${contact.id}`);
-  };
 
   const handleEditClick = (contact: Contact) => {
     setSelectedContact(contact);
@@ -110,18 +105,10 @@ const ClientsDashboard = () => {
           <div className="flex items-center gap-2">
             <div className="flex items-center border rounded-lg bg-white dark:bg-gray-800">
               <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-r-none"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-              <Button
                 variant={viewMode === 'table' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('table')}
-                className="rounded-none"
+                className="rounded-r-none"
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -181,18 +168,7 @@ const ClientsDashboard = () => {
         </div>
 
         <div className="flex-1 overflow-hidden">
-          {viewMode === 'grid' ? (
-            <ClientsGrid
-              contacts={contacts}
-              isLoading={loadingContacts}
-              searchTerm={searchTerm}
-              statusFilter={statusFilter}
-              segmentFilter={segmentFilter}
-              lastContactFilter={lastContactFilter}
-              onContactClick={handleChatClick}
-              onEditClick={handleEditClick}
-            />
-          ) : viewMode === 'table' ? (
+          {viewMode === 'table' ? (
             <ClientsTable
               contacts={contacts}
               isLoading={loadingContacts}
