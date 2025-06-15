@@ -56,7 +56,7 @@ const EditClientDialog = ({
     
     try {
       setLoading(true);
-      const fieldsWithValues = await getCustomFieldsWithValues(parseInt(selectedContact.id));
+      const fieldsWithValues = await getCustomFieldsWithValues(selectedContact.id);
       setCustomFieldsWithValues(fieldsWithValues);
       
       const values = fieldsWithValues.reduce((acc, field) => {
@@ -86,7 +86,7 @@ const EditClientDialog = ({
         fieldId,
         value
       }));
-      await saveClientCustomValues(parseInt(selectedContact.id), customValuesArray);
+      await saveClientCustomValues(selectedContact.id, customValuesArray);
       */
       
       onOpenChange(false);
