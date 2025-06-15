@@ -38,7 +38,7 @@ export function useClientStats() {
       try {
         const { count: total, error } = await supabase
           .from('dados_cliente')
-          .select('*', { count: 'exact', head: true });
+          .select('*', { count: 'exact' });
         if (error) throw error;
         totalClients = total || 0;
         partialStats.totalClients = totalClients;
@@ -57,7 +57,7 @@ export function useClientStats() {
       try {
         const { count: marketingCount, error } = await supabase
           .from('dados_cliente')
-          .select('*', { count: 'exact', head: true })
+          .select('*', { count: 'exact' })
           .not('client_name', 'is', null)
           .neq('client_name', '');
         if (error) throw error;
@@ -76,7 +76,7 @@ export function useClientStats() {
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const { count, error } = await supabase
           .from('dados_cliente')
-          .select('*', { count: 'exact', head: true })
+          .select('*', { count: 'exact' })
           .gte('created_at', firstDayOfMonth.toISOString())
           .lte('created_at', today.toISOString());
         if (error) throw error;
@@ -97,7 +97,7 @@ export function useClientStats() {
 
           const { count, error } = await supabase
             .from('dados_cliente')
-            .select('*', { count: 'exact', head: true })
+            .select('*', { count: 'exact' })
             .gte('created_at', startOfMonth.toISOString())
             .lte('created_at', endOfMonth.toISOString());
 
