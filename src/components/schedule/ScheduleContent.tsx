@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
@@ -7,6 +6,7 @@ import { ScheduleFilters } from './ScheduleFilters';
 import { ScheduleTimeFilter } from './ScheduleTimeFilter';
 import { CalendarView } from './CalendarView';
 import { EventsTable } from './EventsTable';
+import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
 
 interface ScheduleContentProps {
   selectedDate: Date | undefined;
@@ -45,7 +45,11 @@ export function ScheduleContent({
   openEventLink,
   onPeriodChange
 }: ScheduleContentProps) {
-  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
+
+  // Adiciona controle para o tipo de visualização do calendário (mes/semana/dia/agenda)
+  const [calendarViewType, setCalendarViewType] = useState<"mes" | "semana" | "dia" | "agenda">("mes");
+
   const [statusFilter, setStatusFilter] = useState('all');
   const [calendarFilter, setCalendarFilter] = useState('all');
   const [hostFilter, setHostFilter] = useState('all');
@@ -150,8 +154,22 @@ export function ScheduleContent({
     openEditEventDialog(event);
   };
 
+  // Handlers para botões do topo
+  const handleAddEventClick = () => setIsAddEventDialogOpen(true);
+
   return (
     <div className="container mx-auto px-4 py-6">
+      {/* --- NOVA BARRA DE SWITCHER DE VISUALIZAÇÃO/CONTROLE --- */}
+      <CalendarViewSwitcher
+        view={calendarViewType}
+        onChange={setCalendarViewType}
+        onAddEvent={handleAddEventClick}
+        onFilter={() => {
+          // Futuro: abrir modal lateral de filtros avançados
+          alert("Funcionalidade de filtros avançados em breve!");
+        }}
+      />
+      {/* ----------------------------------------------- */}
       <ScheduleFilters
         viewMode={viewMode}
         onViewModeChange={setViewMode}
