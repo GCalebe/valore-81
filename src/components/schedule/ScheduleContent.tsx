@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { isSameDay, parseISO, startOfWeek, endOfWeek, isSameWeek, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { isSameDay, parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
@@ -46,8 +47,6 @@ export function ScheduleContent({
   onPeriodChange
 }: ScheduleContentProps) {
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
-
-  // Adiciona controle para o tipo de visualização do calendário (mes/semana/dia/agenda)
   const [calendarViewType, setCalendarViewType] = useState<"mes" | "semana" | "dia" | "agenda">("mes");
 
   const [statusFilter, setStatusFilter] = useState('all');
@@ -59,7 +58,6 @@ export function ScheduleContent({
   // Função para determinar o período de filtro - APENAS para modo lista
   const getListModeFilterPeriod = () => {
     const today = new Date();
-    
     switch (timeFilter) {
       case 'hoje':
         return {
@@ -85,50 +83,37 @@ export function ScheduleContent({
   };
   
   const filteredEvents = events.filter(event => {
-    // First, validate that the event has a valid start date
     if (!event.start || typeof event.start !== 'string') {
       console.warn('Event with invalid start date found:', event);
       return false;
     }
-
     // Status filter
     if (statusFilter !== 'all' && event.status !== statusFilter) {
       return false;
     }
-
-    // Time filter - APENAS aplicar no modo lista
+    // Time filter - APENAS modo lista
     if (viewMode === 'list') {
       try {
         const eventDate = parseISO(event.start);
-        
-        // Check if the parsed date is valid
         if (isNaN(eventDate.getTime())) {
           console.warn('Event with invalid date format found:', event.start);
           return false;
         }
-        
         const filterPeriod = getListModeFilterPeriod();
-        
-        // Se não há período definido, mostrar todos os eventos
         if (!filterPeriod) {
           return true;
         }
-        
-        // Verificar se o evento está dentro do período
         return isWithinInterval(eventDate, {
           start: filterPeriod.start,
           end: filterPeriod.end
         });
-        
       } catch (error) {
         console.error('Error parsing event date:', event.start, error);
         return false;
       }
     }
-    
-    // No modo calendário, não aplicar filtro de tempo - deixar o CalendarView gerenciar
+    // No modo calendário, não aplicar filtro de tempo
     return true;
-    
   }).filter(event => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
@@ -138,7 +123,7 @@ export function ScheduleContent({
              attendee?.email && attendee.email.toLowerCase().includes(searchLower)
            ));
   }).sort((a, b) => {
-    // Add safe date parsing for sorting as well
+    // Safe date parsing for sorting
     try {
       const dateA = a.start ? parseISO(a.start) : new Date(0);
       const dateB = b.start ? parseISO(b.start) : new Date(0);
@@ -154,22 +139,22 @@ export function ScheduleContent({
     openEditEventDialog(event);
   };
 
-  // Handlers para botões do topo
+  // Handler para adicionar evento
   const handleAddEventClick = () => setIsAddEventDialogOpen(true);
 
+  // ** REMOVENDO O CARD DO CABEÇALHO antigo para deixar FULL SCREEN **
+  // O calendário agora ocupa toda a largura/h (exceto cabeçalhos externos da page)
+
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* --- NOVA BARRA DE SWITCHER DE VISUALIZAÇÃO/CONTROLE --- */}
+    <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0">
       <CalendarViewSwitcher
         view={calendarViewType}
         onChange={setCalendarViewType}
         onAddEvent={handleAddEventClick}
         onFilter={() => {
-          // Futuro: abrir modal lateral de filtros avançados
           alert("Funcionalidade de filtros avançados em breve!");
         }}
       />
-      {/* ----------------------------------------------- */}
       <ScheduleFilters
         viewMode={viewMode}
         onViewModeChange={setViewMode}
@@ -179,36 +164,36 @@ export function ScheduleContent({
         onCalendarFilterChange={setCalendarFilter}
         hostFilter={hostFilter}
         onHostFilterChange={setHostFilter}
-        onAddEvent={() => setIsAddEventDialogOpen(true)}
+        onAddEvent={handleAddEventClick}
       />
-
       <ScheduleTimeFilter
         activeFilter={timeFilter}
         onFilterChange={setTimeFilter}
       />
-
-      {viewMode === 'calendar' ? (
-        <CalendarView
-          selectedDate={selectedDate || new Date()}
-          onDateChange={(date) => setSelectedDate(date)}
-          events={filteredEvents}
-          currentMonth={currentMonth}
-          onMonthChange={setCurrentMonth}
-          timeFilter={timeFilter}
-          onEventClick={handleEventClick}
-          onPeriodChange={onPeriodChange}
-        />
-      ) : (
-        <div className="bg-white dark:bg-gray-800 border rounded-lg p-6">
-          <EventsTable 
+      <div className="flex-1 w-full flex flex-col min-h-0">       
+        {viewMode === 'calendar' ? (
+          <CalendarView
+            selectedDate={selectedDate || new Date()}
+            onDateChange={(date) => setSelectedDate(date)}
             events={filteredEvents}
-            isLoading={isAnyLoading}
-            onEditEvent={openEditEventDialog}
-            onDeleteEvent={openDeleteEventDialog}
-            onOpenEventLink={openEventLink}
+            currentMonth={currentMonth}
+            onMonthChange={setCurrentMonth}
+            timeFilter={timeFilter}
+            onEventClick={handleEventClick}
+            onPeriodChange={onPeriodChange}
           />
-        </div>
-      )}
+        ) : (
+          <div className="bg-white dark:bg-gray-800 border rounded-lg p-6 flex-1 overflow-auto">
+            <EventsTable 
+              events={filteredEvents}
+              isLoading={isAnyLoading}
+              onEditEvent={openEditEventDialog}
+              onDeleteEvent={openDeleteEventDialog}
+              onOpenEventLink={openEventLink}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
