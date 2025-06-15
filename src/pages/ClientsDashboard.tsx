@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RefreshCw, Users, Grid, List } from 'lucide-react';
+import { RefreshCw, Users, Grid, List, Minimize2, Maximize2 } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
@@ -17,6 +16,7 @@ import EditClientDialog from '@/components/clients/EditClientDialog';
 import DeleteClientDialog from '@/components/clients/DeleteClientDialog';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -26,6 +26,7 @@ const ClientsDashboard = () => {
   const [segmentFilter, setSegmentFilter] = useState('all');
   const [lastContactFilter, setLastContactFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
+  const [isCompactView, setIsCompactView] = useState(false);
 
   const {
     contacts,
@@ -103,6 +104,25 @@ const ClientsDashboard = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            {viewMode === 'kanban' && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setIsCompactView(!isCompactView)}
+                      className="h-9 w-9"
+                    >
+                      {isCompactView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isCompactView ? 'Visão Padrão' : 'Visão Compacta'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
             <div className="flex items-center border rounded-lg bg-white dark:bg-gray-800">
               <Button
                 variant={viewMode === 'table' ? 'default' : 'ghost'}
@@ -186,6 +206,7 @@ const ClientsDashboard = () => {
               onStageChange={handleKanbanStageChange}
               searchTerm={searchTerm}
               onEditClick={handleEditClick}
+              isCompact={isCompactView}
             />
           )}
         </div>
