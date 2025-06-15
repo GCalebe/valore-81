@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import { useClientsFilters } from '@/hooks/useClientsFilters';
+import { useKanbanStages } from '@/hooks/useKanbanStages';
 import ClientsDashboardLayout from '@/components/clients/ClientsDashboardLayout';
 import ClientsTable from '@/components/clients/ClientsTable';
 import KanbanView from '@/components/clients/KanbanView';
@@ -51,6 +52,8 @@ const ClientsDashboard = () => {
     handlePauseDurationConfirm,
     handleKanbanStageChange
   } = useClientManagement();
+
+  const kanbanStages = useKanbanStages();
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -114,6 +117,7 @@ const ClientsDashboard = () => {
             searchTerm={filter.searchTerm}
             onEditClick={openEditModal}
             isCompact={isCompactView}
+            stages={kanbanStages.stages}
           />
         )}
       </div>

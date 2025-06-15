@@ -1,8 +1,8 @@
-
 import React, { useRef, useState, useCallback } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import KanbanStageColumn from './KanbanStageColumn';
 import { Contact } from '@/types/client';
+import { KanbanStage } from "@/hooks/useKanbanStages";
 
 interface KanbanViewProps {
   contacts: Contact[];
@@ -11,13 +11,10 @@ interface KanbanViewProps {
   searchTerm: string;
   onEditClick: (contact: Contact) => void;
   isCompact: boolean;
+  stages: KanbanStage[];
 }
 
-const KANBAN_STAGES: Contact['kanbanStage'][] = [
-  'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
-];
-
-const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm, onEditClick, isCompact }: KanbanViewProps) => {
+const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm, onEditClick, isCompact, stages }: KanbanViewProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -30,10 +27,12 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm, onEdi
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
-  const contactsByStage = KANBAN_STAGES.reduce((acc, stage) => {
-    acc[stage] = filteredContacts.filter(contact => contact.kanbanStage === stage);
+  const contactsByStage = stages.reduce((acc, stage) => {
+    acc[stage.title] = filteredContacts.filter(
+      contact => contact.kanbanStage === stage.title
+    );
     return acc;
-  }, {} as Record<Contact['kanbanStage'], Contact[]>);
+  }, {} as Record<string, Contact[]>);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -97,11 +96,11 @@ const KanbanView = ({ contacts, onContactClick, onStageChange, searchTerm, onEdi
         onMouseLeave={handleMouseLeave}
       >
         <div className="flex gap-3 min-w-max p-1 md:p-2 kanban-drag-area h-full">
-          {KANBAN_STAGES.map((stage) => (
+          {stages.map((stage) => (
             <KanbanStageColumn
-              key={stage}
-              stage={stage}
-              contacts={contactsByStage[stage]}
+              key={stage.id}
+              stage={stage.title as Contact['kanbanStage']}
+              contacts={contactsByStage[stage.title]}
               onContactClick={onContactClick}
               onEditClick={onEditClick}
               isCompact={isCompact}

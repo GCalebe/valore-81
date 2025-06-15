@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Settings, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,32 +11,38 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-
-const initialStages = [
-  'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
-];
+import { useKanbanStages } from '@/hooks/useKanbanStages';
 
 export function KanbanSettings() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [stages, setStages] = useState(initialStages);
   const [newStage, setNewStage] = useState('');
+  const {
+    stages,
+    loading,
+    addStage,
+    removeStage,
+    reorderStages,
+    fetchStages,
+  } = useKanbanStages();
 
-  const handleAddStage = () => {
-    if (newStage.trim() && !stages.includes(newStage.trim())) {
-      setStages([...stages, newStage.trim()]);
+  // For drag-and-drop reordering UI (optional)
+  // For now, simple click-up/down arrows, or just a basic non-draggable reorder, focusing on add/remove.
+
+  const handleAddStage = async () => {
+    if (newStage.trim() && !stages.some(s => s.title.toLowerCase() === newStage.trim().toLowerCase())) {
+      await addStage(newStage.trim());
       setNewStage('');
     }
   };
 
-  const handleRemoveStage = (stageToRemove: string) => {
-    setStages(stages.filter(stage => stage !== stageToRemove));
+  const handleRemoveStage = async (stageId: string) => {
+    await removeStage(stageId);
   };
-  
-  const handleSave = () => {
-    // Em um cenário real, isso chamaria uma API para salvar as etapas.
-    console.log("Salvando etapas:", stages);
+
+  const handleSave = async () => {
+    // Already persisted on add/remove, just close
     setIsDialogOpen(false);
-  }
+  };
 
   return (
     <>
@@ -60,11 +67,13 @@ export function KanbanSettings() {
           <div className="py-4 space-y-4">
             <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
               {stages.map((stage, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-muted rounded-md text-sm">
-                  <span>{stage}</span>
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleRemoveStage(stage)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div key={stage.id} className="flex items-center justify-between p-2 bg-muted rounded-md text-sm">
+                  <span>{stage.title}</span>
+                  {stages.length > 1 && (
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleRemoveStage(stage.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
