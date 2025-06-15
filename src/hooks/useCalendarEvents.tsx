@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { CalendarEvent, EventFormData } from '@/types/calendar';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -8,12 +8,75 @@ interface DateRange {
   end: Date;
 }
 
+const CACHE_KEY = "calendar-events-cache";
+const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutos
+
+type CachedEventsData = {
+  key: string;
+  fetchedAt: number;
+  events: CalendarEvent[];
+};
+
+function getCacheKey(date: Date | undefined, range: DateRange | undefined) {
+  if (range) {
+    return `range:${format(range.start, 'yyyy-MM-dd')}:${format(range.end, 'yyyy-MM-dd')}`;
+  }
+  if (date) {
+    return `date:${format(date, 'yyyy-MM-dd')}`;
+  }
+  return 'today';
+}
+
+// Lê do cache localStorage
+function loadFromCache(key: string): CalendarEvent[] | null {
+  try {
+    const item = localStorage.getItem(CACHE_KEY);
+    if (item) {
+      const parsed: CachedEventsData[] = JSON.parse(item);
+      const entry = parsed.find(d => d.key === key);
+      if (entry && Date.now() - entry.fetchedAt < CACHE_DURATION_MS) {
+        return entry.events;
+      }
+    }
+    return null;
+  } catch (e) {
+    console.error("Erro ao carregar eventos do cache:", e);
+    return null;
+  }
+}
+
+// Salva no cache localStorage
+function saveToCache(key: string, events: CalendarEvent[]) {
+  try {
+    let arr: CachedEventsData[] = [];
+    const item = localStorage.getItem(CACHE_KEY);
+    if (item) arr = JSON.parse(item);
+    // Remove registros antigos com mesma chave
+    arr = arr.filter(d => d.key !== key);
+    arr.unshift({
+      key,
+      events,
+      fetchedAt: Date.now(),
+    });
+    // Mantém só os 5 últimos
+    if (arr.length > 5) arr = arr.slice(0, 5);
+    localStorage.setItem(CACHE_KEY, JSON.stringify(arr));
+  } catch (e) {
+    console.error("Erro ao salvar eventos no cache:", e);
+  }
+}
+
 export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRange | null) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const currentCacheKey = getCacheKey(selectedDate || undefined, dateRange || undefined);
+
+  // Ref para evitar updates duplicados em listeners
+  const lastUpdateRef = useRef<number>(0);
 
   // Função para buscar eventos do endpoint n8n
   const fetchEventsFromN8N = useCallback(async (targetDate?: Date, targetRange?: DateRange) => {
@@ -140,45 +203,80 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
     }
   }, []);
 
-  // Função principal para carregar eventos
+  // Carregar eventos da API OU do cache
   const fetchEvents = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    let loadedFromCache = false;
     try {
-      setIsLoading(true);
-      setError(null);
-      
+      // 1. Tentativa de uso do cache local
+      const cachedEvents = loadFromCache(currentCacheKey);
+      if (cachedEvents) {
+        setEvents(cachedEvents);
+        setLastUpdated(new Date());
+        loadedFromCache = true;
+        console.log("Eventos carregados do cache local");
+      }
+      // 2. Chama a API mesmo assim, mas se cache existe, UI já foi preenchida
       const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
-      
       setEvents(fetchedEvents);
       setLastUpdated(new Date());
-      
-      console.log(`Eventos carregados: ${fetchedEvents.length}`);
-    } catch (err) {
-      console.error('Erro ao carregar eventos:', err);
-      setError(err instanceof Error ? err : new Error('Erro desconhecido'));
-      
-      // Manter eventos anteriores em caso de erro
-      if (events.length === 0) {
-        setEvents([]);
+      saveToCache(currentCacheKey, fetchedEvents);
+      if (loadedFromCache) {
+        // Cache foi usado & houve atualização = informa badge/toast
+        toast.success("Agenda atualizada!");
       }
+      lastUpdateRef.current = Date.now();
+      setError(null);
+    } catch (err: any) {
+      setError(err instanceof Error ? err : new Error('Erro desconhecido'));
+      if (!loadedFromCache) {
+        setEvents([]); // SÓ zera caso não havia nem cache
+      }
+      toast.error("Erro ao buscar eventos. Verifique sua conexão.");
     } finally {
       setIsLoading(false);
     }
-  }, [selectedDate, dateRange, fetchEventsFromN8N, events.length]);
+  }, [selectedDate, dateRange, fetchEventsFromN8N, currentCacheKey]);
 
-  // Função para refresh manual
+  // Atualização manual pós-inserção/edição/exclusão
   const refreshEventsPost = useCallback(async () => {
-    console.log('Refresh manual dos eventos solicitado');
+    setIsLoading(true);
     try {
       const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
       setEvents(fetchedEvents);
       setLastUpdated(new Date());
+      saveToCache(currentCacheKey, fetchedEvents);
+      lastUpdateRef.current = Date.now();
       setError(null);
       toast.success("Eventos atualizados com sucesso!");
     } catch (err) {
       console.error('Erro no refresh manual:', err);
       toast.error("Erro ao atualizar eventos. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
-  }, [selectedDate, dateRange, fetchEventsFromN8N]);
+  }, [selectedDate, dateRange, fetchEventsFromN8N, currentCacheKey]);
+
+  // Adiciona listeners para visibilidade/tab focus
+  useEffect(() => {
+    function onVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        // Só atualiza se já passou tempo suficiente desde o último update
+        const now = Date.now();
+        if (now - lastUpdateRef.current > CACHE_DURATION_MS / 2) {
+          fetchEvents();
+        }
+      }
+    }
+    window.addEventListener('visibilitychange', onVisibilityChange);
+    return () => window.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [fetchEvents]);
+
+  // Carregar eventos ao carregar/mudar data/período
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   // Função para adicionar evento
   const addEvent = async (formData: EventFormData) => {
@@ -329,11 +427,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
     }
   };
 
-  // Carregar eventos quando a data mudar
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-
+  // Re-exportar tipos para compatibilidade
   return { 
     events, 
     isLoading, 
@@ -348,5 +442,4 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
   };
 }
 
-// Re-exportar tipos para compatibilidade
 export type { CalendarEvent, EventFormData } from '@/types/calendar';
