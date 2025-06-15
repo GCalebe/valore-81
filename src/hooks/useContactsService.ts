@@ -30,7 +30,7 @@ export function useContactsService() {
       lastContact: client.last_contact
         ? new Date(client.last_contact).toLocaleDateString('pt-BR')
         : (client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'),
-      kanbanStage: client.kanban_stage,
+      kanbanStage: client.kanban_stage || 'Entraram', // Ensure fallback to default stage
       sessionId: client.session_id,
       tags: client.tags || [],
       responsibleUser: client.responsible_user,

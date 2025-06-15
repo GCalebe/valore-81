@@ -42,6 +42,7 @@ export const useClientManagement = () => {
     payment: '',
     uploadedFiles: [],
     consultationStage: 'Nova consulta',
+    kanbanStage: 'Entraram', // Set default kanban stage
   });
 
   const contactsService = useContactsService();
@@ -54,7 +55,12 @@ export const useClientManagement = () => {
       // Gera conversas fictícias se necessário.
       let contactsWithConversations = generateFictitiousConversations(contactsFetched);
 
-      // Atualização de mensagens será feita no futuro utilizando outro hook/serviço  
+      // Ensure all contacts have a valid kanban stage
+      contactsWithConversations = contactsWithConversations.map(contact => ({
+        ...contact,
+        kanbanStage: contact.kanbanStage || 'Entraram'
+      }));
+
       setContacts(contactsWithConversations);
     } catch (error) {
       console.error('Error fetching clients:', error);
@@ -183,6 +189,7 @@ export const useClientManagement = () => {
           payment: '',
           uploadedFiles: [],
           consultationStage: 'Nova consulta',
+          kanbanStage: 'Entraram',
         });
         
         setIsAddContactOpen(false);
@@ -355,6 +362,7 @@ export const useClientManagement = () => {
       payment: selectedContact.payment || '',
       uploadedFiles: selectedContact.uploadedFiles || [],
       consultationStage: selectedContact.consultationStage || 'Nova consulta',
+      kanbanStage: selectedContact.kanbanStage || 'Entraram',
     });
     setIsEditModalOpen(true);
   };

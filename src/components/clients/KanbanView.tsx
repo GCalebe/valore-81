@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useCallback } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import KanbanStageColumn from './KanbanStageColumn';
@@ -38,14 +37,14 @@ const KanbanView = ({
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
-  // Novo agrupamento usando hook refatorado
+  // Agrupamento de contatos por estágio usando hook refatorado
   const contactsByStage = useContactsByKanbanStage(filteredContacts, stages);
 
-  // Log extra para diagnosticar shape recebidos dos contatos e stages
+  // Log para diagnosticar dados recebidos
   React.useEffect(() => {
     console.log("[KanbanView] Stages disponíveis:", stages.map(s => s.title));
-    console.log("[KanbanView] Contatos filtrados:", filteredContacts);
-    console.log("[KanbanView] Agrupamento:", contactsByStage);
+    console.log("[KanbanView] Total de contatos filtrados:", filteredContacts.length);
+    console.log("[KanbanView] Agrupamento final:", contactsByStage);
   }, [filteredContacts, stages, contactsByStage]);
 
   const handleDragEnd = (result: any) => {
@@ -114,7 +113,7 @@ const KanbanView = ({
             <KanbanStageColumn
               key={stage.id}
               stage={stage.title}
-              contacts={contactsByStage[stage.title]}
+              contacts={contactsByStage[stage.title] || []}
               onContactClick={onContactClick}
               onEditClick={onEditClick}
               isCompact={isCompact}
