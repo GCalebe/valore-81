@@ -16,18 +16,20 @@ import UTMMetricsTab from '@/components/metrics/UTMMetricsTab';
 const MetricsDashboard = () => {
   const { stats, loading: statsLoading, refetchStats } = useClientStats();
   const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics();
-  const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking();
   const [dateFilter, setDateFilter] = useState('week');
+  const [selectedCampaign, setSelectedCampaign] = useState('all');
+  
+  const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking(selectedCampaign);
   
   // Initialize real-time updates for the metrics dashboard
   useDashboardRealtime();
   
-  // Fetch data when component mounts
+  // Fetch data when component mounts or campaign filter changes
   useEffect(() => {
     refetchStats();
     refetchMetrics();
     refetchUTMData();
-  }, [refetchStats, refetchMetrics, refetchUTMData]);
+  }, [refetchStats, refetchMetrics, refetchUTMData, selectedCampaign]);
   
   const loading = statsLoading || metricsLoading;
 
@@ -76,6 +78,8 @@ const MetricsDashboard = () => {
             <UTMMetricsTab 
               utmMetrics={utmMetrics}
               utmLoading={utmLoading}
+              selectedCampaign={selectedCampaign}
+              onCampaignChange={setSelectedCampaign}
             />
           </TabsContent>
         </Tabs>
