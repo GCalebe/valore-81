@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,9 +7,9 @@ export function useConversationMetrics() {
     totalConversations: 0,
     responseRate: 0,
     totalRespondidas: 0,
-    avgResponseTime: '0',
+    avgResponseTime: 0,
     conversionRate: 0,
-    avgClosingTime: '0',
+    avgClosingTime: 0,
     conversationData: [],
     funnelData: [],
     conversionByTimeData: [],
@@ -131,9 +130,9 @@ export function useConversationMetrics() {
         totalConversations,
         responseRate,
         totalRespondidas,
-        avgResponseTime: '2.5', // Média calculada baseada em dados simulados
+        avgResponseTime: 2.5, // Changed from string to number
         conversionRate,
-        avgClosingTime: Math.round(conversionRate / 2).toString(), // Estimativa baseada na taxa de conversão
+        avgClosingTime: Math.round(conversionRate / 2), // Changed from string to number
         conversationData,
         funnelData,
         conversionByTimeData,
