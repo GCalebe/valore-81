@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -44,6 +43,7 @@ const EditClientDialog = ({
   const [customFieldsWithValues, setCustomFieldsWithValues] = useState<CustomFieldWithValue[]>([]);
   const [customValues, setCustomValues] = useState<{ [fieldId: string]: any }>({});
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{ [fieldId: string]: string }>({});
 
   useEffect(() => {
     if (selectedContact && isOpen) {
@@ -100,6 +100,15 @@ const EditClientDialog = ({
       ...prev,
       [fieldId]: value
     }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[fieldId]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldId];
+        return newErrors;
+      });
+    }
   };
 
   if (!selectedContact) return null;
@@ -351,6 +360,7 @@ const EditClientDialog = ({
                         field={field}
                         value={customValues[field.id]}
                         onChange={(value) => handleCustomFieldChange(field.id, value)}
+                        validationError={validationErrors[field.id]}
                       />
                     ))}
                   </div>

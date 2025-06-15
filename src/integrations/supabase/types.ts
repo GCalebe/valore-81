@@ -263,6 +263,85 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_field_audit_log: {
+        Row: {
+          change_type: string
+          changed_by: string | null
+          client_id: string
+          created_at: string
+          field_id: string
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+        }
+        Insert: {
+          change_type: string
+          changed_by?: string | null
+          client_id: string
+          created_at?: string
+          field_id: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+        }
+        Update: {
+          change_type?: string
+          changed_by?: string | null
+          client_id?: string
+          created_at?: string
+          field_id?: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_audit_log_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_field_validation_rules: {
+        Row: {
+          created_at: string
+          error_message: string
+          field_id: string
+          id: string
+          rule_type: string
+          rule_value: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message: string
+          field_id: string
+          id?: string
+          rule_type: string
+          rule_value?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string
+          field_id?: string
+          id?: string
+          rule_type?: string
+          rule_value?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_validation_rules_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_fields: {
         Row: {
           category: string

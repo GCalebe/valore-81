@@ -4,14 +4,16 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { CustomFieldWithValue } from '@/types/customFields';
+import { AlertCircle } from 'lucide-react';
 
 interface CustomFieldRendererProps {
   field: CustomFieldWithValue;
   value: any;
   onChange: (value: any) => void;
+  validationError?: string;
 }
 
-const CustomFieldRenderer = ({ field, value, onChange }: CustomFieldRendererProps) => {
+const CustomFieldRenderer = ({ field, value, onChange, validationError }: CustomFieldRendererProps) => {
   const renderField = () => {
     switch (field.field_type) {
       case 'text':
@@ -20,13 +22,14 @@ const CustomFieldRenderer = ({ field, value, onChange }: CustomFieldRendererProp
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={`Digite ${field.field_name.toLowerCase()}`}
+            className={validationError ? 'border-red-500 focus:border-red-500' : ''}
           />
         );
 
       case 'single_select':
         return (
           <Select value={value || 'none'} onValueChange={(val) => onChange(val === 'none' ? null : val)}>
-            <SelectTrigger>
+            <SelectTrigger className={validationError ? 'border-red-500 focus:border-red-500' : ''}>
               <SelectValue placeholder={`Selecione ${field.field_name.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
@@ -43,7 +46,7 @@ const CustomFieldRenderer = ({ field, value, onChange }: CustomFieldRendererProp
       case 'multi_select':
         const selectedValues = Array.isArray(value) ? value : [];
         return (
-          <div className="space-y-2">
+          <div className={`space-y-2 ${validationError ? 'p-2 border border-red-500 rounded' : ''}`}>
             {field.field_options?.map((option) => (
               <label key={option} className="flex items-center space-x-2">
                 <input
@@ -71,11 +74,18 @@ const CustomFieldRenderer = ({ field, value, onChange }: CustomFieldRendererProp
 
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium">
+      <Label className="text-sm font-medium flex items-center gap-2">
         {field.field_name}
         {field.is_required && <span className="text-red-500 ml-1">*</span>}
+        {validationError && <AlertCircle className="h-4 w-4 text-red-500" />}
       </Label>
       {renderField()}
+      {validationError && (
+        <p className="text-sm text-red-600 flex items-center gap-1">
+          <AlertCircle className="h-3 w-3" />
+          {validationError}
+        </p>
+      )}
     </div>
   );
 };

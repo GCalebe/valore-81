@@ -2,6 +2,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
 import { supabase } from '@/integrations/supabase/client';
+import { useCustomFieldValidation } from './useCustomFieldValidation';
+import { validateCustomField } from '@/utils/customFieldValidation';
+import { toast } from '@/hooks/use-toast';
 
 export function useDynamicFields(clientId: string | null) {
   const [dynamicFields, setDynamicFields] = useState<{
@@ -16,6 +19,9 @@ export function useDynamicFields(clientId: string | null) {
     documents: []
   });
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{ [fieldId: string]: string }>({});
+  
+  const { validationRules, logCustomFieldChange } = useCustomFieldValidation();
 
   const fetchDynamicFields = useCallback(async (clientId: string) => {
     try {
@@ -106,6 +112,34 @@ export function useDynamicFields(clientId: string | null) {
   const updateField = useCallback(async (fieldId: string, newValue: any) => {
     if (!clientId) return;
 
+    // Get current value for audit logging
+    const currentField = Object.values(dynamicFields).flat().find(field => field.id === fieldId);
+    const oldValue = currentField?.value;
+
+    // Validate the field
+    const validationError = validateCustomField(fieldId, newValue, validationRules);
+    
+    if (validationError) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [fieldId]: validationError.message
+      }));
+      toast({
+        title: "Erro de validação",
+        description: validationError.message,
+        variant: "destructive"
+      });
+      return;
+    } else {
+      // Clear validation error if field is now valid
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldId];
+        return newErrors;
+      });
+    }
+
+    // Optimistically update the UI
     setDynamicFields(prev => {
       const updated = { ...prev };
       
@@ -138,18 +172,38 @@ export function useDynamicFields(clientId: string | null) {
 
       if (error) {
         console.error('Error saving field value:', error);
+        toast({
+          title: "Erro ao salvar",
+          description: "Não foi possível salvar o valor do campo.",
+          variant: "destructive"
+        });
         // Optionally revert the optimistic update here
       } else {
+        // Log the change for audit purposes
+        await logCustomFieldChange(
+          clientId,
+          fieldId,
+          oldValue,
+          newValue,
+          oldValue === undefined ? 'create' : 'update'
+        );
+        
         console.log(`Field ${fieldId} updated successfully with value:`, newValue);
       }
     } catch (error) {
       console.error('Error updating field:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar o valor do campo.",
+        variant: "destructive"
+      });
     }
-  }, [clientId]);
+  }, [clientId, dynamicFields, validationRules, logCustomFieldChange]);
 
   return { 
     dynamicFields, 
     loading, 
+    validationErrors,
     refetch: () => clientId && fetchDynamicFields(clientId),
     updateField
   };

@@ -22,8 +22,8 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
   const [clientData, setClientData] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(false);
   
-  // Use the dynamic fields hook
-  const { dynamicFields, loading: dynamicFieldsLoading, updateField } = useDynamicFields(
+  // Use the enhanced dynamic fields hook with validation
+  const { dynamicFields, loading: dynamicFieldsLoading, updateField, validationErrors } = useDynamicFields(
     selectedConversation?.sessionId || null
   );
 
@@ -99,8 +99,12 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
 
   const handleFieldUpdate = (fieldId: string, newValue: any) => {
     updateField(fieldId, newValue);
-    // TODO: Aqui você pode adicionar lógica adicional como sincronização com o servidor
     console.log(`Field ${fieldId} updated with value:`, newValue);
+    
+    // Show validation error if exists
+    if (validationErrors[fieldId]) {
+      console.warn(`Validation error for field ${fieldId}:`, validationErrors[fieldId]);
+    }
   };
 
   if (!selectedChat) {
@@ -152,7 +156,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           {/* Tags Field */}
           <TagsField selectedChat={selectedChat} />
           
-          {/* Enhanced Tabs System with Dynamic Fields */}
+          {/* Enhanced Tabs System with Dynamic Fields and Validation */}
           <ClientInfoTabs 
             clientData={clientData}
             dynamicFields={dynamicFields}
@@ -163,6 +167,18 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           <div className="mt-6">
             <NotesField selectedChat={selectedChat} />
           </div>
+          
+          {/* Display validation errors if any */}
+          {Object.keys(validationErrors).length > 0 && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <h4 className="text-sm font-medium text-red-800 mb-2">Erros de validação:</h4>
+              <ul className="text-sm text-red-700 space-y-1">
+                {Object.entries(validationErrors).map(([fieldId, error]) => (
+                  <li key={fieldId}>• {error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </ScrollArea>
     </div>
