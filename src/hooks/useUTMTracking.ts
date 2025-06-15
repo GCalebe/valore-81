@@ -90,9 +90,9 @@ export function useUTMTracking(campaignFilter?: string) {
         return;
       }
       
-      // Se há filtro de campanha, precisamos filtrar os dados das métricas também
-      let processedMetrics = metricsData;
+      let finalMetrics;
       
+      // Se há filtro de campanha, precisamos filtrar os dados das métricas também
       if (campaignFilter && campaignFilter !== 'all') {
         // Buscar dados filtrados manualmente para campanhas específicas
         const { data: filteredData, error: filteredError } = await supabase
@@ -155,7 +155,7 @@ export function useUTMTracking(campaignFilter?: string) {
         
         const deviceData = Object.values(deviceStats);
         
-        processedMetrics = {
+        finalMetrics = {
           totalLeads,
           totalCampaigns,
           totalConversions,
@@ -163,9 +163,11 @@ export function useUTMTracking(campaignFilter?: string) {
           topCampaigns,
           deviceData
         };
+      } else {
+        finalMetrics = metricsData;
       }
       
-      const typedMetricsData = processedMetrics as any;
+      const typedMetricsData = finalMetrics as any;
       const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns, deviceData } = typedMetricsData;
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
