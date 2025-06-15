@@ -84,7 +84,7 @@ const ScheduleHeader = ({
           )}
         </div>
         {/* Controles todos alinhados verticalmente e espaçados */}
-        <div className="flex flex-row items-center gap-3 mt-[15px]">
+        <div className="flex flex-row items-center gap-3">
           {onRefresh && (
             <Button 
               variant="outline"
@@ -125,4 +125,3 @@ const ScheduleHeader = ({
 };
 
 export default ScheduleHeader;
-
