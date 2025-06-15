@@ -39,6 +39,8 @@ export function useClientStats() {
         throw metricsError || recentClientsError;
       }
 
+      const typedMetricsData = metricsData as any;
+
       const recentClients = recentClientsData?.map(client => ({
         id: client.id,
         name: client.nome || 'Cliente sem nome',
@@ -54,16 +56,16 @@ export function useClientStats() {
         '#F97316', '#8B5CF6', '#06B6D4', '#D946EF'
       ];
       
-      const clientTypesWithColors = (metricsData.clientTypes || []).map((type: { name: string; value: number }, index: number) => ({
+      const clientTypesWithColors = (typedMetricsData.clientTypes || []).map((type: { name: string; value: number }, index: number) => ({
         ...type,
         color: colors[index % colors.length]
       }));
 
       setStats({
-        totalClients: metricsData.totalClients,
-        totalMarketingClients: metricsData.totalMarketingClients,
-        newClientsThisMonth: metricsData.newClientsThisMonth,
-        monthlyGrowth: metricsData.monthlyGrowth,
+        totalClients: typedMetricsData.totalClients,
+        totalMarketingClients: typedMetricsData.totalMarketingClients,
+        newClientsThisMonth: typedMetricsData.newClientsThisMonth,
+        monthlyGrowth: typedMetricsData.monthlyGrowth,
         clientTypes: clientTypesWithColors,
         recentClients,
         isStale: false,

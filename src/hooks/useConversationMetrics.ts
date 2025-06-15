@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,7 +41,8 @@ export function useConversationMetrics() {
         throw metricsError;
       }
       
-      const { totalConversations, totalRespondidas, totalClients, funnelData: rawFunnelData, conversationData } = metricsData;
+      const typedMetricsData = metricsData as any;
+      const { totalConversations, totalRespondidas, totalClients, funnelData: rawFunnelData, conversationData } = typedMetricsData;
       
       const responseRate = totalConversations > 0 ? Math.round((totalRespondidas / totalConversations) * 100) : 0;
       const conversionRate = totalClients > 0 ? Math.round((totalRespondidas / totalClients) * 100) : 0;

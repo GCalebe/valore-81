@@ -79,7 +79,8 @@ export function useUTMTracking() {
         return;
       }
       
-      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns } = metricsData;
+      const typedMetricsData = metricsData as any;
+      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns } = typedMetricsData;
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
 
@@ -104,7 +105,7 @@ export function useUTMTracking() {
         topCampaigns,
         campaignData,
         sourceData,
-        recentTracking: recentTracking || [],
+        recentTracking: (recentTracking as UTMData[] | null) || [],
         isStale: false,
       });
       
