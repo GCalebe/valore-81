@@ -35,7 +35,7 @@ const AddClientDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="h-9 bg-green-500 hover:bg-green-600 text-white">
           <UserPlus className="mr-2 h-4 w-4" />
           Novo Cliente
         </Button>

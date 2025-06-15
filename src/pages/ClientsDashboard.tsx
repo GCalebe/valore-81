@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { RefreshCw, Users, Grid, List, Minimize2, Maximize2, X } from 'lucide-react';
+import { RefreshCw, Users, Grid, List, Minimize2, Maximize2 } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import ClientsTable from '@/components/clients/ClientsTable';
 import KanbanView from '@/components/clients/KanbanView';
-import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
@@ -93,7 +91,25 @@ const ClientsDashboard = () => {
 
   return (
     <div className="h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-      <ClientsHeader />
+      <ClientsHeader
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        isFilterDialogOpen={isFilterDialogOpen}
+        setIsFilterDialogOpen={setIsFilterDialogOpen}
+        statusFilter={statusFilter}
+        segmentFilter={segmentFilter}
+        lastContactFilter={lastContactFilter}
+        onStatusFilterChange={setStatusFilter}
+        onSegmentFilterChange={setSegmentFilter}
+        onLastContactFilterChange={setLastContactFilter}
+        onClearFilters={handleClearFilters}
+        hasActiveFilters={hasActiveFilters}
+        isAddContactOpen={isAddContactOpen}
+        onAddContactOpenChange={setIsAddContactOpen}
+        newContact={newContact}
+        setNewContact={setNewContact}
+        handleAddContact={handleAddContact}
+      />
       
       <main className="flex-1 flex flex-col w-full px-4 py-4 overflow-hidden">
         <div className="flex items-center justify-between mb-4">
