@@ -43,7 +43,7 @@ const ScheduleHeader = ({
         style={{ height: 64 }}
       >
         {/* Branding e título totalmente centralizados */}
-        <div className="flex flex-row items-center gap-4 min-w-0">
+        <div className="flex flex-row items-center gap-4 min-w-0 h-full">
           <Button
             variant="ghost"
             size="icon"
@@ -60,7 +60,6 @@ const ScheduleHeader = ({
             style={{
               color: "#FFC72C", // amarelo do calendário igual ao da imagem
               strokeWidth: 2.3,
-              marginBottom: 2
             }}
           />
           <h1 className="text-2xl font-bold text-white pl-1 pr-1 tracking-tight leading-none" style={{ minWidth: 0 }}>
@@ -84,7 +83,7 @@ const ScheduleHeader = ({
           )}
         </div>
         {/* Controles todos alinhados verticalmente e espaçados */}
-        <div className="flex flex-row items-center gap-3">
+        <div className="flex flex-row items-center gap-3 h-full">
           {onRefresh && (
             <Button 
               variant="outline"
