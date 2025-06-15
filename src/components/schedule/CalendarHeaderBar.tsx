@@ -33,18 +33,19 @@ export function CalendarHeaderBar({
           { locale: pt }
         )}`;
       }
+      case "agenda":
       case "mes":
       default:
         return format(currentMonth, "MMMM 'de' yyyy", { locale: pt });
     }
   };
-  const showMonthNavigation = view === "mes";
+  const showNavigation = view === "mes" || view === "semana" || view === "dia" || view === "agenda";
   return (
     <div className="flex items-center justify-between p-4 border-b">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
         {getCalendarTitle()}
       </h2>
-      {showMonthNavigation && (
+      {showNavigation && (
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={goToPrevious}>
             <ChevronLeft className="h-4 w-4" />

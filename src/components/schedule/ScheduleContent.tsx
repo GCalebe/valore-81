@@ -1,11 +1,13 @@
+
 import React, { useState, useMemo, useCallback } from 'react';
-import { parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
+import { parseISO, startOfWeek, endOfWeek, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
 import { CalendarView } from './CalendarView';
 import { EventsTable } from './EventsTable';
 import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
+import { CalendarHeaderBar } from './CalendarHeaderBar';
 
 interface ScheduleContentProps {
   selectedDate: Date | undefined;
@@ -51,6 +53,38 @@ export function ScheduleContent({
   const [hostFilter, setHostFilter] = useState('all');
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
 
+  const goToPrevious = useCallback(() => {
+    if (calendarViewType === 'mes' || (viewMode === 'list' && (calendarViewType === 'agenda' || calendarViewType === 'mes'))) {
+      const prevMonth = new Date(currentMonth);
+      prevMonth.setMonth(prevMonth.getMonth() - 1);
+      setCurrentMonth(prevMonth);
+    } else if (calendarViewType === 'semana') {
+      const prevWeek = new Date(selectedDate || new Date());
+      prevWeek.setDate(prevWeek.getDate() - 7);
+      setSelectedDate(prevWeek);
+    } else if (calendarViewType === 'dia' || (viewMode === 'calendar' && calendarViewType === 'agenda')) {
+      const prevDay = new Date(selectedDate || new Date());
+      prevDay.setDate(prevDay.getDate() - 1);
+      setSelectedDate(prevDay);
+    }
+  }, [calendarViewType, viewMode, currentMonth, selectedDate, setCurrentMonth, setSelectedDate]);
+  
+  const goToNext = useCallback(() => {
+    if (calendarViewType === 'mes' || (viewMode === 'list' && (calendarViewType === 'agenda' || calendarViewType === 'mes'))) {
+      const nextMonth = new Date(currentMonth);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      setCurrentMonth(nextMonth);
+    } else if (calendarViewType === 'semana') {
+      const nextWeek = new Date(selectedDate || new Date());
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      setSelectedDate(nextWeek);
+    } else if (calendarViewType === 'dia' || (viewMode === 'calendar' && calendarViewType === 'agenda')) {
+      const nextDay = new Date(selectedDate || new Date());
+      nextDay.setDate(nextDay.getDate() + 1);
+      setSelectedDate(nextDay);
+    }
+  }, [calendarViewType, viewMode, currentMonth, selectedDate, setCurrentMonth, setSelectedDate]);
+
   // Período de filtro do modo lista
   const getListModeFilterPeriod = useCallback(() => {
     const today = new Date();
@@ -69,15 +103,17 @@ export function ScheduleContent({
         return { start: weekStart, end: weekEnd };
       case 'mes':
       case 'agenda':
-        // Mostrar todos eventos
-        return null;
+        return {
+          start: startOfMonth(currentMonth),
+          end: endOfMonth(currentMonth)
+        };
       default:
         return {
           start: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
           end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
         };
     }
-  }, [calendarViewType, selectedDate]);
+  }, [calendarViewType, selectedDate, currentMonth]);
 
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
@@ -156,16 +192,27 @@ export function ScheduleContent({
             view={calendarViewType}
             onEventClick={handleEventClick}
             onPeriodChange={onPeriodChange}
+            goToPrevious={goToPrevious}
+            goToNext={goToNext}
           />
         ) : (
-          <div className="bg-white dark:bg-gray-800 border rounded-lg p-6 flex-1 overflow-auto">
-            <EventsTable 
-              events={filteredEvents}
-              isLoading={isAnyLoading}
-              onEditEvent={openEditEventDialog}
-              onDeleteEvent={openDeleteEventDialog}
-              onOpenEventLink={openEventLink}
+          <div className="bg-white dark:bg-gray-800 border rounded-lg flex-1 overflow-auto flex flex-col">
+            <CalendarHeaderBar
+              view={calendarViewType}
+              currentMonth={currentMonth}
+              selectedDate={selectedDate || new Date()}
+              goToPrevious={goToPrevious}
+              goToNext={goToNext}
             />
+            <div className="p-6 flex-1 overflow-auto">
+              <EventsTable 
+                events={filteredEvents}
+                isLoading={isAnyLoading}
+                onEditEvent={openEditEventDialog}
+                onDeleteEvent={openDeleteEventDialog}
+                onOpenEventLink={openEventLink}
+              />
+            </div>
           </div>
         )}
       </div>

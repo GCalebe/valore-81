@@ -17,6 +17,8 @@ interface CalendarViewProps {
   view: 'mes' | 'semana' | 'dia' | 'agenda';
   onEventClick?: (event: CalendarEvent) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
+  goToPrevious: () => void;
+  goToNext: () => void;
 }
 
 export function CalendarView({
@@ -27,10 +29,12 @@ export function CalendarView({
   onMonthChange,
   view,
   onEventClick,
-  onPeriodChange
+  onPeriodChange,
+  goToPrevious,
+  goToNext
 }: CalendarViewProps) {
-  // Determinar o período de exibição
-  const getDisplayPeriod = () => {
+  // Determinar o período de exibição com useMemo para otimização
+  const displayPeriod = useMemo(() => {
     switch (view) {
       case 'dia':
         return {
@@ -49,29 +53,15 @@ export function CalendarView({
           end: endOfMonth(currentMonth)
         };
     }
-  };
-
-  const displayPeriod = getDisplayPeriod();
+  }, [view, selectedDate, currentMonth]);
 
   React.useEffect(() => {
-    if (onPeriodChange && (view === 'mes' || view === 'semana')) {
+    if (onPeriodChange) {
       onPeriodChange(displayPeriod.start, displayPeriod.end);
     }
-  }, [view, currentMonth, selectedDate, onPeriodChange, displayPeriod.start, displayPeriod.end]);
+  }, [onPeriodChange, displayPeriod.start, displayPeriod.end]);
 
   const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
-
-  const goToPreviousMonth = useCallback(() => {
-    const prevMonth = new Date(currentMonth);
-    prevMonth.setMonth(prevMonth.getMonth() - 1);
-    onMonthChange(prevMonth);
-  }, [currentMonth, onMonthChange]);
-
-  const goToNextMonth = useCallback(() => {
-    const nextMonth = new Date(currentMonth);
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    onMonthChange(nextMonth);
-  }, [currentMonth, onMonthChange]);
 
   const handleEventClick = useCallback((event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,8 +92,8 @@ export function CalendarView({
         view={view}
         currentMonth={currentMonth}
         selectedDate={selectedDate}
-        goToPrevious={goToPreviousMonth}
-        goToNext={goToNextMonth}
+        goToPrevious={goToPrevious}
+        goToNext={goToNext}
       />
       {/* Grid principal */}
       <div className="px-2 pb-2 pt-3 animate-fade-in flex-1 min-h-0">
