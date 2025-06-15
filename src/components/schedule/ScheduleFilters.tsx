@@ -29,14 +29,7 @@ export function ScheduleFilters({
 }: ScheduleFiltersProps) {
   return (
     <div className="bg-white dark:bg-gray-800 border rounded-lg p-4 mb-6">
-      {/* Header with title and new event button */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Agenda</h1>
-        <Button onClick={onAddEvent} className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Plus className="h-4 w-4 mr-2" />
-          NOVO EVENTO
-        </Button>
-      </div>
+      {/* Removido o cabeçalho antigo com título e botão NOVO EVENTO */}
 
       {/* View mode buttons */}
       <div className="flex items-center gap-4 mb-4">
