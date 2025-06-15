@@ -444,6 +444,140 @@ export type Database = {
         }
         Relationships: []
       }
+      utm_tracking: {
+        Row: {
+          device_type: string | null
+          fbclid: string | null
+          first_utm_campaign: string | null
+          first_utm_content: string | null
+          first_utm_created_at: string | null
+          first_utm_medium: string | null
+          first_utm_source: string | null
+          first_utm_term: string | null
+          gclid: string | null
+          gclientid: string | null
+          id: string
+          inserted_at: string | null
+          ip_address: unknown | null
+          landing_page: string | null
+          last_utm_campaign: string | null
+          last_utm_content: string | null
+          last_utm_created_at: string | null
+          last_utm_medium: string | null
+          last_utm_source: string | null
+          last_utm_term: string | null
+          lead_id: string | null
+          referrer: string | null
+          updated_at: string | null
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_conversion: boolean | null
+          utm_conversion_at: string | null
+          utm_conversion_stage: string | null
+          utm_conversion_time: unknown | null
+          utm_conversion_value: number | null
+          utm_created_at: string | null
+          utm_first_touch: string | null
+          utm_last_touch: string | null
+          utm_medium: string | null
+          utm_referrer: string | null
+          utm_session_id: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          device_type?: string | null
+          fbclid?: string | null
+          first_utm_campaign?: string | null
+          first_utm_content?: string | null
+          first_utm_created_at?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
+          first_utm_term?: string | null
+          gclid?: string | null
+          gclientid?: string | null
+          id?: string
+          inserted_at?: string | null
+          ip_address?: unknown | null
+          landing_page?: string | null
+          last_utm_campaign?: string | null
+          last_utm_content?: string | null
+          last_utm_created_at?: string | null
+          last_utm_medium?: string | null
+          last_utm_source?: string | null
+          last_utm_term?: string | null
+          lead_id?: string | null
+          referrer?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_conversion?: boolean | null
+          utm_conversion_at?: string | null
+          utm_conversion_stage?: string | null
+          utm_conversion_time?: unknown | null
+          utm_conversion_value?: number | null
+          utm_created_at?: string | null
+          utm_first_touch?: string | null
+          utm_last_touch?: string | null
+          utm_medium?: string | null
+          utm_referrer?: string | null
+          utm_session_id?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          device_type?: string | null
+          fbclid?: string | null
+          first_utm_campaign?: string | null
+          first_utm_content?: string | null
+          first_utm_created_at?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
+          first_utm_term?: string | null
+          gclid?: string | null
+          gclientid?: string | null
+          id?: string
+          inserted_at?: string | null
+          ip_address?: unknown | null
+          landing_page?: string | null
+          last_utm_campaign?: string | null
+          last_utm_content?: string | null
+          last_utm_created_at?: string | null
+          last_utm_medium?: string | null
+          last_utm_source?: string | null
+          last_utm_term?: string | null
+          lead_id?: string | null
+          referrer?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_conversion?: boolean | null
+          utm_conversion_at?: string | null
+          utm_conversion_stage?: string | null
+          utm_conversion_time?: unknown | null
+          utm_conversion_value?: number | null
+          utm_created_at?: string | null
+          utm_first_touch?: string | null
+          utm_last_touch?: string | null
+          utm_medium?: string | null
+          utm_referrer?: string | null
+          utm_session_id?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utm_tracking_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

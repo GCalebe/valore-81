@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { LineChart, Users, Clock, TrendingUp, MessageCircle, Target } from 'lucide-react';
+import { LineChart, Users, Clock, TrendingUp, MessageCircle, Target, Share2 } from 'lucide-react';
 import { useClientStats } from '@/hooks/useClientStats';
 import { useConversationMetrics } from '@/hooks/useConversationMetrics';
 import { useDashboardRealtime } from '@/hooks/useDashboardRealtime';
+import { useUTMTracking } from '@/hooks/useUTMTracking';
 
 // Import components
 import DashboardHeader from '@/components/metrics/DashboardHeader';
@@ -14,10 +15,14 @@ import ConversionFunnelChart from '@/components/metrics/ConversionFunnelChart';
 import LeadsTable from '@/components/metrics/LeadsTable';
 import ConversionByTimeChart from '@/components/metrics/ConversionByTimeChart';
 import MetricsFilters from '@/components/metrics/MetricsFilters';
+import UTMCampaignChart from '@/components/metrics/UTMCampaignChart';
+import UTMSourceChart from '@/components/metrics/UTMSourceChart';
+import UTMTrackingTable from '@/components/metrics/UTMTrackingTable';
 
 const MetricsDashboard = () => {
   const { stats, loading: statsLoading, refetchStats } = useClientStats();
   const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics();
+  const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking();
   const [dateFilter, setDateFilter] = useState('week');
   
   // Initialize real-time updates for the metrics dashboard
@@ -27,7 +32,8 @@ const MetricsDashboard = () => {
   useEffect(() => {
     refetchStats();
     refetchMetrics();
-  }, [refetchStats, refetchMetrics]);
+    refetchUTMData();
+  }, [refetchStats, refetchMetrics, refetchUTMData]);
   
   const loading = statsLoading || metricsLoading;
 
@@ -111,11 +117,50 @@ const MetricsDashboard = () => {
             iconTextClass="text-indigo-600 dark:text-indigo-400"
           />
         </div>
+
+        {/* UTM Campaign Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <StatCard 
+            title="Campanhas Ativas"
+            value={utmMetrics.totalCampaigns}
+            icon={<Share2 />}
+            trend="Campanhas UTM únicas"
+            loading={utmLoading}
+            iconBgClass="bg-cyan-100 dark:bg-cyan-900/30"
+            iconTextClass="text-cyan-600 dark:text-cyan-400"
+          />
+          
+          <StatCard 
+            title="Leads via UTM"
+            value={utmMetrics.totalLeads}
+            icon={<Users />}
+            trend="Total de leads rastreados"
+            loading={utmLoading}
+            iconBgClass="bg-emerald-100 dark:bg-emerald-900/30"
+            iconTextClass="text-emerald-600 dark:text-emerald-400"
+          />
+          
+          <StatCard 
+            title="Taxa de Conversão UTM"
+            value={`${utmMetrics.conversionRate}%`}
+            icon={<Target />}
+            trend="Conversão de campanhas UTM"
+            loading={utmLoading}
+            iconBgClass="bg-amber-100 dark:bg-amber-900/30"
+            iconTextClass="text-amber-600 dark:text-amber-400"
+          />
+        </div>
         
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <ConversationChart data={metrics.conversationData} loading={loading} />
           <ConversionFunnelChart data={metrics.funnelData} loading={loading} />
+        </div>
+
+        {/* UTM Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <UTMCampaignChart data={utmMetrics.campaignData} loading={utmLoading} />
+          <UTMSourceChart data={utmMetrics.sourceData} loading={utmLoading} />
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -123,9 +168,10 @@ const MetricsDashboard = () => {
           <ConversionByTimeChart data={metrics.conversionByTimeData} loading={loading} />
         </div>
         
-        {/* Leads Table */}
-        <div className="mb-8">
+        {/* Tables Section */}
+        <div className="grid grid-cols-1 gap-6 mb-8">
           <LeadsTable leads={metrics.leadsData} loading={loading} />
+          <UTMTrackingTable data={utmMetrics.recentTracking} loading={utmLoading} />
         </div>
       </main>
     </div>
