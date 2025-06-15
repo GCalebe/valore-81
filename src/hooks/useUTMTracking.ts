@@ -26,6 +26,7 @@ interface UTMMetrics {
   topCampaigns: Array<{ campaign: string; count: number; conversions: number; value: number }>;
   campaignData: Array<{ name: string; leads: number; conversions: number; value: number }>;
   sourceData: Array<{ name: string; leads: number; conversions: number }>;
+  deviceData: Array<{ name: string; value: number }>;
   recentTracking: UTMData[];
   isStale?: boolean;
 }
@@ -39,6 +40,7 @@ export function useUTMTracking() {
     topCampaigns: [],
     campaignData: [],
     sourceData: [],
+    deviceData: [],
     recentTracking: [],
     isStale: false,
   });
@@ -52,6 +54,7 @@ export function useUTMTracking() {
     topCampaigns: [],
     campaignData: [],
     sourceData: [],
+    deviceData: [],
     recentTracking: [],
     isStale: true,
   };
@@ -80,7 +83,7 @@ export function useUTMTracking() {
       }
       
       const typedMetricsData = metricsData as any;
-      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns } = typedMetricsData;
+      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns, deviceData } = typedMetricsData;
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
 
@@ -105,6 +108,7 @@ export function useUTMTracking() {
         topCampaigns,
         campaignData,
         sourceData,
+        deviceData: deviceData || [],
         recentTracking: (recentTracking as UTMData[] | null) || [],
         isStale: false,
       });

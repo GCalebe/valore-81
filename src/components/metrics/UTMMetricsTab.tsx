@@ -9,6 +9,7 @@ import UTMCampaignChart from './UTMCampaignChart';
 import UTMSourceChart from './UTMSourceChart';
 import UTMTrackingTable from './UTMTrackingTable';
 import UTMConfigPanel from './UTMConfigPanel';
+import UTMDeviceDistributionChart from './UTMDeviceDistributionChart';
 
 interface UTMMetricsTabProps {
   utmMetrics: {
@@ -17,6 +18,7 @@ interface UTMMetricsTabProps {
     conversionRate: number;
     campaignData: any[];
     sourceData: any[];
+    deviceData: any[];
     recentTracking: any[];
     isStale?: boolean;
   };
@@ -115,9 +117,11 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({ utmMetrics, utmLoading })
           📈 Gráficos e Análises
         </h4>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <UTMCampaignChart data={utmMetrics.campaignData} loading={utmLoading} />
+        <UTMCampaignChart data={utmMetrics.campaignData} loading={utmLoading} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
           <UTMSourceChart data={utmMetrics.sourceData} loading={utmLoading} />
+          <UTMDeviceDistributionChart data={utmMetrics.deviceData} loading={utmLoading} />
         </div>
       </div>
       
