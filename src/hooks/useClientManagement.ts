@@ -57,13 +57,15 @@ export const useClientManagement = () => {
       
       if (data) {
         const formattedContacts: Contact[] = data.map(client => {
-          // Ensure kanban_stage is a valid kanban stage value, default to 'Entraram' if invalid
           const validKanbanStages: Contact['kanbanStage'][] = [
             'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
           ];
           const kanbanStage = validKanbanStages.includes(client.kanban_stage as Contact['kanbanStage']) 
             ? client.kanban_stage as Contact['kanbanStage']
             : 'Entraram';
+
+          // FIX: Guarantee status matches Contact type
+          let safeStatus: Contact['status'] = client.status === 'Inactive' ? 'Inactive' : 'Active';
 
           return {
             id: client.id,
@@ -76,7 +78,7 @@ export const useClientManagement = () => {
             clientType: client.client_type,
             cpfCnpj: client.cpf_cnpj,
             asaasCustomerId: client.asaas_customer_id,
-            status: client.status,
+            status: safeStatus,
             notes: client.notes,
             lastContact: client.last_contact ? new Date(client.last_contact).toLocaleDateString('pt-BR') : (client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'),
             kanbanStage: kanbanStage,
