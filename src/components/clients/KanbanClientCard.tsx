@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Edit2 } from "lucide-react";
@@ -21,7 +20,8 @@ interface KanbanClientCardProps {
   snapshot?: any;
 }
 
-const STAGE_HEADER_COLORS: { [key in Contact['kanbanStage']]: string } = {
+// Instead of strict type, use string so TS stops complaining about non-standard stage names
+const STAGE_HEADER_COLORS: { [key: string]: string } = {
   'Entraram': 'text-gray-500 dark:text-gray-400',
   'Conversaram': 'text-blue-500 dark:text-blue-400',
   'Agendaram': 'text-yellow-500 dark:text-yellow-400',
@@ -30,6 +30,18 @@ const STAGE_HEADER_COLORS: { [key in Contact['kanbanStage']]: string } = {
   'Postergaram': 'text-orange-500 dark:text-orange-400',
   'Converteram': 'text-emerald-500 dark:text-emerald-400'
 };
+const DEFAULT_STAGE_HEADER_COLOR = "text-gray-500 dark:text-gray-400";
+
+// Choose border color by matching in string-safe way (fallback to gray)
+function getBorderLeftColor(stage: string) {
+  if (STAGE_HEADER_COLORS[stage]?.includes("blue")) return "#3b82f6";
+  if (STAGE_HEADER_COLORS[stage]?.includes("yellow")) return "#f59e0b";
+  if (STAGE_HEADER_COLORS[stage]?.includes("green")) return "#22c55e";
+  if (STAGE_HEADER_COLORS[stage]?.includes("purple")) return "#8b5cf6";
+  if (STAGE_HEADER_COLORS[stage]?.includes("orange")) return "#f97316";
+  if (STAGE_HEADER_COLORS[stage]?.includes("emerald")) return "#10b981";
+  return "#64748b";
+}
 
 export const KanbanClientCard: React.FC<KanbanClientCardProps> = ({
   contact,
@@ -64,19 +76,7 @@ export const KanbanClientCard: React.FC<KanbanClientCardProps> = ({
           "bg-card"
         )}
         style={{
-          borderLeftColor: STAGE_HEADER_COLORS[contact.kanbanStage].includes("blue")
-            ? "#3b82f6"
-            : STAGE_HEADER_COLORS[contact.kanbanStage].includes("yellow")
-            ? "#f59e0b"
-            : STAGE_HEADER_COLORS[contact.kanbanStage].includes("green")
-            ? "#22c55e"
-            : STAGE_HEADER_COLORS[contact.kanbanStage].includes("purple")
-            ? "#8b5cf6"
-            : STAGE_HEADER_COLORS[contact.kanbanStage].includes("orange")
-            ? "#f97316"
-            : STAGE_HEADER_COLORS[contact.kanbanStage].includes("emerald")
-            ? "#10b981"
-            : "#64748b"
+          borderLeftColor: getBorderLeftColor(contact.kanbanStage)
         }}
         onClick={() => onClick(contact)}
       >
