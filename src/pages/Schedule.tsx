@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
@@ -74,7 +73,7 @@ const Schedule = () => {
   const isAnyLoading = isEventsLoading || isScheduleLoading;
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
   
-  const handleRefreshAll = async () => {
+  const handleRefreshAll = useCallback(async () => {
     console.log('Atualizando todos os dados...');
     
     const refreshPromises = [
@@ -88,12 +87,12 @@ const Schedule = () => {
     } catch (error) {
       console.error('Erro ao atualizar dados:', error);
     }
-  };
+  }, [refreshEventsPost, refreshScheduleData]);
 
-  const handlePeriodChange = (start: Date, end: Date) => {
+  const handlePeriodChange = useCallback((start: Date, end: Date) => {
     console.log('Período alterado:', { start, end });
     setDateRange({ start, end });
-  };
+  }, []);
   
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -109,15 +108,15 @@ const Schedule = () => {
     );
   }
   
-  const handleAddEvent = (formData: EventFormData) => {
+  const handleAddEvent = useCallback((formData: EventFormData) => {
     addEvent(formData).then(success => {
       if (success) {
         setIsAddEventDialogOpen(false);
       }
     });
-  };
+  }, [addEvent, setIsAddEventDialogOpen]);
   
-  const handleEditEvent = (formData: EventFormData) => {
+  const handleEditEvent = useCallback((formData: EventFormData) => {
     if (selectedEvent) {
       editEvent(selectedEvent.id, formData).then(success => {
         if (success) {
@@ -126,9 +125,9 @@ const Schedule = () => {
         }
       });
     }
-  };
+  }, [selectedEvent, editEvent, setIsEditEventDialogOpen, setSelectedEvent]);
   
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = useCallback(() => {
     if (selectedEvent) {
       deleteEvent(selectedEvent.id).then(success => {
         if (success) {
@@ -137,21 +136,21 @@ const Schedule = () => {
         }
       });
     }
-  };
+  }, [selectedEvent, deleteEvent, setIsDeleteEventDialogOpen, setSelectedEvent]);
   
-  const openEditEventDialog = (event: CalendarEvent) => {
+  const openEditEventDialog = useCallback((event: CalendarEvent) => {
     setSelectedEvent(event);
     setIsEditEventDialogOpen(true);
-  };
+  }, [setSelectedEvent, setIsEditEventDialogOpen]);
   
-  const openDeleteEventDialog = (event: CalendarEvent) => {
+  const openDeleteEventDialog = useCallback((event: CalendarEvent) => {
     setSelectedEvent(event);
     setIsDeleteEventDialogOpen(true);
-  };
+  }, [setSelectedEvent, setIsDeleteEventDialogOpen]);
   
-  const openEventLink = (url: string) => {
+  const openEventLink = useCallback((url: string) => {
     window.open(url, '_blank');
-  };
+  }, []);
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

@@ -12,7 +12,7 @@ interface CalendarWeekProps {
   onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
 }
 
-export function CalendarWeek({
+export const CalendarWeek = React.memo(function CalendarWeek({
   week,
   currentMonth,
   selectedDate,
@@ -38,4 +38,4 @@ export function CalendarWeek({
       ))}
     </div>
   );
-}
+});

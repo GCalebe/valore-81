@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
@@ -53,7 +52,7 @@ export function ScheduleContent({
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
 
   // Período de filtro do modo lista
-  const getListModeFilterPeriod = () => {
+  const getListModeFilterPeriod = useCallback(() => {
     const today = new Date();
     switch (calendarViewType) {
       case 'dia':
@@ -78,50 +77,52 @@ export function ScheduleContent({
           end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
         };
     }
-  };
+  }, [calendarViewType, selectedDate]);
 
-  const filteredEvents = events.filter(event => {
-    if (!event.start || typeof event.start !== 'string') return false;
-    if (statusFilter !== 'all' && event.status !== statusFilter) return false;
-    if (viewMode === 'list') {
-      try {
-        const eventDate = parseISO(event.start);
-        if (isNaN(eventDate.getTime())) return false;
-        const filterPeriod = getListModeFilterPeriod();
-        if (!filterPeriod) return true;
-        return isWithinInterval(eventDate, {
-          start: filterPeriod.start,
-          end: filterPeriod.end
-        });
-      } catch {
-        return false;
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      if (!event.start || typeof event.start !== 'string') return false;
+      if (statusFilter !== 'all' && event.status !== statusFilter) return false;
+      if (viewMode === 'list') {
+        try {
+          const eventDate = parseISO(event.start);
+          if (isNaN(eventDate.getTime())) return false;
+          const filterPeriod = getListModeFilterPeriod();
+          if (!filterPeriod) return true;
+          return isWithinInterval(eventDate, {
+            start: filterPeriod.start,
+            end: filterPeriod.end
+          });
+        } catch {
+          return false;
+        }
       }
-    }
-    return true;
-  }).filter(event => {
-    if (!searchTerm) return true;
-    const searchLower = searchTerm.toLowerCase();
-    return (event.summary && event.summary.toLowerCase().includes(searchLower)) || 
-           (event.description && event.description.toLowerCase().includes(searchLower)) ||
-           (event.attendees && event.attendees.some(attendee => 
-             attendee?.email && attendee.email.toLowerCase().includes(searchLower)
-           ));
-  }).sort((a, b) => {
-    try {
-      const dateA = a.start ? parseISO(a.start) : new Date(0);
-      const dateB = b.start ? parseISO(b.start) : new Date(0);
-      return dateA.getTime() - dateB.getTime();
-    } catch {
-      return 0;
-    }
-  });
+      return true;
+    }).filter(event => {
+      if (!searchTerm) return true;
+      const searchLower = searchTerm.toLowerCase();
+      return (event.summary && event.summary.toLowerCase().includes(searchLower)) || 
+             (event.description && event.description.toLowerCase().includes(searchLower)) ||
+             (event.attendees && event.attendees.some(attendee => 
+               attendee?.email && attendee.email.toLowerCase().includes(searchLower)
+             ));
+    }).sort((a, b) => {
+      try {
+        const dateA = a.start ? parseISO(a.start) : new Date(0);
+        const dateB = b.start ? parseISO(b.start) : new Date(0);
+        return dateA.getTime() - dateB.getTime();
+      } catch {
+        return 0;
+      }
+    });
+  }, [events, statusFilter, viewMode, getListModeFilterPeriod, searchTerm]);
 
-  const handleEventClick = (event: CalendarEvent) => {
+  const handleEventClick = useCallback((event: CalendarEvent) => {
     openEditEventDialog(event);
-  };
+  }, [openEditEventDialog]);
 
   // Handler para adicionar evento
-  const handleAddEventClick = () => setIsAddEventDialogOpen(true);
+  const handleAddEventClick = useCallback(() => setIsAddEventDialogOpen(true), [setIsAddEventDialogOpen]);
 
   return (
     <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">

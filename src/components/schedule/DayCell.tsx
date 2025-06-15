@@ -1,4 +1,3 @@
-
 import React from "react";
 import { isSameDay, isSameMonth, parseISO, format } from "date-fns";
 import { CalendarEvent } from "@/types/calendar";
@@ -12,7 +11,7 @@ interface DayCellProps {
   onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
 }
 
-export function DayCell({
+export const DayCell = React.memo(function DayCell({
   day,
   currentMonth,
   selectedDate,
@@ -98,4 +97,4 @@ export function DayCell({
       </div>
     </div>
   );
-}
+});

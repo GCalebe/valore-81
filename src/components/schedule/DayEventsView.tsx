@@ -1,4 +1,3 @@
-
 import React from "react";
 import { CalendarEvent } from "@/types/calendar";
 import { parseISO, isSameDay, format } from "date-fns";
@@ -10,7 +9,7 @@ interface DayEventsViewProps {
   onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
 }
 
-export function DayEventsView({
+export const DayEventsView = React.memo(function DayEventsView({
   selectedDate,
   events,
   onEventClick,
@@ -60,4 +59,4 @@ export function DayEventsView({
       </div>
     </div>
   );
-}
+});

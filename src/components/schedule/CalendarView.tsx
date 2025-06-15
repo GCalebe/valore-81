@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useCallback } from 'react';
 import { startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
 import { CalendarEvent } from '@/types/calendar';
 import { CalendarGridHeader } from './CalendarGridHeader';
@@ -60,24 +59,24 @@ export function CalendarView({
 
   const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
 
-  const goToPreviousMonth = () => {
+  const goToPreviousMonth = useCallback(() => {
     const prevMonth = new Date(currentMonth);
     prevMonth.setMonth(prevMonth.getMonth() - 1);
     onMonthChange(prevMonth);
-  };
+  }, [currentMonth, onMonthChange]);
 
-  const goToNextMonth = () => {
+  const goToNextMonth = useCallback(() => {
     const nextMonth = new Date(currentMonth);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     onMonthChange(nextMonth);
-  };
+  }, [currentMonth, onMonthChange]);
 
-  const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
+  const handleEventClick = useCallback((event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
     if (onEventClick) {
       onEventClick(event);
     }
-  };
+  }, [onEventClick]);
 
   const isMonthOrWeekMode = view === 'mes' || view === 'semana';
 

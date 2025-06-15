@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { pt } from 'date-fns/locale';
@@ -20,7 +19,7 @@ interface EventsTableProps {
   onOpenEventLink: (url: string) => void;
 }
 
-export function EventsTable({ 
+export const EventsTable = React.memo(function EventsTable({ 
   events, 
   isLoading, 
   onEditEvent, 
@@ -167,4 +166,4 @@ export function EventsTable({
       </Table>
     </div>
   );
-}
+});
