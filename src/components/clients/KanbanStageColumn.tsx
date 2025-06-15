@@ -7,14 +7,14 @@ import KanbanClientCard from "./KanbanClientCard";
 import { Contact } from "@/types/client";
 
 interface KanbanStageColumnProps {
-  stage: Contact["kanbanStage"];
+  stage: string; // Allow any stage name, not just the union type
   contacts: Contact[];
   onContactClick: (contact: Contact) => void;
   onEditClick: (contact: Contact) => void;
   isCompact: boolean;
 }
 
-const STAGE_COLORS: { [key in Contact['kanbanStage']]: string } = {
+const STAGE_COLORS: { [key: string]: string } = {
   "Entraram": "bg-gray-100 dark:bg-gray-800/50",
   "Conversaram": "bg-blue-100 dark:bg-blue-900/40",
   "Agendaram": "bg-yellow-100 dark:bg-yellow-900/40",
@@ -23,8 +23,9 @@ const STAGE_COLORS: { [key in Contact['kanbanStage']]: string } = {
   "Postergaram": "bg-orange-100 dark:bg-orange-900/40",
   "Converteram": "bg-emerald-100 dark:bg-emerald-900/40",
 };
+const DEFAULT_STAGE_COLOR = "bg-gray-50 dark:bg-gray-900/40";
 
-const STAGE_HEADER_COLORS: { [key in Contact['kanbanStage']]: string } = {
+const STAGE_HEADER_COLORS: { [key: string]: string } = {
   "Entraram": "text-gray-500 dark:text-gray-400",
   "Conversaram": "text-blue-500 dark:text-blue-400",
   "Agendaram": "text-yellow-500 dark:text-yellow-400",
@@ -33,6 +34,7 @@ const STAGE_HEADER_COLORS: { [key in Contact['kanbanStage']]: string } = {
   "Postergaram": "text-orange-500 dark:text-orange-400",
   "Converteram": "text-emerald-500 dark:text-emerald-400",
 };
+const DEFAULT_HEADER_COLOR = "text-gray-500 dark:text-gray-400";
 
 const KanbanStageColumn: React.FC<KanbanStageColumnProps> = ({
   stage,
@@ -42,10 +44,10 @@ const KanbanStageColumn: React.FC<KanbanStageColumnProps> = ({
   isCompact,
 }) => (
   <div className="w-[280px] md:w-[320px] flex-shrink-0">
-    <Card className={`h-full flex flex-col ${STAGE_COLORS[stage]}`}>
+    <Card className={`h-full flex flex-col ${STAGE_COLORS[stage] ?? DEFAULT_STAGE_COLOR}`}>
       <CardHeader className="p-2 border-b-2 border-border/80">
         <CardTitle className="text-sm font-semibold flex items-center justify-between">
-          <span className={STAGE_HEADER_COLORS[stage]}>{stage}</span>
+          <span className={STAGE_HEADER_COLORS[stage] ?? DEFAULT_HEADER_COLOR}>{stage}</span>
           <Badge variant="secondary" className="text-xs h-5">
             {contacts.length}
           </Badge>
@@ -69,7 +71,6 @@ const KanbanStageColumn: React.FC<KanbanStageColumnProps> = ({
                   onEditClick={onEditClick}
                   index={index}
                   isCompact={isCompact}
-                  // Draggable context will pass draggable info
                 />
               ))}
               {provided.placeholder}

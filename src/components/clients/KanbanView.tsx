@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useCallback } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import KanbanStageColumn from './KanbanStageColumn';
@@ -130,7 +129,7 @@ const KanbanView = ({
           {stages.map((stage) => (
             <KanbanStageColumn
               key={stage.id}
-              stage={stage.title as Contact['kanbanStage']}
+              stage={stage.title}
               contacts={contactsByStage[stage.title]}
               onContactClick={onContactClick}
               onEditClick={onEditClick}
@@ -144,4 +143,3 @@ const KanbanView = ({
 };
 
 export default KanbanView;
-
