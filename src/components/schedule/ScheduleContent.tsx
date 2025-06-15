@@ -54,34 +54,72 @@ export function ScheduleContent({
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
 
   const goToPrevious = useCallback(() => {
-    if (calendarViewType === 'mes' || (viewMode === 'list' && (calendarViewType === 'agenda' || calendarViewType === 'mes'))) {
-      const prevMonth = new Date(currentMonth);
-      prevMonth.setMonth(prevMonth.getMonth() - 1);
-      setCurrentMonth(prevMonth);
-    } else if (calendarViewType === 'semana') {
-      const prevWeek = new Date(selectedDate || new Date());
-      prevWeek.setDate(prevWeek.getDate() - 7);
-      setSelectedDate(prevWeek);
-    } else if (calendarViewType === 'dia' || (viewMode === 'calendar' && calendarViewType === 'agenda')) {
-      const prevDay = new Date(selectedDate || new Date());
-      prevDay.setDate(prevDay.getDate() - 1);
-      setSelectedDate(prevDay);
+    switch (calendarViewType) {
+      case 'mes': {
+        const prevMonth = new Date(currentMonth);
+        prevMonth.setMonth(prevMonth.getMonth() - 1);
+        setCurrentMonth(prevMonth);
+        break;
+      }
+      case 'semana': {
+        const prevWeek = new Date(selectedDate || new Date());
+        prevWeek.setDate(prevWeek.getDate() - 7);
+        setSelectedDate(prevWeek);
+        break;
+      }
+      case 'dia': {
+        const prevDay = new Date(selectedDate || new Date());
+        prevDay.setDate(prevDay.getDate() - 1);
+        setSelectedDate(prevDay);
+        break;
+      }
+      case 'agenda': {
+        if (viewMode === 'list') {
+          const prevMonth = new Date(currentMonth);
+          prevMonth.setMonth(prevMonth.getMonth() - 1);
+          setCurrentMonth(prevMonth);
+        } else { // viewMode === 'calendar'
+          const prevDay = new Date(selectedDate || new Date());
+          prevDay.setDate(prevDay.getDate() - 1);
+          setSelectedDate(prevDay);
+        }
+        break;
+      }
     }
   }, [calendarViewType, viewMode, currentMonth, selectedDate, setCurrentMonth, setSelectedDate]);
-  
+
   const goToNext = useCallback(() => {
-    if (calendarViewType === 'mes' || (viewMode === 'list' && (calendarViewType === 'agenda' || calendarViewType === 'mes'))) {
-      const nextMonth = new Date(currentMonth);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      setCurrentMonth(nextMonth);
-    } else if (calendarViewType === 'semana') {
-      const nextWeek = new Date(selectedDate || new Date());
-      nextWeek.setDate(nextWeek.getDate() + 7);
-      setSelectedDate(nextWeek);
-    } else if (calendarViewType === 'dia' || (viewMode === 'calendar' && calendarViewType === 'agenda')) {
-      const nextDay = new Date(selectedDate || new Date());
-      nextDay.setDate(nextDay.getDate() + 1);
-      setSelectedDate(nextDay);
+    switch (calendarViewType) {
+      case 'mes': {
+        const nextMonth = new Date(currentMonth);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        setCurrentMonth(nextMonth);
+        break;
+      }
+      case 'semana': {
+        const nextWeek = new Date(selectedDate || new Date());
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        setSelectedDate(nextWeek);
+        break;
+      }
+      case 'dia': {
+        const nextDay = new Date(selectedDate || new Date());
+        nextDay.setDate(nextDay.getDate() + 1);
+        setSelectedDate(nextDay);
+        break;
+      }
+      case 'agenda': {
+        if (viewMode === 'list') {
+          const nextMonth = new Date(currentMonth);
+          nextMonth.setMonth(nextMonth.getMonth() + 1);
+          setCurrentMonth(nextMonth);
+        } else { // viewMode === 'calendar'
+          const nextDay = new Date(selectedDate || new Date());
+          nextDay.setDate(nextDay.getDate() + 1);
+          setSelectedDate(nextDay);
+        }
+        break;
+      }
     }
   }, [calendarViewType, viewMode, currentMonth, selectedDate, setCurrentMonth, setSelectedDate]);
 
