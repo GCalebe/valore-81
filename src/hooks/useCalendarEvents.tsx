@@ -1,5 +1,4 @@
 
-// Refatorado: importações reorganizadas + delegação para helpers externos
 import * as React from "react";
 import type { CalendarEvent, EventFormData } from "@/types/calendar";
 import { fetchCalendarEvents } from "./useFetchCalendarEvents";
@@ -12,10 +11,8 @@ import {
 } from "./calendarEventActions";
 import { toast } from "sonner";
 
-// Sync com os outros arquivos utilitários
 type DateRange = { start: Date; end: Date };
 
-// Função principal
 export function useCalendarEvents(
   selectedDate?: Date | null,
   dateRange?: DateRange | null
@@ -26,139 +23,134 @@ export function useCalendarEvents(
   const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const cacheKey = getCacheKey(selectedDate || undefined, dateRange || undefined);
   const lastUpdateRef = React.useRef<number>(0);
-
-  // Armazenar os últimos eventos válidos do cache/disco
   const lastCacheEvents = React.useRef<CalendarEvent[]>([]);
 
-  // Função para buscar eventos (debounced pelo hook externo)
-  const fetchEventsDebounced = useDebouncedCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    let loadedFromCache = false;
+  // Use refs to store the latest values of props for stable callbacks.
+  const propsRef = React.useRef({ selectedDate, dateRange });
+  React.useEffect(() => {
+    propsRef.current = { selectedDate, dateRange };
+  }, [selectedDate, dateRange]);
+
+  const fetchFromNetwork = React.useCallback(async (isManualRefresh: boolean) => {
+    if (isManualRefresh) setIsLoading(true);
+    
+    const { selectedDate, dateRange } = propsRef.current;
+    const cacheKey = getCacheKey(selectedDate, dateRange);
+
     try {
-      const cached = loadFromCache(cacheKey);
-      if (cached) {
-        setEvents(cached);
-        lastCacheEvents.current = cached;
-        setLastUpdated(new Date());
-        loadedFromCache = true;
-        console.log("[useCalendarEvents] Eventos carregados do cache local");
-      }
-      const apiEvents = await fetchCalendarEvents(
-        selectedDate || undefined,
-        dateRange || undefined
-      );
+      const apiEvents = await fetchCalendarEvents(selectedDate, dateRange);
       setEvents(apiEvents);
       lastCacheEvents.current = apiEvents;
       setLastUpdated(new Date());
       saveToCache(cacheKey, apiEvents);
-      if (loadedFromCache) toast.success("Agenda atualizada!");
+      setError(null);
+      if (isManualRefresh) {
+        toast.success("Agenda atualizada com sucesso!");
+      }
       lastUpdateRef.current = Date.now();
     } catch (err: any) {
       setError(err instanceof Error ? err : new Error("Erro desconhecido"));
-      if (!loadedFromCache && lastCacheEvents.current.length === 0)
-        setEvents([]);
-      toast.error(
-        "Erro ao buscar eventos. Verifique sua conexão (retry automático)."
-      );
+      toast.error("Erro ao buscar eventos. Verifique sua conexão.");
     } finally {
-      setIsLoading(false);
+      if (isManualRefresh) setIsLoading(false);
     }
-  }, 400);
+  }, []);
 
-  // Atualização manual
-  const refreshEventsPost = React.useCallback(async () => {
+  const loadData = React.useCallback(() => {
+    const { selectedDate, dateRange } = propsRef.current;
+    const cacheKey = getCacheKey(selectedDate, dateRange);
+    const cached = loadFromCache(cacheKey);
+    
     setIsLoading(true);
-    try {
-      const apiEvents = await fetchCalendarEvents(
-        selectedDate || undefined,
-        dateRange || undefined
-      );
-      setEvents(apiEvents);
-      lastCacheEvents.current = apiEvents;
+    
+    if (cached) {
+      setEvents(cached);
+      lastCacheEvents.current = cached;
       setLastUpdated(new Date());
-      saveToCache(cacheKey, apiEvents);
-      lastUpdateRef.current = Date.now();
-      setError(null);
-      toast.success("Eventos atualizados com sucesso!");
-    } catch (err) {
-      console.error("[useCalendarEvents] Erro no refresh manual:", err);
-      toast.error("Erro ao atualizar eventos. Tente novamente.");
-    } finally {
-      setIsLoading(false);
+      console.log("[useCalendarEvents] Eventos carregados do cache local");
+      setIsLoading(false); // Data is loaded, stop loading indicator
+      // Fetch fresh data in the background
+      fetchFromNetwork(false).then(() => {
+        toast.info("Dados da agenda sincronizados em segundo plano.");
+      });
+    } else {
+      // No cache, so fetch and show loading state
+      fetchFromNetwork(true);
     }
-  }, [selectedDate, dateRange, cacheKey]);
+  }, [fetchFromNetwork]);
 
-  // Visibilidade/tab focus
+  const debouncedLoadData = useDebouncedCallback(loadData, 400);
+
   React.useEffect(() => {
-    function onVisibilityChange() {
+    debouncedLoadData();
+  }, [selectedDate, dateRange, debouncedLoadData]);
+
+  const refreshEventsPost = React.useCallback(() => {
+    return fetchFromNetwork(true);
+  }, [fetchFromNetwork]);
+
+  React.useEffect(() => {
+    const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         const now = Date.now();
         if (now - lastUpdateRef.current > 2.5 * 60 * 1000) {
-          fetchEventsDebounced();
+          console.log("[useCalendarEvents] Sincronizando agenda ao focar na aba.");
+          fetchFromNetwork(false).then(() => {
+            toast.info("Agenda sincronizada.");
+          });
         }
       }
-    }
+    };
     window.addEventListener("visibilitychange", onVisibilityChange);
-    return () =>
-      window.removeEventListener("visibilitychange", onVisibilityChange);
-  }, [fetchEventsDebounced]);
+    return () => window.removeEventListener("visibilitychange", onVisibilityChange);
+  }, [fetchFromNetwork]);
 
-  // Carregar eventos ao carregar/mudar data/período (com debounce)
-  React.useEffect(() => {
-    fetchEventsDebounced();
-  }, [fetchEventsDebounced]);
-
-  // --- Funções de manipulação de eventos (delegadas para helpers) ---
   const addEvent = React.useCallback(
     async (formData: EventFormData) => {
       setIsSubmitting(true);
       const ok = await addCalendarEvent(formData);
-      if (ok) await fetchEventsDebounced();
+      if (ok) await refreshEventsPost();
       setIsSubmitting(false);
       return ok;
     },
-    [fetchEventsDebounced]
+    [refreshEventsPost]
   );
 
   const editEvent = React.useCallback(
     async (eventId: string, formData: EventFormData) => {
       setIsSubmitting(true);
       const ok = await editCalendarEvent(eventId, formData);
-      if (ok) await fetchEventsDebounced();
+      if (ok) await refreshEventsPost();
       setIsSubmitting(false);
       return ok;
     },
-    [fetchEventsDebounced]
+    [refreshEventsPost]
   );
 
   const deleteEvent = React.useCallback(
     async (eventId: string) => {
       setIsSubmitting(true);
-      // Para manter compatibilidade, busca pelos dados do evento a partir do cache local
       const eventToDelete = events.find((e) => e.id === eventId);
       let ok = false;
       if (!eventToDelete) {
         toast.error("Evento não encontrado");
       } else {
         ok = await deleteCalendarEvent(eventToDelete);
-        if (ok) await fetchEventsDebounced();
+        if (ok) await refreshEventsPost();
       }
       setIsSubmitting(false);
       return ok;
     },
-    [fetchEventsDebounced, events]
+    [refreshEventsPost, events]
   );
 
-  // Exporta todos os métodos/estados
   return {
     events,
     isLoading,
     error,
     lastUpdated,
-    refreshEvents: fetchEventsDebounced,
+    refreshEvents: refreshEventsPost,
     refreshEventsPost,
     addEvent,
     editEvent,
@@ -167,5 +159,4 @@ export function useCalendarEvents(
   };
 }
 
-// Exportação de tipos 
 export type { CalendarEvent, EventFormData } from "@/types/calendar";
