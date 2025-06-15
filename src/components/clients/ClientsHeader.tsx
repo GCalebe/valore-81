@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShipWheel, X, RefreshCw, Users, Grid, List, Minimize2, Maximize2 } from 'lucide-react';
+import { ArrowLeft, ShipWheel, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
@@ -10,8 +10,9 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { Input } from '@/components/ui/input';
 import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Contact } from '@/types/client';
+import ClientsCompactToggler from './ClientsCompactToggler';
+import ClientsViewToggler from './ClientsViewToggler';
+import ClientsRefreshButton from './ClientsRefreshButton';
 
 interface ClientsHeaderProps {
   searchTerm: string;
@@ -28,10 +29,9 @@ interface ClientsHeaderProps {
   hasActiveFilters: boolean;
   isAddContactOpen: boolean;
   onAddContactOpenChange: (open: boolean) => void;
-  newContact: Partial<Contact>;
-  setNewContact: (contact: Partial<Contact>) => void;
+  newContact: Partial<any>;
+  setNewContact: (contact: Partial<any>) => void;
   handleAddContact: () => void;
-  // Novas props:
   viewMode: 'table' | 'kanban';
   setViewMode: (v: 'table' | 'kanban') => void;
   isCompactView: boolean;
@@ -70,33 +70,34 @@ const ClientsHeader = ({
   const { settings } = useThemeSettings();
 
   return (
-    <header 
+    <header
       className="text-white shadow-md transition-colors duration-300"
       style={{ backgroundColor: settings.primaryColor }}
     >
       <div className="container mx-auto px-2 py-3 flex flex-wrap justify-between items-center gap-4 min-h-[56px]">
         <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => navigate('/dashboard')}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <Users className="h-6 w-6 text-blue-200/80" />
-          {settings.logo ? (
-            <img 
-              src={settings.logo} 
-              alt="Logo" 
-              className="h-8 w-8 object-contain"
-            />
-          ) : (
-            <ShipWheel 
-              className="h-8 w-8"
-              style={{ color: settings.secondaryColor }}
-            />
-          )}
+          {settings.logo
+            ? (
+              <img
+                src={settings.logo}
+                alt="Logo"
+                className="h-8 w-8 object-contain"
+              />
+            ) : (
+              <ShipWheel
+                className="h-8 w-8"
+                style={{ color: settings.secondaryColor }}
+              />
+            )}
           <h1 className="text-2xl font-bold">{settings.brandName}</h1>
           <span className="text-lg ml-2">- Clientes</span>
         </div>
@@ -114,7 +115,7 @@ const ClientsHeader = ({
               style={{ minWidth: 160 }}
             />
           </div>
-          
+
           <FilterDialog
             isOpen={isFilterDialogOpen}
             onOpenChange={setIsFilterDialogOpen}
@@ -143,7 +144,6 @@ const ClientsHeader = ({
             </Button>
           )}
 
-          {/* Botão novo cliente - mais destacado sobre azul */}
           <AddClientDialog
             isOpen={isAddContactOpen}
             onOpenChange={onAddContactOpenChange}
@@ -152,74 +152,13 @@ const ClientsHeader = ({
             handleAddContact={handleAddContact}
           />
 
-          {/* Divisão visual */}
           <div className="h-6 w-px bg-white/30 mx-2 hidden sm:block"></div>
 
-          {/* Botões de visualização/lista/kanban, atualizar e compacto */}
-          <div className="flex items-center gap-2">
-            {/* Toggle compact/normal só se for Kanban */}
-            {viewMode === 'kanban' && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setIsCompactView(!isCompactView)}
-                      className={`h-9 w-9 text-white border-white hover:bg-white/20`}
-                      style={{ background: 'rgba(255,255,255,0.08)' }}
-                    >
-                      {isCompactView ? (
-                        <Maximize2 className="h-4 w-4 text-white" />
-                      ) : (
-                        <Minimize2 className="h-4 w-4 text-white" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{isCompactView ? 'Visão Padrão' : 'Visão Compacta'}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
+          <ClientsCompactToggler isCompactView={isCompactView} setIsCompactView={setIsCompactView} visible={viewMode === "kanban"} />
 
-            {/* Selector visualização lista/kanban */}
-            <div className="flex items-center border border-white rounded-lg bg-white/10">
-              <Button
-                variant={viewMode === 'table' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('table')}
-                className={`rounded-r-none ${viewMode === 'table'
-                  ? "bg-white text-blue-700"
-                  : "text-white hover:bg-white/20 border-0"}`}
-                style={viewMode === 'table' ? {} : { borderRight: "1px solid #ffffff55"}}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'kanban' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('kanban')}
-                className={`rounded-l-none ${viewMode === 'kanban'
-                  ? "bg-white text-blue-700"
-                  : "text-white hover:bg-white/20"}`}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Atualizar */}
-            <Button 
-              variant="outline" 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-2 text-white border-white hover:bg-white/20"
-              style={{ background: 'rgba(255,255,255,0.08)' }}
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''} text-white`} />
-              <span className="hidden sm:inline">Atualizar</span>
-            </Button>
-          </div>
+          <ClientsViewToggler viewMode={viewMode} setViewMode={setViewMode} />
+
+          <ClientsRefreshButton handleRefresh={handleRefresh} refreshing={refreshing} />
 
           <div className="flex items-center gap-4 ml-2">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
@@ -234,6 +173,3 @@ const ClientsHeader = ({
 };
 
 export default ClientsHeader;
-
-// O arquivo está ficando longo, considere pedir refatoração em componentes menores se desejar.
-
