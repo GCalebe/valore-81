@@ -7,7 +7,7 @@ import { KanbanStage } from "@/hooks/useKanbanStages";
 interface KanbanViewProps {
   contacts: Contact[];
   onContactClick: (contact: Contact) => void;
-  onStageChange: (contactId: string, newStage: Contact['kanbanStage']) => void;
+  onStageChange: (contactId: string, newStage: string) => void;
   searchTerm: string;
   onEditClick: (contact: Contact) => void;
   isCompact: boolean;
@@ -56,8 +56,6 @@ const KanbanView = ({
         `[Kanban] Cliente "${contact.name}" (${contact.id}) está com kanbanStage="${contact.kanbanStage}" mas este estágio não existe. Alocando para "${assignedStage}"`
       );
     }
-    // Diagnóstico (opcional):
-    // console.log(`[Kanban] Cliente "${contact.name}" alocado para etapa "${assignedStage}"`);
     if (assignedStage) {
       contactsByStage[assignedStage] = contactsByStage[assignedStage] || [];
       contactsByStage[assignedStage].push(contact);
@@ -71,7 +69,7 @@ const KanbanView = ({
 
     if (source.droppableId === destination.droppableId) return;
 
-    const newStage = destination.droppableId as Contact['kanbanStage'];
+    const newStage = destination.droppableId;
     onStageChange(draggableId, newStage);
   };
 

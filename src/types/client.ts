@@ -1,4 +1,3 @@
-
 export interface Contact {
   id: string;
   name: string;
@@ -14,7 +13,7 @@ export interface Contact {
   status: 'Active' | 'Inactive';
   notes?: string;
   lastContact: string;
-  kanbanStage: 'Entraram' | 'Conversaram' | 'Agendaram' | 'Compareceram' | 'Negociaram' | 'Postergaram' | 'Converteram';
+  kanbanStage: string;  // << aqui: permitir qualquer valor de stage
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;

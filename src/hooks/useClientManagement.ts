@@ -177,7 +177,7 @@ export const useClientManagement = () => {
     }
   };
 
-  const handleKanbanStageChange = async (contactId: string, newStage: Contact['kanbanStage']) => {
+  const handleKanbanStageChange = async (contactId: string, newStage: string) => {
     try {
       const { error } = await supabase
         .from('contacts')
@@ -186,7 +186,6 @@ export const useClientManagement = () => {
 
       if (error) throw error;
 
-      // Update local state
       setContacts(prevContacts => 
         prevContacts.map(contact => 
           contact.id === contactId 
