@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Settings, List, Grid2x2, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, User, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
@@ -12,7 +12,6 @@ import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientsCompactToggler from './ClientsCompactToggler';
 import ClientsViewToggler from './ClientsViewToggler';
-import ClientsRefreshButton from './ClientsRefreshButton';
 
 interface ClientsHeaderProps {
   searchTerm: string;
@@ -71,7 +70,7 @@ const ClientsHeader = ({
 
   return (
     <header
-      className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
+      className="shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
       <div className="container max-w-full mx-auto px-3 py-2 flex items-center gap-3 min-h-[56px] w-full">
@@ -99,8 +98,8 @@ const ClientsHeader = ({
                 <svg width="28" height="28" viewBox="0 0 24 24" fill={settings.secondaryColor || "#FBBF24"}><circle cx="12" cy="12" r="10" /></svg>
               </span>
             )}
-          <h1 className="text-xl font-bold"> {settings.brandName} </h1>
-          <span className="text-base ml-1 opacity-80">- Clientes</span>
+          <h1 className="text-xl font-bold text-white"> {settings.brandName} </h1>
+          <span className="text-base ml-1 opacity-80 text-white">- Clientes</span>
         </div>
 
         {/* Grupo principal: busca, filtros, novo cliente e controles */}
@@ -157,7 +156,7 @@ const ClientsHeader = ({
             variant="outline"
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 h-9 border-white bg-white text-blue-700 font-bold hover:bg-blue-50 hover:text-blue-800 transition-all"
+            className="flex items-center gap-2 h-9 border-white text-white bg-white/0 font-bold hover:bg-white/20 hover:text-white transition-all"
             style={{ minWidth: 100 }}
             type="button"
           >
@@ -170,7 +169,7 @@ const ClientsHeader = ({
 
           {/* Usuário e config */}
           <div className="flex items-center gap-2 min-w-fit">
-            <Badge variant="outline" className="bg-blue-800 text-white border-0 px-3 py-1 font-normal rounded-md">
+            <Badge variant="outline" className="bg-white/10 text-white border border-white/40 px-3 py-1 font-normal rounded-md">
               {user?.user_metadata?.name || user?.email}
             </Badge>
             <ThemeToggle />

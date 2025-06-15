@@ -35,7 +35,7 @@ const ScheduleHeader = ({
 
   return (
     <header 
-      className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
+      className="shadow-md transition-colors duration-300 rounded-b-xl"
       style={{ backgroundColor: settings.primaryColor }}
     >
       <div className="container max-w-full mx-auto px-4 py-3 flex flex-row items-center justify-between gap-6 min-h-[60px] w-full">
@@ -54,11 +54,12 @@ const ScheduleHeader = ({
             className="h-8 w-8"
             style={{ color: settings.secondaryColor }}
           />
-          <h1 className="text-2xl font-bold whitespace-nowrap">Agenda</h1>
+          <h1 className="text-2xl font-bold whitespace-nowrap text-white">Agenda</h1>
           {lastUpdated && (
             <Badge 
               variant="outline" 
-              className="bg-white/10 text-white border border-white/40 px-3 py-1 ml-4 font-mono text-xs min-w-fit"
+              className="bg-white/10 text-white border border-white/60 px-3 py-1 ml-4 font-mono text-xs min-w-fit"
+              style={{ letterSpacing: 0.5 }}
             >
               Última atualização: {lastUpdated.toLocaleTimeString('pt-BR')}
             </Badge>
@@ -71,7 +72,7 @@ const ScheduleHeader = ({
               variant="outline" 
               onClick={onRefresh}
               disabled={isRefreshing}
-              className="border-white bg-transparent text-white font-medium hover:bg-white/10 dark:border-white min-w-[110px]"
+              className="border-white text-white bg-white/0 font-medium hover:bg-white/20 dark:border-white min-w-[110px] focus-visible:ring-white"
               style={{height: 40}}
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
