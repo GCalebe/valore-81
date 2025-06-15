@@ -12,7 +12,7 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   currentMonth: Date;
   onMonthChange: (month: Date) => void;
-  timeFilter: 'hoje' | 'mes' | 'semana' | 'dia';
+  view: 'mes' | 'semana' | 'dia' | 'agenda'; // usamos view em vez de timeFilter
   onEventClick?: (event: CalendarEvent) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
 }
@@ -23,18 +23,14 @@ export function CalendarView({
   events, 
   currentMonth, 
   onMonthChange,
-  timeFilter,
+  view,
   onEventClick,
   onPeriodChange
 }: CalendarViewProps) {
+  // Determina o período de exibição conforme Google/Monday/~Calendar padrão
   const getDisplayPeriod = () => {
     const today = new Date();
-    switch (timeFilter) {
-      case 'hoje':
-        return {
-          start: startOfDay(today),
-          end: endOfDay(today)
-        };
+    switch (view) {
       case 'dia':
         return {
           start: startOfDay(selectedDate),
@@ -59,17 +55,13 @@ export function CalendarView({
 
   const displayPeriod = getDisplayPeriod();
 
-  // Notificar o pai sobre mudança de período para todas as views que precisam
   React.useEffect(() => {
-    if (onPeriodChange && (timeFilter === 'mes' || timeFilter === 'semana')) {
+    if (onPeriodChange && (view === 'mes' || view === 'semana')) {
       onPeriodChange(displayPeriod.start, displayPeriod.end);
     }
-  }, [timeFilter, currentMonth, selectedDate, onPeriodChange]);
+  }, [view, currentMonth, selectedDate, onPeriodChange]);
 
-  const days = eachDayOfInterval({ 
-    start: displayPeriod.start, 
-    end: displayPeriod.end 
-  });
+  const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
 
   // Get events for a specific day
   const getEventsForDay = (day: Date) => {
@@ -98,12 +90,8 @@ export function CalendarView({
     onMonthChange(nextMonth);
   };
 
-  // Personalizar o título baseado no filtro
   const getCalendarTitle = () => {
-    const today = new Date();
-    switch (timeFilter) {
-      case 'hoje':
-        return `Hoje - ${format(today, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
+    switch (view) {
       case 'dia':
         return `${format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
       case 'semana': {
@@ -117,7 +105,7 @@ export function CalendarView({
     }
   };
 
-  const showMonthNavigation = timeFilter === 'mes';
+  const showMonthNavigation = view === 'mes';
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -126,13 +114,11 @@ export function CalendarView({
     }
   };
 
-  // Novo layout BEGIN -------------------------------------
-  // Disponível apenas para view de mês e semana!
-  const isMonthOrWeekMode = timeFilter === 'mes' || timeFilter === 'semana';
+  // Layout Google/Monday (só mês/semana com grid), dia/agenda modo lista/único
+  const isMonthOrWeekMode = view === 'mes' || view === 'semana';
 
-  // Constrói as weeks (matriz de dias), visual Google Calendar/Monday.com style
   const buildWeeks = () => {
-    // Sempre 7 colunas por semana (mesmo se semana incompleta)
+    // 7 colunas por semana; em mês pode começar/desalinhado, importante visual Google/Monday!
     const daysArr = [...days];
     let weeks: Date[][] = [];
     for (let i = 0; i < daysArr.length; i += 7) {
@@ -143,12 +129,9 @@ export function CalendarView({
 
   const weeks = buildWeeks();
 
-  // Trocar cor do highlight de acordo com o tema [opcional]
-  // const highlightClass = "bg-blue-400 dark:bg-blue-700";
-  // const todayBarClass = "bg-blue-500 dark:bg-blue-400";
-
+  // Garantir flex layout height 100%
   return (
-    <div className="bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
       {/* Calendar Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -167,8 +150,7 @@ export function CalendarView({
       </div>
 
       {/* Calendário Estilo Google/Monday */}
-      <div className="px-2 pb-2 pt-3 animate-fade-in">
-        {/* Cabeçalho dos dias da semana */}
+      <div className={`px-2 pb-2 pt-3 animate-fade-in flex-1 min-h-0`}>
         {isMonthOrWeekMode && (
           <div className="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700 mb-1">
             {weekDays.map((day, i) => (
@@ -184,12 +166,12 @@ export function CalendarView({
 
         {/* Grid principal das semanas/dias */}
         {isMonthOrWeekMode ? (
-          <div>
+          <div className="flex flex-col gap-0 h-full min-h-0">
             {weeks.map((week, weekIdx) => (
               <div
                 key={weekIdx}
-                className="grid grid-cols-7 border-b last:border-b-0 border-gray-200 dark:border-gray-700"
-                style={{ minHeight: 96 }}
+                className="grid grid-cols-7 border-b last:border-b-0 border-gray-200 dark:border-gray-700 flex-1 min-h-[90px]"
+                style={{ minHeight: 0 }}
               >
                 {week.map((day, i) => {
                   const dayEvents = getEventsForDay(day);
@@ -202,14 +184,14 @@ export function CalendarView({
                       key={day.toISOString()}
                       onClick={() => onDateChange(day)}
                       className={`
-                        relative px-1 pt-1 pb-4 h-[96px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700 
+                        relative px-1 pt-1 pb-4 h-full min-h-[90px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700 
                         group transition-colors
                         ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
                         ${isSelected ? 'ring-2 ring-blue-500 z-10' : ''}
                         ${!isCurrentMonth ? 'bg-gray-50 dark:bg-gray-900/20 text-gray-400 dark:text-gray-500' : ''}
                         hover:bg-gray-100/60 dark:hover:bg-gray-700
                       `}
-                      style={{ minWidth: 0, minHeight: 96 }}
+                      style={{ minWidth: 0 }}
                     >
                       {/* Barra azul vertical para hoje */}
                       {isToday && (
@@ -266,8 +248,8 @@ export function CalendarView({
             ))}
           </div>
         ) : (
-          // Para os modos "hoje" e "dia": manter layout antigo, mas colorir para seguir estilo Google/Monday.
-          <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2">
+          // Visual "Dia" — lista do dia selecionado
+          <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2 flex-1">
             <div className="text-lg font-bold my-2 text-blue-700 dark:text-blue-400">
               {format(selectedDate, "EEEE, dd 'de' MMMM", { locale: pt })}
             </div>

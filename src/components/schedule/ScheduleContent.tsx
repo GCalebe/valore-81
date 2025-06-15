@@ -48,22 +48,16 @@ export function ScheduleContent({
 }: ScheduleContentProps) {
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
   const [calendarViewType, setCalendarViewType] = useState<"mes" | "semana" | "dia" | "agenda">("mes");
-
+  // Remover o timeFilter separado, agora é só calendarViewType
   const [statusFilter, setStatusFilter] = useState('all');
   const [calendarFilter, setCalendarFilter] = useState('all');
   const [hostFilter, setHostFilter] = useState('all');
-  const [timeFilter, setTimeFilter] = useState<'hoje' | 'mes' | 'semana' | 'dia'>('mes');
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
 
   // Função para determinar o período de filtro - APENAS para modo lista
   const getListModeFilterPeriod = () => {
     const today = new Date();
-    switch (timeFilter) {
-      case 'hoje':
-        return {
-          start: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
-          end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
-        };
+    switch (calendarViewType) {
       case 'dia':
         if (selectedDate) {
           return {
@@ -73,12 +67,21 @@ export function ScheduleContent({
         }
         return null;
       case 'semana':
-        const weekStart = startOfWeek(today, { weekStartsOn: 0 });
-        const weekEnd = endOfWeek(today, { weekStartsOn: 0 });
+        const weekStart = startOfWeek(selectedDate || today, { weekStartsOn: 0 });
+        const weekEnd = endOfWeek(selectedDate || today, { weekStartsOn: 0 });
         return { start: weekStart, end: weekEnd };
       case 'mes':
+        // Mostrar todos os eventos do mês atual
+        return null;
+      case 'agenda':
+        // Agenda mostra todos
+        return null;
       default:
-        return null; // Mostrar todos os eventos
+        // fallback: mostrar lista do dia atual
+        return {
+          start: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+          end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
+        };
     }
   };
 
@@ -91,7 +94,7 @@ export function ScheduleContent({
     if (statusFilter !== 'all' && event.status !== statusFilter) {
       return false;
     }
-    // Time filter - APENAS modo lista
+    // Time filter - APENAS modo lista (agora respeita calendarViewType)
     if (viewMode === 'list') {
       try {
         const eventDate = parseISO(event.start);
@@ -123,7 +126,6 @@ export function ScheduleContent({
              attendee?.email && attendee.email.toLowerCase().includes(searchLower)
            ));
   }).sort((a, b) => {
-    // Safe date parsing for sorting
     try {
       const dateA = a.start ? parseISO(a.start) : new Date(0);
       const dateB = b.start ? parseISO(b.start) : new Date(0);
@@ -142,10 +144,9 @@ export function ScheduleContent({
   // Handler para adicionar evento
   const handleAddEventClick = () => setIsAddEventDialogOpen(true);
 
-  // ATENÇÃO: NÃO EXISTE MAIS CARD/CABEÇALHO EXTERNO - layout flat só com filtros e calendário/lista.
-  // Garantir full screen sem card/cabeçalho extra da agenda!
+  // Garantir full screen sem card/cabeçalho extra da agenda
   return (
-    <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0">
+    <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">
       <CalendarViewSwitcher
         view={calendarViewType}
         onChange={setCalendarViewType}
@@ -166,7 +167,6 @@ export function ScheduleContent({
         onAddEvent={handleAddEventClick}
       />
       {/* Removido ScheduleTimeFilter */}
-      {/* Agenda 100% tela, sem Cards/Cabeçalho antigos */}
       <div className="flex-1 w-full flex flex-col min-h-0">       
         {viewMode === 'calendar' ? (
           <CalendarView
@@ -175,7 +175,7 @@ export function ScheduleContent({
             events={filteredEvents}
             currentMonth={currentMonth}
             onMonthChange={setCurrentMonth}
-            timeFilter={timeFilter}
+            view={calendarViewType}
             onEventClick={handleEventClick}
             onPeriodChange={onPeriodChange}
           />
@@ -194,4 +194,3 @@ export function ScheduleContent({
     </div>
   );
 }
-
