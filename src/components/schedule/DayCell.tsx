@@ -1,3 +1,4 @@
+
 import React from "react";
 import { isSameDay, isSameMonth, parseISO, format } from "date-fns";
 import { CalendarEvent } from "@/types/calendar";
@@ -6,7 +7,7 @@ interface DayCellProps {
   day: Date;
   currentMonth: Date;
   selectedDate: Date;
-  events: CalendarEvent[];
+  dayEvents: CalendarEvent[];
   onDateChange: (date: Date) => void;
   onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
 }
@@ -15,19 +16,10 @@ export const DayCell = React.memo(function DayCell({
   day,
   currentMonth,
   selectedDate,
-  events,
+  dayEvents,
   onDateChange,
   onEventClick,
 }: DayCellProps) {
-  const dayEvents = events.filter(event => {
-    if (!event.start) return false;
-    try {
-      const eventDate = parseISO(event.start);
-      return isSameDay(eventDate, day);
-    } catch {
-      return false;
-    }
-  });
   const isSelected = isSameDay(day, selectedDate);
   const isCurrentMonth = isSameMonth(day, currentMonth);
   const isToday = isSameDay(day, new Date());

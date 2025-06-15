@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+
+import React, { useCallback, useMemo } from 'react';
 import { startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
 import { CalendarEvent } from '@/types/calendar';
 import { CalendarGridHeader } from './CalendarGridHeader';
 import { CalendarWeek } from './CalendarWeek';
 import { DayEventsView } from './DayEventsView';
 import { CalendarHeaderBar } from './CalendarHeaderBar';
+import { groupEventsByDay } from '@/utils/eventUtils';
 
 interface CalendarViewProps {
   selectedDate: Date;
@@ -91,6 +93,8 @@ export function CalendarView({
 
   const weeks = buildWeeks();
 
+  const eventsByDay = useMemo(() => groupEventsByDay(events), [events]);
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
       {/* Header */}
@@ -113,7 +117,7 @@ export function CalendarView({
                 week={week}
                 currentMonth={currentMonth}
                 selectedDate={selectedDate}
-                events={events}
+                eventsByDay={eventsByDay}
                 onDateChange={onDateChange}
                 onEventClick={handleEventClick}
               />
@@ -122,7 +126,7 @@ export function CalendarView({
         ) : (
           <DayEventsView
             selectedDate={selectedDate}
-            events={events}
+            dayEvents={eventsByDay.get(startOfDay(selectedDate).toISOString()) || []}
             onEventClick={handleEventClick}
           />
         )}

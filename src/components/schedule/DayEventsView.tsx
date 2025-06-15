@@ -1,28 +1,20 @@
+
 import React from "react";
 import { CalendarEvent } from "@/types/calendar";
-import { parseISO, isSameDay, format } from "date-fns";
+import { parseISO, format } from "date-fns";
 import { pt } from "date-fns/locale";
 
 interface DayEventsViewProps {
   selectedDate: Date;
-  events: CalendarEvent[];
+  dayEvents: CalendarEvent[];
   onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
 }
 
 export const DayEventsView = React.memo(function DayEventsView({
   selectedDate,
-  events,
+  dayEvents,
   onEventClick,
 }: DayEventsViewProps) {
-  const dayEvents = events.filter((event) => {
-    if (!event.start) return false;
-    try {
-      const eventDate = parseISO(event.start);
-      return isSameDay(eventDate, selectedDate);
-    } catch {
-      return false;
-    }
-  });
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2 flex-1">
