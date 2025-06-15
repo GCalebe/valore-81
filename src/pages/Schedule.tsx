@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -74,6 +73,8 @@ const Schedule = () => {
   const isAnyLoading = isEventsLoading || isScheduleLoading;
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
   
+  const [calendarViewTab, setCalendarViewTab] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
+
   const handleRefreshAll = useCallback(async () => {
     console.log('Atualizando todos os dados...');
     
@@ -160,6 +161,9 @@ const Schedule = () => {
         onRefresh={handleRefreshAll}
         isRefreshing={isAnyRefreshing}
         lastUpdated={lastUpdated}
+        view={calendarViewTab}
+        onViewChange={setCalendarViewTab}
+        // onOpenFilter not usado por enquanto, pode adicionar depois
       />
       
       <ScheduleContent 
@@ -179,6 +183,7 @@ const Schedule = () => {
         openDeleteEventDialog={openDeleteEventDialog}
         openEventLink={openEventLink}
         onPeriodChange={handlePeriodChange}
+        // não precisa passar tab de viewMode pois controlado localmente
       />
 
       <ScheduleDialogs 

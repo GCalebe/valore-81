@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useCallback } from 'react';
 import { parseISO, startOfWeek, endOfWeek, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
@@ -46,8 +45,8 @@ export function ScheduleContent({
   openEventLink,
   onPeriodChange
 }: ScheduleContentProps) {
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
-  const [calendarViewType, setCalendarViewType] = useState<"mes" | "semana" | "dia" | "agenda">("mes");
+  const [viewMode, setViewMode] = React.useState<"calendar" | "list">("calendar");
+  const [calendarViewType, setCalendarViewType] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
   const [statusFilter, setStatusFilter] = useState('all');
   const [calendarFilter, setCalendarFilter] = useState('all');
   const [hostFilter, setHostFilter] = useState('all');
@@ -200,14 +199,7 @@ export function ScheduleContent({
 
   return (
     <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">
-      <CalendarViewSwitcher
-        view={calendarViewType}
-        onChange={setCalendarViewType}
-        onAddEvent={handleAddEventClick}
-        onFilter={() => {
-          alert("Funcionalidade de filtros avançados em breve!");
-        }}
-      />
+      {/* <CalendarViewSwitcher ... /> REMOVIDO! */}
       <ScheduleFilters
         viewMode={viewMode}
         onViewModeChange={setViewMode}
