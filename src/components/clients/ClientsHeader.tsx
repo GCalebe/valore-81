@@ -139,16 +139,6 @@ const ClientsHeader = ({
             newContact={newContact}
             setNewContact={setNewContact}
             handleAddContact={handleAddContact}
-            trigger={
-              <Button
-                variant="success"
-                className="h-9 px-4 font-bold flex gap-2"
-                type="button"
-              >
-                <User className="h-4 w-4" />
-                Novo Cliente
-              </Button>
-            }
           />
 
           {/* Divisor */}
@@ -192,4 +182,3 @@ const ClientsHeader = ({
 };
 
 export default ClientsHeader;
-
