@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, parseISO, startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
-import { pt } from 'date-fns/locale';
+import { startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
 import { CalendarEvent } from '@/types/calendar';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CalendarGridHeader } from './CalendarGridHeader';
+import { CalendarWeek } from './CalendarWeek';
+import { DayEventsView } from './DayEventsView';
+import { CalendarHeaderBar } from './CalendarHeaderBar';
 
 interface CalendarViewProps {
   selectedDate: Date;
@@ -38,10 +39,7 @@ export function CalendarView({
       case 'semana': {
         const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
-        return {
-          start: weekStart,
-          end: weekEnd
-        };
+        return { start: weekStart, end: weekEnd };
       }
       case 'mes':
       default:
@@ -62,21 +60,6 @@ export function CalendarView({
 
   const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
 
-  // Eventos do dia
-  const getEventsForDay = (day: Date) => {
-    return events.filter(event => {
-      if (!event.start) return false;
-      try {
-        const eventDate = parseISO(event.start);
-        return isSameDay(eventDate, day);
-      } catch {
-        return false;
-      }
-    });
-  };
-
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
   const goToPreviousMonth = () => {
     const prevMonth = new Date(currentMonth);
     prevMonth.setMonth(prevMonth.getMonth() - 1);
@@ -89,23 +72,6 @@ export function CalendarView({
     onMonthChange(nextMonth);
   };
 
-  const getCalendarTitle = () => {
-    switch (view) {
-      case 'dia':
-        return format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt });
-      case 'semana': {
-        const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
-        const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
-        return `Semana de ${format(weekStart, "dd/MM", { locale: pt })} a ${format(weekEnd, "dd/MM", { locale: pt })}`;
-      }
-      case 'mes':
-      default:
-        return format(currentMonth, 'MMMM \'de\' yyyy', { locale: pt });
-    }
-  };
-
-  const showMonthNavigation = view === 'mes';
-
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
     if (onEventClick) {
@@ -116,7 +82,6 @@ export function CalendarView({
   const isMonthOrWeekMode = view === 'mes' || view === 'semana';
 
   const buildWeeks = () => {
-    // 7 colunas por semana
     const daysArr = [...days];
     let weeks: Date[][] = [];
     for (let i = 0; i < daysArr.length; i += 7) {
@@ -130,145 +95,37 @@ export function CalendarView({
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {getCalendarTitle()}
-        </h2>
-        {showMonthNavigation && (
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={goToPreviousMonth}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={goToNextMonth}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </div>
+      <CalendarHeaderBar
+        view={view}
+        currentMonth={currentMonth}
+        selectedDate={selectedDate}
+        goToPrevious={goToPreviousMonth}
+        goToNext={goToNextMonth}
+      />
       {/* Grid principal */}
       <div className="px-2 pb-2 pt-3 animate-fade-in flex-1 min-h-0">
-        {isMonthOrWeekMode && (
-          <div className="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700 mb-1">
-            {weekDays.map((day) => (
-              <div
-                key={day}
-                className="text-xs font-semibold text-gray-700 dark:text-gray-200 text-center uppercase py-2"
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-        )}
+        {isMonthOrWeekMode && <CalendarGridHeader />}
+
         {isMonthOrWeekMode ? (
           <div className="flex flex-col gap-0 h-full min-h-0">
             {weeks.map((week, weekIdx) => (
-              <div
+              <CalendarWeek
                 key={weekIdx}
-                className="grid grid-cols-7 border-b last:border-b-0 border-gray-200 dark:border-gray-700 flex-1 min-h-[90px]"
-                style={{ minHeight: 0 }}
-              >
-                {week.map((day) => {
-                  const dayEvents = getEventsForDay(day);
-                  const isSelected = isSameDay(day, selectedDate);
-                  const isCurrentMonth = isSameMonth(day, currentMonth);
-                  const isToday = isSameDay(day, new Date());
-
-                  return (
-                    <div
-                      key={day.toISOString()}
-                      onClick={() => onDateChange(day)}
-                      className={`
-                        relative px-1 pt-1 pb-4 h-full min-h-[90px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700 
-                        group transition-colors
-                        ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
-                        ${isSelected ? 'ring-2 ring-blue-500 z-10' : ''}
-                        ${!isCurrentMonth ? 'bg-gray-50 dark:bg-gray-900/20 text-gray-400 dark:text-gray-500' : ''}
-                        hover:bg-gray-100/60 dark:hover:bg-gray-700
-                      `}
-                      style={{ minWidth: 0 }}
-                    >
-                      {isToday && (
-                        <div className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-full z-20 animate-fade-in"></div>
-                      )}
-                      <div className={`
-                        flex items-center justify-between z-10 relative
-                        ${isToday ? 'text-blue-600 font-bold' : (isSelected ? 'text-blue-700 font-bold' : '')}
-                        pl-2 pr-1
-                      `}>
-                        <span className={`
-                          text-xs select-none
-                          ${isCurrentMonth ? '' : 'opacity-50'}
-                        `}>{day.getDate()}</span>
-                      </div>
-                      <div className="flex flex-col gap-1 mt-1">
-                        {dayEvents.slice(0, 4).map((event) => (
-                          <div
-                            key={event.id}
-                            title={event.summary}
-                            onClick={(e) => handleEventClick(event, e)}
-                            className={`
-                              truncate rounded px-2 py-1 text-xs font-medium cursor-pointer 
-                              mb-[2px]
-                              bg-blue-100 text-blue-900
-                              dark:bg-blue-800/60 dark:text-white
-                              border border-blue-200 dark:border-blue-500/30
-                              hover:bg-blue-300/70 dark:hover:bg-blue-700/90
-                              transition
-                              shadow-sm
-                            `}
-                            style={{
-                              maxWidth: '100%',
-                              width: '100%',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {format(parseISO(event.start), 'HH:mm')} {event.summary}
-                          </div>
-                        ))}
-                        {dayEvents.length > 4 && (
-                          <div className="text-[11px] text-gray-400 mt-1 pl-2">+{dayEvents.length - 4} mais</div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                week={week}
+                currentMonth={currentMonth}
+                selectedDate={selectedDate}
+                events={events}
+                onDateChange={onDateChange}
+                onEventClick={handleEventClick}
+              />
             ))}
           </div>
         ) : (
-          // Visual "Dia"
-          <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2 flex-1">
-            <div className="text-lg font-bold my-2 text-blue-700 dark:text-blue-400">
-              {format(selectedDate, "EEEE, dd 'de' MMMM", { locale: pt })}
-            </div>
-            <div className="space-y-2">
-              {getEventsForDay(selectedDate).map((event) => (
-                <div
-                  key={event.id}
-                  onClick={(e) => handleEventClick(event, e)}
-                  className={`
-                    flex items-center px-3 py-2 rounded bg-blue-100 
-                    dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/70
-                    text-blue-800 dark:text-blue-200 shadow-sm cursor-pointer
-                  `}
-                  style={{
-                    maxWidth: '100%',
-                    overflow: 'hidden',
-                  }}
-                  title={event.summary}
-                >
-                  <span className="font-bold mr-2">{format(parseISO(event.start), 'HH:mm')}</span>
-                  <span className="truncate">{event.summary}</span>
-                </div>
-              ))}
-              {getEventsForDay(selectedDate).length === 0 && (
-                <div className="text-gray-400 text-sm px-4 py-5 text-center">
-                  Nenhum evento para este dia.
-                </div>
-              )}
-            </div>
-          </div>
+          <DayEventsView
+            selectedDate={selectedDate}
+            events={events}
+            onEventClick={handleEventClick}
+          />
         )}
       </div>
     </div>

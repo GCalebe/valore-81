@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { isSameDay, parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
+import { parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
