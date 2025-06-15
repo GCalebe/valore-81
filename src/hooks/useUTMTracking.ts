@@ -63,20 +63,21 @@ export function useUTMTracking(campaignFilter?: string) {
     try {
       setLoading(true);
       
-      // Construir a query base
-      let baseQuery = supabase.from('utm_tracking');
+      // Construir a query para recent tracking com filtro de campanha
+      let recentTrackingQuery = supabase
+        .from('utm_tracking')
+        .select('*')
+        .order('utm_created_at', { ascending: false })
+        .limit(10);
       
       // Aplicar filtro de campanha se especificado
       if (campaignFilter && campaignFilter !== 'all') {
-        baseQuery = baseQuery.eq('utm_campaign', campaignFilter);
+        recentTrackingQuery = recentTrackingQuery.eq('utm_campaign', campaignFilter);
       }
       
       const [metricsResult, recentTrackingResult] = await Promise.all([
         supabase.rpc('get_utm_metrics'),
-        baseQuery
-          .select('*')
-          .order('utm_created_at', { ascending: false })
-          .limit(10)
+        recentTrackingQuery
       ]);
       
       const { data: metricsData, error: metricsError } = metricsResult;
@@ -90,11 +91,14 @@ export function useUTMTracking(campaignFilter?: string) {
       }
       
       // Se há filtro de campanha, precisamos filtrar os dados das métricas também
-      let filteredMetricsData = metricsData;
+      let processedMetrics = metricsData;
       
       if (campaignFilter && campaignFilter !== 'all') {
         // Buscar dados filtrados manualmente para campanhas específicas
-        const { data: filteredData, error: filteredError } = await baseQuery.select('*');
+        const { data: filteredData, error: filteredError } = await supabase
+          .from('utm_tracking')
+          .select('*')
+          .eq('utm_campaign', campaignFilter);
         
         if (filteredError) {
           console.error('Error fetching filtered data:', filteredError);
@@ -151,7 +155,7 @@ export function useUTMTracking(campaignFilter?: string) {
         
         const deviceData = Object.values(deviceStats);
         
-        filteredMetricsData = {
+        processedMetrics = {
           totalLeads,
           totalCampaigns,
           totalConversions,
@@ -161,7 +165,7 @@ export function useUTMTracking(campaignFilter?: string) {
         };
       }
       
-      const typedMetricsData = filteredMetricsData as any;
+      const typedMetricsData = processedMetrics as any;
       const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns, deviceData } = typedMetricsData;
       
       const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
