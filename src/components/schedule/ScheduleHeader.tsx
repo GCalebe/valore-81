@@ -84,7 +84,7 @@ const ScheduleHeader = ({
           )}
         </div>
         {/* Controles todos alinhados verticalmente e espaçados */}
-        <div className="flex flex-row items-center gap-3 mt-[7px]">
+        <div className="flex flex-row items-center gap-3 mt-[15px]">
           {onRefresh && (
             <Button 
               variant="outline"
