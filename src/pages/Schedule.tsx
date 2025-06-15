@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -93,21 +94,7 @@ const Schedule = () => {
     console.log('Período alterado:', { start, end });
     setDateRange({ start, end });
   }, []);
-  
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      navigate('/');
-    }
-  }, [user, isAuthLoading, navigate]);
-  
-  if (isAuthLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-        <div className="h-16 w-16 border-4 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-  
+
   const handleAddEvent = useCallback((formData: EventFormData) => {
     addEvent(formData).then(success => {
       if (success) {
@@ -151,6 +138,20 @@ const Schedule = () => {
   const openEventLink = useCallback((url: string) => {
     window.open(url, '_blank');
   }, []);
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      navigate('/');
+    }
+  }, [user, isAuthLoading, navigate]);
+  
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="h-16 w-16 border-4 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
