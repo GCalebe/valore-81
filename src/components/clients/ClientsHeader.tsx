@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
@@ -12,6 +11,7 @@ import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientsCompactToggler from './ClientsCompactToggler';
 import ClientsViewToggler from './ClientsViewToggler';
+import ClientsRefreshButton from './ClientsRefreshButton';
 
 interface ClientsHeaderProps {
   searchTerm: string;
@@ -152,17 +152,10 @@ const ClientsHeader = ({
           </div>
 
           {/* Botão atualizar */}
-          <Button
-            variant="outline"
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="flex items-center gap-2 h-9 border-white text-white bg-white/0 font-bold hover:bg-white/20 hover:text-white transition-all"
-            style={{ minWidth: 100 }}
-            type="button"
-          >
-            <RefreshCcw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            <span>Atualizar</span>
-          </Button>
+          <ClientsRefreshButton
+            handleRefresh={handleRefresh}
+            refreshing={refreshing}
+          />
 
           {/* Divisor */}
           <div className="h-7 w-px bg-white/30 mx-2 hidden md:block"></div>

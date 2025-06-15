@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 
 interface ClientsRefreshButtonProps {
   handleRefresh: () => void;
@@ -13,11 +13,12 @@ const ClientsRefreshButton: React.FC<ClientsRefreshButtonProps> = ({ handleRefre
     variant="outline"
     onClick={handleRefresh}
     disabled={refreshing}
-    className="flex items-center gap-2 text-white border-white hover:bg-white/20"
-    style={{ background: "rgba(255,255,255,0.08)" }}
+    className="flex items-center gap-2 h-9 border-white text-white bg-white/0 font-bold hover:bg-white/20 hover:text-white transition-all"
+    style={{ minWidth: 100 }}
+    type="button"
   >
-    <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""} text-white`} />
-    <span className="hidden sm:inline">Atualizar</span>
+    <RefreshCcw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+    <span>Atualizar</span>
   </Button>
 );
 
