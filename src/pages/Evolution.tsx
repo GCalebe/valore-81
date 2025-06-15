@@ -291,16 +291,16 @@ const Evolution = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <header 
-        className="text-white shadow-md transition-colors duration-300"
+        className="text-white shadow-md transition-colors duration-300 rounded-b-xl"
         style={{ backgroundColor: settings.primaryColor }}
       >
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-row items-center justify-between min-h-[64px] w-full px-6 py-0">
+          <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => navigate('/dashboard')}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/20 focus-visible:ring-white"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -318,7 +318,7 @@ const Evolution = () => {
             )}
             <h1 className="text-2xl font-bold">{settings.brandName}</h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Badge variant="outline" className="bg-white/10 text-white border-0 px-3 py-1">
               {user?.user_metadata?.name || user?.email}
             </Badge>
