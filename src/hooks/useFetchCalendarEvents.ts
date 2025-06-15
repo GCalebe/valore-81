@@ -1,10 +1,11 @@
 
 import { CalendarEvent } from '@/types/calendar';
 import { format } from 'date-fns';
+import { retryFetch } from './utils/retryFetch';
 
 // Função isolada de busca da API (utilizada pelo hook principal)
 export async function fetchCalendarEvents(date?: Date, range?: { start: Date, end: Date }): Promise<CalendarEvent[]> {
-  try {
+  return retryFetch(async () => {
     let start: string;
     let end: string;
     if (range) {
@@ -26,7 +27,9 @@ export async function fetchCalendarEvents(date?: Date, range?: { start: Date, en
     });
 
     if (!response.ok) {
-      throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+      // Mensagem de erro mais clara
+      const msg = await response.text();
+      throw new Error(`Erro na requisição (${response.status}): ${msg || response.statusText}`);
     }
 
     const data = await response.json();
@@ -47,8 +50,5 @@ export async function fetchCalendarEvents(date?: Date, range?: { start: Date, en
     })).filter(e =>
       e.start && e.end && e.summary && e.summary !== 'Evento sem título'
     );
-  } catch (err) {
-    console.error('[useFetchCalendarEvents] Erro ao buscar eventos:', err);
-    throw err;
-  }
+  }, 2, 800); // 2 tentativas extras (total 3), delay inicial 800ms
 }

@@ -1,4 +1,3 @@
-
 // Refatorado! Toda lógica de cache e fetch extraída para hooks/utilitários menores
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { CalendarEvent, EventFormData } from '@/types/calendar';
@@ -6,6 +5,20 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fetchCalendarEvents } from './useFetchCalendarEvents';
 import { getCacheKey, loadFromCache, saveToCache } from './calendarCache';
+
+// Helper debounce de hooks (pequeno debounce de 400ms)
+function useDebouncedCallback<T extends (...args: any[]) => void>(callback: T, delay: number) {
+  const timeout = React.useRef<NodeJS.Timeout | null>(null);
+
+  const debounced = useCallback((...args: Parameters<T>) => {
+    if (timeout.current) clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => callback(...args), delay);
+  }, [callback, delay]);
+
+  // Clean up
+  React.useEffect(() => () => { if (timeout.current) clearTimeout(timeout.current); }, []);
+  return debounced;
+}
 
 // Sync com os outros arquivos utilitários
 type DateRange = { start: Date; end: Date; };
@@ -21,7 +34,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
   const lastUpdateRef = useRef<number>(0);
 
   // Usando função isolada
-  const fetchEvents = useCallback(async () => {
+  const fetchEventsDebounced = useDebouncedCallback(async () => {
     setIsLoading(true);
     setError(null);
     let loadedFromCache = false;
@@ -30,32 +43,39 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
       const cached = loadFromCache(cacheKey);
       if (cached) {
         setEvents(cached);
+        lastCacheEvents.current = cached;
         setLastUpdated(new Date());
         loadedFromCache = true;
         console.log("[useCalendarEvents] Eventos carregados do cache local");
       }
-      // Busca sempre
+      // Busca sempre (vai tentar com retry)
       const apiEvents = await fetchCalendarEvents(selectedDate || undefined, dateRange || undefined);
       setEvents(apiEvents);
+      lastCacheEvents.current = apiEvents;
       setLastUpdated(new Date());
       saveToCache(cacheKey, apiEvents);
       if (loadedFromCache) toast.success("Agenda atualizada!");
       lastUpdateRef.current = Date.now();
     } catch (err: any) {
       setError(err instanceof Error ? err : new Error('Erro desconhecido'));
-      if (!loadedFromCache) setEvents([]);
-      toast.error("Erro ao buscar eventos. Verifique sua conexão.");
+      // IMPORTANTE: Se já existe eventos válidos (no cache/ciclo anterior), não apagar.
+      if (!loadedFromCache && lastCacheEvents.current.length === 0) setEvents([]);
+      toast.error("Erro ao buscar eventos. Verifique sua conexão (retry automático).");
     } finally {
       setIsLoading(false);
     }
-  }, [selectedDate, dateRange, cacheKey]);
+  }, 400);
 
-  // Atualização manual
+  // Armazenar o último eventos válidos do cache/disco
+  const lastCacheEvents = useRef<CalendarEvent[]>([]);
+
+  // Atualização manual mantém lógica atual, mas passa handle do cache
   const refreshEventsPost = useCallback(async () => {
     setIsLoading(true);
     try {
       const apiEvents = await fetchCalendarEvents(selectedDate || undefined, dateRange || undefined);
       setEvents(apiEvents);
+      lastCacheEvents.current = apiEvents;
       setLastUpdated(new Date());
       saveToCache(cacheKey, apiEvents);
       lastUpdateRef.current = Date.now();
@@ -75,18 +95,18 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
       if (document.visibilityState === 'visible') {
         const now = Date.now();
         if (now - lastUpdateRef.current > 2.5 * 60 * 1000) {
-          fetchEvents();
+          fetchEventsDebounced();
         }
       }
     }
     window.addEventListener('visibilitychange', onVisibilityChange);
     return () => window.removeEventListener('visibilitychange', onVisibilityChange);
-  }, [fetchEvents]);
+  }, [fetchEventsDebounced]);
 
-  // Carregar eventos ao carregar/mudar data/período
+  // Carregar eventos ao carregar/mudar data/período (com debounce)
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    fetchEventsDebounced();
+  }, [fetchEventsDebounced]);
 
   // --- Funções de manipulação de eventos (add/edit/delete) mantidas aqui ---
   const addEvent = async (formData: EventFormData) => {
@@ -109,7 +129,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
       });
       if (!response.ok) throw new Error(`Erro ao adicionar evento: ${response.status} ${response.statusText}`);
       toast.success("Evento adicionado com sucesso!");
-      await fetchEvents();
+      await fetchEventsDebounced();
       return true;
     } catch (err) {
       console.error('[useCalendarEvents] Erro ao adicionar evento:', err);
@@ -141,7 +161,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
       });
       if (!response.ok) throw new Error(`Erro ao editar evento: ${response.status} ${response.statusText}`);
       toast.success("Evento editado com sucesso!");
-      await fetchEvents();
+      await fetchEventsDebounced();
       return true;
     } catch (err) {
       console.error('[useCalendarEvents] Erro ao editar evento:', err);
@@ -173,7 +193,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
       });
       if (!response.ok) throw new Error(`Erro ao excluir evento: ${response.status} ${response.statusText}`);
       toast.success("Evento excluído com sucesso!");
-      await fetchEvents();
+      await fetchEventsDebounced();
       return true;
     } catch (err) {
       console.error('[useCalendarEvents] Erro ao excluir evento:', err);
@@ -190,7 +210,7 @@ export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRa
     isLoading,
     error,
     lastUpdated,
-    refreshEvents: fetchEvents,
+    refreshEvents: fetchEventsDebounced,
     refreshEventsPost,
     addEvent,
     editEvent,
