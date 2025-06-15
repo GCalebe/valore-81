@@ -1,35 +1,23 @@
 
 import React, { useEffect, useState } from 'react';
-import { LineChart, Users, Clock, TrendingUp, MessageCircle, Target, Share2, Settings } from 'lucide-react';
+import { LineChart, MessageCircle, Share2 } from 'lucide-react';
 import { useClientStats } from '@/hooks/useClientStats';
 import { useConversationMetrics } from '@/hooks/useConversationMetrics';
 import { useDashboardRealtime } from '@/hooks/useDashboardRealtime';
 import { useUTMTracking } from '@/hooks/useUTMTracking';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 
 // Import components
 import DashboardHeader from '@/components/metrics/DashboardHeader';
-import StatCard from '@/components/metrics/StatCard';
-import ClientGrowthChart from '@/components/metrics/ClientGrowthChart';
-import ConversationChart from '@/components/metrics/ConversationChart';
-import ConversionFunnelChart from '@/components/metrics/ConversionFunnelChart';
-import LeadsTable from '@/components/metrics/LeadsTable';
-import ConversionByTimeChart from '@/components/metrics/ConversionByTimeChart';
 import MetricsFilters from '@/components/metrics/MetricsFilters';
-import UTMCampaignChart from '@/components/metrics/UTMCampaignChart';
-import UTMSourceChart from '@/components/metrics/UTMSourceChart';
-import UTMTrackingTable from '@/components/metrics/UTMTrackingTable';
-import UTMGenerator from '@/components/metrics/UTMGenerator';
-import UTMConfigPanel from '@/components/metrics/UTMConfigPanel';
-import UTMAdvancedMetrics from '@/components/metrics/UTMAdvancedMetrics';
+import ChatMetricsTab from '@/components/metrics/ChatMetricsTab';
+import UTMMetricsTab from '@/components/metrics/UTMMetricsTab';
 
 const MetricsDashboard = () => {
   const { stats, loading: statsLoading, refetchStats } = useClientStats();
   const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics();
   const { metrics: utmMetrics, loading: utmLoading, refetchUTMData } = useUTMTracking();
   const [dateFilter, setDateFilter] = useState('week');
-  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
   
   // Initialize real-time updates for the metrics dashboard
   useDashboardRealtime();
@@ -75,197 +63,22 @@ const MetricsDashboard = () => {
           </TabsList>
           
           {/* Chat Metrics Tab */}
-          <TabsContent value="chat" className="space-y-8">
-            {/* Chat KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <StatCard 
-                title="Total de Conversas"
-                value={metrics.totalConversations}
-                icon={<MessageCircle />}
-                trend={`${metrics.totalRespondidas} respondidas de ${metrics.totalConversations} totais`}
-                loading={loading}
-                iconBgClass="bg-blue-100 dark:bg-blue-900/30"
-                iconTextClass="text-blue-600 dark:text-blue-400"
-              />
-              
-              <StatCard 
-                title="Taxa de Resposta"
-                value={`${metrics.responseRate}%`}
-                icon={<TrendingUp />}
-                trend={`${metrics.totalRespondidas} conversas respondidas`}
-                loading={loading}
-                iconBgClass="bg-green-100 dark:bg-green-900/30"
-                iconTextClass="text-green-600 dark:text-green-400"
-              />
-              
-              <StatCard 
-                title="Tempo Médio de Resposta"
-                value={`${metrics.avgResponseTime}h`}
-                icon={<Clock />}
-                trend="Tempo médio para primeira resposta"
-                loading={loading}
-                iconBgClass="bg-orange-100 dark:bg-orange-900/30"
-                iconTextClass="text-orange-600 dark:text-orange-400"
-              />
-              
-              <StatCard 
-                title="Taxa de Conversão"
-                value={`${metrics.conversionRate}%`}
-                icon={<Target />}
-                trend="De lead para projeto"
-                loading={loading}
-                iconBgClass="bg-purple-100 dark:bg-purple-900/30"
-                iconTextClass="text-purple-600 dark:text-purple-400"
-              />
-              
-              <StatCard 
-                title="Tempo Médio de Fechamento"
-                value={`${metrics.avgClosingTime} dias`}
-                icon={<Clock />}
-                trend="Do contato inicial ao fechamento"
-                loading={loading}
-                iconBgClass="bg-pink-100 dark:bg-pink-900/30"
-                iconTextClass="text-pink-600 dark:text-pink-400"
-              />
-              
-              <StatCard 
-                title="Novos Leads"
-                value={stats.newClientsThisMonth}
-                icon={<Users />}
-                trend={`+${stats.newClientsThisMonth} este mês`}
-                loading={loading}
-                iconBgClass="bg-indigo-100 dark:bg-indigo-900/30"
-                iconTextClass="text-indigo-600 dark:text-indigo-400"
-              />
-            </div>
-            
-            {/* Chat Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ConversationChart data={metrics.conversationData} loading={loading} />
-              <ConversionFunnelChart data={metrics.funnelData} loading={loading} />
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ClientGrowthChart data={stats.monthlyGrowth} loading={loading} />
-              <ConversionByTimeChart data={metrics.conversionByTimeData} loading={loading} />
-            </div>
-            
-            {/* Chat Tables Section */}
-            <div className="grid grid-cols-1 gap-6">
-              <LeadsTable leads={metrics.leadsData} loading={loading} />
-            </div>
+          <TabsContent value="chat">
+            <ChatMetricsTab 
+              stats={stats}
+              metrics={metrics}
+              loading={loading}
+            />
           </TabsContent>
           
           {/* UTM Metrics Tab */}
-          <TabsContent value="utm" className="space-y-8">
-            {/* UTM Header with Config Button */}
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                Dashboard UTM Profissional
-              </h3>
-              <Button
-                onClick={() => setIsConfigPanelOpen(true)}
-                className="flex items-center gap-2"
-                variant="outline"
-              >
-                <Settings className="h-4 w-4" />
-                Configurar UTMs
-              </Button>
-            </div>
-
-            {/* Bloco 1: Visão Geral */}
-            <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
-                📊 Visão Geral
-              </h4>
-              
-              {/* UTM KPI Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <StatCard 
-                  title="Campanhas Ativas"
-                  value={utmMetrics.totalCampaigns}
-                  icon={<Share2 />}
-                  trend="Campanhas UTM únicas"
-                  loading={utmLoading}
-                  iconBgClass="bg-cyan-100 dark:bg-cyan-900/30"
-                  iconTextClass="text-cyan-600 dark:text-cyan-400"
-                />
-                
-                <StatCard 
-                  title="Leads via UTM"
-                  value={utmMetrics.totalLeads}
-                  icon={<Users />}
-                  trend="Total de leads rastreados"
-                  loading={utmLoading}
-                  iconBgClass="bg-emerald-100 dark:bg-emerald-900/30"
-                  iconTextClass="text-emerald-600 dark:text-emerald-400"
-                />
-                
-                <StatCard 
-                  title="Taxa de Conversão UTM"
-                  value={`${utmMetrics.conversionRate}%`}
-                  icon={<Target />}
-                  trend="Conversão de campanhas UTM"
-                  loading={utmLoading}
-                  iconBgClass="bg-amber-100 dark:bg-amber-900/30"
-                  iconTextClass="text-amber-600 dark:text-amber-400"
-                />
-              </div>
-
-              {/* Gerador de UTMs */}
-              <UTMGenerator />
-
-              {/* Métricas Avançadas */}
-              <div className="space-y-4">
-                <h5 className="text-lg font-medium text-gray-700 dark:text-gray-300">
-                  📈 Métricas Avançadas
-                </h5>
-                <UTMAdvancedMetrics 
-                  data={{
-                    ctr: 3.2,
-                    cpc: 1.45,
-                    roas: 380,
-                    conversionValuePerLead: 250,
-                    sessionDuration: 145,
-                    bounceRate: 42,
-                    topPerformingCampaign: 'black_friday_2024',
-                    worstPerformingCampaign: 'summer_sale'
-                  }}
-                  loading={utmLoading}
-                />
-              </div>
-            </div>
-
-            {/* Bloco 2: Gráficos */}
-            <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
-                📈 Gráficos e Análises
-              </h4>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <UTMCampaignChart data={utmMetrics.campaignData} loading={utmLoading} />
-                <UTMSourceChart data={utmMetrics.sourceData} loading={utmLoading} />
-              </div>
-            </div>
-            
-            {/* Bloco 3: Tabela Detalhada */}
-            <div className="space-y-6">
-              <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
-                📋 Tabela Detalhada
-              </h4>
-              
-              <div className="grid grid-cols-1 gap-6">
-                <UTMTrackingTable data={utmMetrics.recentTracking} loading={utmLoading} />
-              </div>
-            </div>
+          <TabsContent value="utm">
+            <UTMMetricsTab 
+              utmMetrics={utmMetrics}
+              utmLoading={utmLoading}
+            />
           </TabsContent>
         </Tabs>
-
-        {/* UTM Config Panel */}
-        <UTMConfigPanel 
-          open={isConfigPanelOpen}
-          onOpenChange={setIsConfigPanelOpen}
-        />
       </main>
     </div>
   );
