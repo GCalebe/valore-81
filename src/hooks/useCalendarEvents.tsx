@@ -14,6 +14,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
   // Função para buscar eventos do endpoint n8n
   const fetchEventsFromN8N = useCallback(async (targetDate?: Date) => {
     try {
+      console.log('=== INÍCIO DEBUG EVENTOS ===');
       console.log('Buscando eventos do n8n para a data:', targetDate || 'hoje');
       
       const dateToUse = targetDate || new Date();
@@ -28,6 +29,8 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       url.searchParams.append('start', start);
       url.searchParams.append('end', end);
       
+      console.log('URL completa da requisição:', url.toString());
+      
       const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
@@ -40,26 +43,82 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       }
       
       const data = await response.json();
-      console.log('Resposta do n8n recebida:', data);
+      console.log('=== RESPOSTA BRUTA DA API ===');
+      console.log('Tipo da resposta:', typeof data);
+      console.log('É array?', Array.isArray(data));
+      console.log('Resposta completa:', JSON.stringify(data, null, 2));
       
       // Verificar se os dados são um array ou se precisam ser extraídos
       const eventsArray = Array.isArray(data) ? data : (data.events || []);
+      console.log('=== ARRAY DE EVENTOS EXTRAÍDO ===');
+      console.log('Quantidade de eventos no array:', eventsArray.length);
+      
+      // Log detalhado de cada evento antes do mapeamento
+      eventsArray.forEach((event, index) => {
+        console.log(`Evento ${index + 1} (antes do mapeamento):`, {
+          id: event.id,
+          summary: event.summary,
+          start: event.start,
+          end: event.end,
+          status: event.status,
+          hasValidData: !!(event.id && event.summary && event.start && event.end)
+        });
+      });
       
       // Mapear os dados para o formato CalendarEvent
-      const mappedEvents: CalendarEvent[] = eventsArray.map((event: any) => ({
-        id: event.id || `event-${Date.now()}-${Math.random()}`,
-        summary: event.summary || 'Evento sem título',
-        description: event.description || '',
-        start: event.start,
-        end: event.end,
-        status: event.status || 'confirmed',
-        htmlLink: event.htmlLink || '#',
-        attendees: event.attendees || [],
-        hostName: event.hostName || ''
-      }));
+      const mappedEvents: CalendarEvent[] = eventsArray.map((event: any, index: number) => {
+        const mappedEvent = {
+          id: event.id || `event-${Date.now()}-${Math.random()}`,
+          summary: event.summary || 'Evento sem título',
+          description: event.description || '',
+          start: event.start,
+          end: event.end,
+          status: event.status || 'confirmed',
+          htmlLink: event.htmlLink || '#',
+          attendees: event.attendees || [],
+          hostName: event.hostName || ''
+        };
+        
+        console.log(`Evento ${index + 1} (após mapeamento):`, {
+          id: mappedEvent.id,
+          summary: mappedEvent.summary,
+          start: mappedEvent.start,
+          end: mappedEvent.end,
+          hasValidDates: !!(mappedEvent.start && mappedEvent.end)
+        });
+        
+        return mappedEvent;
+      });
       
-      console.log(`${mappedEvents.length} eventos processados com sucesso`);
-      return mappedEvents;
+      // Filtrar eventos com dados válidos
+      const validEvents = mappedEvents.filter(event => {
+        const isValid = !!(event.start && event.end && event.summary && event.summary !== 'Evento sem título');
+        if (!isValid) {
+          console.log('Evento inválido filtrado:', {
+            id: event.id,
+            summary: event.summary,
+            start: event.start,
+            end: event.end
+          });
+        }
+        return isValid;
+      });
+      
+      console.log('=== EVENTOS FINAIS ===');
+      console.log(`Eventos válidos processados: ${validEvents.length} de ${mappedEvents.length} total`);
+      validEvents.forEach((event, index) => {
+        console.log(`Evento válido ${index + 1}:`, {
+          id: event.id,
+          summary: event.summary,
+          start: event.start,
+          end: event.end,
+          startDate: event.start ? new Date(event.start).toLocaleDateString('pt-BR') : 'Data inválida',
+          startTime: event.start ? new Date(event.start).toLocaleTimeString('pt-BR') : 'Hora inválida'
+        });
+      });
+      
+      console.log('=== FIM DEBUG EVENTOS ===');
+      return validEvents;
       
     } catch (err) {
       console.error('Erro ao buscar eventos do n8n:', err);
@@ -156,7 +215,6 @@ export function useCalendarEvents(selectedDate?: Date | null) {
     }
   };
 
-  // Função para editar evento
   const editEvent = async (eventId: string, formData: EventFormData) => {
     setIsSubmitting(true);
     try {
@@ -206,7 +264,6 @@ export function useCalendarEvents(selectedDate?: Date | null) {
     }
   };
 
-  // Função para excluir evento
   const deleteEvent = async (eventId: string) => {
     setIsSubmitting(true);
     try {
