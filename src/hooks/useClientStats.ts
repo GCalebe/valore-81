@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,7 +26,14 @@ export function useClientStats() {
 
       if (totalClientsError) {
         console.error('Error fetching total clients:', totalClientsError);
-        throw totalClientsError;
+        toast({
+          title: "Erro de conexão",
+          description: "Não foi possível carregar os clientes. Verifique sua conexão ou tente novamente mais tarde.",
+          variant: "destructive"
+        });
+        // Não zera os dados, apenas retorna para evitar sobrescrever stats bons
+        setLoading(false);
+        return;
       }
 
       console.log(`Total clients count: ${totalClients}`);
@@ -118,29 +124,38 @@ export function useClientStats() {
 
       console.log(`Client types:`, clientTypes);
 
-      // Fetch recent clients with better data handling
+      // Fetch recent clients with melhor tratamento de erro
       const { data: recentClientsData, error: recentClientsError } = await supabase
         .from('dados_cliente')
         .select('id, nome, telefone, client_name, created_at, kanban_stage')
         .order('created_at', { ascending: false })
         .limit(5);
 
+      let recentClients = [];
       if (recentClientsError) {
         console.error('Error fetching recent clients:', recentClientsError);
+        // Mostra toast mas não zera o array anterior
+        toast({
+          title: "Erro ao buscar clientes recentes",
+          description: "Não foi possível carregar os clientes recentes.",
+          variant: "destructive"
+        });
+        // Não retorna/falha hard, apenas não atualiza recentClients.
+        recentClients = stats.recentClients ?? [];
+      } else {
+        recentClients = recentClientsData?.map(client => ({
+          id: client.id,
+          name: client.nome || 'Cliente sem nome',
+          phone: client.telefone || 'Não informado',
+          marketingClients: client.client_name ? 1 : 0,
+          lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
+          status: client.kanban_stage || 'Entraram'
+        })) || [];
       }
-
-      const recentClients = recentClientsData?.map(client => ({
-        id: client.id,
-        name: client.nome || 'Cliente sem nome',
-        phone: client.telefone || 'Não informado',
-        marketingClients: client.client_name ? 1 : 0,
-        lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-        status: client.kanban_stage || 'Entraram'
-      })) || [];
 
       console.log(`Recent clients:`, recentClients);
 
-      // Update stats with real data
+      // Update stats normally
       setStats({
         totalClients: totalClients || 0,
         totalMarketingClients: totalMarketingClients || 0,
@@ -156,23 +171,14 @@ export function useClientStats() {
       console.error('Error fetching stats:', error);
       toast({
         title: "Erro ao atualizar estatísticas",
-        description: "Ocorreu um erro ao atualizar as estatísticas.",
+        description: "Problema de conexão ou erro inesperado ao atualizar as estatísticas.",
         variant: "destructive"
       });
-      
-      // Em caso de erro, definir valores padrão para evitar quebra da UI
-      setStats({
-        totalClients: 0,
-        totalMarketingClients: 0,
-        newClientsThisMonth: 0,
-        monthlyGrowth: [],
-        clientTypes: [],
-        recentClients: []
-      });
+      // Não sobrescreve stats: mantém dados anteriores.
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, stats.recentClients]);
 
   return { stats, loading, refetchStats };
 }

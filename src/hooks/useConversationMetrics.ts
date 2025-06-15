@@ -30,7 +30,13 @@ export function useConversationMetrics() {
 
       if (allClientsError) {
         console.error('Error fetching all clients:', allClientsError);
-        throw allClientsError;
+        toast({
+          title: "Erro de conexão",
+          description: "Não foi possível carregar as conversas. Verifique sua conexão ou tente novamente mais tarde.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return; // Evita sobrescrever métricas anteriores
       }
 
       const totalClients = allClients?.length || 0;
@@ -115,24 +121,31 @@ export function useConversationMetrics() {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      let leadsData = [];
       if (leadsError) {
         console.error('Error fetching leads:', leadsError);
+        toast({
+          title: "Erro ao buscar leads",
+          description: "Não foi possível carregar os leads recentes.",
+          variant: "destructive"
+        });
+        leadsData = metrics.leadsData ?? [];
+      } else {
+        leadsData = recentLeads?.map(lead => ({
+          id: lead.id,
+          name: lead.nome || 'Cliente sem nome',
+          lastContact: lead.created_at ? new Date(lead.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
+          status: lead.kanban_stage || 'Entraram'
+        })) || [];
       }
-
-      const leadsData = recentLeads?.map(lead => ({
-        id: lead.id,
-        name: lead.nome || 'Cliente sem nome',
-        lastContact: lead.created_at ? new Date(lead.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-        status: lead.kanban_stage || 'Entraram'
-      })) || [];
 
       setMetrics({
         totalConversations,
         responseRate,
         totalRespondidas,
-        avgResponseTime: 2.5, // Changed from string to number
+        avgResponseTime: 2.5,
         conversionRate,
-        avgClosingTime: Math.round(conversionRate / 2), // Changed from string to number
+        avgClosingTime: Math.round(conversionRate / 2),
         conversationData,
         funnelData,
         conversionByTimeData,
@@ -145,13 +158,14 @@ export function useConversationMetrics() {
       console.error('Error fetching conversation metrics:', error);
       toast({
         title: "Erro ao atualizar métricas de conversas",
-        description: "Ocorreu um erro ao atualizar as métricas de conversas.",
+        description: "Problema de conexão ou erro inesperado ao atualizar as métricas de conversas.",
         variant: "destructive"
       });
+      // Não sobrescreve os dados anteriores.
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, metrics.leadsData]);
 
   return { metrics, loading, refetchMetrics };
 }

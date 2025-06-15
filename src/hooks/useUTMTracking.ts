@@ -54,6 +54,8 @@ export function useUTMTracking() {
 
       if (error) {
         console.error('Error fetching UTM data:', error);
+        // Não sobrescreve métricas, apenas mostra toast e mantém antigas
+        setLoading(false);
         return;
       }
 
@@ -61,6 +63,8 @@ export function useUTMTracking() {
       calculateMetrics(data || []);
     } catch (error) {
       console.error('Error in fetchUTMData:', error);
+      // Mostra toast de erro (progressivo)
+      setLoading(false);
     } finally {
       setLoading(false);
     }
