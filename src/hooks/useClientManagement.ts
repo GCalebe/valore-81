@@ -56,16 +56,35 @@ export const useClientManagement = () => {
       }
       
       if (data) {
+        const validKanbanStages: Contact['kanbanStage'][] = [
+          'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
+        ];
+        const validConsultationStages: Contact['consultationStage'][] = [
+          'Nova consulta',
+          'Qualificado',
+          'Chamada agendada',
+          'Preparando proposta',
+          'Proposta enviada',
+          'Acompanhamento',
+          'Negociação',
+          'Fatura enviada',
+          'Fatura paga – ganho',
+          'Projeto cancelado – perdido'
+        ];
+
         const formattedContacts: Contact[] = data.map(client => {
-          const validKanbanStages: Contact['kanbanStage'][] = [
-            'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
-          ];
-          const kanbanStage = validKanbanStages.includes(client.kanban_stage as Contact['kanbanStage']) 
+          // Ensure kanban_stage is valid
+          const kanbanStage = validKanbanStages.includes(client.kanban_stage as Contact['kanbanStage'])
             ? client.kanban_stage as Contact['kanbanStage']
             : 'Entraram';
 
-          // FIX: Guarantee status matches Contact type
+          // Ensure status is valid
           let safeStatus: Contact['status'] = client.status === 'Inactive' ? 'Inactive' : 'Active';
+
+          // Ensure consultation_stage is valid
+          const consultationStage = validConsultationStages.includes(client.consultation_stage as Contact['consultationStage'])
+            ? client.consultation_stage as Contact['consultationStage']
+            : 'Nova consulta';
 
           return {
             id: client.id,
@@ -95,7 +114,7 @@ export const useClientManagement = () => {
             contractDate: client.contract_date,
             payment: client.payment,
             uploadedFiles: client.uploaded_files || [],
-            consultationStage: client.consultation_stage,
+            consultationStage: consultationStage,
             lastMessage: client.last_message,
             lastMessageTime: client.last_message_time,
             unreadCount: client.unread_count,
