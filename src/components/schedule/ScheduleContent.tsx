@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback } from 'react';
 import { parseISO, startOfWeek, endOfWeek, isWithinInterval, startOfMonth, endOfMonth } from 'date-fns';
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
@@ -25,6 +26,9 @@ interface ScheduleContentProps {
   openDeleteEventDialog: (event: CalendarEvent) => void;
   openEventLink: (url: string) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
+  // Novos props para controle externo da view:
+  calendarViewType: "mes" | "semana" | "dia" | "agenda";
+  setCalendarViewType: (v: "mes" | "semana" | "dia" | "agenda") => void;
 }
 
 export function ScheduleContent({
@@ -43,10 +47,13 @@ export function ScheduleContent({
   openEditEventDialog,
   openDeleteEventDialog,
   openEventLink,
-  onPeriodChange
+  onPeriodChange,
+  calendarViewType,
+  setCalendarViewType,
 }: ScheduleContentProps) {
   const [viewMode, setViewMode] = React.useState<"calendar" | "list">("calendar");
-  const [calendarViewType, setCalendarViewType] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
+  // Remover estado local de calendarViewType
+  // const [calendarViewType, setCalendarViewType] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
   const [statusFilter, setStatusFilter] = useState('all');
   const [calendarFilter, setCalendarFilter] = useState('all');
   const [hostFilter, setHostFilter] = useState('all');

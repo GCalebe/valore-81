@@ -183,7 +183,9 @@ const Schedule = () => {
         openDeleteEventDialog={openDeleteEventDialog}
         openEventLink={openEventLink}
         onPeriodChange={handlePeriodChange}
-        // não precisa passar tab de viewMode pois controlado localmente
+        // new - sincronizar views
+        calendarViewType={calendarViewTab}
+        setCalendarViewType={setCalendarViewTab}
       />
 
       <ScheduleDialogs 
