@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import { ArrowLeft, Calendar, Filter, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
 
@@ -18,7 +18,7 @@ interface ScheduleHeaderProps {
   onOpenFilter?: () => void;
 }
 
-const HEADER_BG = "#183385"; // cor fixa igual à imagem, você pode ajustar, mas representa o azul sólido
+const HEADER_BG = "#183385";
 
 const ScheduleHeader = ({
   onAddEvent,
@@ -31,6 +31,7 @@ const ScheduleHeader = ({
 }: ScheduleHeaderProps) => {
   const { settings } = useThemeSettings();
   const navigate = useNavigate();
+  const handleFilterClick = onOpenFilter || (() => { alert("Funcionalidade de filtros avançados em breve!"); });
 
   return (
     <header 
@@ -42,7 +43,7 @@ const ScheduleHeader = ({
         className="flex flex-row items-center justify-between min-h-[64px] w-full px-6 py-0"
         style={{ height: 64 }}
       >
-        {/* Branding e título totalmente centralizados */}
+        {/* Branding e título */}
         <div className="flex flex-row items-center gap-4 min-w-0 h-full">
           <Button
             variant="ghost"
@@ -58,7 +59,7 @@ const ScheduleHeader = ({
           <Calendar 
             className="h-7 w-7"
             style={{
-              color: "#FFC72C", // amarelo do calendário igual ao da imagem
+              color: "#FFC72C",
               strokeWidth: 2.3,
             }}
           />
@@ -82,7 +83,7 @@ const ScheduleHeader = ({
             </Badge>
           )}
         </div>
-        {/* Controles todos alinhados verticalmente e espaçados */}
+        {/* Controles */}
         <div className="flex flex-row items-center gap-3 h-full">
           {onRefresh && (
             <Button 
@@ -107,13 +108,32 @@ const ScheduleHeader = ({
               {isRefreshing ? 'Atualizando...' : 'Atualizar'}
             </Button>
           )}
+          
+          <Button
+            variant="outline"
+            onClick={handleFilterClick}
+            className="border-white text-white bg-transparent hover:bg-white/20"
+            style={{ height: 40, borderRadius: 8, borderWidth: 1.4 }}
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filtros
+          </Button>
+
+          <Button
+            variant="success"
+            onClick={onAddEvent}
+            className="bg-green-500 hover:bg-green-600 text-white"
+            style={{ height: 40, borderRadius: 8 }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Evento
+          </Button>
+
           {(!!view && !!onViewChange) && (
             <div className="flex flex-row items-center gap-2">
               <CalendarViewSwitcher
                 view={view}
                 onChange={onViewChange}
-                onAddEvent={onAddEvent}
-                onFilter={onOpenFilter || (() => { alert("Funcionalidade de filtros avançados em breve!"); })}
               />
             </div>
           )}
