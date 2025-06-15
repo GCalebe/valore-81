@@ -1,4 +1,3 @@
-
 // Define event types based on the API response
 export type CalendarAttendee = {
   email?: string;
@@ -25,6 +24,8 @@ export type EventFormData = {
   startTime: string;
   endTime: string;
   hostName: string;
+  automation?: string;
+  colorId?: string;
 };
 
 // Appointment types (mock data)

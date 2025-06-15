@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { EventFormDialog } from '@/components/EventFormDialog';
 import { DeleteEventDialog } from '@/components/DeleteEventDialog';
@@ -70,9 +69,9 @@ export function ScheduleDialogs({
         onOpenChange={setIsAddEventDialogOpen}
         onSubmit={onAddEvent}
         isSubmitting={isSubmitting}
-        title="Adicionar Evento Náutico"
-        description="Preencha os campos para adicionar um novo evento náutico ao calendário."
-        submitLabel="Salvar Evento"
+        title="Novo Evento"
+        description=""
+        submitLabel="Criar"
       />
 
       <EventFormDialog
@@ -81,8 +80,8 @@ export function ScheduleDialogs({
         onSubmit={onEditEvent}
         isSubmitting={isSubmitting}
         event={selectedEvent || undefined}
-        title="Editar Evento Náutico"
-        description="Modifique os campos para atualizar este evento náutico."
+        title="Editar Evento"
+        description=""
         submitLabel="Salvar Alterações"
       />
 

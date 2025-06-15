@@ -1,16 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { format, parse } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
+import { format, parse, parseISO } from 'date-fns';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { EventFormData, CalendarEvent } from '@/hooks/useCalendarEvents';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface EventFormDialogProps {
   open: boolean;
@@ -23,6 +21,14 @@ interface EventFormDialogProps {
   submitLabel: string;
 }
 
+const colors = [
+  '#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#0ea5e9', '#6366f1', 
+  '#8b5cf6', '#d946ef', '#ec4899', '#78716c'
+];
+
+const automations = ["Lembrete por E-mail", "Notificação no App", "Nenhum"];
+const collaborators = ["João Silva", "Maria Oliveira", "Pedro Santos", "Ana Costa"];
+
 export function EventFormDialog({
   open,
   onOpenChange,
@@ -33,217 +39,192 @@ export function EventFormDialog({
   description,
   submitLabel
 }: EventFormDialogProps) {
-  const initialFormState: EventFormData = {
-    summary: '',
-    description: '',
-    email: '',
-    date: new Date(),
-    startTime: '09:00',
-    endTime: '10:00',
-    hostName: ''
-  };
+  const [summary, setSummary] = useState('');
+  const [automation, setAutomation] = useState('');
+  const [collaborator, setCollaborator] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
+  const [email, setEmail] = useState('');
+  const [startDateTime, setStartDateTime] = useState('');
+  const [endDateTime, setEndDateTime] = useState('');
+  const [selectedColor, setSelectedColor] = useState(colors[0]);
 
-  const [formData, setFormData] = useState<EventFormData>(initialFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (event) {
-      const start = new Date(event.start);
-      const end = new Date(event.end);
-      
-      setFormData({
-        summary: event.summary || '',
-        description: event.description || '',
-        email: event.attendees?.find(a => a !== null && a.email)?.email || '',
-        date: start,
-        startTime: format(start, 'HH:mm'),
-        endTime: format(end, 'HH:mm'),
-        hostName: event.hostName || ''
-      });
-    } else {
-      setFormData(initialFormState);
+    if (event && open) {
+      const start = parseISO(event.start);
+      const end = parseISO(event.end);
+      setSummary(event.summary || '');
+      // Assuming 'automation' and 'color' are not part of the event data yet
+      // They will be handled via extensions to the calendar event in the future
+      setAutomation('');
+      setCollaborator(event.hostName || '');
+      setEventDescription(event.description || '');
+      setEmail(event.attendees?.find(a => a?.email)?.email || '');
+      setStartDateTime(format(start, "yyyy-MM-dd'T'HH:mm"));
+      setEndDateTime(format(end, "yyyy-MM-dd'T'HH:mm"));
+      // Color is also not in event data yet.
+      setSelectedColor(colors[0]);
+    } else if (!open) {
+      // Reset form when dialog closes
+      setSummary('');
+      setAutomation('');
+      setCollaborator('');
+      setEventDescription('');
+      setEmail('');
+      setStartDateTime('');
+      setEndDateTime('');
+      setSelectedColor(colors[0]);
+      setErrors({});
     }
   }, [event, open]);
-
+  
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.summary.trim()) {
-      newErrors.summary = 'O título é obrigatório';
+    if (!summary.trim()) newErrors.summary = 'O título é obrigatório';
+    if (!collaborator) newErrors.collaborator = 'O colaborador é obrigatório';
+    if (!startDateTime) newErrors.startDateTime = 'A data de início é obrigatória';
+    if (!endDateTime) newErrors.endDateTime = 'A data de fim é obrigatória';
+    if (startDateTime && endDateTime && startDateTime >= endDateTime) {
+      newErrors.endDateTime = 'A data de fim deve ser posterior à de início';
     }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'O e-mail é obrigatório';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Digite um e-mail válido';
-    }
-
-    if (!formData.hostName.trim()) {
-      newErrors.hostName = 'O nome do anfitrião é obrigatório';
-    }
-    
-    if (!formData.date) {
-      newErrors.date = 'A data é obrigatória';
-    }
-    
-    if (!formData.startTime) {
-      newErrors.startTime = 'A hora de início é obrigatória';
-    }
-    
-    if (!formData.endTime) {
-      newErrors.endTime = 'A hora de término é obrigatória';
-    } else if (formData.startTime >= formData.endTime) {
-      newErrors.endTime = 'A hora de término deve ser posterior à hora de início';
-    }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (validateForm()) {
-      onSubmit(formData);
-    }
-  };
+      const startDate = parse(startDateTime, "yyyy-MM-dd'T'HH:mm", new Date());
+      const endDate = parse(endDateTime, "yyyy-MM-dd'T'HH:mm", new Date());
 
-  const handleChange = (field: keyof EventFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error for this field if it exists
-    if (errors[field]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
+      const formData: EventFormData = {
+        summary,
+        description: eventDescription,
+        email,
+        date: startDate,
+        startTime: format(startDate, 'HH:mm'),
+        endTime: format(endDate, 'HH:mm'),
+        hostName: collaborator,
+        automation,
+        colorId: selectedColor,
+      };
+      onSubmit(formData);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            {description}
-          </DialogDescription>
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="summary">Título <span className="text-destructive">*</span></Label>
+            <Label htmlFor="summary">Título</Label>
             <Input
               id="summary"
-              value={formData.summary}
-              onChange={(e) => handleChange('summary', e.target.value)}
-              placeholder="Ex: Banho e Tosa - Max"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              placeholder="Digite o título do evento"
               className={errors.summary ? "border-destructive" : ""}
             />
             {errors.summary && <p className="text-sm text-destructive">{errors.summary}</p>}
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="automation">Automação</Label>
+              <Select value={automation} onValueChange={setAutomation}>
+                <SelectTrigger id="automation">
+                  <SelectValue placeholder="Selecione uma automação" />
+                </SelectTrigger>
+                <SelectContent>
+                  {automations.map(item => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="collaborator">Colaborador</Label>
+              <Select value={collaborator} onValueChange={setCollaborator}>
+                <SelectTrigger id="collaborator" className={errors.collaborator ? "border-destructive" : ""}>
+                  <SelectValue placeholder="Selecione um colaborador" />
+                </SelectTrigger>
+                <SelectContent>
+                  {collaborators.map(item => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              {errors.collaborator && <p className="text-sm text-destructive">{errors.collaborator}</p>}
+            </div>
+          </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="eventDescription">Descrição</Label>
             <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleChange('description', e.target.value)}
-              placeholder="Detalhes do atendimento..."
+              id="eventDescription"
+              value={eventDescription}
+              onChange={(e) => setEventDescription(e.target.value)}
+              placeholder="Adicione uma descrição para o evento..."
               className="min-h-[80px]"
             />
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="email">E-mail do cliente <span className="text-destructive">*</span></Label>
+            <Label htmlFor="email">E-mail do cliente</Label>
             <Input
               id="email"
               type="email"
-              value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="cliente@exemplo.com"
-              className={errors.email ? "border-destructive" : ""}
             />
-            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="startDateTime">Início</Label>
+              <Input
+                id="startDateTime"
+                type="datetime-local"
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
+                className={errors.startDateTime ? "border-destructive" : ""}
+              />
+              {errors.startDateTime && <p className="text-sm text-destructive">{errors.startDateTime}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="endDateTime">Fim</Label>
+              <Input
+                id="endDateTime"
+                type="datetime-local"
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
+                className={errors.endDateTime ? "border-destructive" : ""}
+              />
+              {errors.endDateTime && <p className="text-sm text-destructive">{errors.endDateTime}</p>}
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+             <Label>Cor do Evento</Label>
+             <div className="flex flex-wrap gap-2">
+                {colors.map(color => (
+                  <button
+                    type="button"
+                    key={color}
+                    className={cn(
+                      "h-8 w-8 rounded-full cursor-pointer transition-transform transform hover:scale-110",
+                      selectedColor === color && "ring-2 ring-offset-2 ring-primary"
+                    )}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setSelectedColor(color)}
+                  />
+                ))}
+             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="hostName">Nome do Anfitrião <span className="text-destructive">*</span></Label>
-            <div className="flex items-center">
-              <User className="mr-2 h-4 w-4 text-gray-500" />
-              <Input
-                id="hostName"
-                value={formData.hostName}
-                onChange={(e) => handleChange('hostName', e.target.value)}
-                placeholder="Digite o nome do anfitrião"
-                className={errors.hostName ? "border-destructive" : ""}
-              />
-            </div>
-            {errors.hostName && <p className="text-sm text-destructive">{errors.hostName}</p>}
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="date">Data <span className="text-destructive">*</span></Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  id="date"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !formData.date && "text-muted-foreground",
-                    errors.date && "border-destructive"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.date ? format(formData.date, "dd/MM/yyyy") : <span>Selecione uma data</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={formData.date}
-                  onSelect={(date) => handleChange('date', date)}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-            {errors.date && <p className="text-sm text-destructive">{errors.date}</p>}
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="startTime">Hora início <span className="text-destructive">*</span></Label>
-              <div className="flex items-center">
-                <Clock className="mr-2 h-4 w-4 text-gray-500" />
-                <Input
-                  id="startTime"
-                  type="time"
-                  value={formData.startTime}
-                  onChange={(e) => handleChange('startTime', e.target.value)}
-                  className={errors.startTime ? "border-destructive" : ""}
-                />
-              </div>
-              {errors.startTime && <p className="text-sm text-destructive">{errors.startTime}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="endTime">Hora fim <span className="text-destructive">*</span></Label>
-              <div className="flex items-center">
-                <Clock className="mr-2 h-4 w-4 text-gray-500" />
-                <Input
-                  id="endTime"
-                  type="time"
-                  value={formData.endTime}
-                  onChange={(e) => handleChange('endTime', e.target.value)}
-                  className={errors.endTime ? "border-destructive" : ""}
-                />
-              </div>
-              {errors.endTime && <p className="text-sm text-destructive">{errors.endTime}</p>}
-            </div>
-          </div>
-          
           <DialogFooter className="pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
