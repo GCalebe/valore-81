@@ -27,10 +27,8 @@ export function CalendarView({
   onEventClick,
   onPeriodChange
 }: CalendarViewProps) {
-  // Ajuste: Semana deve ser baseada na data selecionada, e não na data de hoje!
   const getDisplayPeriod = () => {
     const today = new Date();
-    
     switch (timeFilter) {
       case 'hoje':
         return {
@@ -43,8 +41,7 @@ export function CalendarView({
           end: endOfDay(selectedDate)
         };
       case 'semana': {
-        // AGORA: Semana baseada na data selecionada, não mais no "today"
-        const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 }); // Domingo
+        const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
         return {
           start: weekStart,
@@ -74,7 +71,7 @@ export function CalendarView({
     end: displayPeriod.end 
   });
 
-  // Get events for a specific day - buscar em TODOS os eventos disponíveis
+  // Get events for a specific day
   const getEventsForDay = (day: Date) => {
     return events.filter(event => {
       if (!event.start) { return false; }
@@ -87,7 +84,7 @@ export function CalendarView({
     });
   };
 
-  const weekDays = ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'];
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   const goToPreviousMonth = () => {
     const prevMonth = new Date(currentMonth);
@@ -110,7 +107,6 @@ export function CalendarView({
       case 'dia':
         return `${format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: pt })}`;
       case 'semana': {
-        // AGORA: Semana baseada na data selecionada
         const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
         return `Semana de ${format(weekStart, "dd/MM", { locale: pt })} a ${format(weekEnd, "dd/MM", { locale: pt })}`;
@@ -130,8 +126,29 @@ export function CalendarView({
     }
   };
 
+  // Novo layout BEGIN -------------------------------------
+  // Disponível apenas para view de mês e semana!
+  const isMonthOrWeekMode = timeFilter === 'mes' || timeFilter === 'semana';
+
+  // Constrói as weeks (matriz de dias), visual Google Calendar/Monday.com style
+  const buildWeeks = () => {
+    // Sempre 7 colunas por semana (mesmo se semana incompleta)
+    const daysArr = [...days];
+    let weeks: Date[][] = [];
+    for (let i = 0; i < daysArr.length; i += 7) {
+      weeks.push(daysArr.slice(i, i + 7));
+    }
+    return weeks;
+  };
+
+  const weeks = buildWeeks();
+
+  // Trocar cor do highlight de acordo com o tema [opcional]
+  // const highlightClass = "bg-blue-400 dark:bg-blue-700";
+  // const todayBarClass = "bg-blue-500 dark:bg-blue-400";
+
   return (
-    <div className="bg-white dark:bg-gray-800 border rounded-lg">
+    <div className="bg-white dark:bg-gray-800 border rounded-xl shadow-sm overflow-hidden animate-fade-in">
       {/* Calendar Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -149,83 +166,143 @@ export function CalendarView({
         )}
       </div>
 
-      {/* Calendar Grid */}
-      <div className="p-4">
-        {/* Week days header - apenas para visualização mensal e semanal */}
-        {(timeFilter === 'mes' || timeFilter === 'semana') && (
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {weekDays.map(day => (
-              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+      {/* Calendário Estilo Google/Monday */}
+      <div className="px-2 pb-2 pt-3 animate-fade-in">
+        {/* Cabeçalho dos dias da semana */}
+        {isMonthOrWeekMode && (
+          <div className="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700 mb-1">
+            {weekDays.map((day, i) => (
+              <div
+                key={day}
+                className="text-xs font-semibold text-gray-700 dark:text-gray-200 text-center uppercase py-2"
+              >
                 {day}
               </div>
             ))}
           </div>
         )}
 
-        {/* Calendar days */}
-        <div className={`
-          grid gap-1
-          ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'grid-cols-1' : 'grid-cols-7'}
-        `}>
-          {days.map(day => {
-            const dayEvents = getEventsForDay(day);
-            const isSelected = isSameDay(day, selectedDate);
-            const isCurrentMonth = isSameMonth(day, currentMonth);
-            const isToday = isSameDay(day, new Date());
-
-            // No modo semana, mostrar apenas dias da semana vigente, sem opacidade.
-            const dayOpacity = (timeFilter === 'mes' && !isCurrentMonth) ? 'opacity-50' : '';
-
-            return (
+        {/* Grid principal das semanas/dias */}
+        {isMonthOrWeekMode ? (
+          <div>
+            {weeks.map((week, weekIdx) => (
               <div
-                key={day.toString()}
-                className={`
-                  ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'min-h-[300px]' : 'min-h-[120px]'} 
-                  p-1 border border-gray-200 dark:border-gray-700 cursor-pointer
-                  ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}
-                  ${dayOpacity}
-                  ${isToday ? 'ring-2 ring-blue-400' : ''}
-                `}
-                onClick={() => onDateChange(day)}
+                key={weekIdx}
+                className="grid grid-cols-7 border-b last:border-b-0 border-gray-200 dark:border-gray-700"
+                style={{ minHeight: 96 }}
               >
-                <div className={`
-                  text-sm font-medium text-gray-900 dark:text-white mb-1
-                  ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'text-lg text-center border-b pb-2 mb-3' : ''}
-                `}>
-                  {timeFilter === 'hoje' || timeFilter === 'dia' 
-                    ? format(day, "EEEE, dd 'de' MMMM", { locale: pt })
-                    : format(day, 'd')
-                  }
-                </div>
-                
-                {/* Events for this day */}
-                <div className="space-y-1">
-                  {dayEvents.slice(0, timeFilter === 'hoje' || timeFilter === 'dia' ? 10 : 3).map((event, index) => (
+                {week.map((day, i) => {
+                  const dayEvents = getEventsForDay(day);
+                  const isSelected = isSameDay(day, selectedDate);
+                  const isCurrentMonth = isSameMonth(day, currentMonth);
+                  const isToday = isSameDay(day, new Date());
+
+                  return (
                     <div
-                      key={event.id}
+                      key={day.toISOString()}
+                      onClick={() => onDateChange(day)}
                       className={`
-                        text-xs p-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded truncate cursor-pointer
-                        hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors
-                        ${timeFilter === 'hoje' || timeFilter === 'dia' ? 'p-2 text-sm' : ''}
+                        relative px-1 pt-1 pb-4 h-[96px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700 
+                        group transition-colors
+                        ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+                        ${isSelected ? 'ring-2 ring-blue-500 z-10' : ''}
+                        ${!isCurrentMonth ? 'bg-gray-50 dark:bg-gray-900/20 text-gray-400 dark:text-gray-500' : ''}
+                        hover:bg-gray-100/60 dark:hover:bg-gray-700
                       `}
-                      title={`${event.summary} - Clique para editar`}
-                      onClick={(e) => handleEventClick(event, e)}
+                      style={{ minWidth: 0, minHeight: 96 }}
                     >
-                      {format(parseISO(event.start), 'HH:mm')} {event.summary}
+                      {/* Barra azul vertical para hoje */}
+                      {isToday && (
+                        <div className="absolute left-0 top-0 h-full w-1 bg-blue-500 rounded-r-full z-20 animate-fade-in"></div>
+                      )}
+
+                      {/* Número do dia */}
+                      <div className={`
+                        flex items-center justify-between z-10 relative
+                        ${isToday ? 'text-blue-600 font-bold' : (isSelected ? 'text-blue-700 font-bold' : '')}
+                        pl-2 pr-1
+                      `}>
+                        <span className={`
+                          text-xs select-none
+                          ${isCurrentMonth ? '' : 'opacity-50'}
+                        `}>{day.getDate()}</span>
+                      </div>
+
+                      {/* Eventos do dia como barras ocupando largura total */}
+                      <div className="flex flex-col gap-1 mt-1">
+                        {dayEvents.slice(0, 4).map((event, idx) => (
+                          <div
+                            key={event.id}
+                            title={event.summary}
+                            onClick={(e) => handleEventClick(event, e)}
+                            className={`
+                              truncate rounded px-2 py-1 text-xs font-medium cursor-pointer 
+                              mb-[2px]
+                              bg-blue-100 text-blue-900
+                              dark:bg-blue-800/60 dark:text-white
+                              border border-blue-200 dark:border-blue-500/30
+                              hover:bg-blue-300/70 dark:hover:bg-blue-700/90
+                              transition
+                              shadow-sm
+                            `}
+                            style={{
+                              maxWidth: '100%',
+                              width: '100%',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {format(parseISO(event.start), 'HH:mm')} {event.summary}
+                          </div>
+                        ))}
+                        {dayEvents.length > 4 && (
+                          <div className="text-[11px] text-gray-400 mt-1 pl-2">+{dayEvents.length - 4} mais</div>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                  
-                  {dayEvents.length > (timeFilter === 'hoje' || timeFilter === 'dia' ? 10 : 3) && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      +{dayEvents.length - (timeFilter === 'hoje' || timeFilter === 'dia' ? 10 : 3)} more
-                    </div>
-                  )}
-                </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          // Para os modos "hoje" e "dia": manter layout antigo, mas colorir para seguir estilo Google/Monday.
+          <div className="bg-white dark:bg-gray-800 rounded-lg min-h-[300px] border border-gray-100 dark:border-gray-700 p-2">
+            <div className="text-lg font-bold my-2 text-blue-700 dark:text-blue-400">
+              {format(selectedDate, "EEEE, dd 'de' MMMM", { locale: pt })}
+            </div>
+            <div className="space-y-2">
+              {getEventsForDay(selectedDate).map((event) => (
+                <div
+                  key={event.id}
+                  onClick={(e) => handleEventClick(event, e)}
+                  className={`
+                    flex items-center px-3 py-2 rounded bg-blue-100 
+                    dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/70
+                    text-blue-800 dark:text-blue-200 shadow-sm cursor-pointer
+                  `}
+                  style={{
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                  }}
+                  title={event.summary}
+                >
+                  <span className="font-bold mr-2">{format(parseISO(event.start), 'HH:mm')}</span>
+                  <span className="truncate">{event.summary}</span>
+                </div>
+              ))}
+              {getEventsForDay(selectedDate).length === 0 && (
+                <div className="text-gray-400 text-sm px-4 py-5 text-center">
+                  Nenhum evento para este dia.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+// O arquivo src/components/schedule/CalendarView.tsx está ficando extenso (mais de 230 linhas).
+// Recomendo refatorar em arquivos menores se desejar evoluir mais o visual ou modularizar por tipo de view.
