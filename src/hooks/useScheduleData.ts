@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ScheduleEvent {
@@ -19,7 +18,6 @@ export function useScheduleData() {
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { toast } = useToast();
 
   const fetchScheduleData = useCallback(async (showRefreshingState = false) => {
     try {
@@ -70,8 +68,7 @@ export function useScheduleData() {
         console.log(`Successfully processed ${scheduleEvents.length} schedule events`);
         
         if (showRefreshingState) {
-          toast({
-            title: "Dados atualizados",
+          toast.success("Dados atualizados", {
             description: `${scheduleEvents.length} eventos de agenda carregados com sucesso.`,
           });
         }
@@ -80,18 +77,15 @@ export function useScheduleData() {
         setEvents([]);
         
         if (showRefreshingState) {
-          toast({
-            title: "Nenhum evento encontrado",
+          toast.info("Nenhum evento encontrado", {
             description: "Não há eventos de agenda no momento.",
           });
         }
       }
     } catch (error) {
       console.error('Error fetching schedule data:', error);
-      toast({
-        title: "Erro ao carregar agenda",
+      toast.error("Erro ao carregar agenda", {
         description: "Ocorreu um erro ao carregar os eventos da agenda. Tente novamente.",
-        variant: "destructive"
       });
       // Em caso de erro, definir array vazio para evitar estados indefinidos
       setEvents([]);
@@ -99,7 +93,7 @@ export function useScheduleData() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [toast]);
+  }, []);
 
   const refreshScheduleData = useCallback(async () => {
     console.log('Manual refresh of schedule data requested');
