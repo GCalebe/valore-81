@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RefreshCw, Users, Grid, List, Minimize2, Maximize2 } from 'lucide-react';
+import { RefreshCw, Users, Grid, List, Minimize2, Maximize2, X } from 'lucide-react';
 import { Contact } from '@/types/client';
 import { useClientManagement } from '@/hooks/useClientManagement';
 import ClientsHeader from '@/components/clients/ClientsHeader';
 import ClientsTable from '@/components/clients/ClientsTable';
 import KanbanView from '@/components/clients/KanbanView';
-import ClientFilters from '@/components/clients/ClientFilters';
+import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
@@ -27,6 +27,7 @@ const ClientsDashboard = () => {
   const [lastContactFilter, setLastContactFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [isCompactView, setIsCompactView] = useState(false);
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
   const {
     contacts,
@@ -94,8 +95,8 @@ const ClientsDashboard = () => {
     <div className="h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <ClientsHeader />
       
-      <main className="flex-1 flex flex-col w-full px-4 py-6 overflow-hidden">
-        <div className="flex items-center justify-between mb-6">
+      <main className="flex-1 flex flex-col w-full px-4 py-4 overflow-hidden">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
@@ -154,8 +155,8 @@ const ClientsDashboard = () => {
           </div>
         </div>
 
-        <div className="mb-6 space-y-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex flex-1 items-center gap-2">
             <div className="relative flex-1 max-w-sm">
               <Input
                 type="text"
@@ -166,24 +167,41 @@ const ClientsDashboard = () => {
               />
             </div>
             
-            <AddClientDialog
-              isOpen={isAddContactOpen}
-              onOpenChange={setIsAddContactOpen}
-              newContact={newContact}
-              setNewContact={setNewContact}
-              handleAddContact={handleAddContact}
+            <FilterDialog
+              isOpen={isFilterDialogOpen}
+              onOpenChange={setIsFilterDialogOpen}
+              statusFilter={statusFilter}
+              segmentFilter={segmentFilter}
+              lastContactFilter={lastContactFilter}
+              onStatusFilterChange={setStatusFilter}
+              onSegmentFilterChange={setSegmentFilter}
+              onLastContactFilterChange={setLastContactFilter}
+              onClearFilters={() => {
+                handleClearFilters();
+                setIsFilterDialogOpen(false);
+              }}
+              hasActiveFilters={hasActiveFilters}
             />
-          </div>
 
-          <ClientFilters
-            statusFilter={statusFilter}
-            segmentFilter={segmentFilter}
-            lastContactFilter={lastContactFilter}
-            onStatusFilterChange={setStatusFilter}
-            onSegmentFilterChange={setSegmentFilter}
-            onLastContactFilterChange={setLastContactFilter}
-            onClearFilters={handleClearFilters}
-            hasActiveFilters={hasActiveFilters}
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearFilters}
+                className="text-muted-foreground"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Limpar
+              </Button>
+            )}
+          </div>
+          
+          <AddClientDialog
+            isOpen={isAddContactOpen}
+            onOpenChange={setIsAddContactOpen}
+            newContact={newContact}
+            setNewContact={setNewContact}
+            handleAddContact={handleAddContact}
           />
         </div>
 
