@@ -1,18 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Anchor, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Anchor } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { Conversation } from '@/types/chat';
 import { Contact } from '@/types/client';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useDynamicFields } from '@/hooks/useDynamicFields';
 import TagsField from './TagsField';
 import NotesField from './NotesField';
+import ClientInfoTabs from './ClientInfoTabs';
 
 interface ClientInfoPanelProps {
   selectedChat: string | null;
@@ -21,11 +19,13 @@ interface ClientInfoPanelProps {
 
 const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanelProps) => {
   const { settings } = useThemeSettings();
-  const [isInfoOpen, setIsInfoOpen] = useState(true);
-  const [isStatsOpen, setIsStatsOpen] = useState(false);
-  const [isMoreInfoOpen, setIsMoreInfoOpen] = useState(false);
   const [clientData, setClientData] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  // Use the dynamic fields hook
+  const { dynamicFields, loading: dynamicFieldsLoading, updateField } = useDynamicFields(
+    selectedConversation?.sessionId || null
+  );
 
   // Buscar dados do cliente quando o chat for selecionado
   useEffect(() => {
@@ -97,6 +97,12 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
     fetchClientData();
   }, [selectedConversation?.sessionId]);
 
+  const handleFieldUpdate = (fieldId: string, newValue: any) => {
+    updateField(fieldId, newValue);
+    // TODO: Aqui você pode adicionar lógica adicional como sincronização com o servidor
+    console.log(`Field ${fieldId} updated with value:`, newValue);
+  };
+
   if (!selectedChat) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
@@ -111,7 +117,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
     );
   }
 
-  if (loading) {
+  if (loading || dynamicFieldsLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
         <div className="h-8 w-8 border-4 border-t-transparent border-blue-600 rounded-full animate-spin mb-4"></div>
@@ -146,165 +152,15 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           {/* Tags Field */}
           <TagsField selectedChat={selectedChat} />
           
-          <Tabs defaultValue="principal" className="mt-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="principal">Principal</TabsTrigger>
-              <TabsTrigger value="stats">Estatísticas</TabsTrigger>
-              <TabsTrigger value="more">Mais Info</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="principal" className="mt-4 space-y-4">
-              <Collapsible open={isInfoOpen} onOpenChange={setIsInfoOpen}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
-                    Informações Básicas
-                    {isInfoOpen ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 mt-4">
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Email de Contato</h3>
-                    <p>{clientData?.email || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Telefone</h3>
-                    <p>{clientData?.phone || selectedConversation?.phone}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nome do Cliente</h3>
-                    <p>{clientData?.clientName || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tipo de Cliente</h3>
-                    <p>{clientData?.clientType || 'Não informado'}</p>
-                  </Card>
-
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Tamanho do Cliente</h3>
-                    <p>{clientData?.clientSize || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">ID de Navegação</h3>
-                    <p className="text-xs break-all">{clientData?.sessionId || selectedConversation?.sessionId || 'ID não informado'}</p>
-                  </Card>
-                </CollapsibleContent>
-              </Collapsible>
-            </TabsContent>
-            
-            <TabsContent value="stats" className="mt-4 space-y-4">
-              <Collapsible open={isStatsOpen} onOpenChange={setIsStatsOpen}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
-                    Estatísticas
-                    {isStatsOpen ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 mt-4">
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Status</h3>
-                    <Badge variant={clientData?.status === 'Active' ? 'default' : 'secondary'}>
-                      {clientData?.status || 'Inativo'}
-                    </Badge>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Último Contato</h3>
-                    <p>{clientData?.lastContact || 'Não disponível'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Etapa do Funil</h3>
-                    <Badge variant="outline">{clientData?.kanbanStage || 'Não definida'}</Badge>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Vendas</h3>
-                    <p>{clientData?.sales || 0}</p>
-                  </Card>
-                </CollapsibleContent>
-              </Collapsible>
-            </TabsContent>
-
-            <TabsContent value="more" className="mt-4 space-y-4">
-              <Collapsible open={isMoreInfoOpen} onOpenChange={setIsMoreInfoOpen}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
-                    Mais Informações
-                    {isMoreInfoOpen ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 mt-4">
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">CPF/CNPJ</h3>
-                    <p>{clientData?.cpfCnpj || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">ID Cliente Asaas</h3>
-                    <p>{clientData?.asaasCustomerId || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Setor do Cliente</h3>
-                    <p>{clientData?.clientSector || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Orçamento</h3>
-                    <p>{clientData?.budget ? `R$ ${clientData.budget}` : 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Método de Pagamento</h3>
-                    <p>{clientData?.paymentMethod || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Objetivo do Cliente</h3>
-                    <p>{clientData?.clientObjective || 'Não informado'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Usuário Responsável</h3>
-                    <p>{clientData?.responsibleUser || 'Não atribuído'}</p>
-                  </Card>
-                  
-                  <Card className="p-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Etapa da Consulta</h3>
-                    <Badge variant="outline">{clientData?.consultationStage || 'Nova consulta'}</Badge>
-                  </Card>
-
-                  {clientData?.payments && (
-                    <Card className="p-4">
-                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Informações de Pagamento</h3>
-                      <pre className="text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto">
-                        {JSON.stringify(clientData.payments, null, 2)}
-                      </pre>
-                    </Card>
-                  )}
-                </CollapsibleContent>
-              </Collapsible>
-            </TabsContent>
-          </Tabs>
+          {/* Enhanced Tabs System with Dynamic Fields */}
+          <ClientInfoTabs 
+            clientData={clientData}
+            dynamicFields={dynamicFields}
+            onFieldUpdate={handleFieldUpdate}
+          />
           
           {/* Notes Field */}
-          <div className="mt-4">
+          <div className="mt-6">
             <NotesField selectedChat={selectedChat} />
           </div>
         </div>
