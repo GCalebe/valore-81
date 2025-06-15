@@ -58,7 +58,6 @@ const ClientsHeader = ({
   newContact,
   setNewContact,
   handleAddContact,
-  // novas props
   viewMode,
   setViewMode,
   isCompactView,
@@ -75,13 +74,13 @@ const ClientsHeader = ({
       className="text-white shadow-md transition-colors duration-300"
       style={{ backgroundColor: settings.primaryColor }}
     >
-      <div className="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div className="container mx-auto px-2 py-3 flex flex-wrap justify-between items-center gap-4 min-h-[56px]">
         <div className="flex items-center gap-2">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => navigate('/dashboard')}
-            className="text-white hover:bg-white/10"
+            className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -105,13 +104,14 @@ const ClientsHeader = ({
         {/* BLOCO DE BOTOES/CONTROLES DO CABEÇALHO */}
         <div className="flex flex-1 sm:flex-initial items-center justify-end gap-2 flex-wrap">
           {/* Barra de busca */}
-          <div className="relative flex-1 min-w-[200px] sm:flex-initial sm:w-auto sm:max-w-xs">
+          <div className="relative flex-1 min-w-[180px] sm:flex-initial sm:w-auto sm:max-w-xs">
             <Input
               type="text"
               placeholder="Buscar clientes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4 pr-4 py-2 h-9 w-full bg-white/10 text-white placeholder-gray-300 border-gray-400/50 rounded-md focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 focus:ring-0 focus:border-transparent"
+              className="pl-4 pr-4 py-2 h-9 w-full bg-white/10 text-white placeholder-gray-200 border-0 rounded-md focus:bg-white focus:text-gray-900 focus:placeholder-gray-400 focus:ring-0 focus:border-transparent"
+              style={{ minWidth: 160 }}
             />
           </div>
           
@@ -136,14 +136,14 @@ const ClientsHeader = ({
               variant="ghost"
               size="sm"
               onClick={onClearFilters}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/20"
             >
               <X className="h-4 w-4 mr-1" />
               Limpar
             </Button>
           )}
 
-          {/* Botão novo cliente */}
+          {/* Botão novo cliente - mais destacado sobre azul */}
           <AddClientDialog
             isOpen={isAddContactOpen}
             onOpenChange={onAddContactOpenChange}
@@ -153,7 +153,7 @@ const ClientsHeader = ({
           />
 
           {/* Divisão visual */}
-          <div className="h-6 w-px bg-white/20 mx-2 hidden sm:block"></div>
+          <div className="h-6 w-px bg-white/30 mx-2 hidden sm:block"></div>
 
           {/* Botões de visualização/lista/kanban, atualizar e compacto */}
           <div className="flex items-center gap-2">
@@ -166,9 +166,14 @@ const ClientsHeader = ({
                       variant="outline"
                       size="icon"
                       onClick={() => setIsCompactView(!isCompactView)}
-                      className="h-9 w-9 text-white border-white/60 hover:bg-white/10"
+                      className={`h-9 w-9 text-white border-white hover:bg-white/20`}
+                      style={{ background: 'rgba(255,255,255,0.08)' }}
                     >
-                      {isCompactView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                      {isCompactView ? (
+                        <Maximize2 className="h-4 w-4 text-white" />
+                      ) : (
+                        <Minimize2 className="h-4 w-4 text-white" />
+                      )}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -179,12 +184,15 @@ const ClientsHeader = ({
             )}
 
             {/* Selector visualização lista/kanban */}
-            <div className="flex items-center border rounded-lg bg-white/10 border-white/30">
+            <div className="flex items-center border border-white rounded-lg bg-white/10">
               <Button
                 variant={viewMode === 'table' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('table')}
-                className={`rounded-r-none ${viewMode === 'table' ? "bg-white text-blue-700" : "text-white"}`}
+                className={`rounded-r-none ${viewMode === 'table'
+                  ? "bg-white text-blue-700"
+                  : "text-white hover:bg-white/20 border-0"}`}
+                style={viewMode === 'table' ? {} : { borderRight: "1px solid #ffffff55"}}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -192,7 +200,9 @@ const ClientsHeader = ({
                 variant={viewMode === 'kanban' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('kanban')}
-                className={`rounded-l-none ${viewMode === 'kanban' ? "bg-white text-blue-700" : "text-white"}`}
+                className={`rounded-l-none ${viewMode === 'kanban'
+                  ? "bg-white text-blue-700"
+                  : "text-white hover:bg-white/20"}`}
               >
                 <Grid className="h-4 w-4" />
               </Button>
@@ -203,9 +213,10 @@ const ClientsHeader = ({
               variant="outline" 
               onClick={handleRefresh}
               disabled={refreshing}
-              className="flex items-center gap-2 text-white border-white/60 hover:bg-white/10"
+              className="flex items-center gap-2 text-white border-white hover:bg-white/20"
+              style={{ background: 'rgba(255,255,255,0.08)' }}
             >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''} text-white`} />
               <span className="hidden sm:inline">Atualizar</span>
             </Button>
           </div>
@@ -225,3 +236,4 @@ const ClientsHeader = ({
 export default ClientsHeader;
 
 // O arquivo está ficando longo, considere pedir refatoração em componentes menores se desejar.
+
