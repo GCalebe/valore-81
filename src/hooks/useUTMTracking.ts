@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UTMData {
@@ -31,7 +31,6 @@ interface UTMMetrics {
 }
 
 export function useUTMTracking() {
-  const [utmData, setUtmData] = useState<UTMData[]>([]);
   const [metrics, setMetrics] = useState<UTMMetrics>({
     totalCampaigns: 0,
     totalLeads: 0,
@@ -57,112 +56,71 @@ export function useUTMTracking() {
     isStale: true,
   };
 
-  const fetchUTMData = async () => {
+  const refetchUTMData = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('utm_tracking')
-        .select('*')
-        .order('utm_created_at', { ascending: false });
-
-      if (error) {
+      
+      const [metricsResult, recentTrackingResult] = await Promise.all([
+        supabase.rpc('get_utm_metrics'),
+        supabase
+          .from('utm_tracking')
+          .select('*')
+          .order('utm_created_at', { ascending: false })
+          .limit(10)
+      ]);
+      
+      const { data: metricsData, error: metricsError } = metricsResult;
+      const { data: recentTracking, error: recentTrackingError } = recentTrackingResult;
+      
+      if (metricsError || recentTrackingError) {
+        const err = metricsError || recentTrackingError;
+        console.error('Error fetching UTM metrics:', err);
         setMetrics(zeroMetrics);
-        setUtmData([]);
-        setLoading(false);
         return;
       }
+      
+      const { totalLeads, totalCampaigns, totalConversions, topSources, topCampaigns } = metricsData;
+      
+      const conversionRate = totalLeads > 0 ? (totalConversions / totalLeads) * 100 : 0;
 
-      setUtmData(data || []);
-      calculateMetrics(data || []);
+      const campaignData = (topCampaigns || []).map((item: any) => ({
+        name: item.campaign,
+        leads: item.count,
+        conversions: item.conversions,
+        value: item.value || 0
+      }));
+
+      const sourceData = (topSources || []).map((item: any) => ({
+        name: item.source,
+        leads: item.count,
+        conversions: item.conversions
+      }));
+      
+      setMetrics({
+        totalCampaigns: totalCampaigns,
+        totalLeads: totalLeads,
+        conversionRate: Math.round(conversionRate * 100) / 100,
+        topSources,
+        topCampaigns,
+        campaignData,
+        sourceData,
+        recentTracking: recentTracking || [],
+        isStale: false,
+      });
+      
     } catch (error) {
+      console.error('Failed to fetch UTM data with optimized function', error);
       setMetrics(zeroMetrics);
-      setUtmData([]);
-      setLoading(false);
     } finally {
       setLoading(false);
     }
-  };
-
-  const calculateMetrics = (data: UTMData[]) => {
-    const totalLeads = data.length;
-    const conversions = data.filter(item => item.utm_conversion).length;
-    const conversionRate = totalLeads > 0 ? (conversions / totalLeads) * 100 : 0;
-
-    // Top sources
-    const sourceMap = new Map();
-    data.forEach(item => {
-      if (item.utm_source) {
-        const existing = sourceMap.get(item.utm_source) || { count: 0, conversions: 0 };
-        existing.count++;
-        if (item.utm_conversion) existing.conversions++;
-        sourceMap.set(item.utm_source, existing);
-      }
-    });
-
-    const topSources = Array.from(sourceMap.entries())
-      .map(([source, stats]) => ({ source, ...stats }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    // Top campaigns
-    const campaignMap = new Map();
-    data.forEach(item => {
-      if (item.utm_campaign) {
-        const existing = campaignMap.get(item.utm_campaign) || { count: 0, conversions: 0, value: 0 };
-        existing.count++;
-        if (item.utm_conversion) {
-          existing.conversions++;
-          existing.value += item.utm_conversion_value || 0;
-        }
-        campaignMap.set(item.utm_campaign, existing);
-      }
-    });
-
-    const topCampaigns = Array.from(campaignMap.entries())
-      .map(([campaign, stats]) => ({ campaign, ...stats }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    // Campaign data for charts
-    const campaignData = topCampaigns.map(item => ({
-      name: item.campaign,
-      leads: item.count,
-      conversions: item.conversions,
-      value: item.value
-    }));
-
-    // Source data for charts
-    const sourceData = topSources.map(item => ({
-      name: item.source,
-      leads: item.count,
-      conversions: item.conversions
-    }));
-
-    const uniqueCampaigns = new Set(data.map(item => item.utm_campaign).filter(Boolean)).size;
-
-    setMetrics({
-      totalCampaigns: uniqueCampaigns,
-      totalLeads,
-      conversionRate: Math.round(conversionRate * 100) / 100,
-      topSources,
-      topCampaigns,
-      campaignData,
-      sourceData,
-      recentTracking: data.slice(0, 10),
-      isStale: false,
-    });
-  };
-
-  const refetchUTMData = async () => {
-    await fetchUTMData();
-  };
-
-  useEffect(() => {
-    fetchUTMData();
   }, []);
 
+  useEffect(() => {
+    refetchUTMData();
+  }, [refetchUTMData]);
+
   return {
-    utmData,
     metrics,
     loading,
     refetchUTMData

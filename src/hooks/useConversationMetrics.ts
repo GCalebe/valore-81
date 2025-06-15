@@ -19,106 +19,39 @@ export function useConversationMetrics() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const zeroMetrics = {
-    totalConversations: 0,
-    responseRate: 0,
-    totalRespondidas: 0,
-    avgResponseTime: 0,
-    conversionRate: 0,
-    avgClosingTime: 0,
-    conversationData: [],
-    funnelData: [],
-    conversionByTimeData: [],
-    leadsData: [],
-    isStale: true,
-  };
-
   const refetchMetrics = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching conversation metrics from dados_cliente table...');
+      console.log('Fetching conversation metrics with optimized function...');
 
-      // Fetch all clients to calculate metrics
-      const { data: allClients, error: allClientsError } = await supabase
-        .from('dados_cliente')
-        .select('*');
-
-      if (allClientsError) {
-        toast({
-          title: "Erro de conexão",
-          description: "Não foi possível carregar as conversas. Verifique sua conexão ou tente novamente mais tarde.",
-          variant: "destructive"
-        });
-        setMetrics(zeroMetrics);
-        setLoading(false);
-        return; // Evita sobrescrever métricas anteriores
+      const [metricsResult, leadsResult] = await Promise.all([
+        supabase.rpc('get_dashboard_metrics'),
+        supabase
+          .from('dados_cliente')
+          .select('id, nome, created_at, kanban_stage')
+          .order('created_at', { ascending: false })
+          .limit(10)
+      ]);
+      
+      const { data: metricsData, error: metricsError } = metricsResult;
+      const { data: recentLeads, error: leadsError } = leadsResult;
+      
+      if (metricsError) {
+        throw metricsError;
       }
-
-      const totalClients = allClients?.length || 0;
       
-      // Calculate clients with phone (contacted)
-      const clientsWithPhone = allClients?.filter(client => client.telefone && client.telefone.trim() !== '') || [];
-      const totalConversations = clientsWithPhone.length;
+      const { totalConversations, totalRespondidas, totalClients, funnelData: rawFunnelData, conversationData } = metricsData;
       
-      // Calculate clients with marketing project (responded)
-      const clientsWithMarketing = allClients?.filter(client => client.client_name && client.client_name.trim() !== '') || [];
-      const totalRespondidas = clientsWithMarketing.length;
-      
-      // Calculate response rate
       const responseRate = totalConversations > 0 ? Math.round((totalRespondidas / totalConversations) * 100) : 0;
-      
-      // Calculate conversion rate (clients with marketing projects / total clients)
       const conversionRate = totalClients > 0 ? Math.round((totalRespondidas / totalClients) * 100) : 0;
 
-      // Generate conversation data for the last 7 days
-      const conversationData = [];
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const dayStart = new Date(date);
-        dayStart.setHours(0, 0, 0, 0);
-        const dayEnd = new Date(date);
-        dayEnd.setHours(23, 59, 59, 999);
-
-        const dayClients = allClients?.filter(client => {
-          if (!client.created_at) return false;
-          const clientDate = new Date(client.created_at);
-          return clientDate >= dayStart && clientDate <= dayEnd;
-        }) || [];
-
-        const respondidas = dayClients.filter(client => client.client_name && client.client_name.trim() !== '').length;
-        const naoRespondidas = dayClients.length - respondidas;
-
-        conversationData.push({
-          date: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-          respondidas,
-          naoRespondidas
-        });
-      }
-
-      // Calculate funnel data based on kanban stages
-      const kanbanCounts = {};
-      allClients?.forEach(client => {
-        const stage = client.kanban_stage || 'Entraram';
-        kanbanCounts[stage] = (kanbanCounts[stage] || 0) + 1;
-      });
-
-      const funnelStages = [
-        { stage: 'Entraram', value: kanbanCounts['Entraram'] || 0 },
-        { stage: 'Contato feito', value: kanbanCounts['Contato feito'] || 0 },
-        { stage: 'Conversa iniciada', value: kanbanCounts['Conversa iniciada'] || 0 },
-        { stage: 'Reunião', value: kanbanCounts['Reunião'] || 0 },
-        { stage: 'Proposta', value: kanbanCounts['Proposta'] || 0 },
-        { stage: 'Fechamento', value: kanbanCounts['Fechamento'] || 0 }
-      ];
-
-      const maxValue = Math.max(...funnelStages.map(s => s.value), 1);
-      const funnelData = funnelStages.map(stage => ({
+      const maxValue = Math.max(...(rawFunnelData || []).map((s: { value: number }) => s.value), 1);
+      const funnelData = (rawFunnelData || []).map((stage: any) => ({
         ...stage,
         percentage: Math.round((stage.value / maxValue) * 100)
       }));
 
-      // Generate conversion by time data (mock data based on client creation times)
+      // Keep this mocked data for now
       const conversionByTimeData = [
         { day: 'Segunda', morning: Math.floor(totalRespondidas * 0.12), afternoon: Math.floor(totalRespondidas * 0.18), evening: Math.floor(totalRespondidas * 0.08) },
         { day: 'Terça', morning: Math.floor(totalRespondidas * 0.15), afternoon: Math.floor(totalRespondidas * 0.22), evening: Math.floor(totalRespondidas * 0.10) },
@@ -129,16 +62,10 @@ export function useConversationMetrics() {
         { day: 'Domingo', morning: Math.floor(totalRespondidas * 0.05), afternoon: Math.floor(totalRespondidas * 0.10), evening: Math.floor(totalRespondidas * 0.12) }
       ];
 
-      // Generate leads data from recent clients
-      const { data: recentLeads, error: leadsError } = await supabase
-        .from('dados_cliente')
-        .select('id, nome, created_at, kanban_stage')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
       let leadsData = [];
       if (leadsError) {
-        leadsData = metrics.leadsData ?? [];
+        console.error('Error fetching leads data:', leadsError);
+        // On error, we don't want to wipe out existing data
       } else {
         leadsData = recentLeads?.map(lead => ({
           id: lead.id,
@@ -148,34 +75,35 @@ export function useConversationMetrics() {
         })) || [];
       }
 
-      setMetrics({
+      setMetrics(prev => ({
+        ...prev,
         totalConversations,
         responseRate,
         totalRespondidas,
-        avgResponseTime: 2.5,
+        avgResponseTime: 2.5, // mock
         conversionRate,
-        avgClosingTime: Math.round(conversionRate / 2),
+        avgClosingTime: Math.round(conversionRate / 2), // mock
         conversationData,
         funnelData,
         conversionByTimeData,
-        leadsData,
-        isStale: false,
-      });
+        leadsData: leadsData.length > 0 ? leadsData : prev.leadsData,
+        isStale: !!leadsError,
+      }));
 
-      console.log('Conversation metrics updated successfully with real data');
+      console.log('Conversation metrics updated successfully with optimized data');
 
     } catch (error) {
       console.error('Error fetching conversation metrics:', error);
       toast({
-        title: "Erro ao atualizar métricas de conversas",
-        description: "Problema de conexão ou erro inesperado ao atualizar as métricas de conversas.",
+        title: "Erro ao atualizar métricas",
+        description: "Problema ao buscar as métricas de conversas. Os dados podem estar desatualizados.",
         variant: "destructive"
       });
-      // Não sobrescreve os dados anteriores.
+      setMetrics(prev => ({ ...prev, isStale: true }));
     } finally {
       setLoading(false);
     }
-  }, [toast, metrics.leadsData]);
+  }, [toast]);
 
   return { metrics, loading, refetchMetrics };
 }
