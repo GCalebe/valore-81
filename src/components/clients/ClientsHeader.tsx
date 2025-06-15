@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, ShipWheel } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
@@ -86,18 +86,18 @@ const ClientsHeader = ({
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <User className="h-5 w-5 text-white" />
           {settings.logo
             ? (
               <img
                 src={settings.logo}
                 alt="Logo"
-                className="h-7 w-7 object-contain"
+                className="h-8 w-8 object-contain"
               />
             ) : (
-              <span>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill={settings.secondaryColor || "#FBBF24"}><circle cx="12" cy="12" r="10" /></svg>
-              </span>
+              <ShipWheel 
+                className="h-8 w-8"
+                style={{ color: settings.secondaryColor }}
+              />
             )}
           <h1 className="text-xl font-bold text-white"> {settings.brandName} </h1>
           <span className="text-base ml-1 opacity-80 text-white">- Clientes</span>
