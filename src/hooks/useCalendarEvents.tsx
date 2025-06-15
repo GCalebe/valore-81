@@ -54,7 +54,8 @@ export function useCalendarEvents(selectedDate?: Date | null) {
         end: event.end,
         status: event.status || 'confirmed',
         htmlLink: event.htmlLink || '#',
-        attendees: event.attendees || []
+        attendees: event.attendees || [],
+        hostName: event.hostName || ''
       }));
       
       console.log(`${mappedEvents.length} eventos processados com sucesso`);
@@ -121,7 +122,8 @@ export function useCalendarEvents(selectedDate?: Date | null) {
         description: formData.description,
         start: startDateTime,
         end: endDateTime,
-        email: formData.email
+        email: formData.email,
+        hostName: formData.hostName
       };
       
       console.log('Dados do evento para envio:', eventData);
@@ -170,7 +172,8 @@ export function useCalendarEvents(selectedDate?: Date | null) {
         description: formData.description,
         start: startDateTime,
         end: endDateTime,
-        email: formData.email
+        email: formData.email,
+        hostName: formData.hostName
       };
       
       console.log('Dados do evento para edição:', eventData);
@@ -221,7 +224,8 @@ export function useCalendarEvents(selectedDate?: Date | null) {
         description: eventToDelete.description || '',
         start: eventToDelete.start,
         end: eventToDelete.end,
-        email: eventToDelete.attendees?.find(a => a?.email)?.email || ''
+        email: eventToDelete.attendees?.find(a => a?.email)?.email || '',
+        hostName: eventToDelete.hostName || ''
       };
       
       console.log('Dados do evento para exclusão:', eventData);

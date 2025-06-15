@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { format, parse } from 'date-fns';
-import { Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +39,8 @@ export function EventFormDialog({
     email: '',
     date: new Date(),
     startTime: '09:00',
-    endTime: '10:00'
+    endTime: '10:00',
+    hostName: ''
   };
 
   const [formData, setFormData] = useState<EventFormData>(initialFormState);
@@ -56,7 +57,8 @@ export function EventFormDialog({
         email: event.attendees?.find(a => a !== null && a.email)?.email || '',
         date: start,
         startTime: format(start, 'HH:mm'),
-        endTime: format(end, 'HH:mm')
+        endTime: format(end, 'HH:mm'),
+        hostName: event.hostName || ''
       });
     } else {
       setFormData(initialFormState);
@@ -74,6 +76,10 @@ export function EventFormDialog({
       newErrors.email = 'O e-mail é obrigatório';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Digite um e-mail válido';
+    }
+
+    if (!formData.hostName.trim()) {
+      newErrors.hostName = 'O nome do anfitrião é obrigatório';
     }
     
     if (!formData.date) {
@@ -159,6 +165,21 @@ export function EventFormDialog({
               className={errors.email ? "border-destructive" : ""}
             />
             {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="hostName">Nome do Anfitrião <span className="text-destructive">*</span></Label>
+            <div className="flex items-center">
+              <User className="mr-2 h-4 w-4 text-gray-500" />
+              <Input
+                id="hostName"
+                value={formData.hostName}
+                onChange={(e) => handleChange('hostName', e.target.value)}
+                placeholder="Digite o nome do anfitrião"
+                className={errors.hostName ? "border-destructive" : ""}
+              />
+            </div>
+            {errors.hostName && <p className="text-sm text-destructive">{errors.hostName}</p>}
           </div>
           
           <div className="space-y-2">

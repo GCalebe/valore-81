@@ -14,6 +14,7 @@ export type CalendarEvent = {
   htmlLink: string;
   description?: string;
   attendees?: (CalendarAttendee | null)[];
+  hostName?: string;
 };
 
 export type EventFormData = {
@@ -23,6 +24,7 @@ export type EventFormData = {
   date: Date;
   startTime: string;
   endTime: string;
+  hostName: string;
 };
 
 // Appointment types (mock data)
