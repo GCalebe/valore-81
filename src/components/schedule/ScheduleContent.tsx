@@ -4,7 +4,7 @@ import { isSameDay, parseISO, startOfWeek, endOfWeek, isWithinInterval } from 'd
 import { CalendarEvent } from '@/hooks/useCalendarEvents';
 import { Appointment } from '@/types/calendar';
 import { ScheduleFilters } from './ScheduleFilters';
-import { ScheduleTimeFilter } from './ScheduleTimeFilter';
+// import { ScheduleTimeFilter } from './ScheduleTimeFilter';
 import { CalendarView } from './CalendarView';
 import { EventsTable } from './EventsTable';
 import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
@@ -165,10 +165,7 @@ export function ScheduleContent({
         onHostFilterChange={setHostFilter}
         onAddEvent={handleAddEventClick}
       />
-      <ScheduleTimeFilter
-        activeFilter={timeFilter}
-        onFilterChange={setTimeFilter}
-      />
+      {/* Removido ScheduleTimeFilter */}
       {/* Agenda 100% tela, sem Cards/Cabeçalho antigos */}
       <div className="flex-1 w-full flex flex-col min-h-0">       
         {viewMode === 'calendar' ? (
@@ -197,3 +194,4 @@ export function ScheduleContent({
     </div>
   );
 }
+
