@@ -24,6 +24,7 @@ interface ScheduleContentProps {
   openEditEventDialog: (event: CalendarEvent) => void;
   openDeleteEventDialog: (event: CalendarEvent) => void;
   openEventLink: (url: string) => void;
+  onPeriodChange?: (start: Date, end: Date) => void;
 }
 
 export function ScheduleContent({
@@ -41,7 +42,8 @@ export function ScheduleContent({
   setIsAddEventDialogOpen,
   openEditEventDialog,
   openDeleteEventDialog,
-  openEventLink
+  openEventLink,
+  onPeriodChange
 }: ScheduleContentProps) {
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -176,6 +178,7 @@ export function ScheduleContent({
           onMonthChange={setCurrentMonth}
           timeFilter={timeFilter}
           onEventClick={handleEventClick}
+          onPeriodChange={onPeriodChange}
         />
       ) : (
         <div className="bg-white dark:bg-gray-800 border rounded-lg p-6">

@@ -1,10 +1,14 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { CalendarEvent, EventFormData } from '@/types/calendar';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
-export function useCalendarEvents(selectedDate?: Date | null) {
+interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+export function useCalendarEvents(selectedDate?: Date | null, dateRange?: DateRange | null) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -12,16 +16,26 @@ export function useCalendarEvents(selectedDate?: Date | null) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Função para buscar eventos do endpoint n8n
-  const fetchEventsFromN8N = useCallback(async (targetDate?: Date) => {
+  const fetchEventsFromN8N = useCallback(async (targetDate?: Date, targetRange?: DateRange) => {
     try {
       console.log('=== INÍCIO DEBUG EVENTOS ===');
-      console.log('Buscando eventos do n8n para a data:', targetDate || 'hoje');
+      console.log('Buscando eventos do n8n para:', { targetDate, targetRange });
       
-      const dateToUse = targetDate || new Date();
+      let start: string;
+      let end: string;
       
-      // Formatar datas para o endpoint (início e fim do dia)
-      const start = format(dateToUse, 'yyyy-MM-dd') + 'T00:00:00.000-03:00';
-      const end = format(dateToUse, 'yyyy-MM-dd') + 'T23:59:59.999-03:00';
+      if (targetRange) {
+        // Se temos um intervalo, usar ele
+        start = format(targetRange.start, 'yyyy-MM-dd') + 'T00:00:00.000-03:00';
+        end = format(targetRange.end, 'yyyy-MM-dd') + 'T23:59:59.999-03:00';
+        console.log('Usando intervalo de datas:', { start: targetRange.start, end: targetRange.end });
+      } else {
+        // Caso contrário, usar apenas a data específica
+        const dateToUse = targetDate || new Date();
+        start = format(dateToUse, 'yyyy-MM-dd') + 'T00:00:00.000-03:00';
+        end = format(dateToUse, 'yyyy-MM-dd') + 'T23:59:59.999-03:00';
+        console.log('Usando data específica:', dateToUse);
+      }
       
       console.log('Enviando requisição com datas:', { start, end });
       
@@ -132,7 +146,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       setIsLoading(true);
       setError(null);
       
-      const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined);
+      const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
       
       setEvents(fetchedEvents);
       setLastUpdated(new Date());
@@ -149,13 +163,13 @@ export function useCalendarEvents(selectedDate?: Date | null) {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedDate, fetchEventsFromN8N, events.length]);
+  }, [selectedDate, dateRange, fetchEventsFromN8N, events.length]);
 
   // Função para refresh manual
   const refreshEventsPost = useCallback(async () => {
     console.log('Refresh manual dos eventos solicitado');
     try {
-      const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined);
+      const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
       setEvents(fetchedEvents);
       setLastUpdated(new Date());
       setError(null);
@@ -164,7 +178,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       console.error('Erro no refresh manual:', err);
       toast.error("Erro ao atualizar eventos. Tente novamente.");
     }
-  }, [selectedDate, fetchEventsFromN8N]);
+  }, [selectedDate, dateRange, fetchEventsFromN8N]);
 
   // Função para adicionar evento
   const addEvent = async (formData: EventFormData) => {
@@ -327,7 +341,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
     const intervalId = setInterval(async () => {
       console.log('Executando atualização automática dos eventos...');
       try {
-        const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined);
+        const fetchedEvents = await fetchEventsFromN8N(selectedDate || undefined, dateRange || undefined);
         setEvents(fetchedEvents);
         setLastUpdated(new Date());
         setError(null);
@@ -342,7 +356,7 @@ export function useCalendarEvents(selectedDate?: Date | null) {
       console.log('Parando polling automático da agenda');
       clearInterval(intervalId);
     };
-  }, [selectedDate, fetchEventsFromN8N]);
+  }, [selectedDate, dateRange, fetchEventsFromN8N]);
 
   return { 
     events, 

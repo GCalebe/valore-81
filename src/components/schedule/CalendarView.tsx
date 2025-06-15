@@ -14,6 +14,7 @@ interface CalendarViewProps {
   onMonthChange: (month: Date) => void;
   timeFilter: 'hoje' | 'mes' | 'semana' | 'dia';
   onEventClick?: (event: CalendarEvent) => void;
+  onPeriodChange?: (start: Date, end: Date) => void;
 }
 
 export function CalendarView({ 
@@ -23,7 +24,8 @@ export function CalendarView({
   currentMonth, 
   onMonthChange,
   timeFilter,
-  onEventClick
+  onEventClick,
+  onPeriodChange
 }: CalendarViewProps) {
   // Determinar o período a ser exibido baseado no filtro
   const getDisplayPeriod = () => {
@@ -57,6 +59,14 @@ export function CalendarView({
   };
 
   const displayPeriod = getDisplayPeriod();
+  
+  // Notificar o componente pai sobre mudança de período quando necessário
+  React.useEffect(() => {
+    if (onPeriodChange && (timeFilter === 'mes' || timeFilter === 'semana')) {
+      onPeriodChange(displayPeriod.start, displayPeriod.end);
+    }
+  }, [timeFilter, currentMonth, selectedDate, onPeriodChange]);
+
   const days = eachDayOfInterval({ 
     start: displayPeriod.start, 
     end: displayPeriod.end 

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
@@ -8,6 +8,7 @@ import { useScheduleState } from '@/hooks/useScheduleState';
 import ScheduleHeader from '@/components/schedule/ScheduleHeader';
 import { ScheduleContent } from '@/components/schedule/ScheduleContent';
 import { ScheduleDialogs } from '@/components/schedule/ScheduleDialogs';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 const Schedule = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -42,6 +43,15 @@ const Schedule = () => {
     confirmDelete
   } = useScheduleState();
   
+  // Estado para controlar o período de busca de eventos
+  const [dateRange, setDateRange] = useState<{start: Date, end: Date} | null>(() => {
+    const currentMonth = selectedDate || new Date();
+    return {
+      start: startOfMonth(currentMonth),
+      end: endOfMonth(currentMonth)
+    };
+  });
+
   const {
     events,
     isLoading: isEventsLoading,
@@ -52,7 +62,7 @@ const Schedule = () => {
     editEvent,
     deleteEvent,
     isSubmitting
-  } = useCalendarEvents(selectedDate);
+  } = useCalendarEvents(selectedDate, dateRange);
 
   const {
     events: scheduleEvents,
@@ -78,6 +88,11 @@ const Schedule = () => {
     } catch (error) {
       console.error('Erro ao atualizar dados:', error);
     }
+  };
+
+  const handlePeriodChange = (start: Date, end: Date) => {
+    console.log('Período alterado:', { start, end });
+    setDateRange({ start, end });
   };
   
   useEffect(() => {
@@ -163,6 +178,7 @@ const Schedule = () => {
         openEditEventDialog={openEditEventDialog}
         openDeleteEventDialog={openDeleteEventDialog}
         openEventLink={openEventLink}
+        onPeriodChange={handlePeriodChange}
       />
 
       <ScheduleDialogs 
