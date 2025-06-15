@@ -1,8 +1,10 @@
+
 import React, { useRef, useState, useCallback } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import KanbanStageColumn from './KanbanStageColumn';
 import { Contact } from '@/types/client';
 import { KanbanStage } from "@/hooks/useKanbanStages";
+import { useContactsByKanbanStage } from "@/hooks/useContactsByKanbanStage";
 
 interface KanbanViewProps {
   contacts: Contact[];
@@ -36,31 +38,15 @@ const KanbanView = ({
     (contact.phone && contact.phone.includes(searchTerm))
   );
 
-  // Diagnóstico: inclui console.log para entender como estão os valores dos estágios dos contatos
-  // E garantir que contatos sem estágio fiquem no primeiro estágio da lista
-  const stageTitles = stages.map(s => s.title);
-  const contactsByStage: Record<string, Contact[]> = {};
+  // Novo agrupamento usando hook refatorado
+  const contactsByStage = useContactsByKanbanStage(filteredContacts, stages);
 
-  // Inicializar cada estágio com array vazio
-  for (const stage of stages) {
-    contactsByStage[stage.title] = [];
-  }
-
-  // Distribuir contatos nos estágios:
-  for (const contact of filteredContacts) {
-    let assignedStage = contact.kanbanStage;
-    // Fallback: se o estágio não existe mais, joga para o primeiro estágio
-    if (!stageTitles.includes(assignedStage)) {
-      assignedStage = stages[0]?.title || '';
-      console.warn(
-        `[Kanban] Cliente "${contact.name}" (${contact.id}) está com kanbanStage="${contact.kanbanStage}" mas este estágio não existe. Alocando para "${assignedStage}"`
-      );
-    }
-    if (assignedStage) {
-      contactsByStage[assignedStage] = contactsByStage[assignedStage] || [];
-      contactsByStage[assignedStage].push(contact);
-    }
-  }
+  // Log extra para diagnosticar shape recebidos dos contatos e stages
+  React.useEffect(() => {
+    console.log("[KanbanView] Stages disponíveis:", stages.map(s => s.title));
+    console.log("[KanbanView] Contatos filtrados:", filteredContacts);
+    console.log("[KanbanView] Agrupamento:", contactsByStage);
+  }, [filteredContacts, stages, contactsByStage]);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
