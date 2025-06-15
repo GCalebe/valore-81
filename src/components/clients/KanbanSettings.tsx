@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Settings, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -57,7 +56,7 @@ export function KanbanSettings() {
             <DialogDescription>
               Adicione, remova ou reordene as etapas do seu funil de clientes.
             </DialogDescription>
-          </Header>
+          </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
               {stages.map((stage, index) => (
