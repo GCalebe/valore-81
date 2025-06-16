@@ -22,20 +22,20 @@ const CustomFieldRenderer = ({ field, value, onChange, validationError }: Custom
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={`Digite ${field.field_name.toLowerCase()}`}
-            className={validationError ? 'border-red-500 focus:border-red-500' : ''}
+            className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 ${validationError ? 'border-red-500 focus:border-red-500' : ''}`}
           />
         );
 
       case 'single_select':
         return (
           <Select value={value || 'none'} onValueChange={(val) => onChange(val === 'none' ? null : val)}>
-            <SelectTrigger className={validationError ? 'border-red-500 focus:border-red-500' : ''}>
+            <SelectTrigger className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${validationError ? 'border-red-500 focus:border-red-500' : ''}`}>
               <SelectValue placeholder={`Selecione ${field.field_name.toLowerCase()}`} />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">Nenhum</SelectItem>
+            <SelectContent className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
+              <SelectItem value="none" className="text-gray-900 dark:text-white">Nenhum</SelectItem>
               {field.field_options && Array.isArray(field.field_options) && field.field_options.map((option) => (
-                <SelectItem key={option} value={option}>
+                <SelectItem key={option} value={option} className="text-gray-900 dark:text-white">
                   {option}
                 </SelectItem>
               ))}
@@ -59,9 +59,9 @@ const CustomFieldRenderer = ({ field, value, onChange, validationError }: Custom
                       onChange(selectedValues.filter((v: string) => v !== option));
                     }
                   }}
-                  className="rounded border-gray-300"
+                  className="rounded border-gray-300 dark:border-gray-600 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700"
                 />
-                <span className="text-sm">{option}</span>
+                <span className="text-sm text-gray-900 dark:text-white">{option}</span>
               </label>
             ))}
           </div>
@@ -74,14 +74,14 @@ const CustomFieldRenderer = ({ field, value, onChange, validationError }: Custom
 
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium flex items-center gap-2">
+      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
         {field.field_name}
         {field.is_required && <span className="text-red-500 ml-1">*</span>}
         {validationError && <AlertCircle className="h-4 w-4 text-red-500" />}
       </Label>
       {renderField()}
       {validationError && (
-        <p className="text-sm text-red-600 flex items-center gap-1">
+        <p className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
           <AlertCircle className="h-3 w-3" />
           {validationError}
         </p>

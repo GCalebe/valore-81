@@ -31,9 +31,9 @@ const getProgressColor = (stage: string) => {
   const winStages = ['Fatura paga – ganho'];
   const lossStages = ['Projeto cancelado – perdido'];
   
-  if (winStages.includes(stage)) return 'bg-green-500';
-  if (lossStages.includes(stage)) return 'bg-red-500';
-  return 'bg-blue-500';
+  if (winStages.includes(stage)) return 'bg-green-500 dark:bg-green-400';
+  if (lossStages.includes(stage)) return 'bg-red-500 dark:bg-red-400';
+  return 'bg-blue-500 dark:bg-blue-400';
 };
 
 const ConsultationStageSelector = ({ value, onChange }: ConsultationStageSelectorProps) => {
@@ -43,16 +43,16 @@ const ConsultationStageSelector = ({ value, onChange }: ConsultationStageSelecto
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Funil</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Funil</h3>
       </div>
       
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">
           <SelectValue placeholder="Selecione o estágio" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
           {consultationStages.map((stage) => (
-            <SelectItem key={stage} value={stage}>
+            <SelectItem key={stage} value={stage} className="text-gray-900 dark:text-white">
               {stage}
             </SelectItem>
           ))}
@@ -60,7 +60,7 @@ const ConsultationStageSelector = ({ value, onChange }: ConsultationStageSelecto
       </Select>
 
       <div className="space-y-2">
-        <div className="flex justify-between text-xs text-gray-500">
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
           <span>Progresso</span>
           <span>{Math.round(progressValue)}%</span>
         </div>
