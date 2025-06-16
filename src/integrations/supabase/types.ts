@@ -9,7 +9,46 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      chat_messages: {
+      audit_log: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          operation: string
+          record_id: string
+          table_name: string
+          user_agent: string | null
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation: string
+          record_id: string
+          table_name: string
+          user_agent?: string | null
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          operation?: string
+          record_id?: string
+          table_name?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages_backup: {
         Row: {
           active: boolean | null
           bot_message: string | null
@@ -45,7 +84,7 @@ export type Database = {
         }
         Relationships: []
       }
-      chats: {
+      chats_backup: {
         Row: {
           app: string | null
           conversation_id: string | null
@@ -122,6 +161,7 @@ export type Database = {
           contract_number: string | null
           cpf_cnpj: string | null
           created_at: string | null
+          deleted_at: string | null
           email: string | null
           id: string
           kanban_stage: string | null
@@ -140,6 +180,7 @@ export type Database = {
           status: string | null
           tags: string[] | null
           unread_count: number | null
+          updated_at: string | null
           uploaded_files: string[] | null
         }
         Insert: {
@@ -156,6 +197,7 @@ export type Database = {
           contract_number?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           kanban_stage?: string | null
@@ -174,6 +216,7 @@ export type Database = {
           status?: string | null
           tags?: string[] | null
           unread_count?: number | null
+          updated_at?: string | null
           uploaded_files?: string[] | null
         }
         Update: {
@@ -190,6 +233,7 @@ export type Database = {
           contract_number?: string | null
           cpf_cnpj?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: string
           kanban_stage?: string | null
@@ -208,6 +252,7 @@ export type Database = {
           status?: string | null
           tags?: string[] | null
           unread_count?: number | null
+          updated_at?: string | null
           uploaded_files?: string[] | null
         }
         Relationships: []
@@ -228,6 +273,7 @@ export type Database = {
           session_id: string
           time: string | null
           unread: number | null
+          updated_at: string | null
         }
         Insert: {
           address?: string | null
@@ -244,6 +290,7 @@ export type Database = {
           session_id: string
           time?: string | null
           unread?: number | null
+          updated_at?: string | null
         }
         Update: {
           address?: string | null
@@ -260,6 +307,7 @@ export type Database = {
           session_id?: string
           time?: string | null
           unread?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -346,6 +394,7 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          deleted_at: string | null
           field_name: string
           field_options: Json | null
           field_type: string
@@ -356,6 +405,7 @@ export type Database = {
         Insert: {
           category?: string
           created_at?: string
+          deleted_at?: string | null
           field_name: string
           field_options?: Json | null
           field_type: string
@@ -366,6 +416,7 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          deleted_at?: string | null
           field_name?: string
           field_options?: Json | null
           field_type?: string
@@ -375,7 +426,7 @@ export type Database = {
         }
         Relationships: []
       }
-      dados_cliente: {
+      dados_cliente_backup: {
         Row: {
           asaas_customer_id: string | null
           client_name: string | null
@@ -759,16 +810,83 @@ export type Database = {
             referencedRelation: "contacts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "utm_tracking_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "v_clients_complete"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
+      dados_cliente: {
+        Row: {
+          asaas_customer_id: string | null
+          client_name: string | null
+          client_size: string | null
+          client_type: string | null
+          cpf_cnpj: string | null
+          created_at: string | null
+          email: string | null
+          id: number | null
+          kanban_stage: string | null
+          nome: string | null
+          nome_pet: string | null
+          payments: Json | null
+          porte_pet: string | null
+          raca_pet: string | null
+          sessionid: string | null
+          telefone: string | null
+        }
+        Relationships: []
+      }
       latest_chat_messages: {
         Row: {
           id: number | null
           message: Json | null
           message_time: string | null
           session_id: string | null
+        }
+        Relationships: []
+      }
+      v_clients_complete: {
+        Row: {
+          address: string | null
+          asaas_customer_id: string | null
+          budget: number | null
+          client_name: string | null
+          client_objective: string | null
+          client_sector: string | null
+          client_size: string | null
+          client_type: string | null
+          consultation_stage: string | null
+          contract_date: string | null
+          contract_number: string | null
+          cpf_cnpj: string | null
+          created_at: string | null
+          custom_fields: Json | null
+          deleted_at: string | null
+          email: string | null
+          id: string | null
+          kanban_stage: string | null
+          last_contact: string | null
+          last_message: string | null
+          last_message_time: string | null
+          loss_reason: string | null
+          name: string | null
+          notes: string | null
+          payment: string | null
+          payment_method: string | null
+          phone: string | null
+          responsible_user: string | null
+          sales: number | null
+          session_id: string | null
+          status: string | null
+          tags: string[] | null
+          unread_count: number | null
+          uploaded_files: string[] | null
         }
         Relationships: []
       }
@@ -798,6 +916,10 @@ export type Database = {
           metadata: Json
           similarity: number
         }[]
+      }
+      soft_delete_record: {
+        Args: { table_name: string; record_id: string }
+        Returns: boolean
       }
     }
     Enums: {
