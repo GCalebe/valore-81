@@ -1,12 +1,14 @@
 
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, RotateCcw, Palette } from 'lucide-react';
+import { ArrowLeft, Upload, RotateCcw, Palette, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 
@@ -14,6 +16,7 @@ const ThemeSettings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { settings, updateSettings, resetSettings } = useThemeSettings();
+  const { theme, setTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +52,16 @@ const ThemeSettings = () => {
     });
   };
 
+  const handleThemeChange = (value: string) => {
+    if (value && (value === 'light' || value === 'dark' || value === 'system')) {
+      setTheme(value);
+      toast({
+        title: "Tema alterado",
+        description: `Tema alterado para ${value === 'light' ? 'claro' : value === 'dark' ? 'escuro' : 'sistema'}.`,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <DashboardHeader />
@@ -74,6 +87,55 @@ const ThemeSettings = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Configurações */}
           <div className="space-y-6">
+            {/* Modo de Tema */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Modo de Tema</CardTitle>
+                <CardDescription>
+                  Escolha entre tema claro, escuro ou seguir as configurações do sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Label>Selecione o modo de tema</Label>
+                  <ToggleGroup
+                    type="single"
+                    value={theme}
+                    onValueChange={handleThemeChange}
+                    className="grid grid-cols-3 gap-2"
+                  >
+                    <ToggleGroupItem
+                      value="light"
+                      aria-label="Tema claro"
+                      className="flex flex-col items-center gap-2 p-4"
+                    >
+                      <Sun className="h-4 w-4" />
+                      <span className="text-sm">Claro</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                      value="dark"
+                      aria-label="Tema escuro"
+                      className="flex flex-col items-center gap-2 p-4"
+                    >
+                      <Moon className="h-4 w-4" />
+                      <span className="text-sm">Escuro</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                      value="system"
+                      aria-label="Sistema"
+                      className="flex flex-col items-center gap-2 p-4"
+                    >
+                      <Monitor className="h-4 w-4" />
+                      <span className="text-sm">Sistema</span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    O modo sistema segue as configurações de tema do seu dispositivo
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Nome da Marca */}
             <Card>
               <CardHeader>
