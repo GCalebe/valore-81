@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -148,7 +149,7 @@ const AddClientDialog = ({
           Novo Cliente
         </Button>
       </DialogTrigger>
-      <DialogContent className="fixed top-[10%] left-1/2 transform -translate-x-1/2 w-[1200px] h-[80vh] max-w-none overflow-hidden bg-white dark:bg-gray-800 border shadow-lg">
+      <DialogContent className="w-[95vw] max-w-[1400px] h-[95vh] max-h-none overflow-hidden bg-white dark:bg-gray-800 border shadow-lg">
         <DialogHeader className="flex-shrink-0 pb-4">
           <DialogTitle className="text-xl font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
             <UserPlus className="h-5 w-5 text-green-500" />
