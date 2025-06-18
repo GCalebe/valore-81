@@ -36,8 +36,8 @@ const ClientFormTabs = ({
   onDocumentsCategoriesChange,
 }: ClientFormTabsProps) => {
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-100 dark:bg-gray-700">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
+      <TabsList className="grid w-full grid-cols-3 mb-4 bg-gray-100 dark:bg-gray-700">
         <TabsTrigger value="basico" className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300">
           Informações Básicas
           {(validationErrors.name || validationErrors.phone || validationErrors.email) && (
@@ -53,32 +53,34 @@ const ClientFormTabs = ({
         <TabsTrigger value="documentos" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300">Documentos</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="basico" className="space-y-6">
-        <BasicInfoForm
-          newContact={newContact}
-          validationErrors={validationErrors}
-          basicCategories={basicCategories}
-          onInputChange={onInputChange}
-          onCategoriesChange={onBasicCategoriesChange}
-        />
-      </TabsContent>
+      <div className="flex-1 overflow-y-auto">
+        <TabsContent value="basico" className="space-y-6 mt-0">
+          <BasicInfoForm
+            newContact={newContact}
+            validationErrors={validationErrors}
+            basicCategories={basicCategories}
+            onInputChange={onInputChange}
+            onCategoriesChange={onBasicCategoriesChange}
+          />
+        </TabsContent>
 
-      <TabsContent value="comercial" className="space-y-6">
-        <CommercialInfoForm
-          newContact={newContact}
-          validationErrors={validationErrors}
-          commercialCategories={commercialCategories}
-          onInputChange={onInputChange}
-          onCategoriesChange={onCommercialCategoriesChange}
-        />
-      </TabsContent>
+        <TabsContent value="comercial" className="space-y-6 mt-0">
+          <CommercialInfoForm
+            newContact={newContact}
+            validationErrors={validationErrors}
+            commercialCategories={commercialCategories}
+            onInputChange={onInputChange}
+            onCategoriesChange={onCommercialCategoriesChange}
+          />
+        </TabsContent>
 
-      <TabsContent value="documentos" className="space-y-6">
-        <DocumentsForm
-          documentsCategories={documentsCategories}
-          onCategoriesChange={onDocumentsCategoriesChange}
-        />
-      </TabsContent>
+        <TabsContent value="documentos" className="space-y-6 mt-0">
+          <DocumentsForm
+            documentsCategories={documentsCategories}
+            onCategoriesChange={onDocumentsCategoriesChange}
+          />
+        </TabsContent>
+      </div>
     </Tabs>
   );
 };

@@ -5,7 +5,7 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/di
 
 const ClientFormHeader = () => {
   return (
-    <DialogHeader className="flex-shrink-0 pb-4">
+    <DialogHeader className="flex-shrink-0 pb-2">
       <DialogTitle className="text-xl font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
         <UserPlus className="h-5 w-5 text-green-500" />
         Adicionar Novo Cliente Náutico

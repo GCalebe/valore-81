@@ -144,14 +144,14 @@ const AddClientDialog = ({
           Novo Cliente
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] max-w-[1400px] h-[95vh] max-h-none overflow-hidden bg-white dark:bg-gray-800 border shadow-lg">
+      <DialogContent className="w-[95vw] max-w-[1400px] h-[95vh] max-h-none overflow-hidden bg-white dark:bg-gray-800 border shadow-lg flex flex-col">
         <ClientFormHeader />
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto space-y-4">
           <ValidationErrorAlert errors={validationErrors} />
 
           {/* Tags Section */}
-          <div className="mb-4">
+          <div>
             <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
               ADICIONAR TAGS
             </Label>
@@ -162,7 +162,7 @@ const AddClientDialog = ({
           </div>
 
           {/* Consultation Stage Section */}
-          <div className="mb-6">
+          <div>
             <ConsultationStageSelector
               value={newContact.consultationStage || 'Nova consulta'}
               onChange={(stage) => handleInputChange('consultationStage', stage)}
@@ -170,22 +170,24 @@ const AddClientDialog = ({
           </div>
 
           {/* Main content with tabs */}
-          <ClientFormTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            newContact={newContact}
-            validationErrors={validationErrors}
-            basicCategories={basicCategories}
-            commercialCategories={commercialCategories}
-            documentsCategories={documentsCategories}
-            onInputChange={handleInputChange}
-            onBasicCategoriesChange={setBasicCategories}
-            onCommercialCategoriesChange={setCommercialCategories}
-            onDocumentsCategoriesChange={setDocumentsCategories}
-          />
+          <div className="flex-1">
+            <ClientFormTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              newContact={newContact}
+              validationErrors={validationErrors}
+              basicCategories={basicCategories}
+              commercialCategories={commercialCategories}
+              documentsCategories={documentsCategories}
+              onInputChange={handleInputChange}
+              onBasicCategoriesChange={setBasicCategories}
+              onCommercialCategoriesChange={setCommercialCategories}
+              onDocumentsCategoriesChange={setDocumentsCategories}
+            />
+          </div>
         </div>
 
-        <DialogFooter className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-600 flex-shrink-0 mt-6">
+        <DialogFooter className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-600 flex-shrink-0">
           <div className="text-sm text-gray-500 dark:text-gray-400">
             * Campos obrigatórios
           </div>
