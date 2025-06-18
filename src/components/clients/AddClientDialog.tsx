@@ -48,7 +48,6 @@ const AddClientDialog = ({
   // State for dynamic categories per tab
   const [basicCategories, setBasicCategories] = useState<DynamicCategory[]>([]);
   const [commercialCategories, setCommercialCategories] = useState<DynamicCategory[]>([]);
-  const [personalizedCategories, setPersonalizedCategories] = useState<DynamicCategory[]>([]);
   const [documentsCategories, setDocumentsCategories] = useState<DynamicCategory[]>([]);
 
   useEffect(() => {
@@ -101,7 +100,6 @@ const AddClientDialog = ({
       setActiveTab('basico');
       setBasicCategories([]);
       setCommercialCategories([]);
-      setPersonalizedCategories([]);
       setDocumentsCategories([]);
       
       toast({
@@ -150,7 +148,7 @@ const AddClientDialog = ({
           Novo Cliente
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl max-h-[90vh] w-[95vw] overflow-hidden bg-white dark:bg-gray-800 border shadow-lg">
+      <DialogContent className="fixed top-[10%] left-1/2 transform -translate-x-1/2 w-[1200px] h-[80vh] max-w-none overflow-hidden bg-white dark:bg-gray-800 border shadow-lg">
         <DialogHeader className="flex-shrink-0 pb-4">
           <DialogTitle className="text-xl font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
             <UserPlus className="h-5 w-5 text-green-500" />
@@ -198,7 +196,7 @@ const AddClientDialog = ({
 
           {/* Main content with tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6 bg-gray-100 dark:bg-gray-700">
+            <TabsList className="grid w-full grid-cols-3 mb-6 bg-gray-100 dark:bg-gray-700">
               <TabsTrigger value="basico" className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300">
                 Informações Básicas
                 {(validationErrors.name || validationErrors.phone || validationErrors.email) && (
@@ -211,7 +209,6 @@ const AddClientDialog = ({
                   <AlertCircle className="h-3 w-3 text-red-500" />
                 )}
               </TabsTrigger>
-              <TabsTrigger value="personalizados" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300">Campos Personalizados</TabsTrigger>
               <TabsTrigger value="documentos" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300">Documentos</TabsTrigger>
             </TabsList>
 
@@ -366,28 +363,6 @@ const AddClientDialog = ({
                     tabName="Comercial"
                     categories={commercialCategories}
                     onCategoriesChange={setCommercialCategories}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="personalizados" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Coluna 1 - Campos Personalizados Existentes */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Campos Personalizados</h3>
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <p>Nenhum campo personalizado configurado.</p>
-                    <p className="text-sm mt-2">Use as categorias dinâmicas ao lado para criar novos campos.</p>
-                  </div>
-                </div>
-
-                {/* Coluna 2 - Categorias Dinâmicas */}
-                <div className="space-y-4">
-                  <DynamicCategoryManager
-                    tabName="Personalizada"
-                    categories={personalizedCategories}
-                    onCategoriesChange={setPersonalizedCategories}
                   />
                 </div>
               </div>
