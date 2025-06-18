@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -377,25 +376,10 @@ const AddClientDialog = ({
                 {/* Coluna 1 - Campos Personalizados Existentes */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Campos Personalizados</h3>
-                  {loading ? (
-                    <div className="text-center py-8 text-gray-600 dark:text-gray-400">Carregando campos personalizados...</div>
-                  ) : customFields.length > 0 ? (
-                    <div className="space-y-4">
-                      {customFields.map((field) => (
-                        <CustomFieldRenderer
-                          key={field.id}
-                          field={field}
-                          value={customValues[field.id]}
-                          onChange={(value) => handleCustomFieldChange(field.id, value)}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <p>Nenhum campo personalizado configurado.</p>
-                      <p className="text-sm mt-2">Use as categorias dinâmicas ao lado para criar novos campos.</p>
-                    </div>
-                  )}
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <p>Nenhum campo personalizado configurado.</p>
+                    <p className="text-sm mt-2">Use as categorias dinâmicas ao lado para criar novos campos.</p>
+                  </div>
                 </div>
 
                 {/* Coluna 2 - Categorias Dinâmicas */}
