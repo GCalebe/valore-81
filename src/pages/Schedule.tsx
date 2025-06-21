@@ -5,6 +5,7 @@ import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCale
 import { useScheduleData } from '@/hooks/useScheduleData';
 import { useScheduleState } from '@/hooks/useScheduleState';
 import ScheduleHeader from '@/components/schedule/ScheduleHeader';
+import ScheduleFiltersSection from '@/components/schedule/ScheduleFiltersSection';
 import { ScheduleContent } from '@/components/schedule/ScheduleContent';
 import { ScheduleDialogs } from '@/components/schedule/ScheduleDialogs';
 import { startOfMonth, endOfMonth } from 'date-fns';
@@ -74,6 +75,10 @@ const Schedule = () => {
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
   
   const [calendarViewTab, setCalendarViewTab] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
+  
+  // Estados para filtros
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [hostFilter, setHostFilter] = useState('all');
 
   const handleRefreshAll = useCallback(async () => {
     console.log('Atualizando todos os dados...');
@@ -163,7 +168,16 @@ const Schedule = () => {
         lastUpdated={lastUpdated}
         view={calendarViewTab}
         onViewChange={setCalendarViewTab}
-        // onOpenFilter not usado por enquanto, pode adicionar depois
+        onOpenFilter={() => {}}
+      />
+      
+      <ScheduleFiltersSection
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        hostFilter={hostFilter}
+        onHostFilterChange={setHostFilter}
+        onRefresh={handleRefreshAll}
+        isRefreshing={isAnyRefreshing}
       />
       
       <ScheduleContent 

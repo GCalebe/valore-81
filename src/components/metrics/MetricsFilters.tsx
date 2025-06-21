@@ -1,43 +1,47 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Calendar, Filter } from 'lucide-react';
+import * as React from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 
-interface MetricsFiltersProps {
-  dateFilter: string;
-  onDateFilterChange: (filter: string) => void;
-}
-
-const MetricsFilters: React.FC<MetricsFiltersProps> = ({ dateFilter, onDateFilterChange }) => {
-  const filterOptions = [
-    { value: 'day', label: 'Hoje' },
-    { value: 'week', label: 'Esta Semana' },
-    { value: 'month', label: 'Este Mês' }
-  ];
+export function MetricsFilters({ customDate, setCustomDate }) {
+  const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex items-center gap-2">
-      <Filter className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-      <div className="flex gap-1 bg-white dark:bg-gray-800 rounded-lg p-1 shadow-sm border dark:border-gray-700">
-        {filterOptions.map((option) => (
-          <Button
-            key={option.value}
-            variant={dateFilter === option.value ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onDateFilterChange(option.value)}
-            className={`text-xs ${
-              dateFilter === option.value 
-                ? 'bg-petshop-blue text-white dark:bg-blue-600' 
-                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-          >
-            <Calendar className="h-3 w-3 mr-1" />
-            {option.label}
+    <div className="flex items-center space-x-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="w-[150px] justify-start">
+            {customDate ? customDate.toLocaleDateString() : "Personalizado"}
           </Button>
-        ))}
-      </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            selectedDate={customDate}
+            onDateChange={(date) => {
+              setCustomDate(date);
+              setOpen(false);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      <Button variant="outline" onClick={() => { setCustomDate(new Date()); setOpen(false); }}>Hoje</Button>
+      <Button variant="outline" onClick={() => {
+        const now = new Date();
+        const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+        setCustomDate(firstDayOfWeek);
+        setOpen(false);
+      }}>Semana</Button>
+      <Button variant="outline" onClick={() => {
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        setCustomDate(firstDayOfMonth);
+        setOpen(false);
+      }}>Mês</Button>
     </div>
   );
-};
+}
+
+MetricsFilters.displayName = "MetricsFilters";
 
 export default MetricsFilters;

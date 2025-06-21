@@ -14,9 +14,10 @@ import ChatMetricsTab from '@/components/metrics/ChatMetricsTab';
 import UTMMetricsTab from '@/components/metrics/UTMMetricsTab';
 
 const MetricsDashboard = () => {
-  const { stats, loading: statsLoading, refetchStats } = useClientStats();
-  const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics();
   const [dateFilter, setDateFilter] = useState('week');
+  const [customDate, setCustomDate] = useState<Date>();
+  const { stats, loading: statsLoading, refetchStats } = useClientStats(dateFilter, customDate);
+  const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics(dateFilter, customDate);
   const [selectedCampaign, setSelectedCampaign] = useState('all');
   const [selectedDevice, setSelectedDevice] = useState('all');
   
@@ -30,7 +31,7 @@ const MetricsDashboard = () => {
     refetchStats();
     refetchMetrics();
     refetchUTMData();
-  }, [refetchStats, refetchMetrics, refetchUTMData, selectedCampaign, selectedDevice]);
+  }, [refetchStats, refetchMetrics, refetchUTMData, selectedCampaign, selectedDevice, dateFilter, customDate]);
   
   const loading = statsLoading || metricsLoading;
 
@@ -48,7 +49,8 @@ const MetricsDashboard = () => {
           </h2>
           <MetricsFilters 
             dateFilter={dateFilter} 
-            onDateFilterChange={setDateFilter} 
+            onDateFilterChange={setDateFilter}
+            onCustomDateChange={setCustomDate}
           />
         </div>
         

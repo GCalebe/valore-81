@@ -84,34 +84,6 @@ const ScheduleHeader = ({
         </div>
         {/* Controles */}
         <div className="flex flex-row items-center gap-3 h-full">
-          {onRefresh && (
-            <Button 
-              variant="outline"
-              onClick={onRefresh}
-              disabled={isRefreshing}
-              className="border-white text-white bg-transparent hover:bg-white/20 min-w-[110px] transition-all"
-              style={{
-                height: 40,
-                borderRadius: 8,
-                borderWidth: 1.4
-              }}
-            >
-              <RefreshCcw
-                className={`mr-2 h-4 w-4 inline-block ${isRefreshing ? 'animate-spin' : ''}`}
-              />
-              <span>{isRefreshing ? 'Atualizando...' : 'Atualizar'}</span>
-            </Button>
-          )}
-          
-          <Button
-            variant="outline"
-            onClick={handleFilterClick}
-            className="border-white text-white bg-transparent hover:bg-white/20"
-            style={{ height: 40, borderRadius: 8, borderWidth: 1.4 }}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros
-          </Button>
 
           <Button
             variant="success"

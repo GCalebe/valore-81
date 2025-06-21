@@ -17,7 +17,7 @@ const EvolutionCard = () => {
       <CardHeader className="pb-2 bg-gradient-to-r from-blue-400 to-cyan-500 dark:from-blue-500 dark:to-cyan-600 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
           <Link className="h-6 w-6" />
-          Evolution
+          Whatsapp
         </CardTitle>
         <CardDescription className="text-blue-100">
           Conectar e sincronizar
@@ -30,12 +30,12 @@ const EvolutionCard = () => {
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-300 text-center">
-          Conecte e sincronize seu sistema com a plataforma Evolution.
+          Conecte seu sistema com seu Whatsapp Business.
         </p>
       </CardContent>
       <CardFooter className="bg-gray-50 dark:bg-gray-700/50 rounded-b-lg border-t dark:border-gray-700 flex justify-center py-3">
         <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/50">
-          Conectar Evolution
+          Conectar Whatsapp
         </Badge>
       </CardFooter>
     </Card>

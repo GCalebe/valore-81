@@ -30,6 +30,15 @@ interface Website {
 
 const WebsitesTab = () => {
   const { toast } = useToast();
+
+  const PremiumOverlay = () => (
+    <div className="absolute inset-0 bg-red-500/20 backdrop-blur-[2px] z-50 flex items-center justify-center">
+      <div className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg transform -rotate-12">
+        <span className="text-xl font-bold">Conteúdo Premium</span>
+      </div>
+    </div>
+  );
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
@@ -168,7 +177,8 @@ const WebsitesTab = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      <PremiumOverlay />
       <div>
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
           Websites

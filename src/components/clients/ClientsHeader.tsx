@@ -102,18 +102,8 @@ const ClientsHeader = ({
           <span className="text-base ml-1 opacity-80 text-white">- Clientes</span>
         </div>
 
-        {/* Grupo principal: busca, filtros, novo cliente e controles */}
+        {/* Grupo principal: filtros, novo cliente e controles */}
         <div className="flex flex-row items-center gap-3 h-full">
-          {/* Busca */}
-          <div className="relative w-[190px]">
-            <Input
-              type="text"
-              placeholder="Buscar clientes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4 pr-4 py-2 h-10 w-full bg-white text-blue-900 placeholder-blue-200 border-0 rounded-md focus:bg-white focus:text-blue-900 focus:ring-2 focus:ring-blue-200 focus:border-transparent"
-            />
-          </div>
           {/* Filtros */}
           <FilterDialog
             isOpen={isFilterDialogOpen}

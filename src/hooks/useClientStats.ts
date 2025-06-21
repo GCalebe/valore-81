@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useClientStats() {
+export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
   const [stats, setStats] = useState({
     totalClients: 0,
     totalMarketingClients: 0,
@@ -22,7 +22,10 @@ export function useClientStats() {
       console.log('Fetching client statistics with optimized function...');
       
       const [metricsResult, recentClientsResult] = await Promise.all([
-        supabase.rpc('get_dashboard_metrics'),
+        supabase.rpc('get_dashboard_metrics', { 
+          date_filter: dateFilter,
+          custom_date: customDate?.toISOString()
+        }),
         supabase
           .from('dados_cliente')
           .select('id, nome, telefone, client_name, created_at, kanban_stage')
@@ -82,7 +85,7 @@ export function useClientStats() {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, dateFilter, customDate]);
 
   return { stats, loading, refetchStats };
 }

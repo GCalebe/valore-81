@@ -406,6 +406,48 @@ export type Database = {
         }
         Relationships: []
       }
+      tarefas: {
+        Row: {
+          id: string
+          client_id: string
+          user_id: string
+          titulo: string
+          descricao: string | null
+          status: string
+          prioridade: string
+          data_vencimento: string | null
+          data_conclusao: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          client_id: string
+          user_id: string
+          titulo: string
+          descricao?: string | null
+          status?: string
+          prioridade?: string
+          data_vencimento?: string | null
+          data_conclusao?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          client_id?: string
+          user_id?: string
+          titulo?: string
+          descricao?: string | null
+          status?: string
+          prioridade?: string
+          data_vencimento?: string | null
+          data_conclusao?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

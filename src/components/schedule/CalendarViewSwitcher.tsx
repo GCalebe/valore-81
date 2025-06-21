@@ -25,11 +25,17 @@ export const CalendarViewSwitcher: React.FC<CalendarViewSwitcherProps> = ({
           variant={view === item.key ? "default" : "ghost"}
           className={
             view === item.key
-              ? "bg-white text-primary shadow-md"
+              ? "bg-white text-blue-700 shadow-md"
               : "text-white hover:bg-white/20"
           }
+          style={{ 
+            minWidth: 60, 
+            height: 32,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
           onClick={() => onChange(item.key as any)}
-          style={{ minWidth: 60, height: 32 }}
         >
           {item.label}
         </Button>

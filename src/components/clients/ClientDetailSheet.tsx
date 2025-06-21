@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -8,7 +8,8 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Trash2, Edit2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Trash2, Edit2, Briefcase, FileBox, Tag, Calendar, DollarSign, Target, AlertCircle } from 'lucide-react';
 import { Contact } from '@/types/client';
 import DeleteClientDialog from './DeleteClientDialog';
 import SendMessageDialog from './SendMessageDialog';
@@ -54,115 +55,176 @@ const ClientDetailSheet = ({
 }: ClientDetailSheetProps) => {
   if (!selectedContact) return null;
 
+  const [activeTab, setActiveTab] = useState('basico');
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        <SheetContent className="sm:max-w-md">
+        <SheetContent className="sm:max-w-md overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="text-xl flex items-center gap-2">
               <User className="h-5 w-5 text-blue-600 dark:text-amber-500" />
               {selectedContact.name}
             </SheetTitle>
             <SheetDescription>
-              Detalhes do cliente náutico
+              Detalhes do cliente
             </SheetDescription>
           </SheetHeader>
-          <div className="mt-6 space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Informações Básicas
-              </h3>
-              <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
-                <Mail className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.email || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
-                </div>
-                
-                <Phone className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.phone || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Telefone</p>
-                </div>
-                
-                <FileText className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.cpfCnpj || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">CPF/CNPJ</p>
-                </div>
-                
-                <CreditCard className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.asaasCustomerId || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">ID Asaas</p>
-                </div>
-                
-                <MapPin className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.address || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Endereço</p>
-                </div>
+
+          {/* Tags Section */}
+          {selectedContact.tags && selectedContact.tags.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Tags:</span>
+              </div>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {selectedContact.tags.map((tag, index) => (
+                  <span key={index} className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full">
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Informações do Cliente Náutico
-              </h3>
-              <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
-                <ShipWheel className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.clientName || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Nome do Cliente</p>
-                </div>
-                
-                <ShipWheel className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.clientType || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
-                </div>
-                
-                <ShipWheel className="h-5 w-5 text-gray-500" />
-                <div>
-                  <p className="text-sm font-medium">{selectedContact.clientSize || 'Não informado'}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Tamanho</p>
-                </div>
+          )}
+
+          {/* Consultation Stage */}
+          {selectedContact.consultationStage && (
+            <div className="mt-4">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Estágio:</span>
+                <span className="text-sm font-medium">{selectedContact.consultationStage}</span>
               </div>
             </div>
+          )}
+
+          <div className="mt-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="flex w-full mb-4 bg-gray-100 dark:bg-gray-700 h-12 rounded-md overflow-hidden">
+                <TabsTrigger value="basico" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
+                  Informações Básicas
+                </TabsTrigger>
+                <TabsTrigger value="comercial" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
+                  Dados Comerciais
+                </TabsTrigger>
+                <TabsTrigger value="documentos" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
+                  Documentos
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="basico" className="space-y-4 mt-0">
+                <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
+                  <User className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.name || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Nome Completo</p>
+                  </div>
+                  
+                  <Mail className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.email || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
+                  </div>
+                  
+                  <Phone className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.phone || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Telefone</p>
+                  </div>
+                  
+                  <MapPin className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.address || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Endereço</p>
+                  </div>
+
+                  <FileText className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.notes || 'Sem observações'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Observações Iniciais</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="comercial" className="space-y-4 mt-0">
+                <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
+                  <Briefcase className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.clientName || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Nome da Empresa</p>
+                  </div>
+                  
+                  <FileText className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.cpfCnpj || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">CPF/CNPJ</p>
+                  </div>
+                  
+                  <User className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.clientType || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipo de Cliente</p>
+                  </div>
+                  
+                  <DollarSign className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.budget ? `R$ ${selectedContact.budget.toFixed(2)}` : 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Orçamento Estimado</p>
+                  </div>
+                  
+                  <Target className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.clientObjective || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Objetivo do Cliente</p>
+                  </div>
+
+                  <CreditCard className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium">{selectedContact.asaasCustomerId || 'Não informado'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">ID Asaas</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="documentos" className="space-y-4 mt-0">
+                <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
+                  <FileBox className="h-5 w-5 text-gray-500" />
+                  <div>
+                    {selectedContact.uploadedFiles && selectedContact.uploadedFiles.length > 0 ? (
+                      <div className="space-y-2">
+                        {selectedContact.uploadedFiles.map((file, index) => (
+                          <p key={index} className="text-sm font-medium">{file}</p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm font-medium">Nenhum documento anexado</p>
+                    )}
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Documentos</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
             
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Observações
-              </h3>
-              <div className="rounded-md bg-gray-50 dark:bg-gray-800 p-3">
-                <p className="text-sm">{selectedContact.notes || 'Sem observações'}</p>
-              </div>
-            </div>
-            
-            <div className="pt-4 border-t dark:border-gray-700">
-              <div className="flex flex-wrap gap-2 justify-end">
-                <DeleteClientDialog 
-                  isOpen={isDeleteDialogOpen}
-                  onOpenChange={setIsDeleteDialogOpen}
-                  selectedContact={selectedContact}
-                  handleDeleteContact={handleDeleteContact}
-                />
-                
-                <Button variant="outline" size="sm" onClick={onSendMessageClick}>
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Mensagem
-                </Button>
-                
-                <Button variant="outline" size="sm" onClick={onEditClick}>
-                  <Edit2 className="mr-2 h-4 w-4" />
-                  Editar
-                </Button>
-                
-                <Button variant="default" size="sm">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Ligar
-                </Button>
-              </div>
+          <div className="pt-4 mt-4 border-t dark:border-gray-700">
+            <div className="flex flex-wrap gap-2 justify-end">
+              <DeleteClientDialog 
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                selectedContact={selectedContact}
+                handleDeleteContact={handleDeleteContact}
+              />
+              
+              <Button variant="outline" size="sm" onClick={onSendMessageClick}>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Mensagem
+              </Button>
+              
+              <Button variant="outline" size="sm" onClick={onEditClick}>
+                <Edit2 className="mr-2 h-4 w-4" />
+                Editar
+              </Button>
             </div>
           </div>
         </SheetContent>
