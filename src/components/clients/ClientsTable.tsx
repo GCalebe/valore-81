@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Contact } from '@/types/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, Phone, Mail } from 'lucide-react';
+import { MessageSquare, Phone, Mail, Settings } from 'lucide-react';
 import { isDateInPeriod } from '@/utils/dateUtils';
 import { useClientNavigation } from '@/utils/navigationUtils';
+import { ColumnConfig, getColumnConfig } from '@/config/columnConfig';
+import ColumnConfigDialog from './ColumnConfigDialog';
+import ClientCard from './ClientCard';
 
 interface ClientsTableProps {
   contacts: Contact[];
@@ -17,6 +20,12 @@ interface ClientsTableProps {
   lastContactFilter: string;
   onContactClick: (contact: Contact) => void;
   onEditClick: (contact: Contact) => void;
+  displayConfig?: {
+    showTags?: boolean;
+    showConsultationStage?: boolean;
+    showCommercialInfo?: boolean;
+    showCustomFields?: boolean;
+  };
 }
 
 const ClientsTable = ({ 
@@ -27,9 +36,17 @@ const ClientsTable = ({
   segmentFilter,
   lastContactFilter,
   onContactClick,
-  onEditClick
+  onEditClick,
+  displayConfig = {
+    showTags: true,
+    showConsultationStage: true,
+    showCommercialInfo: false,
+    showCustomFields: false
+  }
 }: ClientsTableProps) => {
   const { navigateToClientChat } = useClientNavigation();
+  const [columnConfig, setColumnConfig] = useState<ColumnConfig[]>(getColumnConfig());
+  const [isColumnConfigOpen, setIsColumnConfigOpen] = useState(false);
 
   const filteredContacts = contacts.filter(contact => {
     // Filtro de busca por texto
@@ -85,18 +102,133 @@ const ClientsTable = ({
     );
   }
 
+  // Renderizador de célula personalizado para cada tipo de coluna
+  const renderCell = (contact: Contact, columnId: string) => {
+    const column = columnConfig.find(col => col.id === columnId);
+    if (!column) return null;
+
+    switch (columnId) {
+      case 'name':
+        return <span className="font-medium">{contact.name}</span>;
+      
+      case 'contact':
+        return (
+          <div className="flex flex-col gap-1">
+            {contact.phone && (
+              <div className="flex items-center gap-1 text-sm">
+                <Phone className="h-3 w-3" />
+                <span>{contact.phone}</span>
+              </div>
+            )}
+            {contact.email && (
+              <div className="flex items-center gap-1 text-sm">
+                <Mail className="h-3 w-3" />
+                <span className="truncate max-w-[150px]">{contact.email}</span>
+              </div>
+            )}
+          </div>
+        );
+      
+      case 'clientName':
+        return <span>{contact.clientName || 'N/A'}</span>;
+      
+      case 'status':
+        return (
+          <Badge variant={contact.status === 'Active' ? 'default' : 'secondary'}>
+            {contact.status}
+          </Badge>
+        );
+      
+      case 'kanbanStage':
+        return <Badge variant="outline">{contact.kanbanStage}</Badge>;
+      
+      case 'lastMessage':
+        return (
+          <div className="flex items-start gap-2 max-w-[200px]">
+            <MessageSquare className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                {contact.lastMessage || 'Nenhuma conversa ainda'}
+              </p>
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-xs text-gray-500">
+                  {contact.lastMessageTime || contact.lastContact}
+                </span>
+                {contact.unreadCount && contact.unreadCount > 0 && (
+                  <Badge className="bg-blue-500 text-white text-xs px-2 py-0.5">
+                    {contact.unreadCount}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      
+      case 'tags':
+        return contact.tags && contact.tags.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {contact.tags.slice(0, 3).map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+            {contact.tags.length > 3 && (
+              <Badge variant="outline" className="text-xs">+{contact.tags.length - 3}</Badge>
+            )}
+          </div>
+        ) : <span className="text-gray-400">Sem tags</span>;
+      
+      case 'consultationStage':
+        return contact.consultationStage ? (
+          <span>{contact.consultationStage}</span>
+        ) : <span className="text-gray-400">Não definido</span>;
+      
+      case 'budget':
+        return contact.budget ? (
+          <span>R$ {contact.budget.toFixed(2)}</span>
+        ) : <span className="text-gray-400">Não definido</span>;
+      
+      case 'clientObjective':
+        return contact.clientObjective ? (
+          <span className="truncate max-w-[150px]">{contact.clientObjective}</span>
+        ) : <span className="text-gray-400">Não definido</span>;
+      
+      case 'responsibleUser':
+        return contact.responsibleUser ? (
+          <span>{contact.responsibleUser}</span>
+        ) : <span className="text-gray-400">Não atribuído</span>;
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border">
+      <div className="flex justify-end p-2 border-b">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setIsColumnConfigOpen(true)}
+          className="flex items-center gap-1"
+        >
+          <Settings className="h-4 w-4" />
+          <span>Configurar Colunas</span>
+        </Button>
+      </div>
+      
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>Contato</TableHead>
-            <TableHead>Cliente</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Segmento</TableHead>
-            <TableHead>Última Mensagem</TableHead>
-            <TableHead>Ações</TableHead>
+            {columnConfig
+              .filter(column => column.isVisible)
+              .sort((a, b) => a.priority - b.priority)
+              .map(column => (
+                <TableHead key={column.id} style={{ minWidth: column.minWidth, maxWidth: column.maxWidth }}>
+                  {column.label}
+                </TableHead>
+              ))}
+            <TableHead className="w-[80px]">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -106,52 +238,14 @@ const ClientsTable = ({
               className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
               onClick={() => handleRowClick(contact)}
             >
-              <TableCell className="font-medium">{contact.name}</TableCell>
-              <TableCell>
-                <div className="flex flex-col gap-1">
-                  {contact.phone && (
-                    <div className="flex items-center gap-1 text-sm">
-                      <Phone className="h-3 w-3" />
-                      <span>{contact.phone}</span>
-                    </div>
-                  )}
-                  {contact.email && (
-                    <div className="flex items-center gap-1 text-sm">
-                      <Mail className="h-3 w-3" />
-                      <span className="truncate max-w-[150px]">{contact.email}</span>
-                    </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>{contact.clientName || 'N/A'}</TableCell>
-              <TableCell>
-                <Badge variant={contact.status === 'Active' ? 'default' : 'secondary'}>
-                  {contact.status}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline">{contact.kanbanStage}</Badge>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-start gap-2 max-w-[200px]">
-                  <MessageSquare className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                      {contact.lastMessage || 'Nenhuma conversa ainda'}
-                    </p>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-xs text-gray-500">
-                        {contact.lastMessageTime || contact.lastContact}
-                      </span>
-                      {contact.unreadCount && contact.unreadCount > 0 && (
-                        <Badge className="bg-blue-500 text-white text-xs px-2 py-0.5">
-                          {contact.unreadCount}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
+              {columnConfig
+                .filter(column => column.isVisible)
+                .sort((a, b) => a.priority - b.priority)
+                .map(column => (
+                  <TableCell key={column.id}>
+                    {renderCell(contact, column.id)}
+                  </TableCell>
+                ))}
               <TableCell>
                 <Button
                   variant="ghost"
@@ -173,6 +267,13 @@ const ClientsTable = ({
           ))}
         </TableBody>
       </Table>
+      
+      <ColumnConfigDialog
+        isOpen={isColumnConfigOpen}
+        onOpenChange={setIsColumnConfigOpen}
+        columnConfig={columnConfig}
+        onColumnConfigChange={setColumnConfig}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -8,11 +8,15 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Trash2, Edit2, Briefcase, FileBox, Tag, Calendar, DollarSign, Target, AlertCircle } from 'lucide-react';
 import { Contact } from '@/types/client';
 import DeleteClientDialog from './DeleteClientDialog';
 import SendMessageDialog from './SendMessageDialog';
+import ClientUTMData from './ClientUTMData';
+import { CustomFieldWithValue } from '@/types/customFields';
+import { formatCurrency } from '@/utils/formatters';
 
 interface ClientDetailSheetProps {
   isOpen: boolean;
@@ -32,6 +36,14 @@ interface ClientDetailSheetProps {
   isPauseDurationDialogOpen: boolean;
   setIsPauseDurationDialogOpen: (open: boolean) => void;
   handlePauseDurationConfirm: (duration: number | null) => void;
+  customFields?: CustomFieldWithValue[];
+  loadingCustomFields?: boolean;
+  displayConfig?: {
+    showTags?: boolean;
+    showConsultationStage?: boolean;
+    showCommercialInfo?: boolean;
+    showCustomFields?: boolean;
+  };
 }
 
 const ClientDetailSheet = ({
@@ -51,7 +63,15 @@ const ClientDetailSheet = ({
   handleMessageSubmit,
   isPauseDurationDialogOpen,
   setIsPauseDurationDialogOpen,
-  handlePauseDurationConfirm
+  handlePauseDurationConfirm,
+  customFields = [],
+  loadingCustomFields = false,
+  displayConfig = {
+    showTags: true,
+    showConsultationStage: true,
+    showCommercialInfo: true,
+    showCustomFields: true
+  }
 }: ClientDetailSheetProps) => {
   if (!selectedContact) return null;
 
@@ -105,8 +125,8 @@ const ClientDetailSheet = ({
                 <TabsTrigger value="basico" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
                   Informações Básicas
                 </TabsTrigger>
-                <TabsTrigger value="comercial" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
-                  Dados Comerciais
+                <TabsTrigger value="utm" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
+                  Dados UTM
                 </TabsTrigger>
                 <TabsTrigger value="documentos" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs sm:text-sm px-1">
                   Documentos
@@ -147,44 +167,8 @@ const ClientDetailSheet = ({
                 </div>
               </TabsContent>
 
-              <TabsContent value="comercial" className="space-y-4 mt-0">
-                <div className="grid grid-cols-[20px_1fr] gap-x-3 gap-y-4 items-start">
-                  <Briefcase className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.clientName || 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Nome da Empresa</p>
-                  </div>
-                  
-                  <FileText className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.cpfCnpj || 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">CPF/CNPJ</p>
-                  </div>
-                  
-                  <User className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.clientType || 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Tipo de Cliente</p>
-                  </div>
-                  
-                  <DollarSign className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.budget ? `R$ ${selectedContact.budget.toFixed(2)}` : 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Orçamento Estimado</p>
-                  </div>
-                  
-                  <Target className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.clientObjective || 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Objetivo do Cliente</p>
-                  </div>
-
-                  <CreditCard className="h-5 w-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm font-medium">{selectedContact.asaasCustomerId || 'Não informado'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">ID Asaas</p>
-                  </div>
-                </div>
+              <TabsContent value="utm" className="space-y-4 mt-0">
+                <ClientUTMData contactId={selectedContact.id} />
               </TabsContent>
 
               <TabsContent value="documentos" className="space-y-4 mt-0">

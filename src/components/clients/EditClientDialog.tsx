@@ -20,7 +20,9 @@ import CustomFieldRenderer from './CustomFieldRenderer';
 import CustomFieldManager from './CustomFieldManager';
 import ConsultationStageSelector from './ConsultationStageSelector';
 import TagsManager from './TagsManager';
+import ClientUTMData from './ClientUTMData';
 import { CustomFieldWithValue } from '@/types/customFields';
+import { formatCurrency } from '@/utils/formatters';
 
 interface EditClientDialogProps {
   isOpen: boolean;
@@ -29,6 +31,15 @@ interface EditClientDialogProps {
   editContactData: Partial<Contact>;
   setEditContactData: (contact: Partial<Contact>) => void;
   handleEditContact: () => void;
+  customFields?: CustomFieldWithValue[];
+  loadingCustomFields?: boolean;
+  onSaveCustomFields?: (contactId: string, customValues: { fieldId: string, value: any }[]) => Promise<void>;
+  displayConfig?: {
+    showTags: boolean;
+    showConsultationStage: boolean;
+    showCommercialInfo: boolean;
+    showCustomFields: boolean;
+  };
 }
 
 const EditClientDialog = ({
@@ -38,18 +49,39 @@ const EditClientDialog = ({
   editContactData,
   setEditContactData,
   handleEditContact,
+  customFields,
+  loadingCustomFields,
+  onSaveCustomFields,
+  displayConfig = {
+    showTags: true,
+    showConsultationStage: true,
+    showCommercialInfo: true,
+    showCustomFields: true
+  }
 }: EditClientDialogProps) => {
   const { getCustomFieldsWithValues, saveClientCustomValues } = useCustomFields();
-  const [customFieldsWithValues, setCustomFieldsWithValues] = useState<CustomFieldWithValue[]>([]);
+  const [customFieldsWithValues, setCustomFieldsWithValues] = useState<CustomFieldWithValue[]>(customFields || []);
   const [customValues, setCustomValues] = useState<{ [fieldId: string]: any }>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(loadingCustomFields || false);
   const [validationErrors, setValidationErrors] = useState<{ [fieldId: string]: string }>({});
 
   useEffect(() => {
     if (selectedContact && isOpen) {
-      loadCustomFields();
+      if (customFields) {
+        // Se os campos personalizados foram fornecidos como props, use-os
+        setCustomFieldsWithValues(customFields);
+        
+        const values = customFields.reduce((acc, field) => {
+          acc[field.id] = field.value;
+          return acc;
+        }, {} as { [fieldId: string]: any });
+        setCustomValues(values);
+      } else {
+        // Caso contrário, carregue-os usando o hook
+        loadCustomFields();
+      }
     }
-  }, [selectedContact, isOpen]);
+  }, [selectedContact, isOpen, customFields]);
 
   const loadCustomFields = async () => {
     if (!selectedContact) return;
@@ -78,16 +110,21 @@ const EditClientDialog = ({
       // Save standard contact data
       await handleEditContact();
       
-      // TODO: A funcionalidade de salvar campos personalizados foi desativada temporariamente
-      // para corrigir a edição principal do cliente. O hook `useCustomFields` precisa ser
-      // atualizado para suportar IDs de cliente no formato UUID.
-      /*
-      const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
-        fieldId,
-        value
-      }));
-      await saveClientCustomValues(selectedContact.id, customValuesArray);
-      */
+      // Salvar campos personalizados se a função for fornecida
+      if (onSaveCustomFields) {
+        const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
+          fieldId,
+          value
+        }));
+        await onSaveCustomFields(selectedContact.id, customValuesArray);
+      } else if (displayConfig.showCustomFields) {
+        // Fallback para o hook interno se nenhuma função for fornecida
+        const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
+          fieldId,
+          value
+        }));
+        await saveClientCustomValues(selectedContact.id, customValuesArray);
+      }
       
       onOpenChange(false);
     } catch (error) {
@@ -123,34 +160,37 @@ const EditClientDialog = ({
         </DialogHeader>
 
         {/* Tags Section */}
-        <div className="mb-4">
-          <Label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-            ADICIONAR TAGS
-          </Label>
-          <TagsManager
-            tags={editContactData.tags || []}
-            onChange={(tags) => setEditContactData({ ...editContactData, tags })}
-          />
-        </div>
+        {displayConfig.showTags && (
+          <div className="mb-4">
+            <Label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
+              ADICIONAR TAGS
+            </Label>
+            <TagsManager
+              tags={editContactData.tags || []}
+              onChange={(tags) => setEditContactData({ ...editContactData, tags })}
+            />
+          </div>
+        )}
 
         {/* Consultation Stage Section */}
-        <div className="mb-6">
-          <ConsultationStageSelector
-            value={editContactData.consultationStage || 'Nova consulta'}
-            onChange={(stage) => setEditContactData({ 
-              ...editContactData, 
-              consultationStage: stage as Contact['consultationStage']
-            })}
-          />
-        </div>
+        {displayConfig.showConsultationStage && (
+          <div className="mb-6">
+            <ConsultationStageSelector
+              value={editContactData.consultationStage || 'Nova consulta'}
+              onChange={(stage) => setEditContactData({ 
+                ...editContactData, 
+                consultationStage: stage as Contact['consultationStage']
+              })}
+            />
+          </div>
+        )}
 
         <Tabs defaultValue="principal" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="principal">Principal</TabsTrigger>
-            <TabsTrigger value="estatisticas">Estatísticas</TabsTrigger>
+            <TabsTrigger value="utm">UTM</TabsTrigger>
             <TabsTrigger value="midia">Mídia</TabsTrigger>
             <TabsTrigger value="produtos">Produtos</TabsTrigger>
-            <TabsTrigger value="mais-informacoes">Mais Informações</TabsTrigger>
           </TabsList>
 
           <TabsContent value="principal" className="space-y-4">
@@ -219,8 +259,13 @@ const EditClientDialog = ({
                     type="number"
                     value={editContactData.budget || ''}
                     onChange={(e) => setEditContactData({...editContactData, budget: parseFloat(e.target.value)})}
-                    placeholder="..."
+                    placeholder="R$ 0,00"
                   />
+                  {editContactData.budget && (
+                    <div className="text-sm text-gray-500 mt-1">
+                      {formatCurrency(editContactData.budget)}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -320,11 +365,15 @@ const EditClientDialog = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="estatisticas" className="space-y-4">
-            <div className="text-center py-8 text-gray-500">
-              <h3 className="text-lg font-medium mb-2">Estatísticas</h3>
-              <p>Histórico, progresso no funil e tempo no pipeline serão exibidos aqui.</p>
-            </div>
+          <TabsContent value="utm" className="space-y-4">
+            {selectedContact?.id ? (
+              <ClientUTMData contactId={selectedContact.id} />
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <h3 className="text-lg font-medium mb-2">Dados UTM</h3>
+                <p>Os dados UTM estarão disponíveis após salvar o cliente.</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="midia" className="space-y-4">
@@ -345,38 +394,8 @@ const EditClientDialog = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="mais-informacoes" className="space-y-4">
-            <div className="space-y-6">
-              {/* Campos Personalizados */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Campos Personalizados</h3>
-                {loading ? (
-                  <div className="text-center py-8">Carregando campos personalizados...</div>
-                ) : customFieldsWithValues.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    {customFieldsWithValues.map((field) => (
-                      <CustomFieldRenderer
-                        key={field.id}
-                        field={field}
-                        value={customValues[field.id]}
-                        onChange={(value) => handleCustomFieldChange(field.id, value)}
-                        validationError={validationErrors[field.id]}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>Nenhum campo personalizado configurado.</p>
-                  </div>
-                )}
-              </div>
 
-              {/* Gerenciador de Campos Personalizados */}
-              <div>
-                <CustomFieldManager />
-              </div>
-            </div>
-          </TabsContent>
+
         </Tabs>
 
         <DialogFooter>
