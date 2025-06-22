@@ -8,6 +8,7 @@ import { CalendarView } from './CalendarView';
 import { EventsTable } from './EventsTable';
 import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
 import { CalendarHeaderBar } from './CalendarHeaderBar';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
 interface ScheduleContentProps {
   selectedDate: Date | undefined;
@@ -51,6 +52,7 @@ export function ScheduleContent({
   calendarViewType,
   setCalendarViewType,
 }: ScheduleContentProps) {
+  const { settings } = useThemeSettings();
   const [viewMode, setViewMode] = React.useState<"calendar" | "list">("calendar");
   // Remover estado local de calendarViewType
   // const [calendarViewType, setCalendarViewType] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
@@ -221,52 +223,52 @@ export function ScheduleContent({
       
       {/* Cards de Métricas */}
       <div className="grid grid-cols-5 gap-4 px-4">
-        <div className="bg-gray-800 rounded-lg p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+        <div className="rounded-lg p-4 flex items-center gap-3" style={{ backgroundColor: settings.primaryColor }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: settings.secondaryColor }}>
             <span className="text-white text-sm font-semibold">📅</span>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Hoje</p>
+            <p className="text-gray-200 text-sm">Hoje</p>
             <p className="text-white text-xl font-bold">2</p>
           </div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+        <div className="rounded-lg p-4 flex items-center gap-3" style={{ backgroundColor: settings.primaryColor }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: settings.secondaryColor }}>
             <span className="text-white text-sm font-semibold">📊</span>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Esta Semana</p>
+            <p className="text-gray-200 text-sm">Esta Semana</p>
             <p className="text-white text-xl font-bold">4</p>
           </div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+        <div className="rounded-lg p-4 flex items-center gap-3" style={{ backgroundColor: settings.primaryColor }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: settings.secondaryColor }}>
             <span className="text-white text-sm font-semibold">📈</span>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Este Mês</p>
+            <p className="text-gray-200 text-sm">Este Mês</p>
             <p className="text-white text-xl font-bold">4</p>
           </div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+        <div className="rounded-lg p-4 flex items-center gap-3" style={{ backgroundColor: settings.primaryColor }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: settings.secondaryColor }}>
             <span className="text-white text-sm font-semibold">✅</span>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Confirmados</p>
+            <p className="text-gray-200 text-sm">Confirmados</p>
             <p className="text-white text-xl font-bold">2</p>
           </div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
+        <div className="rounded-lg p-4 flex items-center gap-3" style={{ backgroundColor: settings.primaryColor }}>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: settings.secondaryColor }}>
             <span className="text-white text-sm font-semibold">🎯</span>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Total</p>
+            <p className="text-gray-200 text-sm">Total</p>
             <p className="text-white text-xl font-bold">4</p>
           </div>
         </div>

@@ -27,7 +27,7 @@ const MetricsCard = () => {
         <div className="mb-4 flex justify-center">
           <div className="bg-blue-100 dark:bg-blue-900/30 p-6 rounded-full relative">
             <LineChart className="h-14 w-14 text-blue-500 dark:text-blue-400" />
-            <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-pulse">
+            <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
               110
             </div>
           </div>

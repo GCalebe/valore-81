@@ -25,7 +25,7 @@ interface AddClientDialogProps {
   onOpenChange: (open: boolean) => void;
   newContact: Partial<Contact>;
   setNewContact: (contact: Partial<Contact>) => void;
-  handleAddContact: () => void;
+  handleAddContact: () => Promise<string | undefined>;
 }
 
 const AddClientDialog = ({
@@ -35,7 +35,7 @@ const AddClientDialog = ({
   setNewContact,
   handleAddContact,
 }: AddClientDialogProps) => {
-  const { customFields, fetchCustomFields } = useCustomFields();
+  const { customFields, fetchCustomFields, saveClientCustomValues } = useCustomFields();
   const [customValues, setCustomValues] = useState<{ [fieldId: string]: any }>({});
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
@@ -88,7 +88,24 @@ const AddClientDialog = ({
     }
 
     try {
-      await handleAddContact();
+      // Obter o ID do contato recém-criado
+      const newContactId = await handleAddContact();
+      
+      // Se temos valores de campos personalizados e um ID de contato, salvá-los
+      if (newContactId && Object.keys(customValues).length > 0) {
+        try {
+          // Converter customValues para o formato esperado pelo saveClientCustomValues
+          const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
+            fieldId,
+            value
+          }));
+          
+          await saveClientCustomValues(newContactId, customValuesArray);
+        } catch (customFieldError) {
+          console.error('Error saving custom fields:', customFieldError);
+          // Não interromper o fluxo se falhar ao salvar campos personalizados
+        }
+      }
       
       // Reset form and categories
       setCustomValues({});

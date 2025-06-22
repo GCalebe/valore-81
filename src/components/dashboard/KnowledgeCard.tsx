@@ -26,7 +26,7 @@ const KnowledgeCard = () => {
       <CardContent className="pt-6">
         <div className="mb-4 flex justify-center">
           <div className="bg-amber-100 dark:bg-amber-900/30 p-6 rounded-full">
-            <Database className="h-14 w-14 text-amber-500 dark:text-amber-400 animate-bounce" />
+            <Database className="h-14 w-14 text-amber-500 dark:text-amber-400" />
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-300 text-center">

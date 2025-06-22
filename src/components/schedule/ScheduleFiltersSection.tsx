@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { RefreshCcw, Filter } from 'lucide-react';
+import { useThemeSettings } from '@/context/ThemeSettingsContext';
 
 interface ScheduleFiltersSectionProps {
   statusFilter?: string;
@@ -20,8 +21,9 @@ export const ScheduleFiltersSection = ({
   onRefresh,
   isRefreshing = false
 }: ScheduleFiltersSectionProps) => {
+  const { settings } = useThemeSettings();
   return (
-    <div className="bg-[#23273A] rounded-lg p-6 mt-8 mb-6 flex items-center gap-8">
+    <div className="rounded-lg p-6 mt-8 mb-6 flex items-center gap-8" style={{ backgroundColor: settings.primaryColor }}>
       <div className="flex items-center gap-2">
         <Filter className="w-5 h-5 text-white" />
         <h3 className="text-white text-[16px] font-semibold">Filtros da Agenda</h3>

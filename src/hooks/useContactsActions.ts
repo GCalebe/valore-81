@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useContactsActions = () => {
   const handleAddContact = async (
     newContact: Partial<Contact>,
-    onSuccess: () => void,
+    onSuccess: (contactId?: string) => void,
     onContactReset: () => void
   ) => {
     if (!newContact.name || !newContact.phone) {
@@ -55,7 +55,8 @@ export const useContactsActions = () => {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        onSuccess();
+        const newContactId = data[0].id;
+        onSuccess(newContactId);
         onContactReset();
         
         toast({

@@ -42,15 +42,18 @@ export const useClientManagement = () => {
   const { handleAddContact, handleEditContact, handleDeleteContact } = useContactsActions();
   const { handlePauseDurationConfirm } = useContactsMessages();
 
-  const handleAddContactWrapper = async () => {
-    await handleAddContact(
-      newContact,
-      () => {
-        fetchClients();
-        setIsAddContactOpen(false);
-      },
-      resetNewContact
-    );
+  const handleAddContactWrapper = async (): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      handleAddContact(
+        newContact,
+        (contactId?: string) => {
+          fetchClients();
+          setIsAddContactOpen(false);
+          resolve(contactId);
+        },
+        resetNewContact
+      );
+    });
   };
 
   const handleEditContactWrapper = async () => {

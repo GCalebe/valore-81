@@ -25,8 +25,8 @@ const ClientsCard = () => {
       </CardHeader>
       <CardContent className="pt-6">
         <div className="mb-4 flex justify-center">
-          <div className="bg-blue-100 dark:bg-blue-900/30 p-6 rounded-full">
-            <Users className="h-14 w-14 text-blue-600 dark:text-blue-400 animate-bounce" />
+          <div className="bg-indigo-100 dark:bg-indigo-900/30 p-6 rounded-full">
+            <Users className="h-14 w-14 text-indigo-500 dark:text-indigo-400" />
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-300 text-center">
