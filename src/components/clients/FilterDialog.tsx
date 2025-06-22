@@ -1,16 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+import { Filter, X, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import ClientFilters from './ClientFilters';
+import CustomFieldFilters from './CustomFieldFilters';
+import { CustomFieldFilter } from '@/hooks/useClientsFilters';
+import { useCustomFields } from '@/hooks/useCustomFields';
 
 interface FilterDialogProps {
   isOpen: boolean;
@@ -18,12 +28,39 @@ interface FilterDialogProps {
   statusFilter: string;
   segmentFilter: string;
   lastContactFilter: string;
+  customFieldFilters: CustomFieldFilter[];
   onStatusFilterChange: (value: string) => void;
   onSegmentFilterChange: (value: string) => void;
   onLastContactFilterChange: (value: string) => void;
+  onAddCustomFieldFilter: (filter: CustomFieldFilter) => void;
+  onRemoveCustomFieldFilter: (fieldId: string) => void;
   onClearFilters: () => void;
+  onClearCustomFieldFilters: () => void;
   hasActiveFilters: boolean;
 }
+
+interface FilterCategoryProps {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}
+
+// Componente para categoria de filtro colapsável
+const FilterCategory = ({ title, children, defaultOpen = false }: FilterCategoryProps) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full border rounded-md mb-3">
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-3 text-left font-medium">
+        {title}
+        {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </CollapsibleTrigger>
+      <CollapsibleContent className="p-3 pt-0 border-t">
+        {children}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
 
 const FilterDialog = ({
   isOpen,
@@ -31,12 +68,24 @@ const FilterDialog = ({
   statusFilter,
   segmentFilter,
   lastContactFilter,
+  customFieldFilters,
   onStatusFilterChange,
   onSegmentFilterChange,
   onLastContactFilterChange,
+  onAddCustomFieldFilter,
+  onRemoveCustomFieldFilter,
   onClearFilters,
+  onClearCustomFieldFilters,
   hasActiveFilters
 }: FilterDialogProps) => {
+  const [filterSearch, setFilterSearch] = useState('');
+  const { customFields } = useCustomFields();
+  
+  // Filtrar campos personalizados com base na pesquisa
+  const filteredCustomFields = customFields.filter(field => 
+    field.field_name.toLowerCase().includes(filterSearch.toLowerCase())
+  );
+  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -55,23 +104,240 @@ const FilterDialog = ({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>Filtrar Clientes</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Filtrar Clientes</DialogTitle>
+            {hasActiveFilters && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onClearFilters} 
+                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Limpar todos os filtros
+              </Button>
+            )}
+          </div>
+          <div className="relative mt-2">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar filtros..."
+              value={filterSearch}
+              onChange={(e) => setFilterSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
         </DialogHeader>
-        <div className="py-4">
-          <ClientFilters
-            statusFilter={statusFilter}
-            segmentFilter={segmentFilter}
-            lastContactFilter={lastContactFilter}
-            onStatusFilterChange={onStatusFilterChange}
-            onSegmentFilterChange={onSegmentFilterChange}
-            onLastContactFilterChange={onLastContactFilterChange}
-            onClearFilters={onClearFilters}
-            hasActiveFilters={hasActiveFilters}
-          />
-        </div>
-        <DialogFooter>
+        
+        <ScrollArea className="flex-1 pr-4 mt-2">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <FilterCategory title="Propriedades de Lead" defaultOpen={true}>
+                  <div className="space-y-3">
+                    <div className="grid gap-2">
+                      <Label htmlFor="status-filter">Status do cliente</Label>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="status-all" 
+                            checked={statusFilter === 'all'} 
+                            onCheckedChange={() => onStatusFilterChange('all')} 
+                          />
+                          <label htmlFor="status-all" className="text-sm">Todos os status</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="status-active" 
+                            checked={statusFilter === 'Active'} 
+                            onCheckedChange={() => onStatusFilterChange('Active')} 
+                          />
+                          <label htmlFor="status-active" className="text-sm">Ativo</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="status-inactive" 
+                            checked={statusFilter === 'Inactive'} 
+                            onCheckedChange={() => onStatusFilterChange('Inactive')} 
+                          />
+                          <label htmlFor="status-inactive" className="text-sm">Inativo</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="segment-filter">Segmento</Label>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-all" 
+                            checked={segmentFilter === 'all'} 
+                            onCheckedChange={() => onSegmentFilterChange('all')} 
+                          />
+                          <label htmlFor="segment-all" className="text-sm">Todos os segmentos</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-entraram" 
+                            checked={segmentFilter === 'Entraram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Entraram')} 
+                          />
+                          <label htmlFor="segment-entraram" className="text-sm">Entraram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-conversaram" 
+                            checked={segmentFilter === 'Conversaram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Conversaram')} 
+                          />
+                          <label htmlFor="segment-conversaram" className="text-sm">Conversaram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-agendaram" 
+                            checked={segmentFilter === 'Agendaram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Agendaram')} 
+                          />
+                          <label htmlFor="segment-agendaram" className="text-sm">Agendaram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-compareceram" 
+                            checked={segmentFilter === 'Compareceram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Compareceram')} 
+                          />
+                          <label htmlFor="segment-compareceram" className="text-sm">Compareceram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-negociaram" 
+                            checked={segmentFilter === 'Negociaram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Negociaram')} 
+                          />
+                          <label htmlFor="segment-negociaram" className="text-sm">Negociaram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-postergaram" 
+                            checked={segmentFilter === 'Postergaram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Postergaram')} 
+                          />
+                          <label htmlFor="segment-postergaram" className="text-sm">Postergaram</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="segment-converteram" 
+                            checked={segmentFilter === 'Converteram'} 
+                            onCheckedChange={() => onSegmentFilterChange('Converteram')} 
+                          />
+                          <label htmlFor="segment-converteram" className="text-sm">Converteram</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="last-contact-filter">Último Contato</Label>
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="last-contact-all" 
+                            checked={lastContactFilter === 'all'} 
+                            onCheckedChange={() => onLastContactFilterChange('all')} 
+                          />
+                          <label htmlFor="last-contact-all" className="text-sm">Todos os períodos</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="last-contact-today" 
+                            checked={lastContactFilter === 'today'} 
+                            onCheckedChange={() => onLastContactFilterChange('today')} 
+                          />
+                          <label htmlFor="last-contact-today" className="text-sm">Hoje</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="last-contact-week" 
+                            checked={lastContactFilter === 'week'} 
+                            onCheckedChange={() => onLastContactFilterChange('week')} 
+                          />
+                          <label htmlFor="last-contact-week" className="text-sm">Esta semana</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="last-contact-month" 
+                            checked={lastContactFilter === 'month'} 
+                            onCheckedChange={() => onLastContactFilterChange('month')} 
+                          />
+                          <label htmlFor="last-contact-month" className="text-sm">Este mês</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="last-contact-older" 
+                            checked={lastContactFilter === 'older'} 
+                            onCheckedChange={() => onLastContactFilterChange('older')} 
+                          />
+                          <label htmlFor="last-contact-older" className="text-sm">Mais antigo</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </FilterCategory>
+              </div>
+              
+              <div className="space-y-4">
+                <FilterCategory title="Campos Personalizados" defaultOpen={true}>
+                  {filteredCustomFields.length > 0 ? (
+                    <div className="space-y-4">
+                      {filteredCustomFields.map(field => {
+                        const activeFilter = customFieldFilters.find(f => f.fieldId === field.id);
+                        return (
+                          <div key={field.id} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox 
+                                  id={`field-${field.id}`} 
+                                  checked={!!activeFilter}
+                                  onCheckedChange={() => {}}
+                                />
+                                <Label htmlFor={`field-${field.id}`} className="cursor-pointer">{field.field_name}</Label>
+                              </div>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                  <path d="m15 5 4 4"/>
+                                </svg>
+                              </Button>
+                            </div>
+                            <CustomFieldFilters
+                              customFieldFilters={customFieldFilters.filter(f => f.fieldId === field.id)}
+                              onAddCustomFieldFilter={onAddCustomFieldFilter}
+                              onRemoveCustomFieldFilter={onRemoveCustomFieldFilter}
+                              onClearCustomFieldFilters={onClearCustomFieldFilters}
+                              preselectedFieldId={field.id}
+                              compact={true}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      {filterSearch ? 'Nenhum campo encontrado com esse termo' : 'Nenhum campo personalizado disponível'}
+                    </div>
+                  )}
+                </FilterCategory>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+        
+        <DialogFooter className="pt-4 border-t mt-4">
           <Button onClick={() => onOpenChange(false)}>Aplicar Filtros</Button>
         </DialogFooter>
       </DialogContent>

@@ -14,6 +14,7 @@ const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const filter = useClientsFilters();
+  const { customFieldFilters, addCustomFieldFilter, removeCustomFieldFilter } = filter;
 
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban');
   const [isCompactView, setIsCompactView] = useState(false);
@@ -79,10 +80,14 @@ const ClientsDashboard = () => {
         statusFilter: filter.statusFilter,
         segmentFilter: filter.segmentFilter,
         lastContactFilter: filter.lastContactFilter,
+        customFieldFilters,
         onStatusFilterChange: filter.setStatusFilter,
         onSegmentFilterChange: filter.setSegmentFilter,
         onLastContactFilterChange: filter.setLastContactFilter,
+        onAddCustomFieldFilter: addCustomFieldFilter,
+        onRemoveCustomFieldFilter: removeCustomFieldFilter,
         onClearFilters: filter.clearAll,
+        onClearCustomFieldFilters: () => filter.clearAll('customFields'),
         hasActiveFilters: filter.hasActiveFilters,
         isAddContactOpen,
         onAddContactOpenChange: setIsAddContactOpen,
@@ -106,6 +111,7 @@ const ClientsDashboard = () => {
             statusFilter={filter.statusFilter}
             segmentFilter={filter.segmentFilter}
             lastContactFilter={filter.lastContactFilter}
+            customFieldFilters={customFieldFilters}
             onContactClick={handleContactClick}
             onEditClick={openEditModal}
           />

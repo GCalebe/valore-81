@@ -32,4 +32,11 @@ export interface Contact {
   payment?: string;
   uploadedFiles?: string[];
   consultationStage?: 'Nova consulta' | 'Qualificado' | 'Chamada agendada' | 'Preparando proposta' | 'Proposta enviada' | 'Acompanhamento' | 'Negociação' | 'Fatura enviada' | 'Fatura paga – ganho' | 'Projeto cancelado – perdido';
+  // Campos personalizados
+  customValues?: CustomFieldValue[];
+}
+
+export interface CustomFieldValue {
+  field_id: string;
+  field_value: string | string[] | number | boolean | null;
 }

@@ -11,6 +11,8 @@ import { ColumnConfig, getColumnConfig } from '@/config/columnConfig';
 import ColumnConfigDialog from './ColumnConfigDialog';
 import ClientCard from './ClientCard';
 
+import { CustomFieldFilter } from '@/hooks/useClientsFilters';
+
 interface ClientsTableProps {
   contacts: Contact[];
   isLoading: boolean;
@@ -18,6 +20,7 @@ interface ClientsTableProps {
   statusFilter: string;
   segmentFilter: string;
   lastContactFilter: string;
+  customFieldFilters?: CustomFieldFilter[];
   onContactClick: (contact: Contact) => void;
   onEditClick: (contact: Contact) => void;
   displayConfig?: {
@@ -35,6 +38,7 @@ const ClientsTable = ({
   statusFilter,
   segmentFilter,
   lastContactFilter,
+  customFieldFilters = [],
   onContactClick,
   onEditClick,
   displayConfig = {
@@ -64,8 +68,35 @@ const ClientsTable = ({
 
     // Filtro de último contato
     const matchesLastContact = lastContactFilter === 'all' || isDateInPeriod(contact.lastContact, lastContactFilter);
+    
+    // Filtro de campos personalizados
+    const matchesCustomFields = customFieldFilters.length === 0 || customFieldFilters.every(filter => {
+      // Se o contato não tiver valores de campos personalizados, não corresponde ao filtro
+      if (!contact.customValues) return false;
+      
+      const customValue = contact.customValues.find(cv => cv.field_id === filter.fieldId);
+      if (!customValue) return false;
+      
+      // Para campos de texto, verifica se o valor contém o texto do filtro
+      if (typeof filter.value === 'string' && typeof customValue.field_value === 'string') {
+        return customValue.field_value.toLowerCase().includes(filter.value.toLowerCase());
+      }
+      
+      // Para campos de seleção única, verifica se o valor é igual
+      if (typeof filter.value === 'string' && !Array.isArray(customValue.field_value)) {
+        return customValue.field_value === filter.value;
+      }
+      
+      // Para campos de seleção múltipla, verifica se o valor está incluído
+      if (typeof filter.value === 'string' && Array.isArray(customValue.field_value)) {
+        return customValue.field_value.includes(filter.value);
+      }
+      
+      // Se o tipo de valor não corresponder, não corresponde ao filtro
+      return false;
+    });
 
-    return matchesSearch && matchesStatus && matchesSegment && matchesLastContact;
+    return matchesSearch && matchesStatus && matchesSegment && matchesLastContact && matchesCustomFields;
   });
 
   const handleWhatsAppClick = (e: React.MouseEvent, contact: Contact) => {

@@ -13,6 +13,8 @@ import ClientsViewToggler from './ClientsViewToggler';
 import ClientsRefreshButton from './ClientsRefreshButton';
 import { KanbanSettings } from './KanbanSettings';
 
+import { CustomFieldFilter } from '@/hooks/useClientsFilters';
+
 interface ClientsHeaderProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -21,10 +23,14 @@ interface ClientsHeaderProps {
   statusFilter: string;
   segmentFilter: string;
   lastContactFilter: string;
+  customFieldFilters: CustomFieldFilter[];
   onStatusFilterChange: (value: string) => void;
   onSegmentFilterChange: (value: string) => void;
   onLastContactFilterChange: (value: string) => void;
+  onAddCustomFieldFilter: (filter: CustomFieldFilter) => void;
+  onRemoveCustomFieldFilter: (fieldId: string) => void;
   onClearFilters: () => void;
+  onClearCustomFieldFilters: () => void;
   hasActiveFilters: boolean;
   isAddContactOpen: boolean;
   onAddContactOpenChange: (open: boolean) => void;
@@ -47,10 +53,14 @@ const ClientsHeader = ({
   statusFilter,
   segmentFilter,
   lastContactFilter,
+  customFieldFilters,
   onStatusFilterChange,
   onSegmentFilterChange,
   onLastContactFilterChange,
+  onAddCustomFieldFilter,
+  onRemoveCustomFieldFilter,
   onClearFilters,
+  onClearCustomFieldFilters,
   hasActiveFilters,
   isAddContactOpen,
   onAddContactOpenChange,
@@ -111,13 +121,17 @@ const ClientsHeader = ({
             statusFilter={statusFilter}
             segmentFilter={segmentFilter}
             lastContactFilter={lastContactFilter}
+            customFieldFilters={customFieldFilters}
             onStatusFilterChange={onStatusFilterChange}
             onSegmentFilterChange={onSegmentFilterChange}
             onLastContactFilterChange={onLastContactFilterChange}
+            onAddCustomFieldFilter={onAddCustomFieldFilter}
+            onRemoveCustomFieldFilter={onRemoveCustomFieldFilter}
             onClearFilters={() => {
               onClearFilters();
               setIsFilterDialogOpen(false);
             }}
+            onClearCustomFieldFilters={onClearCustomFieldFilters}
             hasActiveFilters={hasActiveFilters}
           />
 
