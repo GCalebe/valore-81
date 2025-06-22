@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Contact } from '@/types/client';
 import { toast } from '@/hooks/use-toast';
@@ -15,7 +14,15 @@ export const useContactsData = () => {
   const fetchClients = useCallback(async () => {
     try {
       setLoadingContacts(true);
-      const contactsFetched = await contactsService.fetchAllContacts();
+      
+      // Add a timeout to the fetch operation
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      );
+      
+      const fetchPromise = contactsService.fetchAllContacts();
+      
+      const contactsFetched = await Promise.race([fetchPromise, timeoutPromise]) as Contact[];
 
       // Gera conversas fictícias se necessário.
       let contactsWithConversations = generateFictitiousConversations(contactsFetched);
@@ -29,11 +36,27 @@ export const useContactsData = () => {
       setContacts(contactsWithConversations);
     } catch (error) {
       console.error('Error fetching clients:', error);
+      
+      let errorMessage = "Ocorreu um erro ao buscar os clientes do banco de dados.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('timeout')) {
+          errorMessage = "Tempo limite excedido ao conectar com o servidor.";
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão com a internet.";
+        } else if (error.message.includes('network')) {
+          errorMessage = "Erro de rede. Verifique sua conexão com a internet.";
+        }
+      }
+      
       toast({
         title: "Erro ao carregar clientes",
-        description: "Ocorreu um erro ao buscar os clientes do banco de dados.",
+        description: errorMessage,
         variant: "destructive"
       });
+      
+      // Set empty array on error to prevent app crash
+      setContacts([]);
     } finally {
       setLoadingContacts(false);
       setRefreshing(false);
