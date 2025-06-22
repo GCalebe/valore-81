@@ -1,70 +1,118 @@
-
-import { Contact } from '@/types/client';
 import { supabase } from '@/integrations/supabase/client';
+import { Contact } from '@/types/client';
 
-/**
- * Serviço para gerenciamento de contatos. 
- * Este serviço pode ser mockado em testes, permitindo melhor testabilidade.
- */
-export function useContactsService() {
-  // Busca todos os contatos da base.
-  async function fetchAllContacts(): Promise<Contact[]> {
-    const { data, error } = await supabase.from('contacts').select('*');
-    if (error) throw error;
-    if (!data) return [];
+export const useContactsService = () => {
+  const fetchAllContacts = async (): Promise<Contact[]> => {
+    try {
+      // First, try to fetch from the comprehensive view
+      const { data: contactsData, error: contactsError } = await supabase
+        .from('v_clients_complete')
+        .select('*')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-    return data.map((client: any) => ({
-      id: client.id,
-      name: client.name || 'Cliente sem nome',
-      email: client.email,
-      phone: client.phone,
-      address: client.address,
-      clientName: client.client_name,
-      clientSize: client.client_size,
-      clientType: client.client_type,
-      cpfCnpj: client.cpf_cnpj,
-      asaasCustomerId: client.asaas_customer_id,
-      payments: client.payments,
-      status: client.status === 'Inactive' ? 'Inactive' : 'Active',
-      notes: client.notes,
-      lastContact: client.last_contact
-        ? new Date(client.last_contact).toLocaleDateString('pt-BR')
-        : (client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Desconhecido'),
-      kanbanStage: client.kanban_stage || 'Entraram', // Ensure fallback to default stage
-      sessionId: client.session_id,
-      tags: client.tags || [],
-      responsibleUser: client.responsible_user,
-      sales: client.sales,
-      clientSector: client.client_sector,
-      budget: client.budget,
-      paymentMethod: client.payment_method,
-      clientObjective: client.client_objective,
-      lossReason: client.loss_reason,
-      contractNumber: client.contract_number,
-      contractDate: client.contract_date,
-      payment: client.payment,
-      uploadedFiles: client.uploaded_files || [],
-      consultationStage: client.consultation_stage,
-      lastMessage: client.last_message,
-      lastMessageTime: client.last_message_time,
-      unreadCount: client.unread_count,
-    })) as Contact[];
-  }
+      if (contactsError) {
+        console.warn('Failed to fetch from v_clients_complete, trying contacts table:', contactsError);
+        
+        // Fallback to contacts table with manual joins
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('contacts')
+          .select(`
+            *,
+            kanban_stages!contacts_kanban_stage_fk(title)
+          `)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false });
 
-  async function updateContactKanbanStage(contactId: string, newStage: string) {
-    const { error } = await supabase
-      .from('contacts')
-      .update({ kanban_stage: newStage })
-      .eq('id', contactId);
-    if (error) throw error;
-  }
+        if (fallbackError) {
+          throw new Error(`Failed to fetch contacts: ${fallbackError.message}`);
+        }
 
-  // Aqui outros métodos de manipulação podem ser expandidos, separando responsabilidades
-  // como addContact, updateContact etc, facilitando manutenção e testes.
+        // Transform fallback data to match expected format
+        return (fallbackData || []).map(contact => ({
+          ...contact,
+          kanbanStage: contact.kanban_stages?.title || 'Entraram',
+          customFieldsJsonb: null,
+          messageCount: 0
+        }));
+      }
+
+      // Transform the data to match the Contact interface
+      return (contactsData || []).map(contact => ({
+        id: contact.id,
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+        address: contact.address,
+        clientName: contact.client_name,
+        clientSize: contact.client_size,
+        clientType: contact.client_type,
+        cpfCnpj: contact.cpf_cnpj,
+        asaasCustomerId: contact.asaas_customer_id,
+        status: contact.status,
+        notes: contact.notes,
+        lastContact: contact.last_contact,
+        lastMessage: contact.last_message,
+        lastMessageTime: contact.last_message_time,
+        unreadCount: contact.unread_count,
+        sessionId: contact.session_id,
+        tags: contact.tags || [],
+        responsibleUser: contact.responsible_user,
+        sales: contact.sales,
+        clientSector: contact.client_sector,
+        budget: contact.budget,
+        paymentMethod: contact.payment_method,
+        clientObjective: contact.client_objective,
+        lossReason: contact.loss_reason,
+        contractNumber: contact.contract_number,
+        contractDate: contact.contract_date,
+        payment: contact.payment,
+        uploadedFiles: contact.uploaded_files || [],
+        consultationStage: contact.consultation_stage,
+        createdAt: contact.created_at,
+        deletedAt: contact.deleted_at,
+        updatedAt: contact.updated_at,
+        kanbanStageId: contact.kanban_stage_id,
+        kanbanStage: contact.kanban_stage || 'Entraram',
+        customFieldsJsonb: contact.custom_fields_jsonb,
+        messageCount: contact.message_count || 0
+      }));
+    } catch (error) {
+      console.error('Error in fetchAllContacts:', error);
+      throw error;
+    }
+  };
+
+  const updateContactKanbanStage = async (contactId: string, stageTitle: string) => {
+    try {
+      // First, get the stage ID from the title
+      const { data: stageData, error: stageError } = await supabase
+        .from('kanban_stages')
+        .select('id')
+        .eq('title', stageTitle)
+        .single();
+
+      if (stageError) {
+        throw new Error(`Failed to find kanban stage: ${stageError.message}`);
+      }
+
+      // Update the contact with the stage ID
+      const { error: updateError } = await supabase
+        .from('contacts')
+        .update({ kanban_stage_id: stageData.id })
+        .eq('id', contactId);
+
+      if (updateError) {
+        throw new Error(`Failed to update contact: ${updateError.message}`);
+      }
+    } catch (error) {
+      console.error('Error in updateContactKanbanStage:', error);
+      throw error;
+    }
+  };
 
   return {
     fetchAllContacts,
     updateContactKanbanStage,
-    // ... outros métodos no futuro
   };
-}
+};

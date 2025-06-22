@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -103,7 +102,7 @@ export function useConversations() {
         supabase
           .from('dados_cliente')
           .select('*')
-          .in('sessionid', uniqueSessionIds),
+          .in('session_id', uniqueSessionIds),
         supabase
           .from('latest_chat_messages')
           .select('session_id, message, message_time')
@@ -128,7 +127,7 @@ export function useConversations() {
       );
 
       const conversationsData: Conversation[] = clientsData.map((client: Client) => {
-        const lastMessage = lastMessagesMap.get(client.sessionid);
+        const lastMessage = lastMessagesMap.get(client.session_id);
         let lastMessageContent = 'Nenhuma mensagem ainda';
         let messageTime = '...';
 
@@ -162,7 +161,7 @@ export function useConversations() {
         }
 
         return {
-          id: client.sessionid,
+          id: client.session_id,
           name: client.nome || 'Cliente sem nome',
           lastMessage: lastMessageContent,
           time: messageTime,
@@ -174,7 +173,7 @@ export function useConversations() {
           clientName: client.client_name || 'Não informado',
           clientSize: client.client_size || 'Não informado',
           clientType: client.client_type || 'Não informado',
-          sessionId: client.sessionid,
+          sessionId: client.session_id,
         };
       });
       

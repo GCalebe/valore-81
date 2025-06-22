@@ -1,4 +1,3 @@
-
 export interface Message {
   id: string;
   content: string;
@@ -31,7 +30,7 @@ export interface Client {
   client_name?: string;
   client_size?: string;
   client_type?: string;
-  sessionid: string;
+  session_id: string;
   created_at?: string;
 }
 
