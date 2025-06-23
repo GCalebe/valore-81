@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -95,7 +94,7 @@ export function useConversations() {
     }
   };
 
-  const createConversationFromClient = (client: any): Conversation => {
+  const createConversationFromClient = (client: DatabaseClient): Conversation => {
     // Handle missing or null session_id safely
     const sessionId = client.session_id || `fallback_${client.id}`;
     
@@ -187,7 +186,7 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Query clients data with simplified type handling
+      // Query clients data with explicit typing
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -227,10 +226,12 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      // Create conversations with simplified logic
-      const conversationsData: Conversation[] = clientsData
-        .filter(client => client !== null && client !== undefined)
-        .map(createConversationFromClient);
+      // Create conversations with explicit type handling to avoid TypeScript inference issues
+      const validClients = clientsData.filter((client): client is DatabaseClient => {
+        return client !== null && client !== undefined;
+      });
+      
+      const conversationsData: Conversation[] = validClients.map(createConversationFromClient);
 
       // Fetch latest messages for each conversation
       for (const conversation of conversationsData) {
