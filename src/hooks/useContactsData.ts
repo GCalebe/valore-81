@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { Contact } from '@/types/client';
 import { toast } from '@/hooks/use-toast';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 import { useContactsService } from './useContactsService';
+import { generateMockClients } from '@/mocks/clientsMock';
 
 export const useContactsData = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -15,17 +17,12 @@ export const useContactsData = () => {
     try {
       setLoadingContacts(true);
       
-      // Add a timeout to the fetch operation
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 10000)
-      );
-      
-      const fetchPromise = contactsService.fetchAllContacts();
-      
-      const contactsFetched = await Promise.race([fetchPromise, timeoutPromise]) as Contact[];
+      // Use mock data instead of real API calls
+      console.log('Using mock data for clients...');
+      const mockContactsFetched = generateMockClients();
 
       // Gera conversas fictícias se necessário.
-      let contactsWithConversations = generateFictitiousConversations(contactsFetched);
+      let contactsWithConversations = generateFictitiousConversations(mockContactsFetched);
 
       // Ensure all contacts have a valid kanban stage
       contactsWithConversations = contactsWithConversations.map(contact => ({
@@ -34,39 +31,29 @@ export const useContactsData = () => {
       }));
 
       setContacts(contactsWithConversations);
+      
+      console.log('Mock clients loaded successfully:', contactsWithConversations.length, 'clients');
     } catch (error) {
-      console.error('Error fetching clients:', error);
-      
-      let errorMessage = "Ocorreu um erro ao buscar os clientes do banco de dados.";
-      
-      if (error instanceof Error) {
-        if (error.message.includes('timeout')) {
-          errorMessage = "Tempo limite excedido ao conectar com o servidor.";
-        } else if (error.message.includes('Failed to fetch')) {
-          errorMessage = "Não foi possível conectar ao servidor. Verifique sua conexão com a internet.";
-        } else if (error.message.includes('network')) {
-          errorMessage = "Erro de rede. Verifique sua conexão com a internet.";
-        }
-      }
+      console.error('Error loading mock clients:', error);
       
       toast({
         title: "Erro ao carregar clientes",
-        description: errorMessage,
+        description: "Problema ao buscar os dados dos clientes. Usando dados de exemplo.",
         variant: "destructive"
       });
       
-      // Set empty array on error to prevent app crash
-      setContacts([]);
+      // Set mock data on error to prevent app crash
+      const fallbackData = generateMockClients();
+      setContacts(fallbackData);
     } finally {
       setLoadingContacts(false);
       setRefreshing(false);
     }
-  }, [contactsService]);
+  }, []);
 
   const handleKanbanStageChange = async (contactId: string, newStage: string) => {
     try {
-      await contactsService.updateContactKanbanStage(contactId, newStage);
-
+      // Update local state immediately for better UX
       setContacts(prevContacts => 
         prevContacts.map(contact => 
           contact.id === contactId 
@@ -79,6 +66,9 @@ export const useContactsData = () => {
         title: "Etapa atualizada",
         description: `Cliente movido para ${newStage}.`,
       });
+      
+      // In a real app, this would make an API call
+      console.log(`Updated contact ${contactId} to stage ${newStage}`);
     } catch (error) {
       console.error('Error updating kanban stage:', error);
       toast({

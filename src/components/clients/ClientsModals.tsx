@@ -3,7 +3,6 @@ import React from 'react';
 import { Contact } from '@/types/client';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog';
-import DeleteClientDialog from '@/components/clients/DeleteClientDialog';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
 
@@ -82,12 +81,6 @@ const ClientsModals = ({
             editContactData={newContact}
             setEditContactData={setNewContact}
             handleEditContact={handleEditContact}
-          />
-          <DeleteClientDialog
-            isOpen={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
-            selectedContact={selectedContact}
-            handleDeleteContact={handleDeleteContact}
           />
           {isMessageDialogOpen && (
             <SendMessageDialog

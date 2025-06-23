@@ -10,9 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Trash2, Edit2, Briefcase, FileBox, Tag, Calendar, DollarSign, Target, AlertCircle } from 'lucide-react';
+import { User, Phone, Mail, MapPin, MessageSquare, CreditCard, FileText, ShipWheel, Edit2, Briefcase, FileBox, Tag, Calendar, DollarSign, Target, AlertCircle } from 'lucide-react';
 import { Contact } from '@/types/client';
-import DeleteClientDialog from './DeleteClientDialog';
 import SendMessageDialog from './SendMessageDialog';
 import ClientUTMData from './ClientUTMData';
 import { CustomFieldWithValue } from '@/types/customFields';
@@ -51,11 +50,7 @@ const ClientDetailSheet = ({
   onOpenChange,
   selectedContact,
   onEditClick,
-  onDeleteClick,
   onSendMessageClick,
-  isDeleteDialogOpen,
-  setIsDeleteDialogOpen,
-  handleDeleteContact,
   isMessageDialogOpen,
   setIsMessageDialogOpen,
   messageText,
