@@ -94,6 +94,24 @@ export function useConversations() {
     }
   };
 
+  const createConversationFromClient = (client: DatabaseClient): Conversation => {
+    return {
+      id: client.sessionid,
+      name: client.nome || 'Cliente sem nome',
+      lastMessage: 'Carregando mensagem...',
+      time: '...',
+      unread: 0,
+      avatar: '👤',
+      phone: client.telefone || 'Não informado',
+      email: client.email || 'Sem email',
+      address: 'Não informado',
+      clientName: client.client_name || 'Não informado',
+      clientSize: client.client_size || 'Não informado',
+      clientType: client.client_type || 'Não informado',
+      sessionId: client.sessionid,
+    };
+  };
+
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
@@ -205,23 +223,7 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      const conversationsData: Conversation[] = clientsData.map((client: DatabaseClient) => {
-        return {
-          id: client.sessionid,
-          name: client.nome || 'Cliente sem nome',
-          lastMessage: 'Carregando mensagem...',
-          time: '...',
-          unread: 0,
-          avatar: '👤',
-          phone: client.telefone || 'Não informado',
-          email: client.email || 'Sem email',
-          address: 'Não informado',
-          clientName: client.client_name || 'Não informado',
-          clientSize: client.client_size || 'Não informado',
-          clientType: client.client_type || 'Não informado',
-          sessionId: client.sessionid,
-        };
-      });
+      const conversationsData: Conversation[] = clientsData.map((client: DatabaseClient) => createConversationFromClient(client));
 
       // Fetch latest messages for each conversation
       for (const conversation of conversationsData) {
