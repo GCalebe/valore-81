@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,6 +7,7 @@ import { formatMessageTime } from '@/utils/chatUtils';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 import { mockClients } from '@/mocks/clientsMock';
 
+// Simplified interface that matches actual Supabase data structure
 interface DatabaseClient {
   asaas_customer_id: string | null;
   client_name: string | null;
@@ -21,7 +23,7 @@ interface DatabaseClient {
   payments: any;
   porte_pet: string | null;
   raca_pet: string | null;
-  session_id: string | null; // Made optional to match actual database structure
+  session_id: string | null;
   telefone: string | null;
 }
 
@@ -93,8 +95,8 @@ export function useConversations() {
     }
   };
 
-  const createConversationFromClient = (client: DatabaseClient): Conversation => {
-    // Handle missing or null session_id
+  const createConversationFromClient = (client: any): Conversation => {
+    // Handle missing or null session_id safely
     const sessionId = client.session_id || `fallback_${client.id}`;
     
     return {
@@ -185,7 +187,7 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Query clients data without type casting
+      // Query clients data with simplified type handling
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -225,9 +227,9 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      // Create conversations without problematic type casting
+      // Create conversations with simplified logic
       const conversationsData: Conversation[] = clientsData
-        .filter((client): client is DatabaseClient => client !== null)
+        .filter(client => client !== null && client !== undefined)
         .map(createConversationFromClient);
 
       // Fetch latest messages for each conversation
