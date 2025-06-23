@@ -16,7 +16,7 @@ import UTMMetricsTab from '@/components/metrics/UTMMetricsTab';
 const MetricsDashboard = () => {
   const [dateFilter, setDateFilter] = useState('week');
   const [customDate, setCustomDate] = useState<Date>();
-  const { stats, loading: statsLoading, refetchStats } = useClientStats(dateFilter, customDate);
+  const { stats, loading: statsLoading, refetchStats } = useClientStats();
   const { metrics, loading: metricsLoading, refetchMetrics } = useConversationMetrics(dateFilter, customDate);
   const [selectedCampaign, setSelectedCampaign] = useState('all');
   const [selectedDevice, setSelectedDevice] = useState('all');
@@ -48,9 +48,8 @@ const MetricsDashboard = () => {
             Dashboard de Métricas
           </h2>
           <MetricsFilters 
-            dateFilter={dateFilter} 
-            onDateFilterChange={setDateFilter}
-            onCustomDateChange={setCustomDate}
+            customDate={customDate} 
+            setCustomDate={setCustomDate}
           />
         </div>
         

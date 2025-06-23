@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -169,7 +168,7 @@ export function useConversations() {
                 try {
                   const jsonMessage = JSON.parse(chatHistory.message);
                   if (jsonMessage.type && jsonMessage.content) {
-                    lastMessageContent = json
+                    lastMessageContent = jsonMessage.content;
                   }
                 } catch (e) {
                   lastMessageContent = chatHistory.message;

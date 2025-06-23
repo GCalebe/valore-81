@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -99,7 +100,7 @@ const ClientsDashboard = () => {
         isCompactView,
         setIsCompactView,
         refreshing,
-        handleRefresh,
+        handleRefresh: () => handleRefresh(),
       }}
     >
       <div className="flex-1 overflow-hidden">
