@@ -100,7 +100,7 @@ const ClientsDashboard = () => {
         isCompactView,
         setIsCompactView,
         refreshing,
-        handleRefresh: () => handleRefresh(),
+        handleRefresh: handleRefresh,
       }}
     >
       <div className="flex-1 overflow-hidden">
@@ -156,6 +156,3 @@ const ClientsDashboard = () => {
 };
 
 export default ClientsDashboard;
-
-// O arquivo foi refatorado para separar lógica e componentes e está bem mais limpo.
-// Considere repetir a abordagem para outros arquivos grandes.

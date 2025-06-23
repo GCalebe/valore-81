@@ -1,28 +1,50 @@
+
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+interface ConversationMetrics {
+  totalConversations: number;
+  responseRate: number;
+  totalRespondidas: number;
+  avgResponseTime: number;
+  conversionRate: number;
+  avgClosingTime: number;
+  conversationData: any[];
+  funnelData: any[];
+  conversionByTimeData: any[];
+  leadsData: any[];
+  secondaryResponseRate: number;
+  totalSecondaryResponses: number;
+  negotiatedValue: number;
+  averageNegotiatedValue: number;
+  previousPeriodValue: number;
+  leadsBySource: any[];
+  leadsOverTime: any[];
+  leadsByArrivalFunnel: any[];
+  isStale: boolean;
+}
+
 export function useConversationMetrics(dateFilter: string = 'week', customDate?: Date) {
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<ConversationMetrics>({
     totalConversations: 0,
     responseRate: 0,
     totalRespondidas: 0,
     avgResponseTime: 0,
     conversionRate: 0,
     avgClosingTime: 0,
-    conversationData: [] as any[],
-    funnelData: [] as any[],
-    conversionByTimeData: [] as any[],
-    leadsData: [] as any[],
-    // Novas métricas
+    conversationData: [],
+    funnelData: [],
+    conversionByTimeData: [],
+    leadsData: [],
     secondaryResponseRate: 0,
     totalSecondaryResponses: 0,
     negotiatedValue: 0,
     averageNegotiatedValue: 0,
     previousPeriodValue: 0,
-    leadsBySource: [] as any[],
-    leadsOverTime: [] as any[],
-    leadsByArrivalFunnel: [] as any[],
+    leadsBySource: [],
+    leadsOverTime: [],
+    leadsByArrivalFunnel: [],
     isStale: false,
   });
   const [loading, setLoading] = useState(true);
