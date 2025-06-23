@@ -9,6 +9,8 @@ import RecentClientsTable from './RecentClientsTable';
 import LeadsTable from './LeadsTable';
 import SecondaryResponseRateCard from './SecondaryResponseRateCard';
 import ResponseTimeCard from './ResponseTimeCard';
+import NegotiatedValueCard from './NegotiatedValueCard';
+import NegotiatingValueCard from './NegotiatingValueCard';
 import LeadsBySourceChart from './LeadsBySourceChart';
 import LeadsGrowthChart from './LeadsGrowthChart';
 import LeadsByArrivalFunnelChart from './LeadsByArrivalFunnelChart';
@@ -84,9 +86,34 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
       </div>
 
-      {/* Bloco 2: Métricas Secundárias */}
+      {/* Bloco 2: Métricas Financeiras */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-green-200 dark:border-green-700 pb-2">
+          💰 Métricas Financeiras
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <NegotiatedValueCard 
+            totalValue={metricsData.negotiatedValue || 50000}
+            totalDeals={3}
+            averageValue={metricsData.averageNegotiatedValue || 16666}
+            loading={loading}
+            trend="Crescimento de 19% vs período anterior"
+            previousPeriodValue={metricsData.previousPeriodValue || 42000}
+          />
+          
+          <NegotiatingValueCard 
+            totalValue={metricsData.totalNegotiatingValue || 125000}
+            loading={loading}
+            trend="Em processo de fechamento"
+            activePipelines={8}
+          />
+        </div>
+      </div>
+
+      {/* Bloco 3: Métricas Secundárias */}
+      <div className="space-y-6">
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-purple-200 dark:border-purple-700 pb-2">
           📈 Métricas Detalhadas
         </h4>
         
@@ -105,9 +132,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
       </div>
 
-      {/* Bloco 3: Gráficos de Performance */}
+      {/* Bloco 4: Gráficos de Performance */}
       <div className="space-y-6">
-        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-purple-200 dark:border-purple-700 pb-2">
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-yellow-200 dark:border-yellow-700 pb-2">
           📈 Análise de Performance
         </h4>
         
@@ -119,9 +146,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         <ConversionByTimeChart data={metricsData.conversionByTimeData || []} loading={loading} />
       </div>
 
-      {/* Bloco 4: Análise de Leads */}
+      {/* Bloco 5: Análise de Leads */}
       <div className="space-y-6">
-        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-yellow-200 dark:border-yellow-700 pb-2">
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-red-200 dark:border-red-700 pb-2">
           🎯 Análise de Leads
         </h4>
         
@@ -133,9 +160,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         <LeadsByArrivalFunnelChart data={metricsData.leadsByArrivalFunnel || []} loading={loading} />
       </div>
 
-      {/* Bloco 5: Tabelas Detalhadas */}
+      {/* Bloco 6: Tabelas Detalhadas */}
       <div className="space-y-6">
-        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-red-200 dark:border-red-700 pb-2">
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-indigo-200 dark:border-indigo-700 pb-2">
           📋 Dados Detalhados
         </h4>
         

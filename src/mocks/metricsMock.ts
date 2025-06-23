@@ -24,6 +24,7 @@ export interface ConversationMetrics {
   totalSecondaryResponses: number;
   negotiatedValue: number;
   averageNegotiatedValue: number;
+  totalNegotiatingValue: number;
   previousPeriodValue: number;
   leadsBySource: Array<{ name: string; value: number; color: string }>;
   leadsOverTime: Array<{ month: string; clients: number; leads: number }>;
@@ -115,6 +116,7 @@ export const mockConversationMetrics: ConversationMetrics = {
   totalSecondaryResponses: 200,
   negotiatedValue: 50000,
   averageNegotiatedValue: 16666,
+  totalNegotiatingValue: 125000,
   previousPeriodValue: 42000,
   leadsBySource: [
     { name: 'Facebook', value: 80, color: '#3B82F6' },

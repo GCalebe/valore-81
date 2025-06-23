@@ -53,6 +53,7 @@ interface ConversationMetrics {
   totalSecondaryResponses: number;
   negotiatedValue: number;
   averageNegotiatedValue: number;
+  totalNegotiatingValue: number;
   previousPeriodValue: number;
   leadsBySource: LeadsBySource[];
   leadsOverTime: LeadsOverTime[];
@@ -61,7 +62,10 @@ interface ConversationMetrics {
 }
 
 export function useConversationMetrics(dateFilter: string = 'week', customDate?: Date) {
-  const [metrics, setMetrics] = useState<ConversationMetrics>(mockConversationMetrics);
+  const [metrics, setMetrics] = useState<ConversationMetrics>({
+    ...mockConversationMetrics,
+    totalNegotiatingValue: 125000 // Nova métrica
+  });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -73,6 +77,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
       // Ensure all arrays are properly initialized to prevent undefined errors
       const safeMetrics = {
         ...mockConversationMetrics,
+        totalNegotiatingValue: 125000, // Valor total sendo negociado
         conversationData: mockConversationMetrics.conversationData || [],
         funnelData: mockConversationMetrics.funnelData || [],
         conversionByTimeData: mockConversationMetrics.conversionByTimeData || [],
@@ -97,6 +102,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
       // Even in error case, ensure safe data structure
       const safeMetrics = {
         ...mockConversationMetrics,
+        totalNegotiatingValue: 125000,
         conversationData: [],
         funnelData: [],
         conversionByTimeData: [],
