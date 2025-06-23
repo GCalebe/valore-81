@@ -70,8 +70,19 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
       setLoading(true);
       console.log('Using mock data for conversation metrics...');
 
-      // Use mock data directly
-      setMetrics(mockConversationMetrics);
+      // Ensure all arrays are properly initialized to prevent undefined errors
+      const safeMetrics = {
+        ...mockConversationMetrics,
+        conversationData: mockConversationMetrics.conversationData || [],
+        funnelData: mockConversationMetrics.funnelData || [],
+        conversionByTimeData: mockConversationMetrics.conversionByTimeData || [],
+        leadsData: mockConversationMetrics.leadsData || [],
+        leadsBySource: mockConversationMetrics.leadsBySource || [],
+        leadsOverTime: mockConversationMetrics.leadsOverTime || [],
+        leadsByArrivalFunnel: mockConversationMetrics.leadsByArrivalFunnel || []
+      };
+
+      setMetrics(safeMetrics);
 
       console.log('Mock conversation metrics loaded successfully');
 
@@ -82,7 +93,19 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         description: "Problema ao buscar as métricas de conversas. Usando dados de exemplo.",
         variant: "destructive"
       });
-      setMetrics(mockConversationMetrics);
+      
+      // Even in error case, ensure safe data structure
+      const safeMetrics = {
+        ...mockConversationMetrics,
+        conversationData: [],
+        funnelData: [],
+        conversionByTimeData: [],
+        leadsData: [],
+        leadsBySource: [],
+        leadsOverTime: [],
+        leadsByArrivalFunnel: []
+      };
+      setMetrics(safeMetrics);
     } finally {
       setLoading(false);
     }

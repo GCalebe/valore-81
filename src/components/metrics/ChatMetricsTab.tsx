@@ -92,8 +92,9 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SecondaryResponseRateCard 
-            responseRate={metricsData.secondaryResponseRate || 70}
-            totalResponses={metricsData.totalSecondaryResponses || 200}
+            value={metricsData.secondaryResponseRate || 70}
+            totalRespondidas={metricsData.totalRespondidas || 289}
+            totalSecondaryResponses={metricsData.totalSecondaryResponses || 200}
             loading={loading}
           />
           
@@ -139,7 +140,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </h4>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentClientsTable data={clientData.recentClients || []} loading={loading} />
+          <RecentClientsTable loading={loading} />
           <LeadsTable leads={metricsData.leadsData || []} loading={loading} />
         </div>
       </div>

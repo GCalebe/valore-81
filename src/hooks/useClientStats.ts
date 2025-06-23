@@ -13,8 +13,15 @@ export function useClientStats() {
       setLoading(true);
       console.log('Using mock data for client stats...');
 
-      // Use mock data directly
-      setStats(mockClientStats);
+      // Ensure all arrays are properly initialized to prevent undefined errors
+      const safeStats = {
+        ...mockClientStats,
+        monthlyGrowth: mockClientStats.monthlyGrowth || [],
+        ChatBreeds: mockClientStats.ChatBreeds || [],
+        recentClients: mockClientStats.recentClients || []
+      };
+
+      setStats(safeStats);
 
       console.log('Mock client stats loaded successfully');
 
@@ -25,7 +32,15 @@ export function useClientStats() {
         description: "Problema ao buscar as estatísticas de clientes. Usando dados de exemplo.",
         variant: "destructive"
       });
-      setStats(mockClientStats);
+      
+      // Even in error case, ensure safe data structure
+      const safeStats = {
+        ...mockClientStats,
+        monthlyGrowth: [],
+        ChatBreeds: [],
+        recentClients: []
+      };
+      setStats(safeStats);
     } finally {
       setLoading(false);
     }
