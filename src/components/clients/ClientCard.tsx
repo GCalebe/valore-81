@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +76,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
     navigateToClientChat(chatId);
   };
 
+  const isCancelledProject = contact.consultationStage === 'Projeto cancelado – perdido';
+
   return (
     <div
       ref={innerRef}
@@ -86,14 +89,38 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         className={cn(
           `mb-2 cursor-pointer transition-all duration-200 hover:shadow-lg dark:hover:shadow-blue-500/20 relative border-l-4`,
           snapshot?.isDragging ? "shadow-xl rotate-1 scale-105" : "shadow-sm",
-          "bg-card"
+          "bg-card",
+          isCancelledProject && "relative overflow-hidden"
         )}
         style={{
           borderLeftColor: getBorderLeftColor(contact.kanbanStage)
         }}
         onClick={() => onClick(contact)}
       >
-        <CardContent className={cn("p-3 text-sm", isCompact && "py-1.5")}>
+        {/* Red crossed-out overlay for cancelled projects */}
+        {isCancelledProject && (
+          <>
+            <div className="absolute inset-0 bg-red-500/10 z-10 pointer-events-none" />
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-red-500 transform rotate-12 origin-top-left" 
+                   style={{ 
+                     width: '141.42%', 
+                     transformOrigin: 'top left',
+                     top: '50%',
+                     left: '-20.71%'
+                   }} />
+              <div className="absolute top-0 right-0 w-full h-0.5 bg-red-500 transform -rotate-12 origin-top-right" 
+                   style={{ 
+                     width: '141.42%', 
+                     transformOrigin: 'top right',
+                     top: '50%',
+                     right: '-20.71%'
+                   }} />
+            </div>
+          </>
+        )}
+
+        <CardContent className={cn("p-3 text-sm relative z-30", isCompact && "py-1.5")}>
           <div className="flex items-start justify-between mb-1">
             <span
               className="font-semibold text-gray-800 dark:text-gray-100 pr-2 truncate"
@@ -124,7 +151,12 @@ export const ClientCard: React.FC<ClientCardProps> = ({
           {displayConfig.showConsultationStage && contact.consultationStage && (
             <div className="flex items-center gap-1 mb-2 text-xs">
               <AlertCircle className="h-3 w-3 text-gray-500" />
-              <span className="text-gray-600 dark:text-gray-300">{contact.consultationStage}</span>
+              <span className={cn(
+                "text-gray-600 dark:text-gray-300",
+                isCancelledProject && "text-red-600 dark:text-red-400 font-medium"
+              )}>
+                {contact.consultationStage}
+              </span>
             </div>
           )}
           
