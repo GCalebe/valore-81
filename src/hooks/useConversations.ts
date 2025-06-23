@@ -22,7 +22,7 @@ interface DatabaseClient {
   payments: any;
   porte_pet: string | null;
   raca_pet: string | null;
-  sessionid: string;
+  session_id: string; // Fixed: using session_id instead of sessionid
   telefone: string | null;
 }
 
@@ -95,8 +95,11 @@ export function useConversations() {
   };
 
   const createConversationFromClient = (client: DatabaseClient): Conversation => {
+    // Add safety check for session_id
+    const sessionId = client.session_id || `fallback_${client.id}`;
+    
     return {
-      id: client.sessionid,
+      id: sessionId,
       name: client.nome || 'Cliente sem nome',
       lastMessage: 'Carregando mensagem...',
       time: '...',
@@ -108,7 +111,7 @@ export function useConversations() {
       clientName: client.client_name || 'Não informado',
       clientSize: client.client_size || 'Não informado',
       clientType: client.client_type || 'Não informado',
-      sessionId: client.sessionid,
+      sessionId: sessionId,
     };
   };
 
@@ -183,7 +186,7 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Corrigido: usar session_id em vez de sessionid
+      // Fixed: using session_id consistently
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -223,7 +226,7 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      const conversationsData: Conversation[] = clientsData.map((client: DatabaseClient) => createConversationFromClient(client));
+      const conversationsData: Conversation[] = (clientsData as DatabaseClient[]).map(createConversationFromClient);
 
       // Fetch latest messages for each conversation
       for (const conversation of conversationsData) {
