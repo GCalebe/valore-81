@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
 import TagsField from './TagsField';
 import NotesField from './NotesField';
-import ClientInfoTabs from './ClientInfoTabs';
+import ClientInfoTabs from './ClientInfoTabs_old';
 
 interface ClientInfoPanelProps {
   selectedChat: string | null;

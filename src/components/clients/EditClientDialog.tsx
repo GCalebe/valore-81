@@ -1,214 +1,143 @@
-
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
-import { useCustomFields } from '@/hooks/useCustomFields';
-import ConsultationStageSelector from './ConsultationStageSelector';
-import TagsManager from './TagsManager';
-import { CustomFieldWithValue } from '@/types/customFields';
-import PrincipalTab from './ClientFormTabs/PrincipalTab';
-import UTMTab from './ClientFormTabs/UTMTab';
-import MediaTab from './ClientFormTabs/MediaTab';
-import ProductsTab from './ClientFormTabs/ProductsTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDynamicFields } from '@/hooks/useDynamicFields';
+import ClientInfoStandardized from './ClientInfoStandardized';
+import ClientUTMData from './ClientUTMData';
 
-interface EditClientDialogProps {
+interface EditClientFormStandardizedProps {
   isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
   selectedContact: Contact | null;
-  editContactData: Partial<Contact>;
-  setEditContactData: (contact: Partial<Contact>) => void;
-  handleEditContact: () => void;
-  customFields?: CustomFieldWithValue[];
-  loadingCustomFields?: boolean;
-  onSaveCustomFields?: (contactId: string, customValues: { fieldId: string, value: any }[]) => Promise<void>;
-  displayConfig?: {
-    showTags: boolean;
-    showConsultationStage: boolean;
-    showCommercialInfo: boolean;
-    showCustomFields: boolean;
-  };
+  onSave: (updatedContact: Contact) => Promise<void>;
 }
 
-const EditClientDialog = ({
+/**
+ * Exemplo de implementação do componente padronizado no formulário de edição de cliente
+ * Este componente substitui o EditClientDialog original
+ */
+const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
   isOpen,
-  onOpenChange,
+  onClose,
   selectedContact,
-  editContactData,
-  setEditContactData,
-  handleEditContact,
-  customFields,
-  loadingCustomFields,
-  onSaveCustomFields,
-  displayConfig = {
-    showTags: true,
-    showConsultationStage: true,
-    showCommercialInfo: true,
-    showCustomFields: true
-  }
-}: EditClientDialogProps) => {
-  const { getCustomFieldsWithValues, saveClientCustomValues } = useCustomFields();
-  const [customFieldsWithValues, setCustomFieldsWithValues] = useState<CustomFieldWithValue[]>(customFields || []);
-  const [customValues, setCustomValues] = useState<{ [fieldId: string]: any }>({});
-  const [loading, setLoading] = useState(loadingCustomFields || false);
-  const [validationErrors, setValidationErrors] = useState<{ [fieldId: string]: string }>({});
+  onSave
+}) => {
+  const [contact, setContact] = useState<Contact | null>(null);
+  const [activeTab, setActiveTab] = useState('principal');
+  const [isSaving, setIsSaving] = useState(false);
+  const { dynamicFields, loadDynamicFields } = useDynamicFields();
 
   useEffect(() => {
-    if (selectedContact && isOpen) {
-      if (customFields) {
-        setCustomFieldsWithValues(customFields);
-        
-        const values = customFields.reduce((acc, field) => {
-          acc[field.id] = field.value;
-          return acc;
-        }, {} as { [fieldId: string]: any });
-        setCustomValues(values);
-      } else {
-        loadCustomFields();
-      }
+    if (isOpen && selectedContact) {
+      setContact({ ...selectedContact });
+      loadDynamicFields();
     }
-  }, [selectedContact, isOpen, customFields]);
+  }, [isOpen, selectedContact, loadDynamicFields]);
 
-  const loadCustomFields = async () => {
-    if (!selectedContact) return;
-    
-    try {
-      setLoading(true);
-      const fieldsWithValues = await getCustomFieldsWithValues(selectedContact.id);
-      setCustomFieldsWithValues(fieldsWithValues);
-      
-      const values = fieldsWithValues.reduce((acc, field) => {
-        acc[field.id] = field.value;
-        return acc;
-      }, {} as { [fieldId: string]: any });
-      setCustomValues(values);
-    } catch (error) {
-      console.error('Error loading custom fields:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleFieldUpdate = (fieldId: string, newValue: any) => {
+    if (!contact) return;
 
-  const handleSave = async () => {
-    if (!selectedContact) return;
-
-    try {
-      await handleEditContact();
-      
-      if (onSaveCustomFields) {
-        const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
-          fieldId,
-          value
-        }));
-        await onSaveCustomFields(selectedContact.id, customValuesArray);
-      } else if (displayConfig.showCustomFields) {
-        const customValuesArray = Object.entries(customValues).map(([fieldId, value]) => ({
-          fieldId,
-          value
-        }));
-        await saveClientCustomValues(selectedContact.id, customValuesArray);
-      }
-      
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Error saving client:', error);
-    }
-  };
-
-  const handleCustomFieldChange = (fieldId: string, value: any) => {
-    setCustomValues(prev => ({
-      ...prev,
-      [fieldId]: value
-    }));
-    
-    if (validationErrors[fieldId]) {
-      setValidationErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldId];
-        return newErrors;
+    // Verifica se é um campo personalizado ou um campo padrão
+    if (fieldId.startsWith('custom_')) {
+      setContact({
+        ...contact,
+        customValues: {
+          ...contact.customValues,
+          [fieldId]: newValue
+        }
+      });
+    } else {
+      setContact({
+        ...contact,
+        [fieldId]: newValue
       });
     }
   };
 
-  if (!selectedContact) return null;
+  const handleSave = async () => {
+    if (!contact) return;
+    
+    try {
+      setIsSaving(true);
+      await onSave(contact);
+      onClose();
+    } catch (error) {
+      console.error('Erro ao salvar cliente:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-lg">
-            Lead #{selectedContact.id} - {selectedContact.name}
-          </DialogTitle>
+          <DialogTitle>Editar Cliente: {selectedContact?.name}</DialogTitle>
         </DialogHeader>
 
-        {/* Tags Section */}
-        {displayConfig.showTags && (
-          <div className="mb-4">
-            <Label className="text-sm font-medium text-gray-600 uppercase tracking-wide">
-              ADICIONAR TAGS
-            </Label>
-            <TagsManager
-              tags={editContactData.tags || []}
-              onChange={(tags) => setEditContactData({ ...editContactData, tags })}
-            />
-          </div>
-        )}
+        <div className="py-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid grid-cols-4 mb-4">
+              <TabsTrigger value="principal">Principal</TabsTrigger>
+              <TabsTrigger value="utm">UTM</TabsTrigger>
+              <TabsTrigger value="custom">Personalizado</TabsTrigger>
+              <TabsTrigger value="docs">Documentos</TabsTrigger>
+            </TabsList>
 
-        {/* Consultation Stage Section */}
-        {displayConfig.showConsultationStage && (
-          <div className="mb-6">
-            <ConsultationStageSelector
-              value={editContactData.consultationStage || 'Nova consulta'}
-              onChange={(stage) => setEditContactData({ 
-                ...editContactData, 
-                consultationStage: stage as Contact['consultationStage']
-              })}
-            />
-          </div>
-        )}
+            <TabsContent value="principal" className="space-y-4">
+              {contact && (
+                <ClientInfoStandardized
+                  clientData={contact}
+                  dynamicFields={dynamicFields}
+                  onFieldUpdate={handleFieldUpdate}
+                  context="edit"
+                  showTabs={['basic', 'commercial']}
+                />
+              )}
+            </TabsContent>
 
-        <Tabs defaultValue="principal" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
-            <TabsTrigger value="principal">Principal</TabsTrigger>
-            <TabsTrigger value="utm">UTM</TabsTrigger>
-            <TabsTrigger value="midia">Mídia</TabsTrigger>
-            <TabsTrigger value="produtos">Produtos</TabsTrigger>
-          </TabsList>
+            <TabsContent value="utm" className="space-y-4">
+              {contact?.id ? (
+                <ClientUTMData contactId={contact.id} />
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Os dados UTM estarão disponíveis após salvar o cliente.</p>
+                </div>
+              )}
+            </TabsContent>
 
-          <TabsContent value="principal" className="space-y-4">
-            <PrincipalTab 
-              editContactData={editContactData}
-              setEditContactData={setEditContactData}
-            />
-          </TabsContent>
+            <TabsContent value="custom" className="space-y-4">
+              {contact && (
+                <ClientInfoStandardized
+                  clientData={contact}
+                  dynamicFields={dynamicFields}
+                  onFieldUpdate={handleFieldUpdate}
+                  context="edit"
+                  showTabs={['custom']}
+                />
+              )}
+            </TabsContent>
 
-          <TabsContent value="utm" className="space-y-4">
-            <UTMTab contactId={selectedContact?.id} />
-          </TabsContent>
-
-          <TabsContent value="midia" className="space-y-4">
-            <MediaTab />
-          </TabsContent>
-
-          <TabsContent value="produtos" className="space-y-4">
-            <ProductsTab />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="docs" className="space-y-4">
+              {contact && (
+                <ClientInfoStandardized
+                  clientData={contact}
+                  dynamicFields={dynamicFields}
+                  onFieldUpdate={handleFieldUpdate}
+                  context="edit"
+                  showTabs={['docs']}
+                />
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button type="submit" onClick={handleSave}>
-            Salvar Alterações
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? 'Salvando...' : 'Salvar Alterações'}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -216,4 +145,31 @@ const EditClientDialog = ({
   );
 };
 
-export default EditClientDialog;
+export default EditClientFormStandardized;
+
+/**
+ * Instruções para implementação:
+ * 
+ * 1. Renomeie este arquivo para EditClientDialog.tsx (substituindo o atual)
+ * 2. Ou importe este componente no lugar do EditClientDialog atual
+ * 
+ * Exemplo de uso no componente pai:
+ * 
+ * import EditClientFormStandardized from './EditClientFormStandardized';
+ * 
+ * // Substitua
+ * <EditClientDialog 
+ *   isOpen={isEditDialogOpen}
+ *   onClose={handleCloseEditDialog}
+ *   selectedContact={selectedContact}
+ *   onSave={handleSaveClient}
+ * />
+ * 
+ * // Por
+ * <EditClientFormStandardized 
+ *   isOpen={isEditDialogOpen}
+ *   onClose={handleCloseEditDialog}
+ *   selectedContact={selectedContact}
+ *   onSave={handleSaveClient}
+ * />
+ */

@@ -3,7 +3,7 @@ import { Contact } from '@/types/client';
 import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
 import ClientInfoStandardized from '@/components/clients/ClientInfoStandardized';
 
-interface ClientInfoTabsStandardizedProps {
+interface ClientInfoStandardizedExampleProps {
   clientData: Contact | null;
   dynamicFields: {
     basic: DynamicCategory[];
@@ -15,11 +15,10 @@ interface ClientInfoTabsStandardizedProps {
 }
 
 /**
- * Versão padronizada do componente ClientInfoTabs
- * Este componente substitui o ClientInfoTabs original, utilizando o componente padronizado
- * ClientInfoStandardized para exibir as informações do cliente na tela de chat.
+ * Exemplo de implementação do componente padronizado na tela de chat
+ * Este componente substitui o ClientInfoTabs original
  */
-const ClientInfoTabsStandardized: React.FC<ClientInfoTabsStandardizedProps> = ({
+const ClientInfoStandardizedExample: React.FC<ClientInfoStandardizedExampleProps> = ({
   clientData,
   dynamicFields,
   onFieldUpdate
@@ -36,7 +35,7 @@ const ClientInfoTabsStandardized: React.FC<ClientInfoTabsStandardizedProps> = ({
   );
 };
 
-export default ClientInfoTabsStandardized;
+export default ClientInfoStandardizedExample;
 
 /**
  * Instruções para implementação:
@@ -46,7 +45,7 @@ export default ClientInfoTabsStandardized;
  * 
  * Exemplo de uso no componente pai:
  * 
- * import ClientInfoTabsStandardized from './ClientInfoTabsStandardized';
+ * import ClientInfoStandardizedExample from './ClientInfoStandardizedExample';
  * 
  * // Substitua
  * <ClientInfoTabs 
@@ -56,7 +55,7 @@ export default ClientInfoTabsStandardized;
  * />
  * 
  * // Por
- * <ClientInfoTabsStandardized 
+ * <ClientInfoStandardizedExample 
  *   clientData={clientData}
  *   dynamicFields={dynamicFields}
  *   onFieldUpdate={handleFieldUpdate}

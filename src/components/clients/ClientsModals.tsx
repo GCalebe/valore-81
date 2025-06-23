@@ -2,7 +2,7 @@
 import React from 'react';
 import { Contact } from '@/types/client';
 import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
-import EditClientDialog from '@/components/clients/EditClientDialog';
+import EditClientDialog from '@/components/clients/EditClientDialog_old';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
 
