@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -186,11 +187,27 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Use explicit typing with type assertion to avoid deep type instantiation
-      const { data: rawClientsData, error: clientsError } = await supabase
-        .from('dados_cliente')
-        .select('*')
-        .in('session_id', uniqueSessionIds) as { data: any[] | null; error: any };
+      // Completely bypass complex type inference by using raw SQL-like approach
+      let rawClientsData: any[] | null = null;
+      let clientsError: any = null;
+      
+      try {
+        // Use a simple approach that avoids complex type inference
+        const response = await supabase
+          .from('dados_cliente')
+          .select('*');
+          
+        if (response.error) {
+          clientsError = response.error;
+        } else if (response.data) {
+          // Filter the results manually to avoid the complex type inference from .in()
+          rawClientsData = response.data.filter((client: any) => 
+            client.session_id && uniqueSessionIds.includes(client.session_id)
+          );
+        }
+      } catch (error) {
+        clientsError = error;
+      }
 
       if (clientsError) {
         console.log('Erro ao buscar clientes, usando dados mockup:', clientsError);
