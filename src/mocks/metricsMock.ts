@@ -16,9 +16,11 @@ export interface ConversationMetrics {
   avgResponseTime: number;
   conversionRate: number;
   avgClosingTime: number;
+  avgResponseStartTime: number; // Nova métrica em minutos
   conversationData: Array<{ date: string; respondidas: number; naoRespondidas: number }>;
   funnelData: Array<{ name: string; value: number; percentage: number }>;
   conversionByTimeData: Array<{ day: string; morning: number; afternoon: number; evening: number }>;
+  leadsAverageByTimeData: Array<{ day: string; morning: number; afternoon: number; evening: number }>; // Nova métrica
   leadsData: Array<{ id: string; name: string; lastContact: string; status: string; value: number }>;
   secondaryResponseRate: number;
   totalSecondaryResponses: number;
@@ -83,6 +85,7 @@ export const mockConversationMetrics: ConversationMetrics = {
   avgResponseTime: 2,
   conversionRate: 30,
   avgClosingTime: 5,
+  avgResponseStartTime: 45, // 45 minutos para primeira resposta
   conversationData: [
     { date: 'Seg', respondidas: 40, naoRespondidas: 5 },
     { date: 'Ter', respondidas: 45, naoRespondidas: 8 },
@@ -106,6 +109,15 @@ export const mockConversationMetrics: ConversationMetrics = {
     { day: 'Sexta', morning: 20, afternoon: 26, evening: 9 },
     { day: 'Sábado', morning: 10, afternoon: 15, evening: 12 },
     { day: 'Domingo', morning: 8, afternoon: 10, evening: 7 }
+  ],
+  leadsAverageByTimeData: [
+    { day: 'Segunda', morning: 8, afternoon: 15, evening: 4 },
+    { day: 'Terça', morning: 10, afternoon: 18, evening: 5 },
+    { day: 'Quarta', morning: 12, afternoon: 20, evening: 6 },
+    { day: 'Quinta', morning: 14, afternoon: 22, evening: 7 },
+    { day: 'Sexta', morning: 16, afternoon: 24, evening: 8 },
+    { day: 'Sábado', morning: 6, afternoon: 12, evening: 10 },
+    { day: 'Domingo', morning: 4, afternoon: 8, evening: 6 }
   ],
   leadsData: [
     { id: '1', name: 'Empresa Alpha', lastContact: '01/04/2024', status: 'Contato Feito', value: 0 },

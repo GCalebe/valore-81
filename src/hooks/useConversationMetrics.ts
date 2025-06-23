@@ -45,9 +45,11 @@ interface ConversationMetrics {
   avgResponseTime: number;
   conversionRate: number;
   avgClosingTime: number;
+  avgResponseStartTime: number; // Nova métrica
   conversationData: any[];
   funnelData: FunnelStage[];
   conversionByTimeData: ConversionByTime[];
+  leadsAverageByTimeData: ConversionByTime[]; // Nova métrica
   leadsData: LeadData[];
   secondaryResponseRate: number;
   totalSecondaryResponses: number;
@@ -81,6 +83,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         conversationData: mockConversationMetrics.conversationData || [],
         funnelData: mockConversationMetrics.funnelData || [],
         conversionByTimeData: mockConversationMetrics.conversionByTimeData || [],
+        leadsAverageByTimeData: mockConversationMetrics.leadsAverageByTimeData || [], // Nova métrica
         leadsData: mockConversationMetrics.leadsData || [],
         leadsBySource: mockConversationMetrics.leadsBySource || [],
         leadsOverTime: mockConversationMetrics.leadsOverTime || [],
@@ -106,6 +109,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         conversationData: [],
         funnelData: [],
         conversionByTimeData: [],
+        leadsAverageByTimeData: [], // Nova métrica
         leadsData: [],
         leadsBySource: [],
         leadsOverTime: [],

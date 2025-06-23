@@ -11,6 +11,9 @@ import SecondaryResponseRateCard from './SecondaryResponseRateCard';
 import ResponseTimeCard from './ResponseTimeCard';
 import NegotiatedValueCard from './NegotiatedValueCard';
 import NegotiatingValueCard from './NegotiatingValueCard';
+import AverageResponseStartCard from './AverageResponseStartCard';
+import AverageClosingTimeCard from './AverageClosingTimeCard';
+import LeadsAverageByTimeChart from './LeadsAverageByTimeChart';
 import LeadsBySourceChart from './LeadsBySourceChart';
 import LeadsGrowthChart from './LeadsGrowthChart';
 import LeadsByArrivalFunnelChart from './LeadsByArrivalFunnelChart';
@@ -86,7 +89,28 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
       </div>
 
-      {/* Bloco 2: Métricas Financeiras */}
+      {/* Bloco 2: Métricas de Tempo */}
+      <div className="space-y-6">
+        <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-cyan-200 dark:border-cyan-700 pb-2">
+          ⏱️ Métricas de Tempo
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AverageResponseStartCard 
+            avgStartTime={metricsData.avgResponseStartTime || 45}
+            loading={loading}
+            trend="Melhoria de 15% vs período anterior"
+          />
+          
+          <AverageClosingTimeCard 
+            avgClosingTime={metricsData.avgClosingTime || 5}
+            loading={loading}
+            trend="Redução de 20% vs período anterior"
+          />
+        </div>
+      </div>
+
+      {/* Bloco 3: Métricas Financeiras */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-green-200 dark:border-green-700 pb-2">
           💰 Métricas Financeiras
@@ -111,7 +135,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
       </div>
 
-      {/* Bloco 3: Métricas Secundárias */}
+      {/* Bloco 4: Métricas Secundárias */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-purple-200 dark:border-purple-700 pb-2">
           📈 Métricas Detalhadas
@@ -132,7 +156,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
       </div>
 
-      {/* Bloco 4: Gráficos de Performance */}
+      {/* Bloco 5: Gráficos de Performance */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-yellow-200 dark:border-yellow-700 pb-2">
           📈 Análise de Performance
@@ -144,9 +168,11 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </div>
 
         <ConversionByTimeChart data={metricsData.conversionByTimeData || []} loading={loading} />
+        
+        <LeadsAverageByTimeChart data={metricsData.leadsAverageByTimeData || []} loading={loading} />
       </div>
 
-      {/* Bloco 5: Análise de Leads */}
+      {/* Bloco 6: Análise de Leads */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-red-200 dark:border-red-700 pb-2">
           🎯 Análise de Leads
@@ -160,7 +186,7 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         <LeadsByArrivalFunnelChart data={metricsData.leadsByArrivalFunnel || []} loading={loading} />
       </div>
 
-      {/* Bloco 6: Tabelas Detalhadas */}
+      {/* Bloco 7: Tabelas Detalhadas */}
       <div className="space-y-6">
         <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 border-b-2 border-indigo-200 dark:border-indigo-700 pb-2">
           📋 Dados Detalhados
