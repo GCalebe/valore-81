@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,24 +7,24 @@ import { formatMessageTime } from '@/utils/chatUtils';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 import { mockClients } from '@/mocks/clientsMock';
 
-// Simplified interface that matches actual Supabase data structure
-interface DatabaseClient {
-  asaas_customer_id: string | null;
-  client_name: string | null;
-  client_size: string | null;
-  client_type: string | null;
-  cpf_cnpj: string | null;
-  created_at: string;
-  email: string | null;
+// Flexible interface that matches actual Supabase data structure
+interface SupabaseClientData {
+  asaas_customer_id?: string | null;
+  client_name?: string | null;
+  client_size?: string | null;
+  client_type?: string | null;
+  cpf_cnpj?: string | null;
+  created_at?: string;
+  email?: string | null;
   id: number;
-  kanban_stage: string | null;
-  nome: string | null;
-  nome_pet: string | null;
-  payments: any;
-  porte_pet: string | null;
-  raca_pet: string | null;
-  session_id: string | null;
-  telefone: string | null;
+  kanban_stage?: string | null;
+  nome?: string | null;
+  nome_pet?: string | null;
+  payments?: any;
+  porte_pet?: string | null;
+  raca_pet?: string | null;
+  session_id?: string | null;
+  telefone?: string | null;
 }
 
 export function useConversations() {
@@ -94,7 +95,7 @@ export function useConversations() {
     }
   };
 
-  const createConversationFromClient = (client: DatabaseClient): Conversation => {
+  const createConversationFromClient = (client: SupabaseClientData): Conversation => {
     // Handle missing or null session_id safely
     const sessionId = client.session_id || `fallback_${client.id}`;
     
@@ -186,7 +187,7 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Query clients data with explicit typing
+      // Query clients data with flexible typing
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -226,10 +227,10 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      // Create conversations with explicit type handling to avoid TypeScript inference issues
-      const validClients = clientsData.filter((client): client is DatabaseClient => {
-        return client !== null && client !== undefined;
-      });
+      // Create conversations with simplified type handling
+      const validClients: SupabaseClientData[] = clientsData.filter(client => 
+        client !== null && client !== undefined
+      );
       
       const conversationsData: Conversation[] = validClients.map(createConversationFromClient);
 
