@@ -57,12 +57,12 @@ export function useConversations() {
                     lastMessageContent = chatHistory.message;
                   }
                 } else if (typeof chatHistory.message === 'object') {
-                  if (chatHistory.message.content) {
-                    lastMessageContent = chatHistory.message.content;
-                  } else if (chatHistory.message.messages && Array.isArray(chatHistory.message.messages)) {
+                  if (chatHistory.message.messages && Array.isArray(chatHistory.message.messages)) {
                     const lastMsg = chatHistory.message.messages[chatHistory.message.messages.length - 1];
                     lastMessageContent = lastMsg?.content || 'Sem mensagem';
                   } else if (chatHistory.message.type && chatHistory.message.content) {
+                    lastMessageContent = chatHistory.message.content;
+                  } else if (chatHistory.message.content) {
                     lastMessageContent = chatHistory.message.content;
                   }
                 }
@@ -174,12 +174,12 @@ export function useConversations() {
                   lastMessageContent = chatHistory.message;
                 }
               } else if (typeof chatHistory.message === 'object') {
-                if (chatHistory.message.content) {
-                  lastMessageContent = chatHistory.message.content;
-                } else if (chatHistory.message.messages && Array.isArray(chatHistory.message.messages)) {
+                if (chatHistory.message.messages && Array.isArray(chatHistory.message.messages)) {
                   const lastMsg = chatHistory.message.messages[chatHistory.message.messages.length - 1];
                   lastMessageContent = lastMsg?.content || 'Sem mensagem';
                 } else if (chatHistory.message.type && chatHistory.message.content) {
+                  lastMessageContent = chatHistory.message.content;
+                } else if (chatHistory.message.content) {
                   lastMessageContent = chatHistory.message.content;
                 }
               }
