@@ -38,27 +38,30 @@ export const useClientState = () => {
     setIsDetailSheetOpen(true);
   };
 
-  const openEditModal = (contact: Contact) => {
-    setSelectedContact(contact);
+  const openEditModal = (contact?: Contact) => {
+    const contactToEdit = contact || selectedContact;
+    if (!contactToEdit) return;
+    
+    setSelectedContact(contactToEdit);
     setNewContact({
-      name: contact.name,
-      email: contact.email,
-      phone: contact.phone,
-      clientName: contact.clientName,
-      tags: contact.tags || [],
-      notes: contact.notes || '',
-      consultationStage: contact.consultationStage || 'Nova consulta',
-      responsibleUser: contact.responsibleUser,
-      sales: contact.sales,
-      clientType: contact.clientType,
-      clientSector: contact.clientSector,
-      budget: contact.budget,
-      paymentMethod: contact.paymentMethod,
-      clientObjective: contact.clientObjective,
-      lossReason: contact.lossReason,
-      contractNumber: contact.contractNumber,
-      contractDate: contact.contractDate,
-      payment: contact.payment
+      name: contactToEdit.name,
+      email: contactToEdit.email,
+      phone: contactToEdit.phone,
+      clientName: contactToEdit.clientName,
+      tags: contactToEdit.tags || [],
+      notes: contactToEdit.notes || '',
+      consultationStage: contactToEdit.consultationStage || 'Nova consulta',
+      responsibleUser: contactToEdit.responsibleUser,
+      sales: contactToEdit.sales,
+      clientType: contactToEdit.clientType,
+      clientSector: contactToEdit.clientSector,
+      budget: contactToEdit.budget,
+      paymentMethod: contactToEdit.paymentMethod,
+      clientObjective: contactToEdit.clientObjective,
+      lossReason: contactToEdit.lossReason,
+      contractNumber: contactToEdit.contractNumber,
+      contractDate: contactToEdit.contractDate,
+      payment: contactToEdit.payment
     });
     setIsEditModalOpen(true);
   };
