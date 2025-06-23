@@ -5,18 +5,20 @@ import { DollarSign } from 'lucide-react';
 
 interface NegotiatedValueCardProps {
   totalValue: number;
-  totalDeals: number;
+  totalDeals?: number;
   averageValue: number;
   loading?: boolean;
   trend?: string;
+  previousPeriodValue?: number;
 }
 
 const NegotiatedValueCard: React.FC<NegotiatedValueCardProps> = ({ 
   totalValue, 
-  totalDeals, 
+  totalDeals = 0, 
   averageValue, 
   loading = false,
-  trend 
+  trend,
+  previousPeriodValue
 }) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -55,6 +57,11 @@ const NegotiatedValueCard: React.FC<NegotiatedValueCardProps> = ({
             {trend && (
               <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                 {trend}
+              </div>
+            )}
+            {previousPeriodValue && (
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Período anterior: {formatCurrency(previousPeriodValue)}
               </div>
             )}
           </div>

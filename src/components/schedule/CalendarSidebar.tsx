@@ -25,11 +25,8 @@ export function CalendarSidebar({ selectedDate, onDateChange, onAddEvent }: Cale
       </CardHeader>
       <CardContent className="flex justify-center">
         <Calendar 
-          mode="single" 
-          selected={selectedDate} 
-          onSelect={onDateChange} 
-          className="border rounded-md" 
-          locale={pt} 
+          selectedDate={selectedDate}
+          onDateChange={onDateChange}
         />
       </CardContent>
       <CardFooter className="flex flex-col items-center gap-3">

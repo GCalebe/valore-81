@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShipWheel, Filter } from 'lucide-react';
@@ -36,7 +37,7 @@ interface ClientsHeaderProps {
   onAddContactOpenChange: (open: boolean) => void;
   newContact: Partial<any>;
   setNewContact: (contact: Partial<any>) => void;
-  handleAddContact: () => void;
+  handleAddContact: () => Promise<string>;
   viewMode: 'table' | 'kanban';
   setViewMode: (v: 'table' | 'kanban') => void;
   isCompactView: boolean;
@@ -77,6 +78,10 @@ const ClientsHeader = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const { settings } = useThemeSettings();
+
+  const handleAddContactWrapper = async () => {
+    return await handleAddContact();
+  };
 
   return (
     <header
@@ -153,7 +158,7 @@ const ClientsHeader = ({
             onOpenChange={onAddContactOpenChange}
             newContact={newContact}
             setNewContact={setNewContact}
-            handleAddContact={handleAddContact}
+            handleAddContact={handleAddContactWrapper}
           />
 
           {/* Divisor */}

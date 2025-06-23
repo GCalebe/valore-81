@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Anchor } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -36,7 +37,7 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
         const { data, error } = await supabase
           .from('dados_cliente')
           .select('*')
-          .eq('session_id', selectedConversation.sessionId)
+          .eq('sessionid', selectedConversation.sessionId)
           .single();
 
         if (error) {
@@ -63,12 +64,11 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
             clientType: data.client_type,
             cpfCnpj: data.cpf_cnpj,
             asaasCustomerId: data.asaas_customer_id,
-            payments: data.payments,
             status: 'Active',
             notes: '',
             lastContact: data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
             kanbanStage: kanbanStage,
-            sessionId: data.session_id,
+            sessionId: data.sessionid,
             tags: [],
             responsibleUser: '',
             sales: 0,

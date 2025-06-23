@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -153,19 +154,16 @@ const ClientUTMData: React.FC<ClientUTMDataProps> = ({ contactId }) => {
                 <StatCard 
                   title="Interações"
                   value={metrics.totalInteractions.toString()}
-                  description="Total de interações com UTMs"
                   icon={<Activity className="h-4 w-4 text-blue-600" />}
                 />
                 <StatCard 
                   title="Campanhas"
                   value={metrics.totalCampaigns.toString()}
-                  description="Campanhas diferentes"
                   icon={<Share2 className="h-4 w-4 text-purple-600" />}
                 />
                 <StatCard 
                   title="Taxa de Conversão"
                   value={`${metrics.conversionRate.toFixed(1)}%`}
-                  description="Interações que converteram"
                   icon={<Target className="h-4 w-4 text-green-600" />}
                 />
               </div>

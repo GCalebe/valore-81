@@ -3,8 +3,18 @@ import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+interface ClientStats {
+  totalClients: number;
+  totalMarketingClients: number;
+  newClientsThisMonth: number;
+  monthlyGrowth: any[];
+  clientTypes: any[];
+  recentClients: any[];
+  isStale: boolean;
+}
+
 export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<ClientStats>({
     totalClients: 0,
     totalMarketingClients: 0,
     newClientsThisMonth: 0,
@@ -28,7 +38,7 @@ export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
         }),
         supabase
           .from('dados_cliente')
-          .select('id, nome, telefone, client_name, created_at, kanban_stage')
+          .select('id, nome, telefone, nome_pet, created_at')
           .order('created_at', { ascending: false })
           .limit(5)
       ]);
@@ -48,9 +58,9 @@ export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
         id: client.id,
         name: client.nome || 'Cliente sem nome',
         phone: client.telefone || 'Não informado',
-        marketingClients: client.client_name ? 1 : 0,
+        marketingClients: client.nome_pet ? 1 : 0,
         lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-        status: client.kanban_stage || 'Entraram'
+        status: 'Entraram'
       })) || [];
 
       const colors = [
@@ -65,10 +75,10 @@ export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
       }));
 
       setStats({
-        totalClients: typedMetricsData.totalClients,
-        totalMarketingClients: typedMetricsData.totalMarketingClients,
-        newClientsThisMonth: typedMetricsData.newClientsThisMonth,
-        monthlyGrowth: typedMetricsData.monthlyGrowth,
+        totalClients: typedMetricsData.totalClients || 0,
+        totalMarketingClients: typedMetricsData.totalMarketingClients || 0,
+        newClientsThisMonth: typedMetricsData.newClientsThisMonth || 0,
+        monthlyGrowth: typedMetricsData.monthlyGrowth || [],
         clientTypes: clientTypesWithColors,
         recentClients,
         isStale: false,
