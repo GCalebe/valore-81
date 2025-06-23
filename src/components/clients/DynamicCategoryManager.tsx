@@ -204,7 +204,7 @@ const DynamicCategoryManager = ({ tabName, categories, onCategoriesChange }: Dyn
                   id="category-name"
                   value={newCategory.name}
                   onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                  placeholder="Ex: Tipo de Embarcação"
+                  placeholder="Ex: Tipo de Empresa"
                   className="text-sm"
                 />
               </div>

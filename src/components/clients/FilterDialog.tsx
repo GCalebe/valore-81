@@ -16,11 +16,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import ClientFilters from './ClientFilters';
 import CustomFieldFilters from './CustomFieldFilters';
 import { CustomFieldFilter } from '@/hooks/useClientsFilters';
-import { useCustomFields } from '@/hooks/useCustomFields';
 
 interface FilterDialogProps {
   isOpen: boolean;
@@ -79,12 +79,6 @@ const FilterDialog = ({
   hasActiveFilters
 }: FilterDialogProps) => {
   const [filterSearch, setFilterSearch] = useState('');
-  const { customFields } = useCustomFields();
-  
-  // Filtrar campos personalizados com base na pesquisa
-  const filteredCustomFields = customFields.filter(field => 
-    field.field_name.toLowerCase().includes(filterSearch.toLowerCase())
-  );
   
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -123,12 +117,31 @@ const FilterDialog = ({
           <div className="relative mt-2">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar filtros..."
+              placeholder="Buscar tags..."
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               className="pl-8"
             />
           </div>
+          {filterSearch.trim() !== '' && (
+            <div className="mt-2 p-2 border rounded-md bg-muted/50">
+              <p className="text-sm font-medium mb-2">Tags encontradas:</p>
+              <div className="flex flex-wrap gap-2">
+                {['Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram']
+                  .filter(tag => tag.toLowerCase().includes(filterSearch.toLowerCase()))
+                  .map(tag => (
+                    <Badge 
+                      key={tag} 
+                      variant="outline" 
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                      onClick={() => onSegmentFilterChange(tag)}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+              </div>
+            </div>
+          )}
         </DialogHeader>
         
         <ScrollArea className="flex-1 pr-4 mt-2">
@@ -170,7 +183,7 @@ const FilterDialog = ({
                     <Separator />
                     
                     <div className="grid gap-2">
-                      <Label htmlFor="segment-filter">Segmento</Label>
+                      <Label htmlFor="segment-filter">Tags do Cliente</Label>
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <Checkbox 
@@ -178,7 +191,7 @@ const FilterDialog = ({
                             checked={segmentFilter === 'all'} 
                             onCheckedChange={() => onSegmentFilterChange('all')} 
                           />
-                          <label htmlFor="segment-all" className="text-sm">Todos os segmentos</label>
+                          <label htmlFor="segment-all" className="text-sm">Todas as tags</label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Checkbox 
@@ -291,46 +304,16 @@ const FilterDialog = ({
               </div>
               
               <div className="space-y-4">
-                <FilterCategory title="Campos Personalizados" defaultOpen={true}>
-                  {filteredCustomFields.length > 0 ? (
-                    <div className="space-y-4">
-                      {filteredCustomFields.map(field => {
-                        const activeFilter = customFieldFilters.find(f => f.fieldId === field.id);
-                        return (
-                          <div key={field.id} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <Checkbox 
-                                  id={`field-${field.id}`} 
-                                  checked={!!activeFilter}
-                                  onCheckedChange={() => {}}
-                                />
-                                <Label htmlFor={`field-${field.id}`} className="cursor-pointer">{field.field_name}</Label>
-                              </div>
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                                  <path d="m15 5 4 4"/>
-                                </svg>
-                              </Button>
-                            </div>
-                            <CustomFieldFilters
-                              customFieldFilters={customFieldFilters.filter(f => f.fieldId === field.id)}
-                              onAddCustomFieldFilter={onAddCustomFieldFilter}
-                              onRemoveCustomFieldFilter={onRemoveCustomFieldFilter}
-                              onClearCustomFieldFilters={onClearCustomFieldFilters}
-                              preselectedFieldId={field.id}
-                              compact={true}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 text-muted-foreground">
-                      {filterSearch ? 'Nenhum campo encontrado com esse termo' : 'Nenhum campo personalizado disponível'}
-                    </div>
-                  )}
+                <FilterCategory title="Propriedades Adicionais" defaultOpen={true}>
+                  <div className="space-y-4">
+                    <CustomFieldFilters
+                      activeFilters={customFieldFilters}
+                      onAddCustomFieldFilter={onAddCustomFieldFilter}
+                      onRemoveCustomFieldFilter={onRemoveCustomFieldFilter}
+                      onClearCustomFieldFilters={onClearCustomFieldFilters}
+                      compact={false}
+                    />
+                  </div>
                 </FilterCategory>
               </div>
             </div>

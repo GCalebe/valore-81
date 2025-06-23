@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Save, RotateCcw, User, MessageSquare, Heart, Zap } from 'lucide-react';
+import { Save, RotateCcw, User, MessageSquare, Heart, Zap, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
+import { Switch } from '@/components/ui/switch';
 
 interface PersonalitySettings {
   name: string;
@@ -21,6 +22,11 @@ interface PersonalitySettings {
   greeting: string;
   farewell: string;
   specialInstructions: string;
+  maxResponses: number;
+  messageSize: number;
+  responseTime: number;
+  audioResponse: boolean;
+  responseCreativity: number;
 }
 
 const AIPersonalityTab = () => {
@@ -36,7 +42,12 @@ const AIPersonalityTab = () => {
     directness: 3,
     greeting: 'Olá! Como posso ajudá-lo hoje?',
     farewell: 'Foi um prazer ajudá-lo! Tenha um ótimo dia!',
-    specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente. Se não souber algo, admita e direcione para um humano.'
+    specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente. Se não souber algo, admita e direcione para um humano.',
+    maxResponses: 3,
+    messageSize: 3,
+    responseTime: 3,
+    audioResponse: false,
+    responseCreativity: 3
   });
 
   const [hasChanges, setHasChanges] = useState(false);
@@ -75,7 +86,12 @@ const AIPersonalityTab = () => {
       directness: 3,
       greeting: 'Olá! Como posso ajudá-lo hoje?',
       farewell: 'Foi um prazer ajudá-lo! Tenha um ótimo dia!',
-      specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente.'
+      specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente.',
+      maxResponses: 3,
+      messageSize: 3,
+      responseTime: 3,
+      audioResponse: false,
+      responseCreativity: 3
     });
     setHasChanges(true);
   };
@@ -203,12 +219,12 @@ const AIPersonalityTab = () => {
             
             <div>
               <div className="flex justify-between items-center mb-2">
-                <Label>Criatividade</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.creativity)}</span>
+                <Label>Criatividade das respostas</Label>
+                <span className="text-sm text-gray-500">{getSliderLabel(settings.responseCreativity)}</span>
               </div>
               <Slider
-                value={[settings.creativity]}
-                onValueChange={(value) => handleSliderChange('creativity', value)}
+                value={[settings.responseCreativity]}
+                onValueChange={(value) => handleSliderChange('responseCreativity', value)}
                 min={1}
                 max={5}
                 step={1}
@@ -228,6 +244,74 @@ const AIPersonalityTab = () => {
                 max={5}
                 step={1}
                 className="w-full"
+              />
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <Label>Número máximo de respostas</Label>
+                <span className="text-sm text-gray-500">{settings.maxResponses}</span>
+              </div>
+              <Slider
+                value={[settings.maxResponses]}
+                onValueChange={(value) => handleSliderChange('maxResponses', value)}
+                min={1}
+                max={5}
+                step={1}
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <Label>Tamanho das mensagens</Label>
+                <span className="text-sm text-gray-500">{getSliderLabel(settings.messageSize)}</span>
+              </div>
+              <Slider
+                value={[settings.messageSize]}
+                onValueChange={(value) => handleSliderChange('messageSize', value)}
+                min={1}
+                max={5}
+                step={1}
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <Label>Tempo para resposta</Label>
+                <span className="text-sm text-gray-500">{getSliderLabel(settings.responseTime)}</span>
+              </div>
+              <Slider
+                value={[settings.responseTime]}
+                onValueChange={(value) => handleSliderChange('responseTime', value)}
+                min={1}
+                max={5}
+                step={1}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleInputChange('audioResponse', !settings.audioResponse)}
+                  className="p-0 h-6 w-6"
+                >
+                  {settings.audioResponse ? (
+                    <Volume2 className="h-4 w-4" />
+                  ) : (
+                    <VolumeX className="h-4 w-4" />
+                  )}
+                </Button>
+                <Label htmlFor="audioResponse">Resposta em áudio</Label>
+              </div>
+              <Switch
+                id="audioResponse"
+                checked={settings.audioResponse}
+                onCheckedChange={(checked) => handleInputChange('audioResponse', checked)}
               />
             </div>
           </CardContent>
@@ -291,6 +375,8 @@ const AIPersonalityTab = () => {
           </CardContent>
         </Card>
       </div>
+
+
 
       {/* Preview */}
       <Card>

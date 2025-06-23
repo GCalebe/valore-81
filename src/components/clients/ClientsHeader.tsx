@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShipWheel } from 'lucide-react';
+import { ArrowLeft, ShipWheel, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Input } from '@/components/ui/input';
-import FilterDialog from '@/components/clients/FilterDialog';
+import FilterSidePanel from '@/components/clients/FilterSidePanel';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientsCompactToggler from './ClientsCompactToggler';
 import ClientsViewToggler from './ClientsViewToggler';
@@ -115,7 +115,22 @@ const ClientsHeader = ({
         {/* Grupo principal: filtros, novo cliente e controles */}
         <div className="flex flex-row items-center gap-3 h-full">
           {/* Filtros */}
-          <FilterDialog
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsFilterDialogOpen(true)}
+            className="text-white hover:bg-white/20 focus-visible:ring-white flex items-center gap-1"
+          >
+            <Filter className="h-4 w-4" />
+            Filtros
+            {hasActiveFilters && (
+              <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                !
+              </Badge>
+            )}
+          </Button>
+          
+          <FilterSidePanel
             isOpen={isFilterDialogOpen}
             onOpenChange={setIsFilterDialogOpen}
             statusFilter={statusFilter}
@@ -127,10 +142,7 @@ const ClientsHeader = ({
             onLastContactFilterChange={onLastContactFilterChange}
             onAddCustomFieldFilter={onAddCustomFieldFilter}
             onRemoveCustomFieldFilter={onRemoveCustomFieldFilter}
-            onClearFilters={() => {
-              onClearFilters();
-              setIsFilterDialogOpen(false);
-            }}
+            onClearFilters={onClearFilters}
             onClearCustomFieldFilters={onClearCustomFieldFilters}
             hasActiveFilters={hasActiveFilters}
           />

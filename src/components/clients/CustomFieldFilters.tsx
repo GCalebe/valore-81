@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { X, Plus } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { CustomFieldFilter } from '@/hooks/useClientsFilters';
-import { useCustomFields } from '@/hooks/useCustomFields';
+import { CustomField } from '@/types/customFields';
+
+interface CustomFieldFilter {
+  fieldId: string;
+  value: string;
+  fieldName: string;
+}
 
 interface CustomFieldFiltersProps {
-  customFieldFilters: CustomFieldFilter[];
+  activeFilters: CustomFieldFilter[];
   onAddCustomFieldFilter: (filter: CustomFieldFilter) => void;
   onRemoveCustomFieldFilter: (fieldId: string) => void;
   onClearCustomFieldFilters: () => void;
@@ -17,18 +22,31 @@ interface CustomFieldFiltersProps {
   compact?: boolean;
 }
 
-const CustomFieldFilters = ({
-  customFieldFilters,
+// Lista estática de propriedades do cliente para filtros
+const clientProperties = [
+  { id: 'name', name: 'Nome', type: 'text' },
+  { id: 'email', name: 'Email', type: 'text' },
+  { id: 'phone', name: 'Telefone', type: 'text' },
+  { id: 'status', name: 'Status', type: 'select', options: ['Ativo', 'Inativo', 'Pendente'] },
+  { id: 'consultationStage', name: 'Etapa da Consulta', type: 'select', options: ['Agendada', 'Realizada', 'Cancelada'] },
+  { id: 'source', name: 'Origem', type: 'text' },
+  { id: 'city', name: 'Cidade', type: 'text' },
+  { id: 'state', name: 'Estado', type: 'text' },
+  { id: 'lastContact', name: 'Último Contato', type: 'date' },
+  { id: 'nextContact', name: 'Próximo Contato', type: 'date' },
+];
+
+export function CustomFieldFilters({
+  activeFilters,
   onAddCustomFieldFilter,
   onRemoveCustomFieldFilter,
   onClearCustomFieldFilters,
   preselectedFieldId,
   compact = false
-}: CustomFieldFiltersProps) => {
-  const { customFields, loading } = useCustomFields();
+}: CustomFieldFiltersProps) {
   const [selectedFieldId, setSelectedFieldId] = useState<string>(preselectedFieldId || '');
   const [filterValue, setFilterValue] = useState<string>('');
-  const [selectedField, setSelectedField] = useState<any>(null);
+  const [selectedField, setSelectedField] = useState<any | null>(null);
 
   useEffect(() => {
     if (preselectedFieldId) {
@@ -37,20 +55,20 @@ const CustomFieldFilters = ({
   }, [preselectedFieldId]);
 
   useEffect(() => {
-    if (selectedFieldId && customFields) {
-      const field = customFields.find(field => field.id === selectedFieldId);
-      setSelectedField(field);
+    if (selectedFieldId) {
+      const field = clientProperties.find(f => f.id === selectedFieldId);
+      setSelectedField(field || null);
     } else {
       setSelectedField(null);
     }
-  }, [selectedFieldId, customFields]);
+  }, [selectedFieldId]);
 
   const handleAddFilter = () => {
     if (selectedFieldId && filterValue.trim() !== '') {
       onAddCustomFieldFilter({
         fieldId: selectedFieldId,
         value: filterValue,
-        fieldName: selectedField?.name || 'Campo personalizado'
+        fieldName: selectedField?.name || 'Propriedade'
       });
       if (!preselectedFieldId) {
         setSelectedFieldId('');
@@ -67,18 +85,14 @@ const CustomFieldFilters = ({
           <div className="grid gap-2">
             <Select value={selectedFieldId} onValueChange={setSelectedFieldId}>
               <SelectTrigger id="custom-field-filter" className="w-full">
-                <SelectValue placeholder="Selecione um campo" />
+                <SelectValue placeholder="Selecione uma propriedade" />
               </SelectTrigger>
               <SelectContent>
-                {loading ? (
-                  <SelectItem value="loading" disabled>Carregando...</SelectItem>
-                ) : (
-                  customFields?.map(field => (
-                    <SelectItem key={field.id} value={field.id}>
-                      {field.name}
-                    </SelectItem>
-                  ))
-                )}
+                {clientProperties.map(field => (
+                  <SelectItem key={field.id} value={field.id}>
+                    {field.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -104,7 +118,7 @@ const CustomFieldFilters = ({
                 id="filter-value"
                 value={filterValue}
                 onChange={(e) => setFilterValue(e.target.value)}
-                placeholder="Digite o valor"
+                placeholder={`Digite o valor para ${selectedField.name}`}
               />
             )}
           </div>
@@ -122,10 +136,10 @@ const CustomFieldFilters = ({
           </Button>
         )}
 
-        {customFieldFilters.length > 0 && (
+        {activeFilters.length > 0 && (
           <div className="mt-2">
             <div className="space-y-1">
-              {customFieldFilters.map((filter) => (
+              {activeFilters.map((filter) => (
                 <div
                   key={filter.fieldId}
                   className="flex items-center justify-between bg-muted p-1.5 rounded-md text-xs"
@@ -154,21 +168,17 @@ const CustomFieldFilters = ({
     <div className="flex flex-col gap-6">
       <div className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="custom-field-filter">Campo Personalizado</Label>
+          <Label htmlFor="custom-field-filter">Propriedade do Cliente</Label>
           <Select value={selectedFieldId} onValueChange={setSelectedFieldId}>
             <SelectTrigger id="custom-field-filter" className="w-full">
-              <SelectValue placeholder="Selecione um campo" />
+              <SelectValue placeholder="Selecione uma propriedade" />
             </SelectTrigger>
             <SelectContent>
-              {loading ? (
-                <SelectItem value="loading" disabled>Carregando...</SelectItem>
-              ) : (
-                customFields?.map(field => (
-                  <SelectItem key={field.id} value={field.id}>
-                    {field.name}
-                  </SelectItem>
-                ))
-              )}
+              {clientProperties.map(field => (
+                <SelectItem key={field.id} value={field.id}>
+                  {field.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -207,16 +217,16 @@ const CustomFieldFilters = ({
             disabled={!filterValue.trim()}
           >
             <Plus className="h-4 w-4" />
-            Adicionar Filtro
+            Adicionar Propriedade
           </Button>
         )}
       </div>
 
-      {customFieldFilters.length > 0 && (
+      {activeFilters.length > 0 && (
         <div className="space-y-4">
           <div className="text-sm font-medium">Filtros Ativos</div>
           <div className="flex flex-wrap gap-2">
-            {customFieldFilters.map((filter) => (
+            {activeFilters.map((filter) => (
               <Badge key={filter.fieldId} variant="secondary" className="flex items-center gap-1">
                 {filter.fieldName}: {filter.value}
                 <Button
@@ -237,12 +247,11 @@ const CustomFieldFilters = ({
             className="flex items-center gap-2 mt-2"
           >
             <X className="h-4 w-4" />
-            Limpar filtros personalizados
+            Limpar filtros de propriedades
           </Button>
         </div>
       )}
     </div>
   );
 };
-
 export default CustomFieldFilters;

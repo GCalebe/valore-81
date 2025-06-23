@@ -193,13 +193,6 @@ const ClientDetailSheet = ({
             
           <div className="pt-4 mt-4 border-t dark:border-gray-700">
             <div className="flex flex-wrap gap-2 justify-end">
-              <DeleteClientDialog 
-                isOpen={isDeleteDialogOpen}
-                onOpenChange={setIsDeleteDialogOpen}
-                selectedContact={selectedContact}
-                handleDeleteContact={handleDeleteContact}
-              />
-              
               <Button variant="outline" size="sm" onClick={onSendMessageClick}>
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Mensagem
