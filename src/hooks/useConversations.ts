@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,8 +8,8 @@ import { formatMessageTime } from '@/utils/chatUtils';
 import { generateFictitiousConversations } from '@/utils/fictitiousMessages';
 import { mockClients } from '@/mocks/clientsMock';
 
-// Flexible interface that matches actual Supabase data structure
-interface SupabaseClientData {
+// Simple interface that avoids complex type inference
+interface ClientRecord {
   asaas_customer_id?: string | null;
   client_name?: string | null;
   client_size?: string | null;
@@ -95,7 +96,7 @@ export function useConversations() {
     }
   };
 
-  const createConversationFromClient = (client: SupabaseClientData): Conversation => {
+  const createConversationFromClient = (client: ClientRecord): Conversation => {
     // Handle missing or null session_id safely
     const sessionId = client.session_id || `fallback_${client.id}`;
     
@@ -187,11 +188,12 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Query clients data with flexible typing
-      const { data: clientsData, error: clientsError } = await supabase
+      // Use explicit typing to avoid deep type instantiation
+      const clientsQuery = supabase
         .from('dados_cliente')
-        .select('*')
-        .in('session_id', uniqueSessionIds);
+        .select('*');
+        
+      const { data: rawClientsData, error: clientsError } = await clientsQuery.in('session_id', uniqueSessionIds);
 
       if (clientsError) {
         console.log('Erro ao buscar clientes, usando dados mockup:', clientsError);
@@ -219,18 +221,19 @@ export function useConversations() {
         return;
       }
 
-      if (!clientsData || clientsData.length === 0) {
+      if (!rawClientsData || rawClientsData.length === 0) {
         setConversations([]);
         setLoading(false);
         return;
       }
 
-      console.log(`👥 ${clientsData.length} clientes encontrados.`);
+      console.log(`👥 ${rawClientsData.length} clientes encontrados.`);
 
-      // Create conversations with simplified type handling
-      const validClients: SupabaseClientData[] = clientsData.filter(client => 
-        client !== null && client !== undefined
-      );
+      // Explicitly cast to our simple interface to avoid type inference issues
+      const clientsData: ClientRecord[] = rawClientsData as ClientRecord[];
+      
+      // Filter out null/undefined records
+      const validClients = clientsData.filter(client => client != null);
       
       const conversationsData: Conversation[] = validClients.map(createConversationFromClient);
 
@@ -338,3 +341,4 @@ export function useConversations() {
     fetchConversations
   };
 }
+
