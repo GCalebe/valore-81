@@ -1,7 +1,40 @@
-
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+
+interface LeadData {
+  id: string;
+  name: string;
+  lastContact: string;
+  status: string;
+  value: number;
+}
+
+interface FunnelStage {
+  name: string;
+  value: number;
+  percentage: number;
+  color?: string;
+}
+
+interface ConversionByTime {
+  day: string;
+  morning: number;
+  afternoon: number;
+  evening: number;
+}
+
+interface LeadsBySource {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface LeadsOverTime {
+  month: string;
+  clients: number;
+  leads: number;
+}
 
 interface ConversationMetrics {
   totalConversations: number;
@@ -11,17 +44,17 @@ interface ConversationMetrics {
   conversionRate: number;
   avgClosingTime: number;
   conversationData: any[];
-  funnelData: any[];
-  conversionByTimeData: any[];
-  leadsData: any[];
+  funnelData: FunnelStage[];
+  conversionByTimeData: ConversionByTime[];
+  leadsData: LeadData[];
   secondaryResponseRate: number;
   totalSecondaryResponses: number;
   negotiatedValue: number;
   averageNegotiatedValue: number;
   previousPeriodValue: number;
-  leadsBySource: any[];
-  leadsOverTime: any[];
-  leadsByArrivalFunnel: any[];
+  leadsBySource: LeadsBySource[];
+  leadsOverTime: LeadsOverTime[];
+  leadsByArrivalFunnel: FunnelStage[];
   isStale: boolean;
 }
 
@@ -90,13 +123,13 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
       const secondaryResponseRate = totalRespondidas > 0 ? Math.round((totalSecondaryResponses / totalRespondidas) * 100) : 0;
 
       const maxValue = Math.max(...(rawFunnelData || []).map((s: { value: number }) => s.value), 1);
-      const funnelData = (rawFunnelData || []).map((stage: any) => ({
+      const funnelData: FunnelStage[] = (rawFunnelData || []).map((stage: any) => ({
         ...stage,
         percentage: Math.round((stage.value / maxValue) * 100)
       }));
 
       // Keep this mocked data for now
-      const conversionByTimeData = [
+      const conversionByTimeData: ConversionByTime[] = [
         { day: 'Segunda', morning: Math.floor(totalRespondidas * 0.12), afternoon: Math.floor(totalRespondidas * 0.18), evening: Math.floor(totalRespondidas * 0.08) },
         { day: 'Terça', morning: Math.floor(totalRespondidas * 0.15), afternoon: Math.floor(totalRespondidas * 0.22), evening: Math.floor(totalRespondidas * 0.10) },
         { day: 'Quarta', morning: Math.floor(totalRespondidas * 0.18), afternoon: Math.floor(totalRespondidas * 0.25), evening: Math.floor(totalRespondidas * 0.12) },
@@ -106,7 +139,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         { day: 'Domingo', morning: Math.floor(totalRespondidas * 0.05), afternoon: Math.floor(totalRespondidas * 0.10), evening: Math.floor(totalRespondidas * 0.12) }
       ];
 
-      let leadsData = [];
+      let leadsData: LeadData[] = [];
       let negotiatedValue = 0;
       let averageNegotiatedValue = 0;
       let previousPeriodValue = 0;
@@ -130,9 +163,9 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
       }
       
       // Processar dados de UTM para leads por fonte
-      let leadsBySource = [];
-      let leadsOverTime = [];
-      let leadsByArrivalFunnel = [];
+      let leadsBySource: LeadsBySource[] = [];
+      let leadsOverTime: LeadsOverTime[] = [];
+      let leadsByArrivalFunnel: FunnelStage[] = [];
       
       if (utmError) {
         console.error('Error fetching UTM data:', utmError);
@@ -149,8 +182,8 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         
         const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
         leadsBySource = Array.from(sourceMap.entries()).map(([name, value], index) => ({
-          name,
-          value,
+          name: name as string,
+          value: value as number,
           color: colors[index % colors.length]
         }));
         
