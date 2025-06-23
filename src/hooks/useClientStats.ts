@@ -1,132 +1,31 @@
 
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-
-interface ClientStats {
-  totalClients: number;
-  totalChats: number;
-  newClientsThisMonth: number;
-  monthlyGrowth: any[];
-  ChatBreeds: any[];
-  recentClients: any[];
-}
+import { mockClientStats } from '@/mocks/metricsMock';
 
 export function useClientStats() {
-  const [stats, setStats] = useState<ClientStats>({
-    totalClients: 0,
-    totalChats: 0,
-    newClientsThisMonth: 0,
-    monthlyGrowth: [],
-    ChatBreeds: [],
-    recentClients: []
-  });
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(mockClientStats);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const refetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      
-      // Fetch total clients
-      const { count: totalClients } = await supabase
-        .from('dados_cliente')
-        .select('*', { count: 'exact' });
+      console.log('Using mock data for client stats...');
 
-      // Fetch total Chats (assuming each client has at least one Chat)
-      const { count: totalChats } = await supabase
-        .from('dados_cliente')
-        .select('*', { count: 'exact' })
-        .not('nome_pet', 'is', null);
+      // Use mock data directly
+      setStats(mockClientStats);
 
-      // Fetch new clients this month (from 1st of current month to today)
-      const today = new Date();
-      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      
-      const { count: newClientsThisMonth } = await supabase
-        .from('dados_cliente')
-        .select('*', { count: 'exact' })
-        .gte('created_at', firstDayOfMonth.toISOString())
-        .lte('created_at', today.toISOString());
-
-      // Fetch monthly growth data
-      const currentYear = new Date().getFullYear();
-      const monthlyGrowthData = [];
-      
-      for (let month = 0; month < 12; month++) {
-        const startOfMonth = new Date(currentYear, month, 1);
-        const endOfMonth = new Date(currentYear, month + 1, 0);
-        
-        const { count } = await supabase
-          .from('dados_cliente')
-          .select('*', { count: 'exact' })
-          .gte('created_at', startOfMonth.toISOString())
-          .lte('created_at', endOfMonth.toISOString());
-        
-        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        monthlyGrowthData.push({
-          month: monthNames[month],
-          clients: count || 0
-        });
-      }
-
-      // Fetch Chat breeds data
-      const { data: ChatsData } = await supabase
-        .from('dados_cliente')
-        .select('raca_pet')
-        .not('raca_pet', 'is', null);
-
-      const breedCounts: { [key: string]: number } = {};
-      ChatsData?.forEach(Chat => {
-        if (Chat.raca_pet) {
-          breedCounts[Chat.raca_pet] = (breedCounts[Chat.raca_pet] || 0) + 1;
-        }
-      });
-
-      const colors = [
-        '#8B5CF6', '#EC4899', '#10B981', '#3B82F6', 
-        '#F59E0B', '#EF4444', '#6366F1', '#14B8A6',
-        '#F97316', '#8B5CF6', '#06B6D4', '#D946EF'
-      ];
-
-      const ChatBreeds = Object.entries(breedCounts).map(([name, value], index) => ({
-        name,
-        value,
-        color: colors[index % colors.length]
-      }));
-
-      // Fetch recent clients
-      const { data: recentClientsData } = await supabase
-        .from('dados_cliente')
-        .select('id, nome, telefone, nome_pet, created_at')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      const recentClients = recentClientsData?.map(client => ({
-        id: client.id,
-        name: client.nome,
-        phone: client.telefone,
-        Chats: client.nome_pet ? 1 : 0,
-        lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
-      })) || [];
-
-      // Update stats
-      setStats({
-        totalClients: totalClients || 0,
-        totalChats: totalChats || 0,
-        newClientsThisMonth: newClientsThisMonth || 0,
-        monthlyGrowth: monthlyGrowthData,
-        ChatBreeds,
-        recentClients
-      });
+      console.log('Mock client stats loaded successfully');
 
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error loading client stats:', error);
       toast({
         title: "Erro ao atualizar estatísticas",
-        description: "Ocorreu um erro ao atualizar as estatísticas.",
+        description: "Problema ao buscar as estatísticas de clientes. Usando dados de exemplo.",
         variant: "destructive"
       });
+      setStats(mockClientStats);
     } finally {
       setLoading(false);
     }
