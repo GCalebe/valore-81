@@ -5,23 +5,21 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface ClientStats {
   totalClients: number;
-  totalMarketingClients: number;
+  totalChats: number;
   newClientsThisMonth: number;
   monthlyGrowth: any[];
-  clientTypes: any[];
+  ChatBreeds: any[];
   recentClients: any[];
-  isStale: boolean;
 }
 
-export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
+export function useClientStats() {
   const [stats, setStats] = useState<ClientStats>({
     totalClients: 0,
-    totalMarketingClients: 0,
+    totalChats: 0,
     newClientsThisMonth: 0,
     monthlyGrowth: [],
-    clientTypes: [],
-    recentClients: [],
-    isStale: false,
+    ChatBreeds: [],
+    recentClients: []
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -29,73 +27,110 @@ export function useClientStats(dateFilter: string = 'week', customDate?: Date) {
   const refetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching client statistics with optimized function...');
       
-      const [metricsResult, recentClientsResult] = await Promise.all([
-        supabase.rpc('get_dashboard_metrics', { 
-          date_filter: dateFilter,
-          custom_date: customDate?.toISOString()
-        }),
-        supabase
+      // Fetch total clients
+      const { count: totalClients } = await supabase
+        .from('dados_cliente')
+        .select('*', { count: 'exact' });
+
+      // Fetch total Chats (assuming each client has at least one Chat)
+      const { count: totalChats } = await supabase
+        .from('dados_cliente')
+        .select('*', { count: 'exact' })
+        .not('nome_pet', 'is', null);
+
+      // Fetch new clients this month (from 1st of current month to today)
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      
+      const { count: newClientsThisMonth } = await supabase
+        .from('dados_cliente')
+        .select('*', { count: 'exact' })
+        .gte('created_at', firstDayOfMonth.toISOString())
+        .lte('created_at', today.toISOString());
+
+      // Fetch monthly growth data
+      const currentYear = new Date().getFullYear();
+      const monthlyGrowthData = [];
+      
+      for (let month = 0; month < 12; month++) {
+        const startOfMonth = new Date(currentYear, month, 1);
+        const endOfMonth = new Date(currentYear, month + 1, 0);
+        
+        const { count } = await supabase
           .from('dados_cliente')
-          .select('id, nome, telefone, nome_pet, created_at')
-          .order('created_at', { ascending: false })
-          .limit(5)
-      ]);
-      
-      const { data: metricsData, error: metricsError } = metricsResult;
-      const { data: recentClientsData, error: recentClientsError } = recentClientsResult;
-      
-      if (metricsError || recentClientsError) {
-        if (metricsError) console.error('Error fetching dashboard metrics via RPC:', metricsError);
-        if (recentClientsError) console.error('Error fetching recent clients:', recentClientsError);
-        throw metricsError || recentClientsError;
+          .select('*', { count: 'exact' })
+          .gte('created_at', startOfMonth.toISOString())
+          .lte('created_at', endOfMonth.toISOString());
+        
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        monthlyGrowthData.push({
+          month: monthNames[month],
+          clients: count || 0
+        });
       }
 
-      const typedMetricsData = metricsData as any;
+      // Fetch Chat breeds data
+      const { data: ChatsData } = await supabase
+        .from('dados_cliente')
+        .select('raca_pet')
+        .not('raca_pet', 'is', null);
 
-      const recentClients = recentClientsData?.map(client => ({
-        id: client.id,
-        name: client.nome || 'Cliente sem nome',
-        phone: client.telefone || 'Não informado',
-        marketingClients: client.nome_pet ? 1 : 0,
-        lastVisit: client.created_at ? new Date(client.created_at).toLocaleDateString('pt-BR') : 'Data não disponível',
-        status: 'Entraram'
-      })) || [];
+      const breedCounts: { [key: string]: number } = {};
+      ChatsData?.forEach(Chat => {
+        if (Chat.raca_pet) {
+          breedCounts[Chat.raca_pet] = (breedCounts[Chat.raca_pet] || 0) + 1;
+        }
+      });
 
       const colors = [
-        '#8B5CF6', '#EC4899', '#10B981', '#3B82F6',
+        '#8B5CF6', '#EC4899', '#10B981', '#3B82F6', 
         '#F59E0B', '#EF4444', '#6366F1', '#14B8A6',
         '#F97316', '#8B5CF6', '#06B6D4', '#D946EF'
       ];
-      
-      const clientTypesWithColors = (typedMetricsData.clientTypes || []).map((type: { name: string; value: number }, index: number) => ({
-        ...type,
+
+      const ChatBreeds = Object.entries(breedCounts).map(([name, value], index) => ({
+        name,
+        value,
         color: colors[index % colors.length]
       }));
 
+      // Fetch recent clients
+      const { data: recentClientsData } = await supabase
+        .from('dados_cliente')
+        .select('id, nome, telefone, nome_pet, created_at')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      const recentClients = recentClientsData?.map(client => ({
+        id: client.id,
+        name: client.nome,
+        phone: client.telefone,
+        Chats: client.nome_pet ? 1 : 0,
+        lastVisit: new Date(client.created_at).toLocaleDateString('pt-BR')
+      })) || [];
+
+      // Update stats
       setStats({
-        totalClients: typedMetricsData.totalClients || 0,
-        totalMarketingClients: typedMetricsData.totalMarketingClients || 0,
-        newClientsThisMonth: typedMetricsData.newClientsThisMonth || 0,
-        monthlyGrowth: typedMetricsData.monthlyGrowth || [],
-        clientTypes: clientTypesWithColors,
-        recentClients,
-        isStale: false,
+        totalClients: totalClients || 0,
+        totalChats: totalChats || 0,
+        newClientsThisMonth: newClientsThisMonth || 0,
+        monthlyGrowth: monthlyGrowthData,
+        ChatBreeds,
+        recentClients
       });
 
     } catch (error) {
       console.error('Error fetching stats:', error);
       toast({
         title: "Erro ao atualizar estatísticas",
-        description: "Ocorreu um erro ao buscar os dados. Os dados podem estar desatualizados.",
+        description: "Ocorreu um erro ao atualizar as estatísticas.",
         variant: "destructive"
       });
-      setStats(prev => ({ ...prev, isStale: true }));
     } finally {
       setLoading(false);
     }
-  }, [toast, dateFilter, customDate]);
+  }, [toast]);
 
   return { stats, loading, refetchStats };
 }

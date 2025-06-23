@@ -52,7 +52,7 @@ const AIPersonalityTab = () => {
 
   const [hasChanges, setHasChanges] = useState(false);
 
-  const handleInputChange = (field: keyof PersonalitySettings, value: string | number) => {
+  const handleInputChange = (field: keyof PersonalitySettings, value: string | number | boolean) => {
     setSettings(prev => ({ ...prev, [field]: value }));
     setHasChanges(true);
   };
@@ -375,8 +375,6 @@ const AIPersonalityTab = () => {
           </CardContent>
         </Card>
       </div>
-
-
 
       {/* Preview */}
       <Card>

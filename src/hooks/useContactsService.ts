@@ -46,7 +46,10 @@ export const useContactsService = () => {
         contractDate: contact.contract_date,
         payment: contact.payment,
         uploadedFiles: contact.uploaded_files || [],
-        consultationStage: contact.consultation_stage,
+        consultationStage: (contact.consultation_stage && 
+          ['Nova consulta', 'Qualificado', 'Chamada agendada', 'Preparando proposta', 'Proposta enviada', 'Acompanhamento', 'Negociação', 'Fatura enviada', 'Fatura paga – ganho', 'Projeto cancelado – perdido'].includes(contact.consultation_stage)
+          ? contact.consultation_stage as Contact['consultationStage']
+          : 'Nova consulta'),
         kanbanStage: contact.kanban_stage || 'Entraram'
       }));
     } catch (error) {
