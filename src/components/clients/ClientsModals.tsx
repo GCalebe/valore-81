@@ -5,6 +5,7 @@ import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
 import EditClientDialog from '@/components/clients/EditClientDialog_old';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
+// Verificando se o ClientDetailSheet está sendo importado corretamente
 
 interface ClientsModalsProps {
   selectedContact: Contact | null;

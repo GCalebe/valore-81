@@ -115,23 +115,10 @@ export function useChatMessages(selectedChat: string | null) {
   const fetchMessages = useCallback(async (conversationId: string) => {
     try {
       setLoading(true);
-      logger.debug(`Fetching messages for conversation: ${conversationId}`);
+      logger.debug(`Gerando mensagens mockup para a sessão ${conversationId}...`);
 
-      // Primeiro tenta buscar mensagens reais
-      try {
-        const historyData = await fetchChatHistory(conversationId);
-        const allMessages = historyData.flatMap(parseMessage);
-        
-        if (allMessages.length > 0) {
-          setMessages(allMessages);
-          logger.debug("Fetched and processed real messages:", allMessages.length);
-          return;
-        }
-      } catch (error) {
-        logger.debug("No real messages found, using mock data");
-      }
-
-      // Se não encontrar mensagens reais, usa dados mockup
+      // Desativando busca de mensagens reais e usando apenas mensagens mockup
+      logger.debug('Usando apenas mensagens mockup conforme solicitado');
       const mockMessages = generateMockMessages(conversationId);
       setMessages(mockMessages);
       logger.debug("Generated mock messages:", mockMessages.length);
@@ -152,22 +139,16 @@ export function useChatMessages(selectedChat: string | null) {
     }
   }, [toast, selectedChat]);
 
-  // Set up subscription for real-time message updates for the current chat
+  // Assinatura em tempo real desativada para usar apenas dados mockup
   useEffect(() => {
     if (!selectedChat) return;
 
-    logger.debug(`Setting up realtime listener for chat: ${selectedChat}`);
-
-    const subscription = subscribeToChat(selectedChat, (chatHistory: N8nChatHistory) => {
-      const newMessages = parseMessage(chatHistory);
-      if (newMessages.length > 0) {
-        setMessages(prev => [...prev, ...newMessages]);
-      }
-    });
-
+    logger.debug(`Assinatura em tempo real desativada para a sessão ${selectedChat}...`);
+    logger.debug('Usando apenas dados mockup conforme solicitado');
+    
+    // Não há necessidade de limpar assinatura, pois não estamos configurando nenhuma
     return () => {
-      logger.debug(`Cleaning up realtime subscription for chat: ${selectedChat}`);
-      subscription.unsubscribe();
+      logger.debug(`Nenhuma assinatura para cancelar para a sessão ${selectedChat}...`);
     };
   }, [selectedChat]);
 

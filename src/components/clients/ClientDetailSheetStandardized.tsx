@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
-import { MessageCircle, Edit } from 'lucide-react';
+import { MessageCircle, Edit, Trash } from 'lucide-react';
 import ClientInfoStandardized from './ClientInfoStandardized';
 import { DynamicCategory } from './DynamicCategoryManager';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
@@ -13,6 +13,7 @@ interface ClientDetailSheetStandardizedProps {
   contact: Contact | null;
   onSendMessage?: (contactId: string) => void;
   onEditClient?: (contact: Contact) => void;
+  onDeleteClient?: (contact: Contact) => void;
 }
 
 /**
@@ -24,15 +25,32 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
   onClose,
   contact,
   onSendMessage,
-  onEditClient
+  onEditClient,
+  onDeleteClient
 }) => {
-  const { dynamicFields, loadDynamicFields } = useDynamicFields();
+  // Inicializando dynamicFields com um objeto vazio para evitar o erro
+  const [dynamicFields, setDynamicFields] = useState({
+    basic: [],
+    commercial: [],
+    personalized: [],
+    documents: []
+  });
 
   useEffect(() => {
     if (isOpen && contact) {
-      loadDynamicFields();
+      // Verificando no console os dados recebidos
+      console.log('ClientDetailSheetStandardized - Props:', {
+        isOpen,
+        contact,
+        onSendMessage,
+        onEditClient,
+        onDeleteClient
+      });
+      
+      // Se necessário, podemos carregar os campos dinâmicos aqui usando o ID do contato
+      // Exemplo: fetchDynamicFieldsForContact(contact.id);
     }
-  }, [isOpen, contact, loadDynamicFields]);
+  }, [isOpen, contact, onSendMessage, onEditClient, onDeleteClient]);
 
   const handleSendMessage = () => {
     if (contact?.id && onSendMessage) {
@@ -44,6 +62,13 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
   const handleEditClient = () => {
     if (contact && onEditClient) {
       onEditClient(contact);
+      onClose();
+    }
+  };
+
+  const handleDeleteClient = () => {
+    if (contact && onDeleteClient) {
+      onDeleteClient(contact);
       onClose();
     }
   };
@@ -84,6 +109,16 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Editar Cliente
+              </Button>
+
+              <Button
+                variant="destructive"
+                className="flex-1"
+                onClick={handleDeleteClient}
+                disabled={!onDeleteClient}
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                Excluir
               </Button>
             </div>
           </div>

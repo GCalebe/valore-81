@@ -119,200 +119,66 @@ export function useConversations() {
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('🔍 Iniciando busca otimizada por conversas...');
-
-      // Primeiro, tenta buscar dados reais do Supabase
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('n8n_chat_histories')
-        .select('session_id')
-        .not('session_id', 'is', null);
-
-      if (sessionError) {
-        console.log('Erro ao buscar dados reais, usando dados mockup:', sessionError);
-        // ... keep existing code (fallback to mock data)
-        const mockConversations = generateFictitiousConversations(mockClients);
-        const conversationsData: Conversation[] = mockConversations.map(client => ({
-          id: client.sessionId || `session_${client.id}`,
-          name: client.name,
-          lastMessage: client.lastMessage || 'Mensagem de exemplo',
-          time: client.lastMessageTime || '2 min',
-          unread: client.unreadCount || 0,
-          avatar: '👤',
-          phone: client.phone,
-          email: client.email || 'Sem email',
-          address: client.address || 'Não informado',
-          clientName: client.clientName || 'Não informado',
-          clientSize: client.clientSize || 'Não informado',
-          clientType: client.clientType || 'Não informado',
-          sessionId: client.sessionId || `session_${client.id}`,
-        }));
-        
-        console.log('🎉 Conversas mockup criadas:', conversationsData.length);
-        setConversations(conversationsData);
-        setLoading(false);
-        return;
-      }
-
-      if (!sessionData || sessionData.length === 0) {
-        // ... keep existing code (no data fallback to mock)
-        const mockConversations = generateFictitiousConversations(mockClients);
-        const conversationsData: Conversation[] = mockConversations.map(client => ({
-          id: client.sessionId || `session_${client.id}`,
-          name: client.name,
-          lastMessage: client.lastMessage || 'Mensagem de exemplo',
-          time: client.lastMessageTime || '2 min',
-          unread: client.unreadCount || 0,
-          avatar: '👤',
-          phone: client.phone,
-          email: client.email || 'Sem email',
-          address: client.address || 'Não informado',
-          clientName: client.clientName || 'Não informado',
-          clientSize: client.clientSize || 'Não informado',
-          clientType: client.clientType || 'Não informado',
-          sessionId: client.sessionId || `session_${client.id}`,
-        }));
-        
-        console.log('🎉 Conversas mockup criadas (sem dados reais):', conversationsData.length);
-        setConversations(conversationsData);
-        setLoading(false);
-        return;
-      }
-
-      const uniqueSessionIds = Array.from(new Set(sessionData.map(item => item.session_id)));
-      if (uniqueSessionIds.length === 0) {
-        setConversations([]);
-        setLoading(false);
-        return;
-      }
-
-      console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
-
-      // Completely bypass complex type inference by using raw SQL-like approach
-      let rawClientsData: any[] | null = null;
-      let clientsError: any = null;
+      console.log('🔍 Buscando conversas...');
       
-      try {
-        // Use a simple approach that avoids complex type inference
-        const response = await supabase
-          .from('dados_cliente')
-          .select('*');
-          
-        if (response.error) {
-          clientsError = response.error;
-        } else if (response.data) {
-          // Filter the results manually to avoid the complex type inference from .in()
-          rawClientsData = response.data.filter((client: any) => 
-            client.session_id && uniqueSessionIds.includes(client.session_id)
-          );
+      // Desativando busca do Supabase e usando apenas dados mockup
+      console.log('Usando apenas dados mockup conforme solicitado');
+      
+      // Garantir que todos os clientes mockup tenham sessionId
+      const clientsWithSessionId = mockClients.map(client => {
+        if (!client.sessionId) {
+          return {
+            ...client,
+            sessionId: `session_${client.id}`
+          };
         }
-      } catch (error) {
-        clientsError = error;
-      }
-
-      if (clientsError) {
-        console.log('Erro ao buscar clientes, usando dados mockup:', clientsError);
-        // ... keep existing code (error fallback to mock)
-        const mockConversations = generateFictitiousConversations(mockClients);
-        const conversationsData: Conversation[] = mockConversations.map(client => ({
-          id: client.sessionId || `session_${client.id}`,
-          name: client.name,
-          lastMessage: client.lastMessage || 'Mensagem de exemplo',
-          time: client.lastMessageTime || '2 min',
-          unread: client.unreadCount || 0,
-          avatar: '👤',
-          phone: client.phone,
-          email: client.email || 'Sem email',
-          address: client.address || 'Não informado',
-          clientName: client.clientName || 'Não informado',
-          clientSize: client.clientSize || 'Não informado',
-          clientType: client.clientType || 'Não informado',
-          sessionId: client.sessionId || `session_${client.id}`,
-        }));
-        
-        console.log('🎉 Conversas mockup criadas (erro ao buscar clientes):', conversationsData.length);
-        setConversations(conversationsData);
-        setLoading(false);
-        return;
-      }
-
-      if (!rawClientsData || rawClientsData.length === 0) {
-        setConversations([]);
-        setLoading(false);
-        return;
-      }
-
-      console.log(`👥 ${rawClientsData.length} clientes encontrados.`);
-
-      // Explicitly cast to our simple interface to avoid type inference issues
-      const clientsData: ClientRecord[] = rawClientsData as ClientRecord[];
+        return client;
+      });
       
-      // Filter out null/undefined records
-      const validClients = clientsData.filter(client => client != null);
+      const mockConversations = generateFictitiousConversations(clientsWithSessionId);
+      const conversationsData: Conversation[] = mockConversations.map(client => ({
+        id: client.sessionId || `session_${client.id}`,
+        name: client.name,
+        lastMessage: client.lastMessage || 'Mensagem de exemplo',
+        time: client.lastMessageTime || '2 min',
+        unread: client.unreadCount || 0,
+        avatar: '👤',
+        phone: client.phone,
+        email: client.email || 'Sem email',
+        address: client.address || 'Não informado',
+        clientName: client.clientName || 'Não informado',
+        clientSize: client.clientSize || 'Não informado',
+        clientType: client.clientType || 'Não informado',
+        sessionId: client.sessionId || `session_${client.id}`,
+      }));
       
-      const conversationsData: Conversation[] = validClients.map(createConversationFromClient);
-
-      // Fetch latest messages for each conversation
-      for (const conversation of conversationsData) {
-        try {
-          const { data: historyData, error: historyError } = await supabase
-            .from('n8n_chat_histories')
-            .select('*')
-            .eq('session_id', conversation.sessionId)
-            .order('id', { ascending: false })
-            .limit(1);
-          
-          if (!historyError && historyData && historyData.length > 0) {
-            const chatHistory = historyData[0] as N8nChatHistory;
-            
-            let lastMessageContent = 'Sem mensagem';
-            if (chatHistory.message) {
-              if (typeof chatHistory.message === 'string') {
-                try {
-                  const jsonMessage = JSON.parse(chatHistory.message);
-                  if (jsonMessage.type && jsonMessage.content) {
-                    lastMessageContent = jsonMessage.content;
-                  }
-                } catch (e) {
-                  lastMessageContent = chatHistory.message;
-                }
-              } else if (typeof chatHistory.message === 'object') {
-                if (chatHistory.message.messages && Array.isArray(chatHistory.message.messages)) {
-                  const lastMsg = chatHistory.message.messages[chatHistory.message.messages.length - 1];
-                  lastMessageContent = lastMsg?.content || 'Sem mensagem';
-                } else if (chatHistory.message.type && chatHistory.message.content) {
-                  lastMessageContent = chatHistory.message.content;
-                } else if (chatHistory.message.content) {
-                  lastMessageContent = chatHistory.message.content;
-                }
-              }
-            }
-            
-            conversation.lastMessage = lastMessageContent || 'Sem mensagem';
-            
-            // Use hora field if available, otherwise fall back to data field
-            const messageDate = chatHistory.hora 
-              ? new Date(chatHistory.hora) 
-              : chatHistory.data 
-                ? new Date(chatHistory.data) 
-                : new Date();
-            
-            conversation.time = formatMessageTime(messageDate);
-          }
-        } catch (error) {
-          console.error(`Error fetching messages for session ${conversation.sessionId}:`, error);
-          conversation.lastMessage = 'Erro ao carregar mensagem';
-          conversation.time = 'Erro';
-        }
-      }
-      
-      console.log('🎉 Conversas finais montadas:', conversationsData.length);
+      console.log('🎉 Conversas mockup criadas:', conversationsData.length);
       setConversations(conversationsData);
+      setLoading(false);
+      return;
+
+      // Todo o código de busca no Supabase foi removido para usar apenas dados mockup
+
+      // Todo o código de busca no Supabase foi removido para usar apenas dados mockup
+
+      // Todo o código de busca no Supabase foi removido para usar apenas dados mockup
 
     } catch (error) {
       console.error('❌ Erro geral ao buscar conversas:', error);
       
       // ... keep existing code (general error fallback to mock)
-      const mockConversations = generateFictitiousConversations(mockClients);
+      // Garantir que todos os clientes mockup tenham sessionId
+      const clientsWithSessionId = mockClients.map(client => {
+        if (!client.sessionId) {
+          return {
+            ...client,
+            sessionId: `session_${client.id}`
+          };
+        }
+        return client;
+      });
+      
+      const mockConversations = generateFictitiousConversations(clientsWithSessionId);
       const conversationsData: Conversation[] = mockConversations.map(client => ({
         id: client.sessionId || `session_${client.id}`,
         name: client.name,

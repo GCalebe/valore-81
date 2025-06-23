@@ -1,16 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Anchor } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Conversation } from '@/types/chat';
 import { Contact } from '@/types/client';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { supabase } from '@/integrations/supabase/client';
+import { useSupabase } from '@/context/SupabaseContext';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
+import { validateKanbanStage } from '@/utils/clientDataUtils';
 import TagsField from './TagsField';
 import NotesField from './NotesField';
-import ClientInfoTabs from './ClientInfoTabs_old';
+import ClientInfoStandardized from '@/components/clients/ClientInfoStandardized';
+import { mockClients } from '@/mocks/clientsMock';
 
 interface ClientInfoPanelProps {
   selectedChat: string | null;
@@ -34,57 +36,67 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
       
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('dados_cliente')
-          .select('*')
-          .eq('sessionid', selectedConversation.sessionId)
-          .single();
-
-        if (error) {
-          console.error('Error fetching client data:', error);
-          return;
-        }
-
-        if (data) {
-          // Ensure kanban_stage is a valid kanban stage value, default to 'Entraram' if invalid
-          const validKanbanStages: Contact['kanbanStage'][] = [
-            'Entraram', 'Conversaram', 'Agendaram', 'Compareceram', 'Negociaram', 'Postergaram', 'Converteram'
-          ];
-          const kanbanStage = validKanbanStages.includes(data.kanban_stage as Contact['kanbanStage']) 
-            ? data.kanban_stage as Contact['kanbanStage']
-            : 'Entraram';
-
-          const formattedClient: Contact = {
-            id: data.id.toString(),
-            name: data.nome || 'Cliente sem nome',
-            email: data.email,
-            phone: data.telefone,
-            clientName: data.client_name,
-            clientSize: data.client_size,
-            clientType: data.client_type,
-            cpfCnpj: data.cpf_cnpj,
-            asaasCustomerId: data.asaas_customer_id,
-            status: 'Active',
-            notes: '',
-            lastContact: data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : 'Desconhecido',
-            kanbanStage: kanbanStage,
-            sessionId: data.sessionid,
-            tags: [],
-            responsibleUser: '',
-            sales: 0,
-            clientSector: '',
-            budget: 0,
-            paymentMethod: '',
-            clientObjective: '',
-            lossReason: '',
-            contractNumber: '',
-            contractDate: '',
-            payment: '',
-            uploadedFiles: [],
-            consultationStage: 'Nova consulta'
-          };
+        // Desativando busca do Supabase e usando apenas dados mockup
+        console.log('Buscando dados do cliente mockup para a sessão:', selectedConversation.sessionId);
+        console.log('Dados da conversa selecionada:', selectedConversation);
+        console.log('Clientes mockup disponíveis:', mockClients.length);
+        console.log('IDs dos clientes mockup:', mockClients.map(c => ({ id: c.id, sessionId: c.sessionId })));
+        
+        // Encontrar o cliente mockup correspondente à sessão selecionada
+        const mockClient = mockClients.find(client => client.sessionId === selectedConversation.sessionId);
+        
+        if (mockClient) {
+          console.log('Cliente mockup encontrado:', mockClient.name);
+          setClientData(mockClient);
+        } else {
+          console.log('Cliente mockup não encontrado para a sessão:', selectedConversation.sessionId);
+          console.log('Verificando correspondência por ID...');
           
-          setClientData(formattedClient);
+          // Tentar encontrar por ID como fallback
+          const clientById = mockClients.find(client => client.id === selectedConversation.id);
+          
+          if (clientById) {
+            console.log('Cliente mockup encontrado por ID:', clientById.name);
+            // Atualizar o sessionId para garantir consistência
+            const updatedClient = {
+              ...clientById,
+              sessionId: selectedConversation.sessionId
+            };
+            setClientData(updatedClient);
+          } else {
+            console.log('Cliente mockup não encontrado nem por ID. Usando dados da conversa como fallback.');
+            // Usar os dados da conversa selecionada como fallback
+            const fallbackClient: Contact = {
+              id: selectedConversation.id,
+              name: selectedConversation.name || 'Cliente sem nome',
+              email: selectedConversation.email || '',
+              phone: selectedConversation.phone || '',
+              clientName: selectedConversation.clientName || '',
+              clientSize: selectedConversation.clientSize || '',
+              clientType: selectedConversation.clientType || 'pessoa-fisica',
+              cpfCnpj: '',
+              asaasCustomerId: '',
+              status: 'Active',
+              notes: 'Cliente gerado automaticamente a partir dos dados da conversa',
+              lastContact: new Date().toLocaleDateString('pt-BR'),
+              kanbanStage: 'Nova consulta',
+              sessionId: selectedConversation.sessionId,
+              tags: ['Gerado automaticamente'],
+              responsibleUser: '',
+              sales: 0,
+              clientSector: '',
+              budget: 0,
+              paymentMethod: '',
+              clientObjective: '',
+              lossReason: '',
+              contractNumber: '',
+              contractDate: '',
+              payment: '',
+              uploadedFiles: [],
+              consultationStage: 'Nova consulta'
+            };
+            setClientData(fallbackClient);
+          }
         }
       } catch (error) {
         console.error('Error fetching client data:', error);
@@ -143,6 +155,9 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
         </div>
         <h2 className="text-xl font-semibold">{clientData?.name || selectedConversation?.name}</h2>
         <p className="text-gray-500 dark:text-gray-400">{clientData?.phone || selectedConversation?.phone}</p>
+        {clientData?.address && (
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{clientData.address}</p>
+        )}
         {clientData?.kanbanStage && (
           <Badge variant="outline" className="mt-2">
             {clientData.kanbanStage}
@@ -151,19 +166,25 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
       </div>
       
       <ScrollArea className="flex-1">
-        <div className="p-4">
+        <div className="p-4 space-y-6">
           {/* Tags Field */}
           <TagsField selectedChat={selectedChat} />
           
-          {/* Enhanced Tabs System with Dynamic Fields and Validation */}
-          <ClientInfoTabs 
+          {/* Painel de Informações Padronizado */}
+          <ClientInfoStandardized 
             clientData={clientData}
-            dynamicFields={dynamicFields}
+            dynamicFields={{
+              basic: dynamicFields.basic,
+              commercial: dynamicFields.commercial,
+              personalized: dynamicFields.personalized,
+              documents: dynamicFields.documents
+            }}
             onFieldUpdate={handleFieldUpdate}
+            context="chat"
           />
           
           {/* Notes Field */}
-          <div className="mt-6">
+          <div className="mt-2">
             <NotesField selectedChat={selectedChat} />
           </div>
           
