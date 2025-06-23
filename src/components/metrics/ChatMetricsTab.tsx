@@ -140,7 +140,10 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         </h4>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentClientsTable loading={loading} />
+          <RecentClientsTable 
+            clients={clientData.recentClients || []} 
+            loading={loading} 
+          />
           <LeadsTable leads={metricsData.leadsData || []} loading={loading} />
         </div>
       </div>
