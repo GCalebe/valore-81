@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -188,12 +186,11 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Use explicit typing to avoid deep type instantiation
-      const clientsQuery = supabase
+      // Use explicit typing with type assertion to avoid deep type instantiation
+      const { data: rawClientsData, error: clientsError } = await supabase
         .from('dados_cliente')
-        .select('*');
-        
-      const { data: rawClientsData, error: clientsError } = await clientsQuery.in('session_id', uniqueSessionIds);
+        .select('*')
+        .in('session_id', uniqueSessionIds) as { data: any[] | null; error: any };
 
       if (clientsError) {
         console.log('Erro ao buscar clientes, usando dados mockup:', clientsError);
@@ -341,4 +338,3 @@ export function useConversations() {
     fetchConversations
   };
 }
-
