@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -97,27 +96,9 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         }}
         onClick={() => onClick(contact)}
       >
-        {/* Red crossed-out overlay for cancelled projects */}
+        {/* Red overlay for cancelled projects */}
         {isCancelledProject && (
-          <>
-            <div className="absolute inset-0 bg-red-500/10 z-10 pointer-events-none" />
-            <div className="absolute inset-0 z-20 pointer-events-none">
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-red-500 transform rotate-12 origin-top-left" 
-                   style={{ 
-                     width: '141.42%', 
-                     transformOrigin: 'top left',
-                     top: '50%',
-                     left: '-20.71%'
-                   }} />
-              <div className="absolute top-0 right-0 w-full h-0.5 bg-red-500 transform -rotate-12 origin-top-right" 
-                   style={{ 
-                     width: '141.42%', 
-                     transformOrigin: 'top right',
-                     top: '50%',
-                     right: '-20.71%'
-                   }} />
-            </div>
-          </>
+          <div className="absolute inset-0 bg-red-500/10 z-10 pointer-events-none" />
         )}
 
         <CardContent className={cn("p-3 text-sm relative z-30", isCompact && "py-1.5")}>
