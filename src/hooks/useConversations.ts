@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,7 +21,7 @@ interface DatabaseClient {
   payments: any;
   porte_pet: string | null;
   raca_pet: string | null;
-  session_id: string; // Fixed: using session_id instead of sessionid
+  session_id: string | null; // Made optional to match actual database structure
   telefone: string | null;
 }
 
@@ -95,7 +94,7 @@ export function useConversations() {
   };
 
   const createConversationFromClient = (client: DatabaseClient): Conversation => {
-    // Add safety check for session_id
+    // Handle missing or null session_id
     const sessionId = client.session_id || `fallback_${client.id}`;
     
     return {
@@ -128,7 +127,7 @@ export function useConversations() {
 
       if (sessionError) {
         console.log('Erro ao buscar dados reais, usando dados mockup:', sessionError);
-        // Se houver erro, usa dados mockup
+        // ... keep existing code (fallback to mock data)
         const mockConversations = generateFictitiousConversations(mockClients);
         const conversationsData: Conversation[] = mockConversations.map(client => ({
           id: client.sessionId || `session_${client.id}`,
@@ -153,7 +152,7 @@ export function useConversations() {
       }
 
       if (!sessionData || sessionData.length === 0) {
-        // Se não há dados reais, usa mockup
+        // ... keep existing code (no data fallback to mock)
         const mockConversations = generateFictitiousConversations(mockClients);
         const conversationsData: Conversation[] = mockConversations.map(client => ({
           id: client.sessionId || `session_${client.id}`,
@@ -186,7 +185,7 @@ export function useConversations() {
 
       console.log(`🔑 Encontrados ${uniqueSessionIds.length} IDs de sessão únicos. Buscando dados...`);
 
-      // Fixed: using session_id consistently
+      // Query clients data without type casting
       const { data: clientsData, error: clientsError } = await supabase
         .from('dados_cliente')
         .select('*')
@@ -194,7 +193,7 @@ export function useConversations() {
 
       if (clientsError) {
         console.log('Erro ao buscar clientes, usando dados mockup:', clientsError);
-        // Se houver erro, usa dados mockup
+        // ... keep existing code (error fallback to mock)
         const mockConversations = generateFictitiousConversations(mockClients);
         const conversationsData: Conversation[] = mockConversations.map(client => ({
           id: client.sessionId || `session_${client.id}`,
@@ -226,7 +225,10 @@ export function useConversations() {
 
       console.log(`👥 ${clientsData.length} clientes encontrados.`);
 
-      const conversationsData: Conversation[] = (clientsData as DatabaseClient[]).map(createConversationFromClient);
+      // Create conversations without problematic type casting
+      const conversationsData: Conversation[] = clientsData
+        .filter((client): client is DatabaseClient => client !== null)
+        .map(createConversationFromClient);
 
       // Fetch latest messages for each conversation
       for (const conversation of conversationsData) {
@@ -288,7 +290,7 @@ export function useConversations() {
     } catch (error) {
       console.error('❌ Erro geral ao buscar conversas:', error);
       
-      // Em caso de erro geral, usa dados mockup
+      // ... keep existing code (general error fallback to mock)
       const mockConversations = generateFictitiousConversations(mockClients);
       const conversationsData: Conversation[] = mockConversations.map(client => ({
         id: client.sessionId || `session_${client.id}`,
