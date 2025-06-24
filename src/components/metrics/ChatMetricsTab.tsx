@@ -164,7 +164,15 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ConversationChart data={metricsData.conversationData || []} loading={loading} />
-          <ConversionFunnelChart data={metricsData.funnelData || []} loading={loading} />
+          <ConversionFunnelChart 
+            data={metricsData.funnelData || []} 
+            loading={loading} 
+            noShowRate={metricsData.noShowRate || 15}
+            onFilterChange={(date, stages, showNoShow) => {
+              console.log('Filtro aplicado no Funil de Conversão:', { date, stages, showNoShow });
+              // Aqui você pode implementar a lógica para filtrar os dados com base nos parâmetros
+            }}
+          />
         </div>
 
         <ConversionByTimeChart data={metricsData.conversionByTimeData || []} loading={loading} />
@@ -183,7 +191,15 @@ const ChatMetricsTab: React.FC<ChatMetricsTabProps> = ({ stats, metrics, loading
           <LeadsGrowthChart data={metricsData.leadsOverTime || []} loading={loading} />
         </div>
 
-        <LeadsByArrivalFunnelChart data={metricsData.leadsByArrivalFunnel || []} loading={loading} />
+        <LeadsByArrivalFunnelChart 
+          data={metricsData.leadsByArrivalFunnel || []} 
+          loading={loading} 
+          noShowRate={metricsData.noShowRate || 12}
+          onFilterChange={(date, stages, showNoShow) => {
+            console.log('Filtro aplicado no Funil por Data de Chegada:', { date, stages, showNoShow });
+            // Aqui você pode implementar a lógica para filtrar os dados com base nos parâmetros
+          }}
+        />
       </div>
 
       {/* Bloco 7: Tabelas Detalhadas */}
