@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Contact } from '@/types/client';
-import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
-import EditClientDialog from '@/components/clients/EditClientDialog_old';
+import ClientDetailSheet from '@/components/clients/ClientDetailSheetStandardized';
+import EditClientDialog from '@/components/clients/EditClientFormStandardized';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
-// Verificando se o ClientDetailSheet está sendo importado corretamente
+// Atualizando para usar os componentes padronizados
 
 interface ClientsModalsProps {
   selectedContact: Contact | null;
