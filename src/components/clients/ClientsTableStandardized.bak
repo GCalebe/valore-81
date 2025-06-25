@@ -6,11 +6,11 @@ import { Settings } from 'lucide-react';
 import { isDateInPeriod } from '@/utils/dateUtils';
 import { ColumnConfig, getColumnConfig } from '@/config/columnConfig';
 import ColumnConfigDialog from './ColumnConfigDialog';
-import ClientTableRowStandardized from './ClientTableRowStandardized';
+import ClientTableRow from './ClientTableRow';
 
 import { CustomFieldFilter } from '@/hooks/useClientsFilters';
 
-interface ClientsTableStandardizedProps {
+interface ClientsTableProps {
   contacts: Contact[];
   isLoading: boolean;
   searchTerm: string;
@@ -33,7 +33,7 @@ interface ClientsTableStandardizedProps {
  * Exemplo de implementação do componente padronizado na tabela de clientes
  * Este componente substitui o ClientsTable original
  */
-const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({ 
+const ClientsTable: React.FC<ClientsTableProps> = ({ 
   contacts, 
   isLoading, 
   searchTerm,
@@ -50,7 +50,7 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
     showCommercialInfo: false,
     showCustomFields: false
   }
-}: ClientsTableStandardizedProps) => {
+}: ClientsTableProps) => {
   const [columnConfig, setColumnConfig] = useState<ColumnConfig[]>(getColumnConfig());
   const [isColumnConfigOpen, setIsColumnConfigOpen] = useState(false);
 
@@ -168,7 +168,7 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
         </TableHeader>
         <TableBody>
           {filteredContacts.map((contact) => (
-            <ClientTableRowStandardized
+            <ClientTableRow
               key={contact.id}
               contact={contact}
               onViewDetails={onViewDetails}
@@ -190,33 +190,16 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
   );
 };
 
-export default ClientsTableStandardized;
+export default ClientsTable;
 
 /**
  * Instruções para implementação:
  * 
- * 1. Renomeie este arquivo para ClientsTable.tsx (substituindo o atual)
- * 2. Ou importe este componente no lugar do ClientsTable atual
- * 
  * Exemplo de uso no componente pai:
  * 
- * import ClientsTableStandardized from './ClientsTableStandardized';
+ * import ClientsTable from './ClientsTable';
  * 
- * // Substitua
  * <ClientsTable 
- *   contacts={contacts}
- *   isLoading={loadingContacts}
- *   searchTerm={filter.searchTerm}
- *   statusFilter={filter.statusFilter}
- *   segmentFilter={filter.segmentFilter}
- *   lastContactFilter={filter.lastContactFilter}
- *   customFieldFilters={filter.customFieldFilters}
- *   onContactClick={handleContactClick}
- *   onEditClick={handleEditClick}
- * />
- * 
- * // Por
- * <ClientsTableStandardized 
  *   contacts={contacts}
  *   isLoading={loadingContacts}
  *   searchTerm={filter.searchTerm}

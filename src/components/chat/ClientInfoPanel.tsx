@@ -11,7 +11,7 @@ import { useDynamicFields } from '@/hooks/useDynamicFields';
 import { validateKanbanStage } from '@/utils/clientDataUtils';
 import TagsField from './TagsField';
 import NotesField from './NotesField';
-import ClientInfoStandardized from '@/components/clients/ClientInfoStandardized';
+import ClientInfo from '@/components/clients/ClientInfo';
 import { mockClients } from '@/mocks/clientsMock';
 
 interface ClientInfoPanelProps {
@@ -170,8 +170,8 @@ const ClientInfoPanel = ({ selectedChat, selectedConversation }: ClientInfoPanel
           {/* Tags Field */}
           <TagsField selectedChat={selectedChat} />
           
-          {/* Painel de Informações Padronizado */}
-          <ClientInfoStandardized 
+          {/* Painel de Informações */}
+          <ClientInfo 
             clientData={clientData}
             dynamicFields={{
               basic: dynamicFields.basic,

@@ -4,7 +4,7 @@ import { Contact } from '@/types/client';
 import UnifiedClientInfo from './UnifiedClientInfo';
 import { DynamicCategory } from './DynamicCategoryManager';
 
-interface ClientInfoStandardizedProps {
+interface ClientInfoProps {
   clientData: Contact | null;
   dynamicFields?: {
     basic: DynamicCategory[];
@@ -18,11 +18,11 @@ interface ClientInfoStandardizedProps {
 }
 
 /**
- * Componente padronizado para exibir informações do cliente em diferentes contextos
+ * Componente para exibir informações do cliente em diferentes contextos
  * Este componente serve como um wrapper para o UnifiedClientInfo, configurando-o
  * de acordo com o contexto em que está sendo usado.
  */
-const ClientInfoStandardized: React.FC<ClientInfoStandardizedProps> = ({
+const ClientInfo: React.FC<ClientInfoProps> = ({
   clientData,
   dynamicFields = { basic: [], commercial: [], personalized: [], documents: [] },
   onFieldUpdate,
@@ -80,4 +80,4 @@ const ClientInfoStandardized: React.FC<ClientInfoStandardizedProps> = ({
   );
 };
 
-export default ClientInfoStandardized;
+export default ClientInfo;

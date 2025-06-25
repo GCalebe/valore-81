@@ -1,6 +1,6 @@
-# ClientDetailSheetStandardized
+# ClientDetailSheet
 
-O componente `ClientDetailSheetStandardized` é responsável por exibir os detalhes de um cliente em um painel lateral (sheet) que desliza da direita da tela. Ele mostra informações detalhadas do cliente e fornece ações como enviar mensagem, editar e excluir.
+O componente `ClientDetailSheet` é responsável por exibir os detalhes de um cliente em um painel lateral (sheet) que desliza da direita da tela. Ele mostra informações detalhadas do cliente e fornece ações como enviar mensagem, editar e excluir.
 
 ## Props
 
@@ -16,7 +16,7 @@ O componente `ClientDetailSheetStandardized` é responsável por exibir os detal
 ## Exemplos de Uso
 
 ```tsx
-<ClientDetailSheetStandardized 
+<ClientDetailSheet 
   isOpen={isDetailSheetOpen}
   onClose={() => setIsDetailSheetOpen(false)}
   contact={selectedContact}
@@ -28,7 +28,7 @@ O componente `ClientDetailSheetStandardized` é responsável por exibir os detal
 
 ## Comportamento
 
-O componente `ClientDetailSheetStandardized` exibe um painel lateral com as seguintes características:
+O componente `ClientDetailSheet` exibe um painel lateral com as seguintes características:
 
 1. **Cabeçalho**: Exibe o nome do cliente e botões de ação (fechar, enviar mensagem, editar, excluir)
 2. **Informações do Cliente**: Exibe as informações básicas do cliente (nome, email, telefone, etc.)
@@ -38,7 +38,7 @@ O componente `ClientDetailSheetStandardized` exibe um painel lateral com as segu
 
 ## Estrutura Interna
 
-O componente utiliza os componentes `ClientInfoStandardized` e `DynamicCategory` para organizar e exibir as informações do cliente. A estrutura básica é:
+O componente utiliza os componentes `ClientInfo` e `DynamicCategory` para organizar e exibir as informações do cliente. A estrutura básica é:
 
 ```tsx
 <Sheet open={isOpen} onOpenChange={onClose}>
@@ -47,7 +47,7 @@ O componente utiliza os componentes `ClientInfoStandardized` e `DynamicCategory`
       {/* Cabeçalho com nome do cliente e botões de ação */}
     </SheetHeader>
     <div className="space-y-6">
-      <ClientInfoStandardized contact={contact} />
+      <ClientInfo contact={contact} />
       {/* Categorias dinâmicas com informações adicionais */}
       <DynamicCategory title="Dados de Contato" items={contactData} />
       <DynamicCategory title="Informações Adicionais" items={additionalData} />
@@ -64,7 +64,7 @@ O componente utiliza os componentes `ClientInfoStandardized` e `DynamicCategory`
 
 - `Sheet`, `SheetContent`, `SheetHeader`, `SheetFooter` da biblioteca de UI
 - `Button` da biblioteca de UI
-- `ClientInfoStandardized` para exibir informações básicas do cliente
+- `ClientInfo` para exibir informações básicas do cliente
 - `DynamicCategory` para organizar informações em categorias
 
 ## Notas de Implementação

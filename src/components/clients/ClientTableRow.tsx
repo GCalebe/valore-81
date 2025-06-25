@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
 import { MessageSquare, MoreHorizontal, Eye } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import ClientInfoStandardized from './ClientInfoStandardized';
+import ClientInfo from './ClientInfo';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-interface ClientTableRowStandardizedProps {
+interface ClientTableRowProps {
   contact: Contact;
   onViewDetails: (contact: Contact) => void;
   onSendMessage: (contactId: string) => void;
@@ -18,10 +18,9 @@ interface ClientTableRowStandardizedProps {
 }
 
 /**
- * Exemplo de implementação do componente padronizado na tabela de clientes
- * Este componente representa uma linha da tabela com informações padronizadas
+ * Componente que representa uma linha da tabela de clientes
  */
-const ClientTableRowStandardized: React.FC<ClientTableRowStandardizedProps> = ({
+const ClientTableRow: React.FC<ClientTableRowProps> = ({
   contact,
   onViewDetails,
   onSendMessage,
@@ -179,7 +178,7 @@ const ClientTableRowStandardized: React.FC<ClientTableRowStandardizedProps> = ({
         <TableRow>
           <TableCell colSpan={columns.length + 2} className="p-0">
             <div className="p-4 bg-gray-50 dark:bg-gray-800">
-              <ClientInfoStandardized
+              <ClientInfo
                 clientData={contact}
                 context="table"
                 compact={true}
@@ -192,34 +191,4 @@ const ClientTableRowStandardized: React.FC<ClientTableRowStandardizedProps> = ({
   );
 };
 
-export default ClientTableRowStandardized;
-
-/**
- * Instruções para implementação:
- * 
- * Este componente deve ser usado dentro do ClientsTable para renderizar cada linha
- * da tabela de forma padronizada.
- * 
- * Exemplo de uso no ClientsTable:
- * 
- * import ClientTableRowStandardized from './ClientTableRowStandardized';
- * 
- * // Dentro do componente ClientsTable
- * return (
- *   <Table>
- *     <TableHeader>...</TableHeader>
- *     <TableBody>
- *       {contacts.map(contact => (
- *         <ClientTableRowStandardized
- *           key={contact.id}
- *           contact={contact}
- *           onViewDetails={handleViewDetails}
- *           onSendMessage={handleSendMessage}
- *           onEditClient={handleEditClient}
- *           columns={visibleColumns}
- *         />
- *       ))}
- *     </TableBody>
- *   </Table>
- * );
- */
+export default ClientTableRow;

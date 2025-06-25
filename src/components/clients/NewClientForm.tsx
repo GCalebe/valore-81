@@ -4,19 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
-import ClientInfoStandardized from './ClientInfoStandardized';
+import ClientInfo from './ClientInfo';
 
-interface NewClientFormStandardizedProps {
+interface NewClientFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (newContact: Contact) => Promise<void>;
 }
 
 /**
- * Exemplo de implementação do componente padronizado no formulário de criação de cliente
- * Este componente substitui o NewClientDialog original
+ * Componente para criação de novo cliente
  */
-const NewClientFormStandardized: React.FC<NewClientFormStandardizedProps> = ({
+const NewClientForm: React.FC<NewClientFormProps> = ({
   isOpen,
   onClose,
   onSave
@@ -94,7 +93,7 @@ const NewClientFormStandardized: React.FC<NewClientFormStandardizedProps> = ({
             </TabsList>
 
             <TabsContent value="principal" className="space-y-4">
-              <ClientInfoStandardized
+              <ClientInfo
                 clientData={contact}
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
@@ -104,7 +103,7 @@ const NewClientFormStandardized: React.FC<NewClientFormStandardizedProps> = ({
             </TabsContent>
 
             <TabsContent value="custom" className="space-y-4">
-              <ClientInfoStandardized
+              <ClientInfo
                 clientData={contact}
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
@@ -114,7 +113,7 @@ const NewClientFormStandardized: React.FC<NewClientFormStandardizedProps> = ({
             </TabsContent>
 
             <TabsContent value="docs" className="space-y-4">
-              <ClientInfoStandardized
+              <ClientInfo
                 clientData={contact}
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
@@ -136,29 +135,4 @@ const NewClientFormStandardized: React.FC<NewClientFormStandardizedProps> = ({
   );
 };
 
-export default NewClientFormStandardized;
-
-/**
- * Instruções para implementação:
- * 
- * 1. Renomeie este arquivo para NewClientDialog.tsx (substituindo o atual)
- * 2. Ou importe este componente no lugar do NewClientDialog atual
- * 
- * Exemplo de uso no componente pai:
- * 
- * import NewClientFormStandardized from './NewClientFormStandardized';
- * 
- * // Substitua
- * <NewClientDialog 
- *   isOpen={isNewDialogOpen}
- *   onClose={handleCloseNewDialog}
- *   onSave={handleCreateClient}
- * />
- * 
- * // Por
- * <NewClientFormStandardized 
- *   isOpen={isNewDialogOpen}
- *   onClose={handleCloseNewDialog}
- *   onSave={handleCreateClient}
- * />
- */
+export default NewClientForm;

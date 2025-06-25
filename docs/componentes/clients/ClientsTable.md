@@ -1,6 +1,6 @@
-# ClientsTableStandardized
+# ClientsTable
 
-O componente `ClientsTableStandardized` é responsável por exibir uma tabela de clientes com recursos de filtragem, ordenação e ações como visualização de detalhes, edição e exclusão.
+O componente `ClientsTable` é responsável por exibir uma tabela de clientes com recursos de filtragem, ordenação e ações como visualização de detalhes, edição e exclusão.
 
 ## Props
 
@@ -21,7 +21,7 @@ O componente `ClientsTableStandardized` é responsável por exibir uma tabela de
 ## Exemplos de Uso
 
 ```tsx
-<ClientsTableStandardized 
+<ClientsTable 
   contacts={clients}
   isLoading={loading}
   searchTerm={searchQuery}
@@ -38,7 +38,7 @@ O componente `ClientsTableStandardized` é responsável por exibir uma tabela de
 
 ## Comportamento
 
-O componente `ClientsTableStandardized` exibe uma tabela de clientes com as seguintes características:
+O componente `ClientsTable` exibe uma tabela de clientes com as seguintes características:
 
 1. **Cabeçalho da Tabela**: Exibe os nomes das colunas com suporte a ordenação
 2. **Linhas de Clientes**: Cada linha representa um cliente e exibe suas informações principais
@@ -48,7 +48,7 @@ O componente `ClientsTableStandardized` exibe uma tabela de clientes com as segu
 
 ## Estrutura Interna
 
-O componente utiliza o componente `ClientTableRowStandardized` para renderizar cada linha da tabela. A estrutura básica é:
+O componente utiliza o componente `ClientTableRow` para renderizar cada linha da tabela. A estrutura básica é:
 
 ```tsx
 <Table>
@@ -57,7 +57,7 @@ O componente utiliza o componente `ClientTableRowStandardized` para renderizar c
   </TableHeader>
   <TableBody>
     {filteredContacts.map(contact => (
-      <ClientTableRowStandardized 
+      <ClientTableRow 
         key={contact.id}
         contact={contact}
         onViewDetails={onViewDetails}
@@ -74,7 +74,7 @@ O componente utiliza o componente `ClientTableRowStandardized` para renderizar c
 
 - `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell` da biblioteca de UI
 - `Button` da biblioteca de UI
-- `ClientTableRowStandardized` para renderizar as linhas da tabela
+- `ClientTableRow` para renderizar as linhas da tabela
 
 ## Notas de Implementação
 

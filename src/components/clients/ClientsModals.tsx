@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Contact } from '@/types/client';
-import ClientDetailSheet from '@/components/clients/ClientDetailSheetStandardized';
-import EditClientDialog from '@/components/clients/EditClientFormStandardized';
+import ClientDetailSheet from '@/components/clients/ClientDetailSheet';
+import EditClientDialog from '@/components/clients/EditClientForm';
 import SendMessageDialog from '@/components/clients/SendMessageDialog';
 import PauseDurationDialog from '@/components/PauseDurationDialog';
 // Atualizando para usar os componentes padronizados

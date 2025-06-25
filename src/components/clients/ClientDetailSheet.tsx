@@ -3,11 +3,11 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
 import { MessageCircle, Edit, Trash } from 'lucide-react';
-import ClientInfoStandardized from './ClientInfoStandardized';
+import ClientInfo from './ClientInfo';
 import { DynamicCategory } from './DynamicCategoryManager';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
 
-interface ClientDetailSheetStandardizedProps {
+interface ClientDetailSheetProps {
   isOpen: boolean;
   onClose: () => void;
   contact: Contact | null;
@@ -17,10 +17,9 @@ interface ClientDetailSheetStandardizedProps {
 }
 
 /**
- * Exemplo de implementação do componente padronizado na tela de detalhes do cliente
- * Este componente substitui o ClientDetailSheet original
+ * Componente para exibir os detalhes do cliente em uma folha lateral
  */
-const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps> = ({
+const ClientDetailSheet: React.FC<ClientDetailSheetProps> = ({
   isOpen,
   onClose,
   contact,
@@ -39,7 +38,7 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
   useEffect(() => {
     if (isOpen && contact) {
       // Verificando no console os dados recebidos
-      console.log('ClientDetailSheetStandardized - Props:', {
+      console.log('ClientDetailSheet - Props:', {
         isOpen,
         contact,
         onSendMessage,
@@ -84,7 +83,7 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
 
         {contact && (
           <div className="space-y-6">
-            <ClientInfoStandardized
+            <ClientInfo
               clientData={contact}
               dynamicFields={dynamicFields}
               context="details"
@@ -128,33 +127,4 @@ const ClientDetailSheetStandardized: React.FC<ClientDetailSheetStandardizedProps
   );
 };
 
-export default ClientDetailSheetStandardized;
-
-/**
- * Instruções para implementação:
- * 
- * 1. Renomeie este arquivo para ClientDetailSheet.tsx (substituindo o atual)
- * 2. Ou importe este componente no lugar do ClientDetailSheet atual
- * 
- * Exemplo de uso no componente pai:
- * 
- * import ClientDetailSheetStandardized from './ClientDetailSheetStandardized';
- * 
- * // Substitua
- * <ClientDetailSheet 
- *   isOpen={isDetailSheetOpen}
- *   onClose={handleCloseDetailSheet}
- *   contact={selectedContact}
- *   onSendMessage={handleSendMessage}
- *   onEditClient={handleEditClient}
- * />
- * 
- * // Por
- * <ClientDetailSheetStandardized 
- *   isOpen={isDetailSheetOpen}
- *   onClose={handleCloseDetailSheet}
- *   contact={selectedContact}
- *   onSendMessage={handleSendMessage}
- *   onEditClient={handleEditClient}
- * />
- */
+export default ClientDetailSheet;

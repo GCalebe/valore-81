@@ -7,7 +7,7 @@ import { useClientManagement } from '@/hooks/useClientManagement';
 import { useClientsFilters } from '@/hooks/useClientsFilters';
 import { useKanbanStages } from '@/hooks/useKanbanStages';
 import ClientsDashboardLayout from '@/components/clients/ClientsDashboardLayout';
-import ClientsTable from '@/components/clients/ClientsTableStandardized';
+import ClientsTable from '@/components/clients/ClientsTable';
 import KanbanView from '@/components/clients/KanbanView';
 import ClientsModals from '@/components/clients/ClientsModals';
 

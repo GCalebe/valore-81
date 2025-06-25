@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Contact } from '@/types/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDynamicFields } from '@/hooks/useDynamicFields';
-import ClientInfoStandardized from './ClientInfoStandardized';
+import ClientInfo from './ClientInfo';
 import ClientUTMData from './ClientUTMData';
 
-interface EditClientFormStandardizedProps {
+interface EditClientFormProps {
   isOpen: boolean;
   onClose: () => void;
   selectedContact: Contact | null;
@@ -15,10 +15,9 @@ interface EditClientFormStandardizedProps {
 }
 
 /**
- * Exemplo de implementação do componente padronizado no formulário de edição de cliente
- * Este componente substitui o EditClientDialog original
+ * Componente para edição de cliente
  */
-const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
+const EditClientForm: React.FC<EditClientFormProps> = ({
   isOpen,
   onClose,
   selectedContact,
@@ -88,7 +87,7 @@ const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
 
             <TabsContent value="principal" className="space-y-4">
               {contact && (
-                <ClientInfoStandardized
+                <ClientInfo
                   clientData={contact}
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
@@ -110,7 +109,7 @@ const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
 
             <TabsContent value="custom" className="space-y-4">
               {contact && (
-                <ClientInfoStandardized
+                <ClientInfo
                   clientData={contact}
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
@@ -122,7 +121,7 @@ const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
 
             <TabsContent value="docs" className="space-y-4">
               {contact && (
-                <ClientInfoStandardized
+                <ClientInfo
                   clientData={contact}
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
@@ -145,31 +144,4 @@ const EditClientFormStandardized: React.FC<EditClientFormStandardizedProps> = ({
   );
 };
 
-export default EditClientFormStandardized;
-
-/**
- * Instruções para implementação:
- * 
- * 1. Renomeie este arquivo para EditClientDialog.tsx (substituindo o atual)
- * 2. Ou importe este componente no lugar do EditClientDialog atual
- * 
- * Exemplo de uso no componente pai:
- * 
- * import EditClientFormStandardized from './EditClientFormStandardized';
- * 
- * // Substitua
- * <EditClientDialog 
- *   isOpen={isEditDialogOpen}
- *   onClose={handleCloseEditDialog}
- *   selectedContact={selectedContact}
- *   onSave={handleSaveClient}
- * />
- * 
- * // Por
- * <EditClientFormStandardized 
- *   isOpen={isEditDialogOpen}
- *   onClose={handleCloseEditDialog}
- *   selectedContact={selectedContact}
- *   onSave={handleSaveClient}
- * />
- */
+export default EditClientForm;
