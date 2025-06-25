@@ -1,0 +1,298 @@
+{
+  "name": "Gerenciamento de Memória da IA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "memoria/consultar",
+        "options": {}
+      },
+      "name": "Webhook - Consultar Memória",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extrair parâmetros da requisição\nconst sessionId = $input.item.json.sessionId;\nconst memoryType = $input.item.json.memoryType || 'contextual';\nconst limit = $input.item.json.limit || 10;\n\nif (!sessionId) {\n  return {\n    error: true,\n    message: 'sessionId é obrigatório'\n  };\n}\n\n// Retornar os parâmetros para uso no próximo nó\nreturn {\n  sessionId,\n  memoryType,\n  limit\n};\n"
+      },
+      "name": "Preparar Parâmetros",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=SELECT * FROM n8n_chat_memory \nWHERE session_id = '{{$json.sessionId}}' \nAND memory_type = '{{$json.memoryType}}' \nORDER BY created_at DESC \nLIMIT {{$json.limit}}"
+      },
+      "name": "Supabase - Consultar Memória",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Processar os resultados da consulta\nconst memories = $input.item.json;\n\n// Formatar as memórias para uso pela IA\nconst formattedMemories = memories.map(memory => {\n  // Extrair conteúdo da mensagem\n  let content = '';\n  let type = '';\n  \n  if (typeof memory.message === 'string') {\n    try {\n      const parsed = JSON.parse(memory.message);\n      content = parsed.content || parsed.message || '';\n      type = parsed.type || 'unknown';\n    } catch (e) {\n      content = memory.message;\n      type = 'unknown';\n    }\n  } else if (memory.message && typeof memory.message === 'object') {\n    content = memory.message.content || memory.message.message || '';\n    type = memory.message.type || 'unknown';\n  }\n\n  // Formatar para uso pela IA\n  return {\n    id: memory.id,\n    sessionId: memory.session_id,\n    content,\n    type,\n    timestamp: memory.created_at || memory.hora || memory.data,\n    memoryType: memory.memory_type || 'contextual',\n    memoryLevel: memory.memory_level || 'short_term',\n    importance: memory.importance || 1,\n    entities: memory.entities || [],\n    relationships: memory.relationships || [],\n    context: memory.context || {},\n    metadata: memory.metadata || {}\n  };\n});\n\n// Gerar um resumo do contexto\nlet contextSummary = '';\nif (formattedMemories.length > 0) {\n  const messageContents = formattedMemories.map(m => m.content).filter(c => c.length > 0);\n  contextSummary = messageContents.join(' ');\n  if (contextSummary.length > 500) {\n    contextSummary = contextSummary.substring(0, 500) + '...';\n  }\n}\n\n// Extrair entidades únicas\nconst allEntities = {};\nformattedMemories.forEach(memory => {\n  if (memory.entities && Array.isArray(memory.entities)) {\n    memory.entities.forEach(entity => {\n      if (entity.name) {\n        allEntities[entity.name] = entity;\n      }\n    });\n  }\n});\n\n// Retornar resultado formatado\nreturn {\n  memories: formattedMemories,\n  count: formattedMemories.length,\n  contextSummary,\n  entities: Object.values(allEntities)\n};\n"
+      },
+      "name": "Formatar Memórias",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$node[\"Formatar Memórias\"].json}}",
+        "options": {}
+      },
+      "name": "Responder com Memórias",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "memoria/armazenar",
+        "options": {}
+      },
+      "name": "Webhook - Armazenar Memória",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extrair parâmetros da requisição\nconst sessionId = $input.item.json.sessionId;\nconst message = $input.item.json.message;\nconst memoryType = $input.item.json.memoryType || 'contextual';\nconst memoryLevel = $input.item.json.memoryLevel || 'short_term';\nconst importance = $input.item.json.importance || 1;\nconst entities = $input.item.json.entities || [];\nconst context = $input.item.json.context || {};\nconst metadata = $input.item.json.metadata || {};\n\n// Validar parâmetros obrigatórios\nif (!sessionId || !message) {\n  return {\n    error: true,\n    message: 'sessionId e message são obrigatórios'\n  };\n}\n\n// Preparar objeto para inserção\nconst memoryObject = {\n  session_id: sessionId,\n  message: typeof message === 'string' ? { content: message, type: 'assistant' } : message,\n  created_at: new Date().toISOString(),\n  memory_type: memoryType,\n  memory_level: memoryLevel,\n  importance: importance,\n  entities: entities,\n  context: context,\n  metadata: metadata\n};\n\n// Adicionar data de expiração para memórias de curto prazo\nif (memoryLevel === 'short_term') {\n  const expirationDate = new Date();\n  expirationDate.setDate(expirationDate.getDate() + 7); // Expira em 7 dias\n  memoryObject.expiration_date = expirationDate.toISOString();\n}\n\nreturn memoryObject;\n"
+      },
+      "name": "Preparar Memória",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "n8n_chat_memory",
+        "schema": "public",
+        "columns": "={{Object.keys($json)}}",
+        "additionalFields": {}
+      },
+      "name": "Supabase - Inserir Memória",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        650,
+        500
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"memoryId\": $node[\"Supabase - Inserir Memória\"].json.id,\n  \"message\": \"Memória armazenada com sucesso\"\n}",
+        "options": {}
+      },
+      "name": "Responder Sucesso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        850,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "memoria/limpar-expiradas",
+        "options": {}
+      },
+      "name": "Webhook - Limpar Memórias Expiradas",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "=DELETE FROM n8n_chat_memory \nWHERE expiration_date IS NOT NULL \nAND expiration_date < '{{$now.toISOString()}}' \nRETURNING id"
+      },
+      "name": "Supabase - Remover Expiradas",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        450,
+        700
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"removedCount\": $node[\"Supabase - Remover Expiradas\"].json.length,\n  \"removedIds\": $node[\"Supabase - Remover Expiradas\"].json.map(r => r.id)\n}",
+        "options": {}
+      },
+      "name": "Responder Limpeza",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        650,
+        700
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Consultar Memória": {
+      "main": [
+        [
+          {
+            "node": "Preparar Parâmetros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Parâmetros": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Consultar Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Consultar Memória": {
+      "main": [
+        [
+          {
+            "node": "Formatar Memórias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Memórias": {
+      "main": [
+        [
+          {
+            "node": "Responder com Memórias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Armazenar Memória": {
+      "main": [
+        [
+          {
+            "node": "Preparar Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Memória": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Inserir Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Inserir Memória": {
+      "main": [
+        [
+          {
+            "node": "Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Limpar Memórias Expiradas": {
+      "main": [
+        [
+          {
+            "node": "Supabase - Remover Expiradas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - Remover Expiradas": {
+      "main": [
+        [
+          {
+            "node": "Responder Limpeza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1",
+  "id": "1",
+  "meta": {
+    "instanceId": "1"
+  },
+  "tags": [
+    "memoria",
+    "ia",
+    "supabase"
+  ]
+}

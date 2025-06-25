@@ -558,6 +558,57 @@ export type Database = {
         }
         Relationships: []
       }
+      n8n_chat_memory: {
+        Row: {
+          id: number
+          session_id: string
+          message: Json
+          data: string | null
+          hora: string | null
+          created_at: string
+          memory_type: string | null
+          memory_level: string | null
+          expiration_date: string | null
+          importance: number | null
+          entities: Json | null
+          relationships: Json | null
+          context: Json | null
+          metadata: Json | null
+        }
+        Insert: {
+          id?: number
+          session_id: string
+          message: Json
+          data?: string | null
+          hora?: string | null
+          created_at?: string
+          memory_type?: string | null
+          memory_level?: string | null
+          expiration_date?: string | null
+          importance?: number | null
+          entities?: Json | null
+          relationships?: Json | null
+          context?: Json | null
+          metadata?: Json | null
+        }
+        Update: {
+          id?: number
+          session_id?: string
+          message?: Json
+          data?: string | null
+          hora?: string | null
+          created_at?: string
+          memory_type?: string | null
+          memory_level?: string | null
+          expiration_date?: string | null
+          importance?: number | null
+          entities?: Json | null
+          relationships?: Json | null
+          context?: Json | null
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       n8n_chat_histories: {
         Row: {
           data: string | null
