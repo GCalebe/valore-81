@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/context/AuthContext';
 import { useThemeSettings } from '@/context/ThemeSettingsContext';
 import { Input } from '@/components/ui/input';
-import FilterSidePanel from '@/components/clients/FilterSidePanel';
+import FilterDialog from '@/components/clients/FilterDialog';
 import AddClientDialog from '@/components/clients/AddClientDialog';
 import ClientsCompactToggler from './ClientsCompactToggler';
 import ClientsViewToggler from './ClientsViewToggler';
@@ -135,7 +135,7 @@ const ClientsHeader = ({
             )}
           </Button>
           
-          <FilterSidePanel
+          <FilterDialog
             isOpen={isFilterDialogOpen}
             onOpenChange={setIsFilterDialogOpen}
             statusFilter={statusFilter}

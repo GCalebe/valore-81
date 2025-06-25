@@ -24,6 +24,8 @@ Duplicação de código entre `FilterSidePanel.tsx` e `FilterDialog.tsx`, que im
 
 #### Status
 - ✅ Componente `FilterSidePanel.tsx` implementado (renomeado de `FilterSidePanelStandardized.tsx`)
+- ✅ Componente `FilterDialog.tsx` implementado (renomeado de `FilterDialogStandardized.tsx`)
+- ✅ Componente `FilterDialog.tsx` integrado no `ClientsHeader.tsx`
 
 ### 2. Formulários de Cliente
 
@@ -161,6 +163,7 @@ Gerenciamento inconsistente de campos personalizados em diferentes componentes.
    - ✅ Implementar `FilterComponent.tsx` (renomeado de `FilterComponentStandardized.tsx`)
    - ✅ Migrar `FilterSidePanel.tsx` (renomeado de `FilterSidePanelStandardized.tsx`)
    - ✅ Migrar `FilterDialog.tsx` (renomeado de `FilterDialogStandardized.tsx`)
+   - ✅ Integrar `FilterDialog.tsx` no `ClientsHeader.tsx`
    - Validar a funcionalidade em diferentes contextos
 
 2. **Formulários de Cliente**

@@ -1,13 +1,19 @@
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
-export function Calendar({ selectedDate, onDateChange }) {
+interface CalendarProps {
+  selected?: Date | null;
+  onSelect?: (date: Date | null) => void;
+  className?: string;
+}
+
+export function Calendar({ selected, onSelect, className }: CalendarProps) {
   return (
     <DayPicker
       mode="single"
-      selected={selectedDate}
-      onSelect={onDateChange}
-      className="calendar"
+      selected={selected}
+      onSelect={onSelect}
+      className={`calendar ${className || ''}`}
     />
   );
 }
