@@ -237,3 +237,98 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
 3. **Consistência**: Garante uma experiência de filtro consistente em diferentes contextos
 4. **Extensibilidade**: Permite adicionar novos tipos de filtro de forma centralizada
 5. **Reutilização**: Permite reutilizar a lógica de filtro em diferentes partes da aplicação
+
+## Atualizações Recentes
+
+### Filtro Avançado com Regras Condicionais
+
+O componente `FilterDialog` foi atualizado para incluir um construtor de filtros avançado que permite criar regras condicionais complexas com grupos AND/OR, similar ao filtro avançado do Kommo CRM.
+
+#### Principais Mudanças
+
+1. **Remoção das Abas**: Substituição das abas por uma interface unificada com filtros rápidos e construtor de filtros avançados.
+
+2. **Customização de Campos**: Suporte para filtrar por diversos campos do cliente, incluindo nome, email, telefone, status, etapa da consulta, origem, cidade, estado, último contato e próximo contato.
+
+3. **Grupos Condicionais AND/OR**: Capacidade de criar grupos de regras com condições AND (todas as regras devem ser verdadeiras) ou OR (qualquer regra pode ser verdadeira).
+
+4. **Grupos Aninhados**: Suporte para criar grupos dentro de grupos, permitindo lógica de filtro complexa.
+
+5. **Salvamento de Filtros**: Capacidade de nomear e salvar filtros personalizados para uso futuro.
+
+6. **Filtros Rápidos**: Manutenção dos filtros rápidos para status, tags e último contato.
+
+7. **Interface Aprimorada**: Layout mais amplo e visualização clara dos filtros aplicados.
+
+#### Novas Interfaces
+
+```typescript
+// Tipos de condição para grupos
+type ConditionType = 'AND' | 'OR';
+
+// Interface para uma regra de filtro
+interface FilterRule {
+  id: string;
+  field: string;
+  operator: string;
+  value: string;
+  fieldName?: string;
+}
+
+// Interface para um grupo de filtros
+interface FilterGroup {
+  id: string;
+  condition: ConditionType;
+  rules: (FilterRule | FilterGroup)[];
+}
+
+// Interface para filtros salvos
+interface SavedFilter {
+  id: string;
+  name: string;
+  filter: FilterGroup;
+}
+```
+
+#### Componentes Internos
+
+1. **FilterRuleComponent**: Componente para uma regra de filtro individual, permitindo selecionar campo, operador e valor.
+
+2. **FilterGroupComponent**: Componente recursivo para um grupo de filtros, permitindo adicionar regras, grupos aninhados e alternar entre condições AND/OR.
+
+3. **SavedFilters**: Componente para gerenciar filtros salvos, permitindo aplicar e excluir filtros.
+
+4. **QuickFilters**: Componente para filtros rápidos de status, tags e último contato.
+
+#### Exemplo de Uso
+
+```tsx
+<FilterDialog
+  isOpen={isFilterDialogOpen}
+  onOpenChange={setIsFilterDialogOpen}
+  statusFilter={statusFilter}
+  segmentFilter={segmentFilter}
+  lastContactFilter={lastContactFilter}
+  customFieldFilters={customFieldFilters}
+  onStatusFilterChange={handleStatusFilterChange}
+  onSegmentFilterChange={handleSegmentFilterChange}
+  onLastContactFilterChange={handleLastContactFilterChange}
+  onAddCustomFieldFilter={handleAddCustomFieldFilter}
+  onRemoveCustomFieldFilter={handleRemoveCustomFieldFilter}
+  onClearFilters={handleClearFilters}
+  onClearCustomFieldFilters={handleClearCustomFieldFilters}
+  hasActiveFilters={hasActiveFilters}
+/>
+```
+
+#### Benefícios das Novas Funcionalidades
+
+1. **Filtragem Avançada**: Permite criar filtros complexos para encontrar exatamente os clientes desejados.
+
+2. **Produtividade**: Salvar filtros frequentemente utilizados economiza tempo e aumenta a produtividade.
+
+3. **Flexibilidade**: Grupos aninhados permitem criar lógica de filtro altamente personalizada.
+
+4. **Experiência do Usuário**: Interface intuitiva e responsiva para criação e gerenciamento de filtros.
+
+5. **Consistência com CRMs Profissionais**: Implementa funcionalidades de filtro avançado similares a CRMs profissionais como o Kommo.
