@@ -1,4 +1,3 @@
-
 import React from "react";
 import { CalendarEvent } from "@/types/calendar";
 import { DayCell } from "./DayCell";

@@ -1,10 +1,17 @@
-
-import React, { useState } from 'react';
-import { Plus, Search, Globe, ExternalLink, Trash2, RefreshCw, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from "react";
+import {
+  Plus,
+  Search,
+  Globe,
+  ExternalLink,
+  Trash2,
+  RefreshCw,
+  Eye,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -13,16 +20,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface Website {
   id: number;
   url: string;
   title: string;
   description: string;
-  status: 'active' | 'pending' | 'error';
+  status: "active" | "pending" | "error";
   lastCrawled: string;
   pagesIndexed: number;
   category: string;
@@ -39,42 +46,43 @@ const WebsitesTab = () => {
     </div>
   );
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [previewWebsite, setPreviewWebsite] = useState<Website | null>(null);
   const [websites, setWebsites] = useState<Website[]>([
     {
       id: 1,
-      url: 'https://exemplo.com',
-      title: 'Site Principal da Empresa',
-      description: 'Site corporativo com informações sobre serviços',
-      status: 'active',
-      lastCrawled: '2024-01-15T10:30:00',
+      url: "https://exemplo.com",
+      title: "Site Principal da Empresa",
+      description: "Site corporativo com informações sobre serviços",
+      status: "active",
+      lastCrawled: "2024-01-15T10:30:00",
       pagesIndexed: 25,
-      category: 'Corporativo'
+      category: "Corporativo",
     },
     {
       id: 2,
-      url: 'https://blog.exemplo.com',
-      title: 'Blog da Empresa',
-      description: 'Artigos e dicas sobre o setor',
-      status: 'pending',
-      lastCrawled: '2024-01-10T14:20:00',
+      url: "https://blog.exemplo.com",
+      title: "Blog da Empresa",
+      description: "Artigos e dicas sobre o setor",
+      status: "pending",
+      lastCrawled: "2024-01-10T14:20:00",
       pagesIndexed: 12,
-      category: 'Blog'
-    }
+      category: "Blog",
+    },
   ]);
 
   const [newWebsite, setNewWebsite] = useState({
-    url: '',
-    category: ''
+    url: "",
+    category: "",
   });
 
-  const filteredWebsites = websites.filter(website =>
-    website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    website.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    website.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredWebsites = websites.filter(
+    (website) =>
+      website.url.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      website.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleAddWebsite = async () => {
@@ -103,17 +111,17 @@ const WebsitesTab = () => {
       id: Date.now(),
       url: newWebsite.url,
       title: `Website - ${newWebsite.url}`,
-      description: 'Aguardando indexação...',
-      status: 'pending',
+      description: "Aguardando indexação...",
+      status: "pending",
       lastCrawled: new Date().toISOString(),
       pagesIndexed: 0,
-      category: newWebsite.category || 'Geral'
+      category: newWebsite.category || "Geral",
     };
 
     setWebsites([...websites, website]);
-    setNewWebsite({ url: '', category: '' });
+    setNewWebsite({ url: "", category: "" });
     setIsAddDialogOpen(false);
-    
+
     toast({
       title: "Website adicionado",
       description: "Website adicionado para indexação!",
@@ -121,20 +129,34 @@ const WebsitesTab = () => {
 
     // Simulate crawling process
     setTimeout(() => {
-      setWebsites(prev => prev.map(w => 
-        w.id === website.id 
-          ? { ...w, status: 'active' as const, title: `Site ${w.url}`, description: 'Conteúdo indexado com sucesso', pagesIndexed: Math.floor(Math.random() * 50) + 5 }
-          : w
-      ));
+      setWebsites((prev) =>
+        prev.map((w) =>
+          w.id === website.id
+            ? {
+                ...w,
+                status: "active" as const,
+                title: `Site ${w.url}`,
+                description: "Conteúdo indexado com sucesso",
+                pagesIndexed: Math.floor(Math.random() * 50) + 5,
+              }
+            : w,
+        ),
+      );
     }, 3000);
   };
 
   const handleRefreshWebsite = (id: number) => {
-    setWebsites(prev => prev.map(w => 
-      w.id === id 
-        ? { ...w, status: 'pending' as const, lastCrawled: new Date().toISOString() }
-        : w
-    ));
+    setWebsites((prev) =>
+      prev.map((w) =>
+        w.id === id
+          ? {
+              ...w,
+              status: "pending" as const,
+              lastCrawled: new Date().toISOString(),
+            }
+          : w,
+      ),
+    );
 
     toast({
       title: "Reindexação iniciada",
@@ -143,16 +165,22 @@ const WebsitesTab = () => {
 
     // Simulate reindexing
     setTimeout(() => {
-      setWebsites(prev => prev.map(w => 
-        w.id === id 
-          ? { ...w, status: 'active' as const, pagesIndexed: Math.floor(Math.random() * 50) + 5 }
-          : w
-      ));
+      setWebsites((prev) =>
+        prev.map((w) =>
+          w.id === id
+            ? {
+                ...w,
+                status: "active" as const,
+                pagesIndexed: Math.floor(Math.random() * 50) + 5,
+              }
+            : w,
+        ),
+      );
     }, 2000);
   };
 
   const handleDeleteWebsite = (id: number) => {
-    setWebsites(websites.filter(w => w.id !== id));
+    setWebsites(websites.filter((w) => w.id !== id));
     toast({
       title: "Website removido",
       description: "Website removido da base de conhecimento!",
@@ -165,14 +193,26 @@ const WebsitesTab = () => {
     setIsPreviewDialogOpen(true);
   };
 
-  const getStatusBadge = (status: Website['status']) => {
+  const getStatusBadge = (status: Website["status"]) => {
     switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Ativo</Badge>;
-      case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">Processando</Badge>;
-      case 'error':
-        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">Erro</Badge>;
+      case "active":
+        return (
+          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+            Ativo
+          </Badge>
+        );
+      case "pending":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
+            Processando
+          </Badge>
+        );
+      case "error":
+        return (
+          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+            Erro
+          </Badge>
+        );
     }
   };
 
@@ -199,7 +239,7 @@ const WebsitesTab = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -221,7 +261,9 @@ const WebsitesTab = () => {
                   id="url"
                   placeholder="https://exemplo.com"
                   value={newWebsite.url}
-                  onChange={(e) => setNewWebsite({...newWebsite, url: e.target.value})}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, url: e.target.value })
+                  }
                 />
               </div>
               <div>
@@ -230,17 +272,20 @@ const WebsitesTab = () => {
                   id="category"
                   placeholder="ex: Corporativo, Blog, Documentação..."
                   value={newWebsite.category}
-                  onChange={(e) => setNewWebsite({...newWebsite, category: e.target.value})}
+                  onChange={(e) =>
+                    setNewWebsite({ ...newWebsite, category: e.target.value })
+                  }
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsAddDialogOpen(false)}
+              >
                 Cancelar
               </Button>
-              <Button onClick={handleAddWebsite}>
-                Adicionar
-              </Button>
+              <Button onClick={handleAddWebsite}>Adicionar</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -251,16 +296,21 @@ const WebsitesTab = () => {
         {filteredWebsites.length === 0 ? (
           <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
             <Globe className="h-16 w-16 mx-auto mb-4 opacity-30" />
-            <h3 className="text-lg font-medium mb-1">Nenhum website encontrado</h3>
+            <h3 className="text-lg font-medium mb-1">
+              Nenhum website encontrado
+            </h3>
             <p className="text-sm">
-              {searchQuery ? 
-                "Nenhum website corresponde à sua pesquisa." : 
-                "Comece adicionando websites para indexação."}
+              {searchQuery
+                ? "Nenhum website corresponde à sua pesquisa."
+                : "Comece adicionando websites para indexação."}
             </p>
           </div>
         ) : (
           filteredWebsites.map((website) => (
-            <Card key={website.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={website.id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-base flex items-center">
@@ -268,22 +318,22 @@ const WebsitesTab = () => {
                     <span className="truncate">{website.title}</span>
                   </CardTitle>
                   <div className="flex gap-1">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handlePreviewWebsite(website)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleRefreshWebsite(website.id)}
                     >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteWebsite(website.id)}
                       className="text-red-500 hover:text-red-600"
@@ -304,11 +354,16 @@ const WebsitesTab = () => {
                   </div>
                   <div className="text-xs text-gray-500">
                     <div>Páginas: {website.pagesIndexed}</div>
-                    <div>Última atualização: {new Date(website.lastCrawled).toLocaleDateString('pt-BR')}</div>
+                    <div>
+                      Última atualização:{" "}
+                      {new Date(website.lastCrawled).toLocaleDateString(
+                        "pt-BR",
+                      )}
+                    </div>
                   </div>
-                  <a 
-                    href={website.url} 
-                    target="_blank" 
+                  <a
+                    href={website.url}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-500 hover:text-blue-600 text-xs"
                   >
@@ -360,11 +415,11 @@ const WebsitesTab = () => {
                 <h4 className="font-medium">Conteúdo Exemplo (simulado)</h4>
                 <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mt-2 max-h-60 overflow-y-auto">
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Este é um exemplo de como o conteúdo indexado apareceria. 
-                    O sistema faria a extração automática do texto das páginas do website,
-                    removendo elementos desnecessários como menus e rodapés, 
-                    mantendo apenas o conteúdo principal que seria útil para responder 
-                    perguntas dos usuários.
+                    Este é um exemplo de como o conteúdo indexado apareceria. O
+                    sistema faria a extração automática do texto das páginas do
+                    website, removendo elementos desnecessários como menus e
+                    rodapés, mantendo apenas o conteúdo principal que seria útil
+                    para responder perguntas dos usuários.
                   </p>
                 </div>
               </div>

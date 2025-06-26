@@ -61,6 +61,7 @@ Este documento contém as recomendações e próximos passos para o aprimorament
 ### 3.1 Workflows Dedicados
 
 - [✅] Documentar arquitetura atual da integração com n8n
+
   - [✅] Criar diagrama de componentes
   - [✅] Documentar interfaces e estruturas de dados
   - [✅] Descrever fluxo de dados atual
@@ -111,16 +112,19 @@ Este documento contém as recomendações e próximos passos para o aprimorament
 ## Próximos Passos Priorizados
 
 1. [🔄] **Documentação da Arquitetura Atual**
+
    - Responsável: Equipe de Arquitetura
    - Prazo: Imediato
    - Descrição: Documentar completamente o sistema atual para facilitar futuras melhorias.
 
 2. [ ] **Implementação da Memória Contextual**
+
    - Responsável: Equipe de IA
    - Prazo: 2 semanas
    - Descrição: Desenvolver o sistema de níveis de memória para melhorar a contextualização das conversas.
 
 3. [ ] **Criação de Workflows no n8n**
+
    - Responsável: Equipe de Integração
    - Prazo: 3 semanas
    - Descrição: Desenvolver os workflows básicos para processamento de memória e geração de respostas.
@@ -132,4 +136,4 @@ Este documento contém as recomendações e próximos passos para o aprimorament
 
 ---
 
-*Este documento deve ser atualizado regularmente para refletir o progresso e ajustes nas prioridades.*
+_Este documento deve ser atualizado regularmente para refletir o progresso e ajustes nas prioridades._

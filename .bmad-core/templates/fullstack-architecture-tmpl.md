@@ -292,16 +292,16 @@ Use appropriate format for the chosen API style. If no API (e.g., static site), 
 openapi: 3.0.0
 info:
   title:
-    '[object Object]': null
+    "[object Object]": null
   version:
-    '[object Object]': null
+    "[object Object]": null
   description:
-    '[object Object]': null
+    "[object Object]": null
 servers:
   - url:
-      '[object Object]': null
+      "[object Object]": null
     description:
-      '[object Object]': null
+      "[object Object]": null
 ```
 
 ^^/CONDITION: has_rest_api^^
@@ -779,7 +779,7 @@ After presenting this section, apply `tasks#advanced-elicitation` protocol]]
 ### CI/CD Pipeline
 
 ```yaml
-'[object Object]': null
+"[object Object]": null
 ```
 
 ### Environments

@@ -1,7 +1,16 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MessageCircleMore } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { MessageCircleMore } from "lucide-react";
 
 interface SecondaryResponseRateCardProps {
   value: number;
@@ -12,13 +21,13 @@ interface SecondaryResponseRateCardProps {
   showChart?: boolean;
 }
 
-const SecondaryResponseRateCard: React.FC<SecondaryResponseRateCardProps> = ({ 
-  value, 
-  totalRespondidas, 
+const SecondaryResponseRateCard: React.FC<SecondaryResponseRateCardProps> = ({
+  value,
+  totalRespondidas,
   totalSecondaryResponses,
   chartData = [],
   loading = false,
-  showChart = false
+  showChart = false,
 }) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
@@ -44,9 +53,12 @@ const SecondaryResponseRateCard: React.FC<SecondaryResponseRateCardProps> = ({
             </div>
             <div className="text-sm text-indigo-600 dark:text-indigo-400 flex items-center">
               <MessageCircleMore className="h-3 w-3 mr-1" />
-              <span>{totalSecondaryResponses} respostas secundárias de {totalRespondidas} conversas</span>
+              <span>
+                {totalSecondaryResponses} respostas secundárias de{" "}
+                {totalRespondidas} conversas
+              </span>
             </div>
-            
+
             {showChart && chartData.length > 0 && (
               <div className="h-60 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
@@ -54,28 +66,32 @@ const SecondaryResponseRateCard: React.FC<SecondaryResponseRateCardProps> = ({
                     data={chartData}
                     margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      opacity={0.2}
+                    />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} />
                     <YAxis axisLine={false} tickLine={false} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'var(--background)', 
-                        borderColor: 'var(--border)',
-                        borderRadius: '0.5rem'
-                      }} 
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--background)",
+                        borderColor: "var(--border)",
+                        borderRadius: "0.5rem",
+                      }}
                     />
                     <Legend />
-                    <Bar 
-                      dataKey="primary" 
-                      name="Primeira Resposta" 
-                      fill="#8B5CF6" 
-                      radius={[4, 4, 0, 0]} 
+                    <Bar
+                      dataKey="primary"
+                      name="Primeira Resposta"
+                      fill="#8B5CF6"
+                      radius={[4, 4, 0, 0]}
                     />
-                    <Bar 
-                      dataKey="secondary" 
-                      name="Resposta Secundária" 
-                      fill="#6366F1" 
-                      radius={[4, 4, 0, 0]} 
+                    <Bar
+                      dataKey="secondary"
+                      name="Resposta Secundária"
+                      fill="#6366F1"
+                      radius={[4, 4, 0, 0]}
                     />
                   </BarChart>
                 </ResponsiveContainer>

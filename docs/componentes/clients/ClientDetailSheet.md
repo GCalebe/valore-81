@@ -4,19 +4,19 @@ O componente `ClientDetailSheet` é responsável por exibir os detalhes de um cl
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|-------------|--------|------------|
-| isOpen | boolean | Sim | - | Controla se o painel está aberto ou fechado |
-| onClose | function | Sim | - | Função chamada quando o usuário fecha o painel |
-| contact | Contact | Sim | - | Objeto contendo os dados do cliente a ser exibido |
-| onSendMessage | function | Sim | - | Função chamada quando o usuário clica para enviar mensagem |
-| onEditClient | function | Sim | - | Função chamada quando o usuário clica para editar o cliente |
-| onDeleteClient | function | Sim | - | Função chamada quando o usuário clica para excluir o cliente |
+| Prop           | Tipo     | Obrigatório | Padrão | Descrição                                                    |
+| -------------- | -------- | ----------- | ------ | ------------------------------------------------------------ |
+| isOpen         | boolean  | Sim         | -      | Controla se o painel está aberto ou fechado                  |
+| onClose        | function | Sim         | -      | Função chamada quando o usuário fecha o painel               |
+| contact        | Contact  | Sim         | -      | Objeto contendo os dados do cliente a ser exibido            |
+| onSendMessage  | function | Sim         | -      | Função chamada quando o usuário clica para enviar mensagem   |
+| onEditClient   | function | Sim         | -      | Função chamada quando o usuário clica para editar o cliente  |
+| onDeleteClient | function | Sim         | -      | Função chamada quando o usuário clica para excluir o cliente |
 
 ## Exemplos de Uso
 
 ```tsx
-<ClientDetailSheet 
+<ClientDetailSheet
   isOpen={isDetailSheetOpen}
   onClose={() => setIsDetailSheetOpen(false)}
   contact={selectedContact}
@@ -53,9 +53,7 @@ O componente utiliza os componentes `ClientInfo` e `DynamicCategory` para organi
       <DynamicCategory title="Informações Adicionais" items={additionalData} />
       {/* Outras categorias */}
     </div>
-    <SheetFooter>
-      {/* Botões de ação no rodapé */}
-    </SheetFooter>
+    <SheetFooter>{/* Botões de ação no rodapé */}</SheetFooter>
   </SheetContent>
 </Sheet>
 ```

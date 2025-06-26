@@ -347,16 +347,16 @@ Use YAML format for better readability. If no REST API, skip this section.]]
 openapi: 3.0.0
 info:
   title:
-    '[object Object]': null
+    "[object Object]": null
   version:
-    '[object Object]': null
+    "[object Object]": null
   description:
-    '[object Object]': null
+    "[object Object]": null
 servers:
   - url:
-      '[object Object]': null
+      "[object Object]": null
     description:
-      '[object Object]': null
+      "[object Object]": null
 ```
 
 ^^/CONDITION: has_rest_api^^

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarClock, AlertCircle } from 'lucide-react';
-import { FunnelChartSettings } from './FunnelChartSettings';
-import { useKanbanStages } from '@/hooks/useKanbanStages';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarClock, AlertCircle } from "lucide-react";
+import { FunnelChartSettings } from "./FunnelChartSettings";
+import { useKanbanStages } from "@/hooks/useKanbanStages";
 
 interface FunnelStage {
   name: string;
@@ -14,15 +14,19 @@ interface FunnelStage {
 interface LeadsByArrivalFunnelChartProps {
   data: FunnelStage[];
   loading?: boolean;
-  onFilterChange?: (date: Date, stages: string[], showNoShowRate: boolean) => void;
+  onFilterChange?: (
+    date: Date,
+    stages: string[],
+    showNoShowRate: boolean,
+  ) => void;
   noShowRate?: number;
 }
 
-const LeadsByArrivalFunnelChart: React.FC<LeadsByArrivalFunnelChartProps> = ({ 
-  data, 
+const LeadsByArrivalFunnelChart: React.FC<LeadsByArrivalFunnelChartProps> = ({
+  data,
   loading = false,
   onFilterChange,
-  noShowRate
+  noShowRate,
 }) => {
   const [customDate, setCustomDate] = useState<Date>(new Date());
   const [selectedStages, setSelectedStages] = useState<string[]>([]);
@@ -32,15 +36,17 @@ const LeadsByArrivalFunnelChart: React.FC<LeadsByArrivalFunnelChartProps> = ({
 
   useEffect(() => {
     if (stages.length > 0 && selectedStages.length === 0) {
-      setSelectedStages(stages.map(stage => stage.title));
+      setSelectedStages(stages.map((stage) => stage.title));
     }
   }, [stages]);
 
   useEffect(() => {
     if (selectedStages.length > 0) {
-      const filtered = data.filter(item => selectedStages.includes(item.name));
+      const filtered = data.filter((item) =>
+        selectedStages.includes(item.name),
+      );
       setFilteredData(filtered);
-      
+
       if (onFilterChange) {
         onFilterChange(customDate, selectedStages, showNoShowRate);
       }
@@ -55,7 +61,7 @@ const LeadsByArrivalFunnelChart: React.FC<LeadsByArrivalFunnelChartProps> = ({
           <CalendarClock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
           Funil por Data de Chegada
         </CardTitle>
-        <FunnelChartSettings 
+        <FunnelChartSettings
           selectedStages={selectedStages}
           onStagesChange={setSelectedStages}
           customDate={customDate}
@@ -124,25 +130,34 @@ const LeadsByArrivalFunnelChart: React.FC<LeadsByArrivalFunnelChartProps> = ({
                 </div>
               )}
             </div>
-            
+
             {/* Legenda de cores */}
             <div className="flex flex-wrap gap-3 pt-2">
               {filteredData.map((stage, index) => (
-                <div key={`legend-${index}`} className="flex items-center gap-1">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                <div
+                  key={`legend-${index}`}
+                  className="flex items-center gap-1"
+                >
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: stage.color }}
                   ></div>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{stage.name}</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    {stage.name}
+                  </span>
                 </div>
               ))}
             </div>
-            
+
             {/* Taxa de No-Show */}
             {showNoShowRate && noShowRate !== undefined && (
               <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Taxa de No-Show:</span>
-                <span className="text-sm font-bold text-red-600 dark:text-red-400">{noShowRate}%</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Taxa de No-Show:
+                </span>
+                <span className="text-sm font-bold text-red-600 dark:text-red-400">
+                  {noShowRate}%
+                </span>
               </div>
             )}
           </div>

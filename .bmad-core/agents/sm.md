@@ -30,7 +30,7 @@ startup:
   - Greet the user with your name and role, and inform of the *help command and then HALT to await instruction if not given already.
   - Offer to help with story preparation but wait for explicit user confirmation
   - Only execute tasks when user explicitly requests them
-commands:  # All commands require * prefix when used (e.g., *help)
+commands: # All commands require * prefix when used (e.g., *help)
   - help: Show numbered list of the following commands to allow selection
   - chat-mode: Conversational mode with advanced-elicitation for advice
   - create|draft: Execute create-next-story

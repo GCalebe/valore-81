@@ -1,9 +1,8 @@
-
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { X, Plus } from 'lucide-react';
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { X, Plus } from "lucide-react";
 
 interface TagsManagerProps {
   tags: string[];
@@ -11,21 +10,21 @@ interface TagsManagerProps {
 }
 
 const TagsManager = ({ tags, onChange }: TagsManagerProps) => {
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
 
   const addTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       onChange([...tags, newTag.trim()]);
-      setNewTag('');
+      setNewTag("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    onChange(tags.filter(tag => tag !== tagToRemove));
+    onChange(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       addTag();
     }
@@ -45,10 +44,14 @@ const TagsManager = ({ tags, onChange }: TagsManagerProps) => {
           <Plus className="h-4 w-4" />
         </Button>
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+          <Badge
+            key={tag}
+            variant="secondary"
+            className="flex items-center gap-1"
+          >
             {tag}
             <button
               onClick={() => removeTag(tag)}

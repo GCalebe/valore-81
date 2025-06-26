@@ -1,10 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Calendar, Filter, Plus, RefreshCcw } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Calendar, Filter, Plus, RefreshCcw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
 
 interface ScheduleHeaderProps {
@@ -30,12 +30,16 @@ const ScheduleHeader = ({
 }: ScheduleHeaderProps) => {
   const { settings } = useThemeSettings();
   const navigate = useNavigate();
-  const handleFilterClick = onOpenFilter || (() => { alert("Funcionalidade de filtros avançados em breve!"); });
+  const handleFilterClick =
+    onOpenFilter ||
+    (() => {
+      alert("Funcionalidade de filtros avançados em breve!");
+    });
 
   return (
-    <header 
+    <header
       className="rounded-b-xl"
-      style={{ backgroundColor: settings.primaryColor || '#183385' }}
+      style={{ backgroundColor: settings.primaryColor || "#183385" }}
       data-testid="schedule-header"
     >
       <div
@@ -47,7 +51,7 @@ const ScheduleHeader = ({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="text-white hover:bg-white/20 focus-visible:ring-white"
             style={{ minWidth: 32, minHeight: 32, padding: 0 }}
             aria-label="Voltar para o dashboard"
@@ -55,14 +59,17 @@ const ScheduleHeader = ({
             <ArrowLeft className="h-5 w-5" />
           </Button>
 
-          <Calendar 
+          <Calendar
             className="h-7 w-7"
             style={{
               color: "#FFC72C",
               strokeWidth: 2.3,
             }}
           />
-          <h1 className="text-2xl font-bold text-white pl-1 pr-1 tracking-tight leading-none" style={{ minWidth: 0 }}>
+          <h1
+            className="text-2xl font-bold text-white pl-1 pr-1 tracking-tight leading-none"
+            style={{ minWidth: 0 }}
+          >
             Agenda
           </h1>
           {lastUpdated && (
@@ -72,19 +79,18 @@ const ScheduleHeader = ({
               style={{
                 letterSpacing: 0.5,
                 height: 28,
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 fontWeight: 500,
-                background: "rgba(255,255,255,0.06)"
+                background: "rgba(255,255,255,0.06)",
               }}
             >
-              Última atualização: {lastUpdated.toLocaleTimeString('pt-BR')}
+              Última atualização: {lastUpdated.toLocaleTimeString("pt-BR")}
             </Badge>
           )}
         </div>
         {/* Controles */}
         <div className="flex flex-row items-center gap-3 h-full">
-
           <Button
             variant="success"
             onClick={onAddEvent}
@@ -95,12 +101,9 @@ const ScheduleHeader = ({
             Novo Evento
           </Button>
 
-          {(!!view && !!onViewChange) && (
+          {!!view && !!onViewChange && (
             <div className="flex flex-row items-center gap-2">
-              <CalendarViewSwitcher
-                view={view}
-                onChange={onViewChange}
-              />
+              <CalendarViewSwitcher view={view} onChange={onViewChange} />
             </div>
           )}
         </div>

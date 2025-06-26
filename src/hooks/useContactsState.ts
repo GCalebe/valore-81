@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { Contact } from '@/types/client';
+import { useState } from "react";
+import { Contact } from "@/types/client";
 
 export const useContactsState = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
@@ -9,35 +8,36 @@ export const useContactsState = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
-  const [isPauseDurationDialogOpen, setIsPauseDurationDialogOpen] = useState(false);
-  const [messageText, setMessageText] = useState('');
-  
+  const [isPauseDurationDialogOpen, setIsPauseDurationDialogOpen] =
+    useState(false);
+  const [messageText, setMessageText] = useState("");
+
   const [newContact, setNewContact] = useState<Partial<Contact>>({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    clientName: '',
-    clientSize: '',
-    clientType: '',
-    cpfCnpj: '',
-    asaasCustomerId: '',
-    status: 'Active',
-    notes: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    clientName: "",
+    clientSize: "",
+    clientType: "",
+    cpfCnpj: "",
+    asaasCustomerId: "",
+    status: "Active",
+    notes: "",
     tags: [],
-    responsibleUser: '',
+    responsibleUser: "",
     sales: 0,
-    clientSector: '',
+    clientSector: "",
     budget: 0,
-    paymentMethod: '',
-    clientObjective: '',
-    lossReason: '',
-    contractNumber: '',
-    contractDate: '',
-    payment: '',
+    paymentMethod: "",
+    clientObjective: "",
+    lossReason: "",
+    contractNumber: "",
+    contractDate: "",
+    payment: "",
     uploadedFiles: [],
-    consultationStage: 'Nova consulta',
-    kanbanStage: 'Entraram',
+    consultationStage: "Nova consulta",
+    kanbanStage: "Entraram",
   });
 
   const handleContactClick = (contact: Contact) => {
@@ -60,50 +60,50 @@ export const useContactsState = () => {
       status: selectedContact.status,
       notes: selectedContact.notes,
       tags: selectedContact.tags || [],
-      responsibleUser: selectedContact.responsibleUser || '',
+      responsibleUser: selectedContact.responsibleUser || "",
       sales: selectedContact.sales || 0,
-      clientSector: selectedContact.clientSector || '',
+      clientSector: selectedContact.clientSector || "",
       budget: selectedContact.budget || 0,
-      paymentMethod: selectedContact.paymentMethod || '',
-      clientObjective: selectedContact.clientObjective || '',
-      lossReason: selectedContact.lossReason || '',
-      contractNumber: selectedContact.contractNumber || '',
-      contractDate: selectedContact.contractDate || '',
-      payment: selectedContact.payment || '',
+      paymentMethod: selectedContact.paymentMethod || "",
+      clientObjective: selectedContact.clientObjective || "",
+      lossReason: selectedContact.lossReason || "",
+      contractNumber: selectedContact.contractNumber || "",
+      contractDate: selectedContact.contractDate || "",
+      payment: selectedContact.payment || "",
       uploadedFiles: selectedContact.uploadedFiles || [],
-      consultationStage: selectedContact.consultationStage || 'Nova consulta',
-      kanbanStage: selectedContact.kanbanStage || 'Entraram',
+      consultationStage: selectedContact.consultationStage || "Nova consulta",
+      kanbanStage: selectedContact.kanbanStage || "Entraram",
     });
     setIsEditModalOpen(true);
   };
 
   const resetNewContact = () => {
     setNewContact({
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      clientName: '',
-      clientSize: '',
-      clientType: '',
-      cpfCnpj: '',
-      asaasCustomerId: '',
-      status: 'Active',
-      notes: '',
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      clientName: "",
+      clientSize: "",
+      clientType: "",
+      cpfCnpj: "",
+      asaasCustomerId: "",
+      status: "Active",
+      notes: "",
       tags: [],
-      responsibleUser: '',
+      responsibleUser: "",
       sales: 0,
-      clientSector: '',
+      clientSector: "",
       budget: 0,
-      paymentMethod: '',
-      clientObjective: '',
-      lossReason: '',
-      contractNumber: '',
-      contractDate: '',
-      payment: '',
+      paymentMethod: "",
+      clientObjective: "",
+      lossReason: "",
+      contractNumber: "",
+      contractDate: "",
+      payment: "",
       uploadedFiles: [],
-      consultationStage: 'Nova consulta',
-      kanbanStage: 'Entraram',
+      consultationStage: "Nova consulta",
+      kanbanStage: "Entraram",
     });
   };
 

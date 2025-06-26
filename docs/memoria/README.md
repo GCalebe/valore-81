@@ -38,21 +38,25 @@ Manter uma memória institucional robusta é crucial para:
 ## Índice de Documentos
 
 ### Decisões Arquiteturais
+
 - [Escolha de Tecnologias](./decisoes/escolha-tecnologias.md)
 - [Padrões de Projeto](./decisoes/padroes-projeto.md)
 - [Estratégia de Autenticação](./decisoes/estrategia-autenticacao.md)
 
 ### Lições Aprendidas
+
 - [Otimização de Performance](./licoes/otimizacao-performance.md)
 - [Gestão de Estado](./licoes/gestao-estado.md)
 - [Testes Automatizados](./licoes/testes-automatizados.md)
 
 ### Evolução do Projeto
+
 - [Linha do Tempo](./evolucao/linha-tempo.md)
 - [Versões Principais](./evolucao/versoes-principais.md)
 - [Mudanças de Requisitos](./evolucao/mudancas-requisitos.md)
 
 ### Retrospectivas
+
 - [Retrospectiva Q2 2025](./retrospectivas/2025-q2.md)
 - [Retrospectiva Q3 2025](./retrospectivas/2025-q3.md)
 - [Retrospectiva Q4 2025](./retrospectivas/2025-q4.md)

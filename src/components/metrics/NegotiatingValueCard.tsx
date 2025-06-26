@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrendingUp } from "lucide-react";
 
 interface NegotiatingValueCardProps {
   totalValue: number;
@@ -10,16 +9,16 @@ interface NegotiatingValueCardProps {
   activePipelines?: number;
 }
 
-const NegotiatingValueCard: React.FC<NegotiatingValueCardProps> = ({ 
-  totalValue, 
+const NegotiatingValueCard: React.FC<NegotiatingValueCardProps> = ({
+  totalValue,
   loading = false,
   trend,
-  activePipelines = 0
+  activePipelines = 0,
 }) => {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 

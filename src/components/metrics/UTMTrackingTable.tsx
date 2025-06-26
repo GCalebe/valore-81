@@ -1,10 +1,22 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface UTMData {
   id: string;
@@ -27,13 +39,18 @@ interface UTMTrackingTableProps {
   loading?: boolean;
 }
 
-const UTMTrackingTable: React.FC<UTMTrackingTableProps> = ({ data, loading }) => {
+const UTMTrackingTable: React.FC<UTMTrackingTableProps> = ({
+  data,
+  loading,
+}) => {
   if (loading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Rastreamento UTM Recente</CardTitle>
-          <CardDescription>Últimas atividades de rastreamento de campanhas</CardDescription>
+          <CardDescription>
+            Últimas atividades de rastreamento de campanhas
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
@@ -48,7 +65,9 @@ const UTMTrackingTable: React.FC<UTMTrackingTableProps> = ({ data, loading }) =>
     <Card>
       <CardHeader>
         <CardTitle>Rastreamento UTM Recente</CardTitle>
-        <CardDescription>Últimas atividades de rastreamento de campanhas</CardDescription>
+        <CardDescription>
+          Últimas atividades de rastreamento de campanhas
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -66,7 +85,10 @@ const UTMTrackingTable: React.FC<UTMTrackingTableProps> = ({ data, loading }) =>
           <TableBody>
             {data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell
+                  colSpan={7}
+                  className="text-center py-8 text-gray-500"
+                >
                   Nenhum dado de rastreamento UTM encontrado
                 </TableCell>
               </TableRow>
@@ -74,37 +96,55 @@ const UTMTrackingTable: React.FC<UTMTrackingTableProps> = ({ data, loading }) =>
               data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    {format(new Date(item.utm_created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                    {format(new Date(item.utm_created_at), "dd/MM/yyyy HH:mm", {
+                      locale: ptBR,
+                    })}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-600">
-                      {item.utm_source || '-'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-purple-50 text-purple-600">
-                      {item.utm_campaign || '-'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-green-50 text-green-600">
-                      {item.utm_medium || '-'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={item.utm_conversion ? "default" : "secondary"}
-                      className={item.utm_conversion ? "bg-green-500 text-white" : ""}
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-50 text-blue-600"
                     >
-                      {item.utm_conversion ? 'Converteu' : 'Não converteu'}
+                      {item.utm_source || "-"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {item.utm_conversion_value ? `R$ ${item.utm_conversion_value.toFixed(2)}` : '-'}
+                    <Badge
+                      variant="outline"
+                      className="bg-purple-50 text-purple-600"
+                    >
+                      {item.utm_campaign || "-"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="bg-gray-50 text-gray-600">
-                      {item.device_type || 'Desktop'}
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-600"
+                    >
+                      {item.utm_medium || "-"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={item.utm_conversion ? "default" : "secondary"}
+                      className={
+                        item.utm_conversion ? "bg-green-500 text-white" : ""
+                      }
+                    >
+                      {item.utm_conversion ? "Converteu" : "Não converteu"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {item.utm_conversion_value
+                      ? `R$ ${item.utm_conversion_value.toFixed(2)}`
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className="bg-gray-50 text-gray-600"
+                    >
+                      {item.device_type || "Desktop"}
                     </Badge>
                   </TableCell>
                 </TableRow>

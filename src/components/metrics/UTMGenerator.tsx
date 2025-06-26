@@ -1,11 +1,10 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Copy, Link, Plus } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Copy, Link, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface UTMConfig {
   id: string;
@@ -23,41 +22,52 @@ interface UTMConfig {
 
 const UTMGenerator = () => {
   const { toast } = useToast();
-  const [currentConfig, setCurrentConfig] = useState<Omit<UTMConfig, 'id' | 'generatedUrl' | 'createdAt' | 'createdBy'>>({
-    friendlyName: '',
-    utm_source: '',
-    utm_medium: '',
-    utm_campaign: '',
-    utm_content: '',
-    utm_term: '',
-    baseUrl: 'https://seusite.com'
+  const [currentConfig, setCurrentConfig] = useState<
+    Omit<UTMConfig, "id" | "generatedUrl" | "createdAt" | "createdBy">
+  >({
+    friendlyName: "",
+    utm_source: "",
+    utm_medium: "",
+    utm_campaign: "",
+    utm_content: "",
+    utm_term: "",
+    baseUrl: "https://seusite.com",
   });
-  const [generatedUrl, setGeneratedUrl] = useState('');
+  const [generatedUrl, setGeneratedUrl] = useState("");
   const [history, setHistory] = useState<UTMConfig[]>([]);
 
   const handleInputChange = (field: string, value: string) => {
-    setCurrentConfig(prev => ({
+    setCurrentConfig((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const generateUTMLink = () => {
-    if (!currentConfig.utm_source || !currentConfig.utm_medium || !currentConfig.utm_campaign) {
+    if (
+      !currentConfig.utm_source ||
+      !currentConfig.utm_medium ||
+      !currentConfig.utm_campaign
+    ) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha pelo menos Source, Medium e Campaign",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     const params = new URLSearchParams();
-    if (currentConfig.utm_source) params.append('utm_source', currentConfig.utm_source);
-    if (currentConfig.utm_medium) params.append('utm_medium', currentConfig.utm_medium);
-    if (currentConfig.utm_campaign) params.append('utm_campaign', currentConfig.utm_campaign);
-    if (currentConfig.utm_content) params.append('utm_content', currentConfig.utm_content);
-    if (currentConfig.utm_term) params.append('utm_term', currentConfig.utm_term);
+    if (currentConfig.utm_source)
+      params.append("utm_source", currentConfig.utm_source);
+    if (currentConfig.utm_medium)
+      params.append("utm_medium", currentConfig.utm_medium);
+    if (currentConfig.utm_campaign)
+      params.append("utm_campaign", currentConfig.utm_campaign);
+    if (currentConfig.utm_content)
+      params.append("utm_content", currentConfig.utm_content);
+    if (currentConfig.utm_term)
+      params.append("utm_term", currentConfig.utm_term);
 
     const finalUrl = `${currentConfig.baseUrl}?${params.toString()}`;
     setGeneratedUrl(finalUrl);
@@ -68,10 +78,10 @@ const UTMGenerator = () => {
       id: Date.now().toString(),
       generatedUrl: finalUrl,
       createdAt: new Date(),
-      createdBy: 'Usuário Atual' // Implementar sistema de usuário
+      createdBy: "Usuário Atual", // Implementar sistema de usuário
     };
 
-    setHistory(prev => [newConfig, ...prev]);
+    setHistory((prev) => [newConfig, ...prev]);
 
     toast({
       title: "Link UTM gerado!",
@@ -89,15 +99,15 @@ const UTMGenerator = () => {
 
   const clearForm = () => {
     setCurrentConfig({
-      friendlyName: '',
-      utm_source: '',
-      utm_medium: '',
-      utm_campaign: '',
-      utm_content: '',
-      utm_term: '',
-      baseUrl: 'https://seusite.com'
+      friendlyName: "",
+      utm_source: "",
+      utm_medium: "",
+      utm_campaign: "",
+      utm_content: "",
+      utm_term: "",
+      baseUrl: "https://seusite.com",
     });
-    setGeneratedUrl('');
+    setGeneratedUrl("");
   };
 
   return (
@@ -117,17 +127,19 @@ const UTMGenerator = () => {
                 id="friendlyName"
                 placeholder="Ex: Campanha Black Friday 2024"
                 value={currentConfig.friendlyName}
-                onChange={(e) => handleInputChange('friendlyName', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("friendlyName", e.target.value)
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="baseUrl">URL Base</Label>
               <Input
                 id="baseUrl"
                 placeholder="https://seusite.com"
                 value={currentConfig.baseUrl}
-                onChange={(e) => handleInputChange('baseUrl', e.target.value)}
+                onChange={(e) => handleInputChange("baseUrl", e.target.value)}
               />
             </div>
           </div>
@@ -139,27 +151,33 @@ const UTMGenerator = () => {
                 id="utm_source"
                 placeholder="Ex: google, facebook, email"
                 value={currentConfig.utm_source}
-                onChange={(e) => handleInputChange('utm_source', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("utm_source", e.target.value)
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="utm_medium">UTM Medium *</Label>
               <Input
                 id="utm_medium"
                 placeholder="Ex: cpc, email, social"
                 value={currentConfig.utm_medium}
-                onChange={(e) => handleInputChange('utm_medium', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("utm_medium", e.target.value)
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="utm_campaign">UTM Campaign *</Label>
               <Input
                 id="utm_campaign"
                 placeholder="Ex: black_friday_2024"
                 value={currentConfig.utm_campaign}
-                onChange={(e) => handleInputChange('utm_campaign', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("utm_campaign", e.target.value)
+                }
               />
             </div>
           </div>
@@ -171,23 +189,28 @@ const UTMGenerator = () => {
                 id="utm_content"
                 placeholder="Ex: banner_top, link_rodape"
                 value={currentConfig.utm_content}
-                onChange={(e) => handleInputChange('utm_content', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("utm_content", e.target.value)
+                }
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="utm_term">UTM Term</Label>
               <Input
                 id="utm_term"
                 placeholder="Ex: marketing_digital"
                 value={currentConfig.utm_term}
-                onChange={(e) => handleInputChange('utm_term', e.target.value)}
+                onChange={(e) => handleInputChange("utm_term", e.target.value)}
               />
             </div>
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={generateUTMLink} className="flex items-center gap-2">
+            <Button
+              onClick={generateUTMLink}
+              className="flex items-center gap-2"
+            >
               <Link className="h-4 w-4" />
               🔗 Gerar Link UTM
             </Button>
@@ -226,15 +249,22 @@ const UTMGenerator = () => {
           <CardContent>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {history.map((config) => (
-                <div key={config.id} className="p-3 border rounded-lg space-y-2">
+                <div
+                  key={config.id}
+                  className="p-3 border rounded-lg space-y-2"
+                >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-medium">{config.friendlyName || 'Link UTM'}</h4>
+                      <h4 className="font-medium">
+                        {config.friendlyName || "Link UTM"}
+                      </h4>
                       <p className="text-sm text-gray-500">
-                        {config.utm_source} / {config.utm_medium} / {config.utm_campaign}
+                        {config.utm_source} / {config.utm_medium} /{" "}
+                        {config.utm_campaign}
                       </p>
                       <p className="text-xs text-gray-400">
-                        Criado em {config.createdAt.toLocaleDateString('pt-BR')} às {config.createdAt.toLocaleTimeString('pt-BR')}
+                        Criado em {config.createdAt.toLocaleDateString("pt-BR")}{" "}
+                        às {config.createdAt.toLocaleTimeString("pt-BR")}
                       </p>
                     </div>
                     <Button

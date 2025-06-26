@@ -1,6 +1,5 @@
-
-import { useState } from 'react';
-import { Contact } from '@/types/client';
+import { useState } from "react";
+import { Contact } from "@/types/client";
 
 export const useClientState = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
@@ -9,27 +8,28 @@ export const useClientState = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
-  const [isPauseDurationDialogOpen, setIsPauseDurationDialogOpen] = useState(false);
-  const [messageText, setMessageText] = useState('');
+  const [isPauseDurationDialogOpen, setIsPauseDurationDialogOpen] =
+    useState(false);
+  const [messageText, setMessageText] = useState("");
   const [newContact, setNewContact] = useState<Partial<Contact>>({
-    name: '',
-    email: '',
-    phone: '',
-    clientName: '',
+    name: "",
+    email: "",
+    phone: "",
+    clientName: "",
     tags: [],
-    notes: '',
-    consultationStage: 'Nova consulta'
+    notes: "",
+    consultationStage: "Nova consulta",
   });
 
   const resetNewContact = () => {
     setNewContact({
-      name: '',
-      email: '',
-      phone: '',
-      clientName: '',
+      name: "",
+      email: "",
+      phone: "",
+      clientName: "",
       tags: [],
-      notes: '',
-      consultationStage: 'Nova consulta'
+      notes: "",
+      consultationStage: "Nova consulta",
     });
   };
 
@@ -41,7 +41,7 @@ export const useClientState = () => {
   const openEditModal = (contact?: Contact) => {
     const contactToEdit = contact || selectedContact;
     if (!contactToEdit) return;
-    
+
     setSelectedContact(contactToEdit);
     setNewContact({
       name: contactToEdit.name,
@@ -49,8 +49,8 @@ export const useClientState = () => {
       phone: contactToEdit.phone,
       clientName: contactToEdit.clientName,
       tags: contactToEdit.tags || [],
-      notes: contactToEdit.notes || '',
-      consultationStage: contactToEdit.consultationStage || 'Nova consulta',
+      notes: contactToEdit.notes || "",
+      consultationStage: contactToEdit.consultationStage || "Nova consulta",
       responsibleUser: contactToEdit.responsibleUser,
       sales: contactToEdit.sales,
       clientType: contactToEdit.clientType,
@@ -61,7 +61,7 @@ export const useClientState = () => {
       lossReason: contactToEdit.lossReason,
       contractNumber: contactToEdit.contractNumber,
       contractDate: contactToEdit.contractDate,
-      payment: contactToEdit.payment
+      payment: contactToEdit.payment,
     });
     setIsEditModalOpen(true);
   };
@@ -87,6 +87,6 @@ export const useClientState = () => {
     setNewContact,
     resetNewContact,
     handleContactClick,
-    openEditModal
+    openEditModal,
   };
 };

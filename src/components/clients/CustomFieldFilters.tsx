@@ -1,11 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from 'lucide-react';
-import { CustomField } from '@/types/customFields';
+import { X, Plus } from "lucide-react";
+import { CustomField } from "@/types/customFields";
 
 interface CustomFieldFilter {
   fieldId: string;
@@ -24,16 +30,26 @@ interface CustomFieldFiltersProps {
 
 // Lista estática de propriedades do cliente para filtros
 const clientProperties = [
-  { id: 'name', name: 'Nome', type: 'text' },
-  { id: 'email', name: 'Email', type: 'text' },
-  { id: 'phone', name: 'Telefone', type: 'text' },
-  { id: 'status', name: 'Status', type: 'select', options: ['Ativo', 'Inativo', 'Pendente'] },
-  { id: 'consultationStage', name: 'Etapa da Consulta', type: 'select', options: ['Agendada', 'Realizada', 'Cancelada'] },
-  { id: 'source', name: 'Origem', type: 'text' },
-  { id: 'city', name: 'Cidade', type: 'text' },
-  { id: 'state', name: 'Estado', type: 'text' },
-  { id: 'lastContact', name: 'Último Contato', type: 'date' },
-  { id: 'nextContact', name: 'Próximo Contato', type: 'date' },
+  { id: "name", name: "Nome", type: "text" },
+  { id: "email", name: "Email", type: "text" },
+  { id: "phone", name: "Telefone", type: "text" },
+  {
+    id: "status",
+    name: "Status",
+    type: "select",
+    options: ["Ativo", "Inativo", "Pendente"],
+  },
+  {
+    id: "consultationStage",
+    name: "Etapa da Consulta",
+    type: "select",
+    options: ["Agendada", "Realizada", "Cancelada"],
+  },
+  { id: "source", name: "Origem", type: "text" },
+  { id: "city", name: "Cidade", type: "text" },
+  { id: "state", name: "Estado", type: "text" },
+  { id: "lastContact", name: "Último Contato", type: "date" },
+  { id: "nextContact", name: "Próximo Contato", type: "date" },
 ];
 
 export function CustomFieldFilters({
@@ -42,10 +58,12 @@ export function CustomFieldFilters({
   onRemoveCustomFieldFilter,
   onClearCustomFieldFilters,
   preselectedFieldId,
-  compact = false
+  compact = false,
 }: CustomFieldFiltersProps) {
-  const [selectedFieldId, setSelectedFieldId] = useState<string>(preselectedFieldId || '');
-  const [filterValue, setFilterValue] = useState<string>('');
+  const [selectedFieldId, setSelectedFieldId] = useState<string>(
+    preselectedFieldId || "",
+  );
+  const [filterValue, setFilterValue] = useState<string>("");
   const [selectedField, setSelectedField] = useState<any | null>(null);
 
   useEffect(() => {
@@ -56,7 +74,7 @@ export function CustomFieldFilters({
 
   useEffect(() => {
     if (selectedFieldId) {
-      const field = clientProperties.find(f => f.id === selectedFieldId);
+      const field = clientProperties.find((f) => f.id === selectedFieldId);
       setSelectedField(field || null);
     } else {
       setSelectedField(null);
@@ -64,16 +82,16 @@ export function CustomFieldFilters({
   }, [selectedFieldId]);
 
   const handleAddFilter = () => {
-    if (selectedFieldId && filterValue.trim() !== '') {
+    if (selectedFieldId && filterValue.trim() !== "") {
       onAddCustomFieldFilter({
         fieldId: selectedFieldId,
         value: filterValue,
-        fieldName: selectedField?.name || 'Propriedade'
+        fieldName: selectedField?.name || "Propriedade",
       });
       if (!preselectedFieldId) {
-        setSelectedFieldId('');
+        setSelectedFieldId("");
       }
-      setFilterValue('');
+      setFilterValue("");
       setSelectedField(null);
     }
   };
@@ -88,7 +106,7 @@ export function CustomFieldFilters({
                 <SelectValue placeholder="Selecione uma propriedade" />
               </SelectTrigger>
               <SelectContent>
-                {clientProperties.map(field => (
+                {clientProperties.map((field) => (
                   <SelectItem key={field.id} value={field.id}>
                     {field.name}
                   </SelectItem>
@@ -100,7 +118,7 @@ export function CustomFieldFilters({
 
         {selectedField && (
           <div className="grid gap-2">
-            {selectedField.type === 'select' ? (
+            {selectedField.type === "select" ? (
               <Select value={filterValue} onValueChange={setFilterValue}>
                 <SelectTrigger id="filter-value" className="w-full">
                   <SelectValue placeholder="Selecione um valor" />
@@ -125,8 +143,8 @@ export function CustomFieldFilters({
         )}
 
         {selectedFieldId && (
-          <Button 
-            onClick={handleAddFilter} 
+          <Button
+            onClick={handleAddFilter}
             className="flex items-center gap-2 w-full"
             disabled={!filterValue.trim()}
             size="sm"
@@ -145,7 +163,8 @@ export function CustomFieldFilters({
                   className="flex items-center justify-between bg-muted p-1.5 rounded-md text-xs"
                 >
                   <span>
-                    {!preselectedFieldId && `${filter.fieldName}: `}<strong>{filter.value}</strong>
+                    {!preselectedFieldId && `${filter.fieldName}: `}
+                    <strong>{filter.value}</strong>
                   </span>
                   <Button
                     variant="ghost"
@@ -174,7 +193,7 @@ export function CustomFieldFilters({
               <SelectValue placeholder="Selecione uma propriedade" />
             </SelectTrigger>
             <SelectContent>
-              {clientProperties.map(field => (
+              {clientProperties.map((field) => (
                 <SelectItem key={field.id} value={field.id}>
                   {field.name}
                 </SelectItem>
@@ -186,7 +205,7 @@ export function CustomFieldFilters({
         {selectedField && (
           <div className="grid gap-2">
             <Label htmlFor="filter-value">Valor</Label>
-            {selectedField.type === 'select' ? (
+            {selectedField.type === "select" ? (
               <Select value={filterValue} onValueChange={setFilterValue}>
                 <SelectTrigger id="filter-value" className="w-full">
                   <SelectValue placeholder="Selecione um valor" />
@@ -211,8 +230,8 @@ export function CustomFieldFilters({
         )}
 
         {selectedFieldId && (
-          <Button 
-            onClick={handleAddFilter} 
+          <Button
+            onClick={handleAddFilter}
             className="flex items-center gap-2"
             disabled={!filterValue.trim()}
           >
@@ -227,7 +246,11 @@ export function CustomFieldFilters({
           <div className="text-sm font-medium">Filtros Ativos</div>
           <div className="flex flex-wrap gap-2">
             {activeFilters.map((filter) => (
-              <Badge key={filter.fieldId} variant="secondary" className="flex items-center gap-1">
+              <Badge
+                key={filter.fieldId}
+                variant="secondary"
+                className="flex items-center gap-1"
+              >
                 {filter.fieldName}: {filter.value}
                 <Button
                   variant="ghost"
@@ -253,5 +276,5 @@ export function CustomFieldFilters({
       )}
     </div>
   );
-};
+}
 export default CustomFieldFilters;

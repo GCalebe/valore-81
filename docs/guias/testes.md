@@ -34,10 +34,12 @@ src/
 Testes unitários verificam o comportamento de unidades individuais de código (funções, classes, componentes) isoladamente.
 
 **Ferramentas:**
+
 - Jest - Framework de testes
 - React Testing Library - Biblioteca para testar componentes React
 
 **Convenções:**
+
 - Arquivos de teste unitário seguem o padrão `[nome-do-arquivo].test.tsx`
 - Testes são organizados em blocos `describe` e casos de teste `it`/`test`
 - Mocks são utilizados para isolar a unidade sendo testada
@@ -46,57 +48,57 @@ Testes unitários verificam o comportamento de unidades individuais de código (
 
 ```typescript
 // src/utils/__tests__/formatters.test.ts
-import { formatCurrency, formatDate, formatCpfCnpj } from '../formatters';
+import { formatCurrency, formatDate, formatCpfCnpj } from "../formatters";
 
-describe('Formatters', () => {
-  describe('formatCurrency', () => {
-    it('should format number to BRL currency', () => {
-      expect(formatCurrency(1000)).toBe('R$ 1.000,00');
-      expect(formatCurrency(1000.5)).toBe('R$ 1.000,50');
-      expect(formatCurrency(0)).toBe('R$ 0,00');
+describe("Formatters", () => {
+  describe("formatCurrency", () => {
+    it("should format number to BRL currency", () => {
+      expect(formatCurrency(1000)).toBe("R$ 1.000,00");
+      expect(formatCurrency(1000.5)).toBe("R$ 1.000,50");
+      expect(formatCurrency(0)).toBe("R$ 0,00");
     });
 
-    it('should handle negative values', () => {
-      expect(formatCurrency(-1000)).toBe('-R$ 1.000,00');
+    it("should handle negative values", () => {
+      expect(formatCurrency(-1000)).toBe("-R$ 1.000,00");
     });
 
-    it('should handle undefined or null', () => {
-      expect(formatCurrency(undefined)).toBe('R$ 0,00');
-      expect(formatCurrency(null)).toBe('R$ 0,00');
-    });
-  });
-
-  describe('formatDate', () => {
-    it('should format date to DD/MM/YYYY', () => {
-      const date = new Date('2023-06-15');
-      expect(formatDate(date)).toBe('15/06/2023');
-    });
-
-    it('should handle string dates', () => {
-      expect(formatDate('2023-06-15')).toBe('15/06/2023');
-    });
-
-    it('should return empty string for invalid dates', () => {
-      expect(formatDate('invalid-date')).toBe('');
-      expect(formatDate(null)).toBe('');
-      expect(formatDate(undefined)).toBe('');
+    it("should handle undefined or null", () => {
+      expect(formatCurrency(undefined)).toBe("R$ 0,00");
+      expect(formatCurrency(null)).toBe("R$ 0,00");
     });
   });
 
-  describe('formatCpfCnpj', () => {
-    it('should format CPF correctly', () => {
-      expect(formatCpfCnpj('12345678900')).toBe('123.456.789-00');
+  describe("formatDate", () => {
+    it("should format date to DD/MM/YYYY", () => {
+      const date = new Date("2023-06-15");
+      expect(formatDate(date)).toBe("15/06/2023");
     });
 
-    it('should format CNPJ correctly', () => {
-      expect(formatCpfCnpj('12345678000190')).toBe('12.345.678/0001-90');
+    it("should handle string dates", () => {
+      expect(formatDate("2023-06-15")).toBe("15/06/2023");
     });
 
-    it('should return original value if not valid CPF or CNPJ', () => {
-      expect(formatCpfCnpj('123')).toBe('123');
-      expect(formatCpfCnpj('')).toBe('');
-      expect(formatCpfCnpj(null)).toBe('');
-      expect(formatCpfCnpj(undefined)).toBe('');
+    it("should return empty string for invalid dates", () => {
+      expect(formatDate("invalid-date")).toBe("");
+      expect(formatDate(null)).toBe("");
+      expect(formatDate(undefined)).toBe("");
+    });
+  });
+
+  describe("formatCpfCnpj", () => {
+    it("should format CPF correctly", () => {
+      expect(formatCpfCnpj("12345678900")).toBe("123.456.789-00");
+    });
+
+    it("should format CNPJ correctly", () => {
+      expect(formatCpfCnpj("12345678000190")).toBe("12.345.678/0001-90");
+    });
+
+    it("should return original value if not valid CPF or CNPJ", () => {
+      expect(formatCpfCnpj("123")).toBe("123");
+      expect(formatCpfCnpj("")).toBe("");
+      expect(formatCpfCnpj(null)).toBe("");
+      expect(formatCpfCnpj(undefined)).toBe("");
     });
   });
 });
@@ -107,11 +109,13 @@ describe('Formatters', () => {
 Testes de componentes verificam se os componentes React renderizam corretamente e respondem adequadamente às interações do usuário.
 
 **Ferramentas:**
+
 - Jest
 - React Testing Library
 - jest-dom - Extensões de matchers para DOM
 
 **Convenções:**
+
 - Testar o comportamento do componente, não sua implementação
 - Focar em interações do usuário e saídas visíveis
 - Usar seletores acessíveis (getByRole, getByLabelText, etc.)
@@ -314,6 +318,7 @@ describe('ClientsTableStandardized', () => {
 Testes de hooks personalizados verificam se os hooks React funcionam corretamente.
 
 **Ferramentas:**
+
 - Jest
 - React Testing Library
 - @testing-library/react-hooks
@@ -322,51 +327,51 @@ Testes de hooks personalizados verificam se os hooks React funcionam corretament
 
 ```typescript
 // src/hooks/__tests__/useClientForm.test.ts
-import { renderHook, act } from '@testing-library/react-hooks';
-import { useClientForm } from '../useClientForm';
+import { renderHook, act } from "@testing-library/react-hooks";
+import { useClientForm } from "../useClientForm";
 
-describe('useClientForm', () => {
+describe("useClientForm", () => {
   const mockClient = {
-    id: '1',
-    nome: 'Empresa ABC',
-    email: 'contato@empresaabc.com',
-    telefone: '(11) 1234-5678',
-    tipo: 'PJ',
-    cnpj: '12.345.678/0001-90',
+    id: "1",
+    nome: "Empresa ABC",
+    email: "contato@empresaabc.com",
+    telefone: "(11) 1234-5678",
+    tipo: "PJ",
+    cnpj: "12.345.678/0001-90",
   };
 
-  it('should initialize with default values when no client is provided', () => {
+  it("should initialize with default values when no client is provided", () => {
     const { result } = renderHook(() => useClientForm());
 
     expect(result.current.formData).toEqual({
-      nome: '',
-      email: '',
-      telefone: '',
-      tipo: 'PF',
-      cpf: '',
-      cnpj: '',
+      nome: "",
+      email: "",
+      telefone: "",
+      tipo: "PF",
+      cpf: "",
+      cnpj: "",
     });
   });
 
-  it('should initialize with client data when client is provided', () => {
+  it("should initialize with client data when client is provided", () => {
     const { result } = renderHook(() => useClientForm(mockClient));
 
     expect(result.current.formData).toEqual(mockClient);
   });
 
-  it('should update form data when handleChange is called', () => {
+  it("should update form data when handleChange is called", () => {
     const { result } = renderHook(() => useClientForm());
 
     act(() => {
       result.current.handleChange({
-        target: { name: 'nome', value: 'Novo Nome' },
+        target: { name: "nome", value: "Novo Nome" },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
-    expect(result.current.formData.nome).toBe('Novo Nome');
+    expect(result.current.formData.nome).toBe("Novo Nome");
   });
 
-  it('should validate form data and return errors', () => {
+  it("should validate form data and return errors", () => {
     const { result } = renderHook(() => useClientForm());
 
     // Form is initially empty, should have validation errors
@@ -381,15 +386,15 @@ describe('useClientForm', () => {
     // Fill required fields
     act(() => {
       result.current.handleChange({
-        target: { name: 'nome', value: 'Novo Nome' },
+        target: { name: "nome", value: "Novo Nome" },
       } as React.ChangeEvent<HTMLInputElement>);
 
       result.current.handleChange({
-        target: { name: 'email', value: 'email@valido.com' },
+        target: { name: "email", value: "email@valido.com" },
       } as React.ChangeEvent<HTMLInputElement>);
 
       result.current.handleChange({
-        target: { name: 'telefone', value: '(11) 1234-5678' },
+        target: { name: "telefone", value: "(11) 1234-5678" },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
@@ -403,17 +408,17 @@ describe('useClientForm', () => {
     expect(result.current.errors.telefone).toBeFalsy();
   });
 
-  it('should validate CPF when tipo is PF', () => {
+  it("should validate CPF when tipo is PF", () => {
     const { result } = renderHook(() => useClientForm());
 
     // Set tipo to PF and provide invalid CPF
     act(() => {
       result.current.handleChange({
-        target: { name: 'tipo', value: 'PF' },
+        target: { name: "tipo", value: "PF" },
       } as React.ChangeEvent<HTMLInputElement>);
 
       result.current.handleChange({
-        target: { name: 'cpf', value: '123' }, // Invalid CPF
+        target: { name: "cpf", value: "123" }, // Invalid CPF
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
@@ -426,7 +431,7 @@ describe('useClientForm', () => {
     // Provide valid CPF
     act(() => {
       result.current.handleChange({
-        target: { name: 'cpf', value: '123.456.789-00' },
+        target: { name: "cpf", value: "123.456.789-00" },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
@@ -437,17 +442,17 @@ describe('useClientForm', () => {
     expect(result.current.errors.cpf).toBeFalsy();
   });
 
-  it('should validate CNPJ when tipo is PJ', () => {
+  it("should validate CNPJ when tipo is PJ", () => {
     const { result } = renderHook(() => useClientForm());
 
     // Set tipo to PJ and provide invalid CNPJ
     act(() => {
       result.current.handleChange({
-        target: { name: 'tipo', value: 'PJ' },
+        target: { name: "tipo", value: "PJ" },
       } as React.ChangeEvent<HTMLInputElement>);
 
       result.current.handleChange({
-        target: { name: 'cnpj', value: '123' }, // Invalid CNPJ
+        target: { name: "cnpj", value: "123" }, // Invalid CNPJ
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
@@ -460,7 +465,7 @@ describe('useClientForm', () => {
     // Provide valid CNPJ
     act(() => {
       result.current.handleChange({
-        target: { name: 'cnpj', value: '12.345.678/0001-90' },
+        target: { name: "cnpj", value: "12.345.678/0001-90" },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
@@ -471,17 +476,17 @@ describe('useClientForm', () => {
     expect(result.current.errors.cnpj).toBeFalsy();
   });
 
-  it('should reset form data when reset is called', () => {
+  it("should reset form data when reset is called", () => {
     const { result } = renderHook(() => useClientForm(mockClient));
 
     // Change some data
     act(() => {
       result.current.handleChange({
-        target: { name: 'nome', value: 'Novo Nome' },
+        target: { name: "nome", value: "Novo Nome" },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
-    expect(result.current.formData.nome).toBe('Novo Nome');
+    expect(result.current.formData.nome).toBe("Novo Nome");
 
     // Reset form
     act(() => {
@@ -499,6 +504,7 @@ describe('useClientForm', () => {
 Testes de integração verificam se diferentes partes da aplicação funcionam corretamente juntas.
 
 **Ferramentas:**
+
 - Jest
 - React Testing Library
 - MSW (Mock Service Worker) - Para simular chamadas de API
@@ -691,6 +697,7 @@ describe('Client Management Integration', () => {
 Testes E2E verificam o fluxo completo da aplicação, simulando interações reais do usuário.
 
 **Ferramentas:**
+
 - Cypress - Framework de testes E2E
 
 **Estrutura:**
@@ -707,107 +714,113 @@ cypress/
 
 ```javascript
 // cypress/integration/client-management.spec.js
-describe('Client Management', () => {
+describe("Client Management", () => {
   beforeEach(() => {
     // Login before each test
-    cy.login('admin@example.com', 'password');
-    cy.visit('/clients');
+    cy.login("admin@example.com", "password");
+    cy.visit("/clients");
   });
 
-  it('should display client list', () => {
-    cy.get('table').should('be.visible');
-    cy.contains('th', 'Nome').should('be.visible');
-    cy.contains('th', 'Email').should('be.visible');
-    cy.contains('th', 'Telefone').should('be.visible');
-    cy.contains('th', 'Tipo').should('be.visible');
-    cy.contains('th', 'Ações').should('be.visible');
+  it("should display client list", () => {
+    cy.get("table").should("be.visible");
+    cy.contains("th", "Nome").should("be.visible");
+    cy.contains("th", "Email").should("be.visible");
+    cy.contains("th", "Telefone").should("be.visible");
+    cy.contains("th", "Tipo").should("be.visible");
+    cy.contains("th", "Ações").should("be.visible");
   });
 
-  it('should add a new client', () => {
+  it("should add a new client", () => {
     // Click add client button
-    cy.contains('button', 'Adicionar Cliente').click();
+    cy.contains("button", "Adicionar Cliente").click();
 
     // Fill form
-    cy.get('form').within(() => {
-      cy.get('input[name="nome"]').type('Cliente Teste E2E');
-      cy.get('input[name="email"]').type('teste-e2e@example.com');
-      cy.get('input[name="telefone"]').type('(11) 9999-8888');
-      cy.get('select[name="tipo"]').select('PF');
-      cy.get('input[name="cpf"]').type('123.456.789-00');
-      cy.contains('button', 'Salvar').click();
+    cy.get("form").within(() => {
+      cy.get('input[name="nome"]').type("Cliente Teste E2E");
+      cy.get('input[name="email"]').type("teste-e2e@example.com");
+      cy.get('input[name="telefone"]').type("(11) 9999-8888");
+      cy.get('select[name="tipo"]').select("PF");
+      cy.get('input[name="cpf"]').type("123.456.789-00");
+      cy.contains("button", "Salvar").click();
     });
 
     // Check success message
-    cy.contains('Cliente adicionado com sucesso').should('be.visible');
+    cy.contains("Cliente adicionado com sucesso").should("be.visible");
 
     // Check if new client is in the list
-    cy.contains('td', 'Cliente Teste E2E').should('be.visible');
-    cy.contains('td', 'teste-e2e@example.com').should('be.visible');
+    cy.contains("td", "Cliente Teste E2E").should("be.visible");
+    cy.contains("td", "teste-e2e@example.com").should("be.visible");
   });
 
-  it('should view client details', () => {
+  it("should view client details", () => {
     // Find first client and click view button
-    cy.get('table tbody tr').first().within(() => {
-      cy.get('button[aria-label="Visualizar"]').click();
-    });
+    cy.get("table tbody tr")
+      .first()
+      .within(() => {
+        cy.get('button[aria-label="Visualizar"]').click();
+      });
 
     // Check if details panel is visible
-    cy.contains('h2', 'Detalhes do Cliente').should('be.visible');
+    cy.contains("h2", "Detalhes do Cliente").should("be.visible");
 
     // Check client information
     cy.get('[data-testid="client-details"]').within(() => {
-      cy.contains('Nome').should('be.visible');
-      cy.contains('Email').should('be.visible');
-      cy.contains('Telefone').should('be.visible');
+      cy.contains("Nome").should("be.visible");
+      cy.contains("Email").should("be.visible");
+      cy.contains("Telefone").should("be.visible");
     });
 
     // Close details panel
     cy.get('button[aria-label="Fechar"]').click();
-    cy.contains('h2', 'Detalhes do Cliente').should('not.exist');
+    cy.contains("h2", "Detalhes do Cliente").should("not.exist");
   });
 
-  it('should edit a client', () => {
+  it("should edit a client", () => {
     // Find first client and click edit button
-    cy.get('table tbody tr').first().within(() => {
-      cy.get('button[aria-label="Editar"]').click();
-    });
+    cy.get("table tbody tr")
+      .first()
+      .within(() => {
+        cy.get('button[aria-label="Editar"]').click();
+      });
 
     // Check if edit form is visible
-    cy.contains('h2', 'Editar Cliente').should('be.visible');
+    cy.contains("h2", "Editar Cliente").should("be.visible");
 
     // Update client information
-    cy.get('form').within(() => {
-      cy.get('input[name="nome"]').clear().type('Cliente Atualizado E2E');
-      cy.get('input[name="email"]').clear().type('atualizado-e2e@example.com');
-      cy.contains('button', 'Salvar').click();
+    cy.get("form").within(() => {
+      cy.get('input[name="nome"]').clear().type("Cliente Atualizado E2E");
+      cy.get('input[name="email"]').clear().type("atualizado-e2e@example.com");
+      cy.contains("button", "Salvar").click();
     });
 
     // Check success message
-    cy.contains('Cliente atualizado com sucesso').should('be.visible');
+    cy.contains("Cliente atualizado com sucesso").should("be.visible");
 
     // Check if client was updated in the list
-    cy.contains('td', 'Cliente Atualizado E2E').should('be.visible');
-    cy.contains('td', 'atualizado-e2e@example.com').should('be.visible');
+    cy.contains("td", "Cliente Atualizado E2E").should("be.visible");
+    cy.contains("td", "atualizado-e2e@example.com").should("be.visible");
   });
 
-  it('should delete a client', () => {
+  it("should delete a client", () => {
     // Get initial number of clients
-    cy.get('table tbody tr').then(($rows) => {
+    cy.get("table tbody tr").then(($rows) => {
       const initialCount = $rows.length;
 
       // Find first client and click delete button
-      cy.get('table tbody tr').first().within(() => {
-        cy.get('button[aria-label="Excluir"]').click();
-      });
+      cy.get("table tbody tr")
+        .first()
+        .within(() => {
+          cy.get('button[aria-label="Excluir"]').click();
+        });
 
       // Confirm deletion
-      cy.on('window:confirm', () => true);
+      cy.on("window:confirm", () => true);
 
       // Check success message
-      cy.contains('Cliente excluído com sucesso').should('be.visible');
+      cy.contains("Cliente excluído com sucesso").should("be.visible");
 
       // Check if client was removed from the list
-      cy.get('table tbody tr').should('have.length', initialCount - 1);
+      cy.get("table tbody tr").should("have.length", initialCount - 1);
     });
   });
 });
@@ -821,23 +834,23 @@ Configurações do Jest no arquivo `jest.config.js`:
 
 ```javascript
 module.exports = {
-  testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  testEnvironment: "jsdom",
+  testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{ts,tsx}',
-    '!src/pages/_app.tsx',
-    '!src/pages/_document.tsx',
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.{ts,tsx}",
+    "!src/pages/_app.tsx",
+    "!src/pages/_document.tsx",
   ],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  modulePaths: ['<rootDir>/src/'],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  modulePaths: ["<rootDir>/src/"],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
   },
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };
 ```
@@ -845,10 +858,10 @@ module.exports = {
 Arquivo `jest.setup.js` para configurações adicionais:
 
 ```javascript
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Mock do matchMedia para testes
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
     matches: false,
@@ -885,7 +898,7 @@ class LocalStorageMock {
   }
 }
 
-Object.defineProperty(window, 'localStorage', {
+Object.defineProperty(window, "localStorage", {
   value: new LocalStorageMock(),
 });
 ```
@@ -910,18 +923,18 @@ Comandos personalizados no arquivo `cypress/support/commands.js`:
 
 ```javascript
 // Login command
-Cypress.Commands.add('login', (email, password) => {
+Cypress.Commands.add("login", (email, password) => {
   cy.session([email, password], () => {
-    cy.visit('/login');
+    cy.visit("/login");
     cy.get('input[name="email"]').type(email);
     cy.get('input[name="password"]').type(password);
     cy.get('button[type="submit"]').click();
-    cy.url().should('include', '/dashboard');
+    cy.url().should("include", "/dashboard");
   });
 });
 
 // Get by data-testid
-Cypress.Commands.add('getByTestId', (testId) => {
+Cypress.Commands.add("getByTestId", (testId) => {
   return cy.get(`[data-testid="${testId}"]`);
 });
 ```
@@ -1002,8 +1015,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
       - name: Install dependencies
         run: npm ci
       - name: Run tests
@@ -1018,8 +1031,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
       - name: Install dependencies
         run: npm ci
       - name: Build

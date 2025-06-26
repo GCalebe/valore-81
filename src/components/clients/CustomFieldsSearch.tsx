@@ -1,11 +1,20 @@
-
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { X, Search, Filter } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { X, Search, Filter } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface CustomFieldsSearchProps {
   onSearch: (searchTerm: string) => void;
@@ -25,7 +34,7 @@ const CustomFieldsSearch = ({
   onFilterByCategory,
   onClearFilters,
   searchTerm,
-  activeFilters
+  activeFilters,
 }: CustomFieldsSearchProps) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -34,7 +43,7 @@ const CustomFieldsSearch = ({
   };
 
   const handleTypeFilter = (value: string) => {
-    if (value === 'all') {
+    if (value === "all") {
       onFilterByType(null);
     } else {
       onFilterByType(value);
@@ -42,7 +51,7 @@ const CustomFieldsSearch = ({
   };
 
   const handleCategoryFilter = (value: string) => {
-    if (value === 'all') {
+    if (value === "all") {
       onFilterByCategory(null);
     } else {
       onFilterByCategory(value);
@@ -79,7 +88,7 @@ const CustomFieldsSearch = ({
             </div>
           </Button>
         </CollapsibleTrigger>
-        
+
         <CollapsibleContent className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Type Filter */}
@@ -87,8 +96,8 @@ const CustomFieldsSearch = ({
               <label className="text-sm font-medium text-gray-600 mb-2 block">
                 Tipo de Campo
               </label>
-              <Select 
-                value={activeFilters.type || 'all'} 
+              <Select
+                value={activeFilters.type || "all"}
                 onValueChange={handleTypeFilter}
               >
                 <SelectTrigger>
@@ -108,8 +117,8 @@ const CustomFieldsSearch = ({
               <label className="text-sm font-medium text-gray-600 mb-2 block">
                 Categoria
               </label>
-              <Select 
-                value={activeFilters.category || 'all'} 
+              <Select
+                value={activeFilters.category || "all"}
                 onValueChange={handleCategoryFilter}
               >
                 <SelectTrigger>
@@ -133,8 +142,8 @@ const CustomFieldsSearch = ({
               {activeFilters.type && (
                 <Badge variant="outline" className="flex items-center gap-1">
                   Tipo: {activeFilters.type}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
+                  <X
+                    className="h-3 w-3 cursor-pointer"
                     onClick={() => onFilterByType(null)}
                   />
                 </Badge>
@@ -142,15 +151,15 @@ const CustomFieldsSearch = ({
               {activeFilters.category && (
                 <Badge variant="outline" className="flex items-center gap-1">
                   Categoria: {activeFilters.category}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
+                  <X
+                    className="h-3 w-3 cursor-pointer"
                     onClick={() => onFilterByCategory(null)}
                   />
                 </Badge>
               )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={onClearFilters}
                 className="text-red-600 hover:text-red-700"
               >

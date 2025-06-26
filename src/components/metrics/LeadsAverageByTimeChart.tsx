@@ -1,8 +1,16 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Clock } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import { Clock } from "lucide-react";
 
 interface LeadsAverageByTimeData {
   day: string;
@@ -16,7 +24,10 @@ interface LeadsAverageByTimeChartProps {
   loading?: boolean;
 }
 
-const LeadsAverageByTimeChart: React.FC<LeadsAverageByTimeChartProps> = ({ data, loading = false }) => {
+const LeadsAverageByTimeChart: React.FC<LeadsAverageByTimeChartProps> = ({
+  data,
+  loading = false,
+}) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
@@ -33,42 +44,42 @@ const LeadsAverageByTimeChart: React.FC<LeadsAverageByTimeChartProps> = ({ data,
         ) : (
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <BarChart
+                data={data}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis 
-                  dataKey="day" 
+                <XAxis
+                  dataKey="day"
                   className="text-xs"
                   tick={{ fontSize: 12 }}
                 />
-                <YAxis 
-                  className="text-xs"
-                  tick={{ fontSize: 12 }}
-                />
-                <Tooltip 
+                <YAxis className="text-xs" tick={{ fontSize: 12 }} />
+                <Tooltip
                   contentStyle={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: 'white'
+                    backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    border: "none",
+                    borderRadius: "8px",
+                    color: "white",
                   }}
                 />
                 <Legend />
-                <Bar 
-                  dataKey="morning" 
-                  name="Manhã" 
-                  fill="#10B981" 
+                <Bar
+                  dataKey="morning"
+                  name="Manhã"
+                  fill="#10B981"
                   radius={[2, 2, 0, 0]}
                 />
-                <Bar 
-                  dataKey="afternoon" 
-                  name="Tarde" 
-                  fill="#3B82F6" 
+                <Bar
+                  dataKey="afternoon"
+                  name="Tarde"
+                  fill="#3B82F6"
                   radius={[2, 2, 0, 0]}
                 />
-                <Bar 
-                  dataKey="evening" 
-                  name="Noite" 
-                  fill="#8B5CF6" 
+                <Bar
+                  dataKey="evening"
+                  name="Noite"
+                  fill="#8B5CF6"
                   radius={[2, 2, 0, 0]}
                 />
               </BarChart>

@@ -1,16 +1,26 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { Share2 } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from "recharts";
+import { Share2 } from "lucide-react";
 
 interface LeadsBySourceChartProps {
   data: Array<{ name: string; value: number; color: string }>;
   loading?: boolean;
 }
 
-const LeadsBySourceChart: React.FC<LeadsBySourceChartProps> = ({ data, loading = false }) => {
+const LeadsBySourceChart: React.FC<LeadsBySourceChartProps> = ({
+  data,
+  loading = false,
+}) => {
   const RADIAN = Math.PI / 180;
-  
+
   const renderCustomizedLabel = ({
     cx,
     cy,
@@ -69,11 +79,14 @@ const LeadsBySourceChart: React.FC<LeadsBySourceChartProps> = ({ data, loading =
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => [`${value} leads`, 'Quantidade']}
+                  formatter={(value: number) => [
+                    `${value} leads`,
+                    "Quantidade",
+                  ]}
                   contentStyle={{
-                    backgroundColor: 'var(--background)',
-                    borderColor: 'var(--border)',
-                    borderRadius: '0.5rem',
+                    backgroundColor: "var(--background)",
+                    borderColor: "var(--border)",
+                    borderRadius: "0.5rem",
                   }}
                 />
                 <Legend
@@ -81,7 +94,7 @@ const LeadsBySourceChart: React.FC<LeadsBySourceChartProps> = ({ data, loading =
                   verticalAlign="middle"
                   align="right"
                   wrapperStyle={{
-                    paddingLeft: '20px',
+                    paddingLeft: "20px",
                   }}
                 />
               </PieChart>

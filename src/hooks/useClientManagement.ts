@@ -1,9 +1,8 @@
-
-import { useContactsData } from './useContactsData';
-import { useClientState } from './useClientState';
-import { useClientActions } from './useClientActions';
-import { useClientCustomFields } from './useClientCustomFields';
-import { useClientDisplayConfig } from './useClientDisplayConfig';
+import { useContactsData } from "./useContactsData";
+import { useClientState } from "./useClientState";
+import { useClientActions } from "./useClientActions";
+import { useClientCustomFields } from "./useClientCustomFields";
+import { useClientDisplayConfig } from "./useClientDisplayConfig";
 
 export const useClientManagement = () => {
   const {
@@ -40,19 +39,20 @@ export const useClientManagement = () => {
     openEditModal,
   } = useClientState();
 
-  const { createContact, updateContact, deleteContact, sendMessage } = useClientActions();
-  
+  const { createContact, updateContact, deleteContact, sendMessage } =
+    useClientActions();
+
   const {
     customFieldsWithValues,
     loadingCustomFields,
     loadCustomFieldsForContact,
-    saveCustomFields
+    saveCustomFields,
   } = useClientCustomFields(selectedContact?.id);
 
   const { displayConfig, updateDisplayConfig } = useClientDisplayConfig();
 
   const getUnifiedContacts = () => {
-    return contacts.map(contact => {
+    return contacts.map((contact) => {
       return contact;
     });
   };
@@ -64,55 +64,45 @@ export const useClientManagement = () => {
         fetchClients();
         setIsAddContactOpen(false);
       },
-      resetNewContact
+      resetNewContact,
     );
   };
 
   const handleEditContactWrapper = async () => {
     if (!selectedContact) return;
-    
-    await updateContact(
-      selectedContact,
-      newContact,
-      () => {
-        fetchClients();
-        setIsEditModalOpen(false);
-      }
-    );
+
+    await updateContact(selectedContact, newContact, () => {
+      fetchClients();
+      setIsEditModalOpen(false);
+    });
   };
 
   const handleDeleteContactWrapper = async () => {
     if (!selectedContact) return;
-    
-    await deleteContact(
-      selectedContact,
-      () => {
-        fetchClients();
-        setSelectedContact(null);
-        setIsDetailSheetOpen(false);
-        setIsDeleteDialogOpen(false);
-      }
-    );
+
+    await deleteContact(selectedContact, () => {
+      fetchClients();
+      setSelectedContact(null);
+      setIsDetailSheetOpen(false);
+      setIsDeleteDialogOpen(false);
+    });
   };
 
   const handleMessageClick = () => {
-    setMessageText('');
+    setMessageText("");
     setIsMessageDialogOpen(true);
   };
 
   const handleMessageSubmit = () => {
     if (!messageText.trim() || !selectedContact) return;
-    
+
     setIsMessageDialogOpen(false);
     setIsPauseDurationDialogOpen(true);
   };
 
   const handlePauseDurationConfirmWrapper = async (duration: number | null) => {
-    await sendMessage(
-      selectedContact,
-      messageText,
-      duration,
-      () => setIsPauseDurationDialogOpen(false)
+    await sendMessage(selectedContact, messageText, duration, () =>
+      setIsPauseDurationDialogOpen(false),
     );
   };
 
@@ -124,7 +114,7 @@ export const useClientManagement = () => {
     refreshing,
     selectedContact,
     setSelectedContact,
-    
+
     // Estados de modais e diálogos
     isAddContactOpen,
     setIsAddContactOpen,
@@ -138,23 +128,23 @@ export const useClientManagement = () => {
     setIsMessageDialogOpen,
     isPauseDurationDialogOpen,
     setIsPauseDurationDialogOpen,
-    
+
     // Estados de formulários
     messageText,
     setMessageText,
     newContact,
     setNewContact,
-    
+
     // Campos personalizados
     customFieldsWithValues,
     loadingCustomFields,
     loadCustomFieldsForContact,
     saveCustomFields,
-    
+
     // Configurações de visualização
     displayConfig,
     updateDisplayConfig,
-    
+
     // Ações
     handleRefresh,
     handleContactClick,

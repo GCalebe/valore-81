@@ -1,9 +1,15 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface PauseDurationDialogProps {
   isOpen: boolean;
@@ -12,8 +18,13 @@ interface PauseDurationDialogProps {
   phoneNumber: string;
 }
 
-const PauseDurationDialog = ({ isOpen, onClose, onConfirm, phoneNumber }: PauseDurationDialogProps) => {
-  const [duration, setDuration] = useState<string>('30');
+const PauseDurationDialog = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  phoneNumber,
+}: PauseDurationDialogProps) => {
+  const [duration, setDuration] = useState<string>("30");
   const [noPause, setNoPause] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,7 +33,7 @@ const PauseDurationDialog = ({ isOpen, onClose, onConfirm, phoneNumber }: PauseD
       onConfirm(null);
       return;
     }
-    
+
     const durationValue = parseInt(duration);
     if (isNaN(durationValue) || durationValue <= 0) return;
     onConfirm(durationValue);
@@ -47,10 +58,12 @@ const PauseDurationDialog = ({ isOpen, onClose, onConfirm, phoneNumber }: PauseD
                 onChange={(e) => setNoPause(e.target.checked)}
                 className="rounded border-gray-300 focus:ring-blue-500"
               />
-              <Label htmlFor="no-pause">Não pausar o bot (continuar funcionando)</Label>
+              <Label htmlFor="no-pause">
+                Não pausar o bot (continuar funcionando)
+              </Label>
             </div>
           </div>
-          
+
           {!noPause && (
             <div className="space-y-2">
               <Label htmlFor="duration">Duração (segundos)</Label>

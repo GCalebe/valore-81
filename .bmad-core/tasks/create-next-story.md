@@ -15,7 +15,7 @@ To identify the next logical story based on project progress and epic definition
   - HALT and inform the user: "core-config.yml not found. This file is required for story creation. You can:
     1. Copy it from GITHUB BMAD-METHOD/bmad-core/core-config.yml and configure it for your project
     2. Run the BMAD installer against your project to upgrade and add the file automatically
-    Please add and configure core-config.yml before proceeding."
+       Please add and configure core-config.yml before proceeding."
 - Extract the following key configurations:
   - `devStoryLocation`: Where to save story files
   - `prd.prdSharded`: Whether PRD is sharded or monolithic
@@ -40,6 +40,7 @@ To identify the next logical story based on project progress and epic definition
 - Check `devStoryLocation` from config (e.g., `docs/stories/`) for existing story files
 - If the directory exists and has at least 1 file, find the highest-numbered story file.
 - **If a highest story file exists (`{lastEpicNum}.{lastStoryNum}.story.md`):**
+
   - Verify its `Status` is 'Done' (or equivalent).
   - If not 'Done', present an alert to the user:
 
@@ -64,12 +65,12 @@ To identify the next logical story based on project progress and epic definition
     ALERT: Next story has unmet prerequisites:
     Story: {epicNum}.{storyNum} - {Story Title}
     Prerequisites not met: [list specific prerequisites]
-    
+
     Would you like to:
     1. Create the story anyway (mark prerequisites as pending)
     2. Skip to a different story (requires your specific instruction)
     3. Cancel story creation
-    
+
     Please choose an option (1/2/3):
     ```
 
@@ -77,12 +78,12 @@ To identify the next logical story based on project progress and epic definition
 
     ```plaintext
     Epic {epicNum} Complete: All stories in Epic {epicNum} have been completed.
-    
+
     Would you like to:
     1. Begin Epic {epicNum + 1} with story {epicNum + 1}.1
     2. Select a specific story to work on
     3. Cancel story creation
-    
+
     Please choose an option (1/2/3):
     ```
 
@@ -122,13 +123,15 @@ To identify the next logical story based on project progress and epic definition
 Based on configuration loaded in Step 0:
 
 - **If `architectureVersion: v4` and `architectureSharded: true`**:
+
   - Read `{architectureShardedLocation}/index.md` to understand available documentation
   - Follow the structured reading order in section 4.2 below
-  
+
 - **If `architectureVersion: v4` and `architectureSharded: false`**:
+
   - Load the monolithic architecture from `architectureFile`
   - Extract relevant sections based on v4 structure (tech stack, project structure, etc.)
-  
+
 - **If `architectureVersion` is NOT v4**:
   - Inform user: "Architecture document is not v4 format. Will use best judgment to find relevant information."
   - If `architectureSharded: true`: Search sharded files by filename relevance
@@ -145,18 +148,9 @@ Based on configuration loaded in Step 0:
 3. `docs/architecture/coding-standards.md` - Ensure dev follows project conventions
 4. `docs/architecture/testing-strategy.md` - Include testing requirements in tasks
 
-**For Backend/API Stories, additionally read:**
-5. `docs/architecture/data-models.md` - Data structures and validation rules
-6. `docs/architecture/database-schema.md` - Database design and relationships
-7. `docs/architecture/backend-architecture.md` - Service patterns and structure
-8. `docs/architecture/rest-api-spec.md` - API endpoint specifications
-9. `docs/architecture/external-apis.md` - Third-party integrations (if relevant)
+**For Backend/API Stories, additionally read:** 5. `docs/architecture/data-models.md` - Data structures and validation rules 6. `docs/architecture/database-schema.md` - Database design and relationships 7. `docs/architecture/backend-architecture.md` - Service patterns and structure 8. `docs/architecture/rest-api-spec.md` - API endpoint specifications 9. `docs/architecture/external-apis.md` - Third-party integrations (if relevant)
 
-**For Frontend/UI Stories, additionally read:**
-5. `docs/architecture/frontend-architecture.md` - Component structure and patterns
-6. `docs/architecture/components.md` - Specific component designs
-7. `docs/architecture/core-workflows.md` - User interaction flows
-8. `docs/architecture/data-models.md` - Frontend data handling
+**For Frontend/UI Stories, additionally read:** 5. `docs/architecture/frontend-architecture.md` - Component structure and patterns 6. `docs/architecture/components.md` - Specific component designs 7. `docs/architecture/core-workflows.md` - User interaction flows 8. `docs/architecture/data-models.md` - Frontend data handling
 
 **For Full-Stack Stories:**
 

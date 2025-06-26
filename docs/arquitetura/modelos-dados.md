@@ -20,19 +20,19 @@ Representa um cliente da plataforma.
 
 ```typescript
 interface Cliente {
-  id: string;                 // UUID gerado pelo Supabase
-  created_at: string;         // Data de criação (ISO 8601)
-  nome: string;               // Nome do cliente
-  email: string;              // Email principal do cliente
-  telefone: string;           // Telefone principal
-  cnpj: string | null;        // CNPJ (apenas para PJ)
-  cpf: string | null;         // CPF (apenas para PF)
-  tipo: 'PF' | 'PJ';          // Tipo de cliente (Pessoa Física ou Jurídica)
-  endereco: Endereco;         // Objeto com informações de endereço
-  contatos: Contato[];        // Lista de contatos adicionais
-  status: StatusCliente;      // Status do cliente
+  id: string; // UUID gerado pelo Supabase
+  created_at: string; // Data de criação (ISO 8601)
+  nome: string; // Nome do cliente
+  email: string; // Email principal do cliente
+  telefone: string; // Telefone principal
+  cnpj: string | null; // CNPJ (apenas para PJ)
+  cpf: string | null; // CPF (apenas para PF)
+  tipo: "PF" | "PJ"; // Tipo de cliente (Pessoa Física ou Jurídica)
+  endereco: Endereco; // Objeto com informações de endereço
+  contatos: Contato[]; // Lista de contatos adicionais
+  status: StatusCliente; // Status do cliente
   observacoes: string | null; // Observações gerais
-  avatar_url: string | null;  // URL da imagem de avatar
+  avatar_url: string | null; // URL da imagem de avatar
   metadata: Record<string, any> | null; // Metadados adicionais
 }
 
@@ -56,10 +56,10 @@ interface Contato {
 }
 
 enum StatusCliente {
-  Ativo = 'ativo',
-  Inativo = 'inativo',
-  Prospecto = 'prospecto',
-  Arquivado = 'arquivado'
+  Ativo = "ativo",
+  Inativo = "inativo",
+  Prospecto = "prospecto",
+  Arquivado = "arquivado",
 }
 ```
 
@@ -69,33 +69,33 @@ Representa um usuário do sistema.
 
 ```typescript
 interface Usuario {
-  id: string;                 // UUID gerado pelo Supabase Auth
-  created_at: string;         // Data de criação (ISO 8601)
-  email: string;              // Email do usuário (usado para login)
-  nome: string;               // Nome completo
-  avatar_url: string | null;  // URL da imagem de avatar
-  cargo: string | null;       // Cargo na empresa
+  id: string; // UUID gerado pelo Supabase Auth
+  created_at: string; // Data de criação (ISO 8601)
+  email: string; // Email do usuário (usado para login)
+  nome: string; // Nome completo
+  avatar_url: string | null; // URL da imagem de avatar
+  cargo: string | null; // Cargo na empresa
   departamento: string | null; // Departamento
-  telefone: string | null;    // Telefone de contato
+  telefone: string | null; // Telefone de contato
   ultimo_login: string | null; // Data do último login
-  status: StatusUsuario;      // Status do usuário
-  perfil: PerfilUsuario;      // Perfil de acesso
+  status: StatusUsuario; // Status do usuário
+  perfil: PerfilUsuario; // Perfil de acesso
   metadata: Record<string, any> | null; // Metadados adicionais
 }
 
 enum StatusUsuario {
-  Ativo = 'ativo',
-  Inativo = 'inativo',
-  Pendente = 'pendente',
-  Bloqueado = 'bloqueado'
+  Ativo = "ativo",
+  Inativo = "inativo",
+  Pendente = "pendente",
+  Bloqueado = "bloqueado",
 }
 
 enum PerfilUsuario {
-  Admin = 'admin',           // Acesso total ao sistema
-  Gerente = 'gerente',       // Acesso a todas as funcionalidades, exceto configurações avançadas
-  Analista = 'analista',     // Acesso a clientes, projetos e tarefas
-  Operador = 'operador',     // Acesso limitado a tarefas específicas
-  Cliente = 'cliente'        // Acesso apenas a seus próprios projetos (portal do cliente)
+  Admin = "admin", // Acesso total ao sistema
+  Gerente = "gerente", // Acesso a todas as funcionalidades, exceto configurações avançadas
+  Analista = "analista", // Acesso a clientes, projetos e tarefas
+  Operador = "operador", // Acesso limitado a tarefas específicas
+  Cliente = "cliente", // Acesso apenas a seus próprios projetos (portal do cliente)
 }
 ```
 
@@ -105,36 +105,36 @@ Representa um projeto associado a um cliente.
 
 ```typescript
 interface Projeto {
-  id: string;                 // UUID gerado pelo Supabase
-  created_at: string;         // Data de criação (ISO 8601)
-  nome: string;               // Nome do projeto
-  descricao: string | null;   // Descrição detalhada
-  cliente_id: string;         // ID do cliente associado
-  responsavel_id: string;     // ID do usuário responsável
-  data_inicio: string;        // Data de início (ISO 8601)
-  data_fim_prevista: string;  // Data de término prevista (ISO 8601)
+  id: string; // UUID gerado pelo Supabase
+  created_at: string; // Data de criação (ISO 8601)
+  nome: string; // Nome do projeto
+  descricao: string | null; // Descrição detalhada
+  cliente_id: string; // ID do cliente associado
+  responsavel_id: string; // ID do usuário responsável
+  data_inicio: string; // Data de início (ISO 8601)
+  data_fim_prevista: string; // Data de término prevista (ISO 8601)
   data_fim_real: string | null; // Data de término real (ISO 8601)
-  status: StatusProjeto;      // Status do projeto
-  progresso: number;          // Percentual de progresso (0-100)
-  prioridade: Prioridade;     // Prioridade do projeto
-  valor: number | null;       // Valor do projeto
-  tags: string[];             // Tags para categorização
+  status: StatusProjeto; // Status do projeto
+  progresso: number; // Percentual de progresso (0-100)
+  prioridade: Prioridade; // Prioridade do projeto
+  valor: number | null; // Valor do projeto
+  tags: string[]; // Tags para categorização
   metadata: Record<string, any> | null; // Metadados adicionais
 }
 
 enum StatusProjeto {
-  Planejamento = 'planejamento',
-  EmAndamento = 'em_andamento',
-  Pausado = 'pausado',
-  Concluido = 'concluido',
-  Cancelado = 'cancelado'
+  Planejamento = "planejamento",
+  EmAndamento = "em_andamento",
+  Pausado = "pausado",
+  Concluido = "concluido",
+  Cancelado = "cancelado",
 }
 
 enum Prioridade {
-  Baixa = 'baixa',
-  Media = 'media',
-  Alta = 'alta',
-  Urgente = 'urgente'
+  Baixa = "baixa",
+  Media = "media",
+  Alta = "alta",
+  Urgente = "urgente",
 }
 ```
 
@@ -144,23 +144,23 @@ Representa uma tarefa relacionada a um projeto.
 
 ```typescript
 interface Tarefa {
-  id: string;                 // UUID gerado pelo Supabase
-  created_at: string;         // Data de criação (ISO 8601)
-  titulo: string;             // Título da tarefa
-  descricao: string | null;   // Descrição detalhada
-  projeto_id: string;         // ID do projeto associado
+  id: string; // UUID gerado pelo Supabase
+  created_at: string; // Data de criação (ISO 8601)
+  titulo: string; // Título da tarefa
+  descricao: string | null; // Descrição detalhada
+  projeto_id: string; // ID do projeto associado
   responsavel_id: string | null; // ID do usuário responsável
-  criador_id: string;         // ID do usuário que criou a tarefa
+  criador_id: string; // ID do usuário que criou a tarefa
   data_inicio: string | null; // Data de início (ISO 8601)
   data_fim_prevista: string | null; // Data de término prevista (ISO 8601)
   data_fim_real: string | null; // Data de término real (ISO 8601)
-  status: StatusTarefa;       // Status da tarefa
-  progresso: number;          // Percentual de progresso (0-100)
-  prioridade: Prioridade;     // Prioridade da tarefa
+  status: StatusTarefa; // Status da tarefa
+  progresso: number; // Percentual de progresso (0-100)
+  prioridade: Prioridade; // Prioridade da tarefa
   tempo_estimado: number | null; // Tempo estimado em horas
   tempo_gasto: number | null; // Tempo gasto em horas
-  tags: string[];             // Tags para categorização
-  subtarefas: Subtarefa[];    // Lista de subtarefas
+  tags: string[]; // Tags para categorização
+  subtarefas: Subtarefa[]; // Lista de subtarefas
   metadata: Record<string, any> | null; // Metadados adicionais
 }
 
@@ -172,12 +172,12 @@ interface Subtarefa {
 }
 
 enum StatusTarefa {
-  Backlog = 'backlog',
-  ToDo = 'to_do',
-  EmAndamento = 'em_andamento',
-  EmRevisao = 'em_revisao',
-  Concluida = 'concluida',
-  Cancelada = 'cancelada'
+  Backlog = "backlog",
+  ToDo = "to_do",
+  EmAndamento = "em_andamento",
+  EmRevisao = "em_revisao",
+  Concluida = "concluida",
+  Cancelada = "cancelada",
 }
 ```
 
@@ -187,29 +187,29 @@ Representa um documento associado a um cliente ou projeto.
 
 ```typescript
 interface Documento {
-  id: string;                 // UUID gerado pelo Supabase
-  created_at: string;         // Data de criação (ISO 8601)
-  nome: string;               // Nome do documento
-  descricao: string | null;   // Descrição do documento
-  tipo: TipoDocumento;        // Tipo do documento
-  cliente_id: string | null;  // ID do cliente associado (opcional)
-  projeto_id: string | null;  // ID do projeto associado (opcional)
-  criador_id: string;         // ID do usuário que criou o documento
-  arquivo_url: string;        // URL do arquivo no Storage
-  arquivo_nome: string;       // Nome original do arquivo
-  arquivo_tipo: string;       // Tipo MIME do arquivo
-  arquivo_tamanho: number;    // Tamanho em bytes
-  versao: string;             // Versão do documento
-  tags: string[];             // Tags para categorização
+  id: string; // UUID gerado pelo Supabase
+  created_at: string; // Data de criação (ISO 8601)
+  nome: string; // Nome do documento
+  descricao: string | null; // Descrição do documento
+  tipo: TipoDocumento; // Tipo do documento
+  cliente_id: string | null; // ID do cliente associado (opcional)
+  projeto_id: string | null; // ID do projeto associado (opcional)
+  criador_id: string; // ID do usuário que criou o documento
+  arquivo_url: string; // URL do arquivo no Storage
+  arquivo_nome: string; // Nome original do arquivo
+  arquivo_tipo: string; // Tipo MIME do arquivo
+  arquivo_tamanho: number; // Tamanho em bytes
+  versao: string; // Versão do documento
+  tags: string[]; // Tags para categorização
   metadata: Record<string, any> | null; // Metadados adicionais
 }
 
 enum TipoDocumento {
-  Contrato = 'contrato',
-  Proposta = 'proposta',
-  Relatorio = 'relatorio',
-  Fatura = 'fatura',
-  Outro = 'outro'
+  Contrato = "contrato",
+  Proposta = "proposta",
+  Relatorio = "relatorio",
+  Fatura = "fatura",
+  Outro = "outro",
 }
 ```
 
@@ -285,34 +285,38 @@ enum TipoDocumento {
 ### Consultas Comuns
 
 1. **Listar clientes ativos**:
+
    ```sql
    SELECT * FROM clientes WHERE status = 'ativo' ORDER BY nome;
    ```
 
 2. **Buscar projetos de um cliente**:
+
    ```sql
    SELECT * FROM projetos WHERE cliente_id = :cliente_id ORDER BY data_inicio DESC;
    ```
 
 3. **Listar tarefas de um projeto**:
+
    ```sql
    SELECT * FROM tarefas WHERE projeto_id = :projeto_id ORDER BY prioridade DESC, data_fim_prevista;
    ```
 
 4. **Buscar tarefas atribuídas a um usuário**:
+
    ```sql
-   SELECT t.*, p.nome as projeto_nome, c.nome as cliente_nome 
-   FROM tarefas t 
-   JOIN projetos p ON t.projeto_id = p.id 
-   JOIN clientes c ON p.cliente_id = c.id 
+   SELECT t.*, p.nome as projeto_nome, c.nome as cliente_nome
+   FROM tarefas t
+   JOIN projetos p ON t.projeto_id = p.id
+   JOIN clientes c ON p.cliente_id = c.id
    WHERE t.responsavel_id = :usuario_id AND t.status != 'concluida' AND t.status != 'cancelada'
    ORDER BY t.prioridade DESC, t.data_fim_prevista;
    ```
 
 5. **Buscar documentos de um cliente ou projeto**:
    ```sql
-   SELECT * FROM documentos 
-   WHERE (cliente_id = :cliente_id OR projeto_id = :projeto_id) 
+   SELECT * FROM documentos
+   WHERE (cliente_id = :cliente_id OR projeto_id = :projeto_id)
    ORDER BY created_at DESC;
    ```
 
@@ -353,10 +357,12 @@ As seguintes regras de validação devem ser aplicadas aos modelos de dados:
 ## Considerações de Segurança
 
 1. **Políticas de Acesso RLS (Row Level Security)**:
+
    - Usuários só podem ver clientes, projetos e tarefas de acordo com seu perfil
    - Clientes só podem ver seus próprios projetos e documentos
 
 2. **Auditoria**:
+
    - Todas as tabelas incluem campos `created_at` e `updated_at`
    - Operações de exclusão são registradas em tabelas de auditoria
 

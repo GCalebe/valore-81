@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, TrendingUp, TrendingDown } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Clock, TrendingUp, TrendingDown } from "lucide-react";
 
 interface ResponseTimeCardProps {
   avgResponseTime: number;
@@ -9,10 +8,10 @@ interface ResponseTimeCardProps {
   previousPeriod?: number;
 }
 
-const ResponseTimeCard: React.FC<ResponseTimeCardProps> = ({ 
-  avgResponseTime, 
+const ResponseTimeCard: React.FC<ResponseTimeCardProps> = ({
+  avgResponseTime,
   loading = false,
-  previousPeriod = 3.2
+  previousPeriod = 3.2,
 }) => {
   const improvement = previousPeriod - avgResponseTime;
   const isImproving = improvement > 0;
@@ -38,18 +37,21 @@ const ResponseTimeCard: React.FC<ResponseTimeCardProps> = ({
             <div className="text-3xl font-bold text-gray-800 dark:text-white">
               {avgResponseTime}h
             </div>
-            <div className={`text-sm flex items-center ${
-              isImproving 
-                ? 'text-green-600 dark:text-green-400' 
-                : 'text-red-600 dark:text-red-400'
-            }`}>
+            <div
+              className={`text-sm flex items-center ${
+                isImproving
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
               {isImproving ? (
                 <TrendingUp className="h-3 w-3 mr-1" />
               ) : (
                 <TrendingDown className="h-3 w-3 mr-1" />
               )}
               <span>
-                {isImproving ? 'Melhorou' : 'Piorou'} {improvementPercentage.toFixed(1)}%
+                {isImproving ? "Melhorou" : "Piorou"}{" "}
+                {improvementPercentage.toFixed(1)}%
               </span>
             </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">

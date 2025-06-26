@@ -1,29 +1,35 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CustomField } from '@/types/customField';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CustomField } from "@/types/customField";
 
 interface ClientCustomFieldsProps {
   /**
    * Lista de campos personalizados do cliente
    */
   customFields: CustomField[];
-  
+
   /**
    * Função para atualizar um campo personalizado
    */
   onUpdateCustomField?: (fieldId: string, value: any) => Promise<void>;
-  
+
   /**
    * Define se os campos devem ser somente leitura
    * @default false
    */
   readOnly?: boolean;
-  
+
   /**
    * Define se o componente deve ser exibido em modo compacto
    * @default false
@@ -50,29 +56,37 @@ export const ClientCustomFields: React.FC<ClientCustomFieldsProps> = ({
     const currentValue = field.value;
 
     if (readOnly) {
-      return <p>{currentValue?.toString() || 'Não informado'}</p>;
+      return <p>{currentValue?.toString() || "Não informado"}</p>;
     }
 
     switch (field.type) {
-      case 'text':
-      case 'email':
-      case 'phone':
+      case "text":
+      case "email":
+      case "phone":
         return (
           <Input
-            type={field.type === 'email' ? 'email' : field.type === 'phone' ? 'tel' : 'text'}
-            value={currentValue as string || ''}
+            type={
+              field.type === "email"
+                ? "email"
+                : field.type === "phone"
+                  ? "tel"
+                  : "text"
+            }
+            value={(currentValue as string) || ""}
             onChange={(e) => handleFieldChange(field.id, e.target.value)}
             placeholder={`Digite ${field.label.toLowerCase()}`}
           />
         );
-      case 'select':
+      case "select":
         return (
           <Select
-            value={currentValue as string || ''}
+            value={(currentValue as string) || ""}
             onValueChange={(value) => handleFieldChange(field.id, value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={`Selecione ${field.label.toLowerCase()}`} />
+              <SelectValue
+                placeholder={`Selecione ${field.label.toLowerCase()}`}
+              />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">Nenhum</SelectItem>
@@ -84,22 +98,26 @@ export const ClientCustomFields: React.FC<ClientCustomFieldsProps> = ({
             </SelectContent>
           </Select>
         );
-      case 'boolean':
+      case "boolean":
         return (
           <div className="flex items-center space-x-2">
             <Checkbox
               id={`field-${field.id}`}
               checked={Boolean(currentValue)}
-              onCheckedChange={(checked) => handleFieldChange(field.id, Boolean(checked))}
+              onCheckedChange={(checked) =>
+                handleFieldChange(field.id, Boolean(checked))
+              }
             />
             <Label htmlFor={`field-${field.id}`}>{field.label}</Label>
           </div>
         );
-      case 'date':
+      case "date":
         return (
           <DatePicker
             date={currentValue ? new Date(currentValue as string) : null}
-            setDate={(date) => handleFieldChange(field.id, date?.toISOString() || null)}
+            setDate={(date) =>
+              handleFieldChange(field.id, date?.toISOString() || null)
+            }
             placeholder={`Selecione uma data`}
           />
         );
@@ -110,7 +128,7 @@ export const ClientCustomFields: React.FC<ClientCustomFieldsProps> = ({
 
   if (customFields.length === 0) {
     return (
-      <Card className={compact ? 'p-3' : 'p-4'}>
+      <Card className={compact ? "p-3" : "p-4"}>
         <CardHeader className="p-0 pb-3">
           <CardTitle className="text-lg">Campos Personalizados</CardTitle>
         </CardHeader>
@@ -124,7 +142,7 @@ export const ClientCustomFields: React.FC<ClientCustomFieldsProps> = ({
   }
 
   return (
-    <Card className={compact ? 'p-3' : 'p-4'}>
+    <Card className={compact ? "p-3" : "p-4"}>
       <CardHeader className="p-0 pb-3">
         <CardTitle className="text-lg">Campos Personalizados</CardTitle>
       </CardHeader>

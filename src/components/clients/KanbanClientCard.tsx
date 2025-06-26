@@ -24,7 +24,7 @@ export const KanbanClientCard: React.FC<KanbanClientCardProps> = ({
   dragHandleProps,
   draggableProps,
   innerRef,
-  snapshot
+  snapshot,
 }) => {
   return (
     <ClientCard
@@ -36,15 +36,13 @@ export const KanbanClientCard: React.FC<KanbanClientCardProps> = ({
         showConsultationStage: true,
         showCommercialInfo: false,
         showCustomFields: false,
-        isCompact
+        isCompact,
       }}
       dragHandleProps={dragHandleProps}
       draggableProps={draggableProps}
       innerRef={innerRef}
       snapshot={snapshot}
-      className={cn(
-        snapshot?.isDragging ? "shadow-xl rotate-1 scale-105" : ""
-      )}
+      className={cn(snapshot?.isDragging ? "shadow-xl rotate-1 scale-105" : "")}
     />
   );
 };

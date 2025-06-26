@@ -3,12 +3,12 @@
 /**
  * Tipos de memória suportados pelo sistema
  */
-export type MemoryType = 'contextual' | 'semantic' | 'episodic';
+export type MemoryType = "contextual" | "semantic" | "episodic";
 
 /**
  * Níveis de memória para diferentes durações
  */
-export type MemoryLevel = 'short_term' | 'medium_term' | 'long_term';
+export type MemoryLevel = "short_term" | "medium_term" | "long_term";
 
 /**
  * Interface para entidades na memória semântica
@@ -54,7 +54,7 @@ export interface N8nChatMemory {
   data?: string;
   hora?: string;
   created_at?: string;
-  
+
   // Novos campos para tipos de memória
   memory_type?: MemoryType;
   memory_level?: MemoryLevel;

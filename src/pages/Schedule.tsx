@@ -1,19 +1,23 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { useCalendarEvents, CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
-import { useScheduleData } from '@/hooks/useScheduleData';
-import { useScheduleState } from '@/hooks/useScheduleState';
-import ScheduleHeader from '@/components/schedule/ScheduleHeader';
-import ScheduleFiltersSection from '@/components/schedule/ScheduleFiltersSection';
-import { ScheduleContent } from '@/components/schedule/ScheduleContent';
-import { ScheduleDialogs } from '@/components/schedule/ScheduleDialogs';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import {
+  useCalendarEvents,
+  CalendarEvent,
+  EventFormData,
+} from "@/hooks/useCalendarEvents";
+import { useScheduleData } from "@/hooks/useScheduleData";
+import { useScheduleState } from "@/hooks/useScheduleState";
+import ScheduleHeader from "@/components/schedule/ScheduleHeader";
+import ScheduleFiltersSection from "@/components/schedule/ScheduleFiltersSection";
+import { ScheduleContent } from "@/components/schedule/ScheduleContent";
+import { ScheduleDialogs } from "@/components/schedule/ScheduleDialogs";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 const Schedule = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
-  
+
   const {
     selectedDate,
     setSelectedDate,
@@ -40,17 +44,19 @@ const Schedule = () => {
     formData,
     setFormData,
     handleSubmit,
-    confirmDelete
+    confirmDelete,
   } = useScheduleState();
-  
+
   // Estado para controlar o período de busca de eventos
-  const [dateRange, setDateRange] = useState<{start: Date, end: Date} | null>(() => {
-    const currentMonth = selectedDate || new Date();
-    return {
-      start: startOfMonth(currentMonth),
-      end: endOfMonth(currentMonth)
-    };
-  });
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date } | null>(
+    () => {
+      const currentMonth = selectedDate || new Date();
+      return {
+        start: startOfMonth(currentMonth),
+        end: endOfMonth(currentMonth),
+      };
+    },
+  );
 
   const {
     events,
@@ -61,96 +67,112 @@ const Schedule = () => {
     addEvent,
     editEvent,
     deleteEvent,
-    isSubmitting
+    isSubmitting,
   } = useCalendarEvents(selectedDate, dateRange);
 
   const {
     events: scheduleEvents,
     loading: isScheduleLoading,
     refreshing: isScheduleRefreshing,
-    refetchScheduleData: refreshScheduleData
+    refetchScheduleData: refreshScheduleData,
   } = useScheduleData();
-  
+
   const isAnyLoading = isEventsLoading || isScheduleLoading;
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
-  
-  const [calendarViewTab, setCalendarViewTab] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
-  
+
+  const [calendarViewTab, setCalendarViewTab] = React.useState<
+    "mes" | "semana" | "dia" | "agenda"
+  >("mes");
+
   // Estados para filtros
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [hostFilter, setHostFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [hostFilter, setHostFilter] = useState("all");
 
   const handleRefreshAll = useCallback(async () => {
-    console.log('Atualizando todos os dados...');
-    
-    const refreshPromises = [
-      refreshEventsPost(),
-      refreshScheduleData()
-    ];
-    
+    console.log("Atualizando todos os dados...");
+
+    const refreshPromises = [refreshEventsPost(), refreshScheduleData()];
+
     try {
       await Promise.all(refreshPromises);
-      console.log('Todos os dados atualizados com sucesso');
+      console.log("Todos os dados atualizados com sucesso");
     } catch (error) {
-      console.error('Erro ao atualizar dados:', error);
+      console.error("Erro ao atualizar dados:", error);
     }
   }, [refreshEventsPost, refreshScheduleData]);
 
   const handlePeriodChange = useCallback((start: Date, end: Date) => {
-    console.log('Período alterado:', { start, end });
+    console.log("Período alterado:", { start, end });
     setDateRange({ start, end });
   }, []);
 
-  const handleAddEvent = useCallback((formData: EventFormData) => {
-    addEvent(formData).then(success => {
-      if (success) {
-        setIsAddEventDialogOpen(false);
-      }
-    });
-  }, [addEvent, setIsAddEventDialogOpen]);
-  
-  const handleEditEvent = useCallback((formData: EventFormData) => {
-    if (selectedEvent) {
-      editEvent(selectedEvent.id, formData).then(success => {
+  const handleAddEvent = useCallback(
+    (formData: EventFormData) => {
+      addEvent(formData).then((success) => {
         if (success) {
-          setIsEditEventDialogOpen(false);
-          setSelectedEvent(null);
+          setIsAddEventDialogOpen(false);
         }
       });
-    }
-  }, [selectedEvent, editEvent, setIsEditEventDialogOpen, setSelectedEvent]);
-  
+    },
+    [addEvent, setIsAddEventDialogOpen],
+  );
+
+  const handleEditEvent = useCallback(
+    (formData: EventFormData) => {
+      if (selectedEvent) {
+        editEvent(selectedEvent.id, formData).then((success) => {
+          if (success) {
+            setIsEditEventDialogOpen(false);
+            setSelectedEvent(null);
+          }
+        });
+      }
+    },
+    [selectedEvent, editEvent, setIsEditEventDialogOpen, setSelectedEvent],
+  );
+
   const handleDeleteEvent = useCallback(() => {
     if (selectedEvent) {
-      deleteEvent(selectedEvent.id).then(success => {
+      deleteEvent(selectedEvent.id).then((success) => {
         if (success) {
           setIsDeleteEventDialogOpen(false);
           setSelectedEvent(null);
         }
       });
     }
-  }, [selectedEvent, deleteEvent, setIsDeleteEventDialogOpen, setSelectedEvent]);
-  
-  const openEditEventDialog = useCallback((event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setIsEditEventDialogOpen(true);
-  }, [setSelectedEvent, setIsEditEventDialogOpen]);
-  
-  const openDeleteEventDialog = useCallback((event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setIsDeleteEventDialogOpen(true);
-  }, [setSelectedEvent, setIsDeleteEventDialogOpen]);
-  
+  }, [
+    selectedEvent,
+    deleteEvent,
+    setIsDeleteEventDialogOpen,
+    setSelectedEvent,
+  ]);
+
+  const openEditEventDialog = useCallback(
+    (event: CalendarEvent) => {
+      setSelectedEvent(event);
+      setIsEditEventDialogOpen(true);
+    },
+    [setSelectedEvent, setIsEditEventDialogOpen],
+  );
+
+  const openDeleteEventDialog = useCallback(
+    (event: CalendarEvent) => {
+      setSelectedEvent(event);
+      setIsDeleteEventDialogOpen(true);
+    },
+    [setSelectedEvent, setIsDeleteEventDialogOpen],
+  );
+
   const openEventLink = useCallback((url: string) => {
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }, []);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
-      navigate('/');
+      navigate("/");
     }
   }, [user, isAuthLoading, navigate]);
-  
+
   if (isAuthLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -158,10 +180,10 @@ const Schedule = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <ScheduleHeader 
+      <ScheduleHeader
         onAddEvent={() => setIsAddEventDialogOpen(true)}
         onRefresh={handleRefreshAll}
         isRefreshing={isAnyRefreshing}
@@ -170,7 +192,7 @@ const Schedule = () => {
         onViewChange={setCalendarViewTab}
         onOpenFilter={() => {}}
       />
-      
+
       <ScheduleFiltersSection
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
@@ -179,8 +201,8 @@ const Schedule = () => {
         onRefresh={handleRefreshAll}
         isRefreshing={isAnyRefreshing}
       />
-      
-      <ScheduleContent 
+
+      <ScheduleContent
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
         events={events}
@@ -202,7 +224,7 @@ const Schedule = () => {
         setCalendarViewType={setCalendarViewTab}
       />
 
-      <ScheduleDialogs 
+      <ScheduleDialogs
         isAddEventDialogOpen={isAddEventDialogOpen}
         setIsAddEventDialogOpen={setIsAddEventDialogOpen}
         isEditEventDialogOpen={isEditEventDialogOpen}

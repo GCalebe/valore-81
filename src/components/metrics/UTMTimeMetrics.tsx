@@ -1,7 +1,12 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Clock, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 
 interface UTMTimeMetricsProps {
   timeToConversion: {
@@ -13,7 +18,10 @@ interface UTMTimeMetricsProps {
   loading?: boolean;
 }
 
-const UTMTimeMetrics: React.FC<UTMTimeMetricsProps> = ({ timeToConversion, loading }) => {
+const UTMTimeMetrics: React.FC<UTMTimeMetricsProps> = ({
+  timeToConversion,
+  loading,
+}) => {
   if (loading) {
     return (
       <Card>
@@ -44,32 +52,32 @@ const UTMTimeMetrics: React.FC<UTMTimeMetricsProps> = ({ timeToConversion, loadi
 
   const metrics = [
     {
-      title: 'Tempo Médio',
+      title: "Tempo Médio",
       value: formatTime(timeToConversion.average),
       icon: <BarChart3 className="h-4 w-4" />,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+      color: "text-blue-600",
+      bgColor: "bg-blue-100 dark:bg-blue-900/30",
     },
     {
-      title: 'Tempo Mediano',
+      title: "Tempo Mediano",
       value: formatTime(timeToConversion.median),
       icon: <Clock className="h-4 w-4" />,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100 dark:bg-green-900/30',
+      color: "text-green-600",
+      bgColor: "bg-green-100 dark:bg-green-900/30",
     },
     {
-      title: 'Mais Rápido',
+      title: "Mais Rápido",
       value: formatTime(timeToConversion.min),
       icon: <TrendingUp className="h-4 w-4" />,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+      color: "text-emerald-600",
+      bgColor: "bg-emerald-100 dark:bg-emerald-900/30",
     },
     {
-      title: 'Mais Lento',
+      title: "Mais Lento",
       value: formatTime(timeToConversion.max),
       icon: <TrendingDown className="h-4 w-4" />,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100 dark:bg-red-900/30',
+      color: "text-red-600",
+      bgColor: "bg-red-100 dark:bg-red-900/30",
     },
   ];
 
@@ -77,16 +85,18 @@ const UTMTimeMetrics: React.FC<UTMTimeMetricsProps> = ({ timeToConversion, loadi
     <Card>
       <CardHeader>
         <CardTitle>⏱️ Tempo para Conversão</CardTitle>
-        <CardDescription>Análise temporal das conversões (primeiro toque até conversão)</CardDescription>
+        <CardDescription>
+          Análise temporal das conversões (primeiro toque até conversão)
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {metrics.map((metric) => (
             <div key={metric.title} className="text-center">
-              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${metric.bgColor} mb-2`}>
-                <div className={metric.color}>
-                  {metric.icon}
-                </div>
+              <div
+                className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${metric.bgColor} mb-2`}
+              >
+                <div className={metric.color}>{metric.icon}</div>
               </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {metric.value}
@@ -97,7 +107,7 @@ const UTMTimeMetrics: React.FC<UTMTimeMetricsProps> = ({ timeToConversion, loadi
             </div>
           ))}
         </div>
-        
+
         {timeToConversion.average === 0 && (
           <div className="text-center py-4 text-gray-500">
             Nenhum dado de conversão temporal disponível

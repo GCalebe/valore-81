@@ -1,7 +1,12 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface UTMGeoHeatmapProps {
   data: Array<{
@@ -31,14 +36,14 @@ const UTMGeoHeatmap: React.FC<UTMGeoHeatmapProps> = ({ data, loading }) => {
 
   const getIntensityColor = (leads: number, maxLeads: number) => {
     const intensity = leads / maxLeads;
-    if (intensity > 0.8) return 'bg-red-500';
-    if (intensity > 0.6) return 'bg-orange-500';
-    if (intensity > 0.4) return 'bg-yellow-500';
-    if (intensity > 0.2) return 'bg-green-500';
-    return 'bg-blue-500';
+    if (intensity > 0.8) return "bg-red-500";
+    if (intensity > 0.6) return "bg-orange-500";
+    if (intensity > 0.4) return "bg-yellow-500";
+    if (intensity > 0.2) return "bg-green-500";
+    return "bg-blue-500";
   };
 
-  const maxLeads = Math.max(...data.map(item => item.leads), 1);
+  const maxLeads = Math.max(...data.map((item) => item.leads), 1);
 
   return (
     <Card>
@@ -54,15 +59,28 @@ const UTMGeoHeatmap: React.FC<UTMGeoHeatmapProps> = ({ data, loading }) => {
             </div>
           ) : (
             data.map((region, index) => {
-              const conversionRate = region.leads > 0 ? (region.conversions / region.leads) * 100 : 0;
+              const conversionRate =
+                region.leads > 0
+                  ? (region.conversions / region.leads) * 100
+                  : 0;
               return (
-                <div key={region.location} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={region.location}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-gray-500">#{index + 1}</span>
-                      <div 
-                        className={`w-4 h-4 rounded ${getIntensityColor(region.leads, maxLeads)}`}
-                        title={`Intensidade: ${Math.round((region.leads / maxLeads) * 100)}%`}
+                      <span className="text-lg font-bold text-gray-500">
+                        #{index + 1}
+                      </span>
+                      <div
+                        className={`w-4 h-4 rounded ${getIntensityColor(
+                          region.leads,
+                          maxLeads,
+                        )}`}
+                        title={`Intensidade: ${Math.round(
+                          (region.leads / maxLeads) * 100,
+                        )}%`}
                       />
                     </div>
                     <div>

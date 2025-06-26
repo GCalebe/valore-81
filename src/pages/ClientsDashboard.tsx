@@ -1,23 +1,23 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { useAuth } from '@/context/AuthContext';
-import { useClientManagement } from '@/hooks/useClientManagement';
-import { useClientsFilters } from '@/hooks/useClientsFilters';
-import { useKanbanStages } from '@/hooks/useKanbanStages';
-import ClientsDashboardLayout from '@/components/clients/ClientsDashboardLayout';
-import ClientsTable from '@/components/clients/ClientsTable';
-import KanbanView from '@/components/clients/KanbanView';
-import ClientsModals from '@/components/clients/ClientsModals';
+import { useAuth } from "@/context/AuthContext";
+import { useClientManagement } from "@/hooks/useClientManagement";
+import { useClientsFilters } from "@/hooks/useClientsFilters";
+import { useKanbanStages } from "@/hooks/useKanbanStages";
+import ClientsDashboardLayout from "@/components/clients/ClientsDashboardLayout";
+import ClientsTable from "@/components/clients/ClientsTable";
+import KanbanView from "@/components/clients/KanbanView";
+import ClientsModals from "@/components/clients/ClientsModals";
 
 const ClientsDashboard = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const filter = useClientsFilters();
-  const { customFieldFilters, addCustomFieldFilter, removeCustomFieldFilter } = filter;
+  const { customFieldFilters, addCustomFieldFilter, removeCustomFieldFilter } =
+    filter;
 
-  const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban');
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("kanban");
   const [isCompactView, setIsCompactView] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
@@ -52,14 +52,14 @@ const ClientsDashboard = () => {
     handleMessageClick,
     handleMessageSubmit,
     handlePauseDurationConfirm,
-    handleKanbanStageChange
+    handleKanbanStageChange,
   } = useClientManagement();
 
   const kanbanStages = useKanbanStages();
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
-      navigate('/');
+      navigate("/");
     }
   }, [user, isAuthLoading, navigate]);
 
@@ -88,7 +88,7 @@ const ClientsDashboard = () => {
         onAddCustomFieldFilter: addCustomFieldFilter,
         onRemoveCustomFieldFilter: removeCustomFieldFilter,
         onClearFilters: filter.clearAll,
-        onClearCustomFieldFilters: () => filter.clearAll('customFields'),
+        onClearCustomFieldFilters: () => filter.clearAll("customFields"),
         hasActiveFilters: filter.hasActiveFilters,
         isAddContactOpen,
         onAddContactOpenChange: setIsAddContactOpen,
@@ -104,7 +104,7 @@ const ClientsDashboard = () => {
       }}
     >
       <div className="flex-1 overflow-hidden">
-        {viewMode === 'table' ? (
+        {viewMode === "table" ? (
           <ClientsTable
             contacts={contacts}
             isLoading={loadingContacts}

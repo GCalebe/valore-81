@@ -25,18 +25,22 @@ Para adicionar uma nova entrada no histórico de alterações:
 ## [Versão] - YYYY-MM-DD
 
 ### Adicionado
+
 - Nova funcionalidade A
 - Nova funcionalidade B
 
 ### Alterado
+
 - Melhoria na funcionalidade C
 - Atualização na biblioteca D
 
 ### Corrigido
+
 - Correção do bug E
 - Correção do bug F
 
 ### Removido
+
 - Funcionalidade obsoleta G
 - Dependência desnecessária H
 ```

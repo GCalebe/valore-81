@@ -41,10 +41,10 @@ const ClientTableRow: React.FC<ClientTableRowProps> = ({
 
   const renderTags = () => {
     if (!contact.tags || contact.tags.length === 0) return 'Sem tags';
-    
+
     const visibleTags = contact.tags.slice(0, 3);
     const remainingCount = contact.tags.length - 3;
-    
+
     return (
       <div className="flex flex-wrap gap-1">
         {visibleTags.map((tag, index) => (
@@ -154,7 +154,7 @@ const ClientTableRow: React.FC<ClientTableRowProps> = ({
             >
               <MessageSquare className="h-4 w-4" />
             </Button>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -196,14 +196,14 @@ export default ClientTableRow;
 
 /**
  * Instruções para implementação:
- * 
+ *
  * Este componente deve ser usado dentro do ClientsTable para renderizar cada linha
  * da tabela de clientes.
- * 
+ *
  * Exemplo de uso no ClientsTable:
- * 
+ *
  * import ClientTableRow from './ClientTableRow';
- * 
+ *
  * // Dentro do componente ClientsTable
  * return (
  *   <Table>

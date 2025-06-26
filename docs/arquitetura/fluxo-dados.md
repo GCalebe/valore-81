@@ -51,8 +51,8 @@ Os componentes de interface do usuário são responsáveis por:
 
 ```tsx
 // src/components/clients/ClientsTableStandardized/ClientsTableStandardized.tsx
-import React from 'react';
-import { Client } from '@/types/client';
+import React from "react";
+import { Client } from "@/types/client";
 
 interface ClientsTableStandardizedProps {
   clients: Client[];
@@ -70,7 +70,7 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
   onDelete,
 }) => {
   if (isLoading) return <div>Carregando...</div>;
-  
+
   return (
     <table className="min-w-full">
       <thead>
@@ -113,9 +113,9 @@ O estado armazena dados que podem ser acessados e modificados pelos componentes:
 
 ```tsx
 // src/stores/uiStore.ts
-import { create } from 'zustand';
+import { create } from "zustand";
 
-type NotificationType = 'success' | 'error' | 'info' | 'warning';
+type NotificationType = "success" | "error" | "info" | "warning";
 
 interface Notification {
   id: string;
@@ -128,7 +128,11 @@ interface UIState {
   notifications: Notification[];
   isClientModalOpen: boolean;
   selectedClientId: string | null;
-  addNotification: (message: string, type: NotificationType, duration?: number) => void;
+  addNotification: (
+    message: string,
+    type: NotificationType,
+    duration?: number,
+  ) => void;
   removeNotification: (id: string) => void;
   openClientModal: (clientId?: string) => void;
   closeClientModal: () => void;
@@ -138,32 +142,38 @@ export const useUIStore = create<UIState>((set) => ({
   notifications: [],
   isClientModalOpen: false,
   selectedClientId: null,
-  
-  addNotification: (message, type, duration = 5000) => set((state) => ({
-    notifications: [
-      ...state.notifications,
-      {
-        id: Date.now().toString(),
-        message,
-        type,
-        duration,
-      },
-    ],
-  })),
-  
-  removeNotification: (id) => set((state) => ({
-    notifications: state.notifications.filter((notification) => notification.id !== id),
-  })),
-  
-  openClientModal: (clientId = null) => set({
-    isClientModalOpen: true,
-    selectedClientId: clientId,
-  }),
-  
-  closeClientModal: () => set({
-    isClientModalOpen: false,
-    selectedClientId: null,
-  }),
+
+  addNotification: (message, type, duration = 5000) =>
+    set((state) => ({
+      notifications: [
+        ...state.notifications,
+        {
+          id: Date.now().toString(),
+          message,
+          type,
+          duration,
+        },
+      ],
+    })),
+
+  removeNotification: (id) =>
+    set((state) => ({
+      notifications: state.notifications.filter(
+        (notification) => notification.id !== id,
+      ),
+    })),
+
+  openClientModal: (clientId = null) =>
+    set({
+      isClientModalOpen: true,
+      selectedClientId: clientId,
+    }),
+
+  closeClientModal: () =>
+    set({
+      isClientModalOpen: false,
+      selectedClientId: null,
+    }),
 }));
 ```
 
@@ -179,14 +189,14 @@ Hooks encapsulam a lógica de negócios e servem como intermediários entre os c
 
 ```tsx
 // src/hooks/useClients.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { clientsService } from '@/services/clientsService';
-import { Client, ClientInput } from '@/types/client';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { clientsService } from "@/services/clientsService";
+import { Client, ClientInput } from "@/types/client";
 
 // Hook para buscar todos os clientes
 export const useClients = () => {
   return useQuery<Client[], Error>({
-    queryKey: ['clients'],
+    queryKey: ["clients"],
     queryFn: clientsService.getClients,
   });
 };
@@ -194,7 +204,7 @@ export const useClients = () => {
 // Hook para buscar um cliente específico
 export const useClient = (id: string) => {
   return useQuery<Client, Error>({
-    queryKey: ['clients', id],
+    queryKey: ["clients", id],
     queryFn: () => clientsService.getClient(id),
     enabled: !!id, // Só executa se o ID for fornecido
   });
@@ -203,12 +213,12 @@ export const useClient = (id: string) => {
 // Hook para criar um novo cliente
 export const useCreateClient = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<Client, Error, ClientInput>({
     mutationFn: clientsService.createClient,
     onSuccess: () => {
       // Invalida a query de clientes para forçar uma nova busca
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 };
@@ -216,14 +226,14 @@ export const useCreateClient = () => {
 // Hook para atualizar um cliente existente
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<Client, Error, { id: string; data: ClientInput }>({
     mutationFn: ({ id, data }) => clientsService.updateClient(id, data),
     onSuccess: (updatedClient) => {
       // Atualiza o cliente no cache
-      queryClient.setQueryData(['clients', updatedClient.id], updatedClient);
+      queryClient.setQueryData(["clients", updatedClient.id], updatedClient);
       // Invalida a query de clientes para forçar uma nova busca
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 };
@@ -231,12 +241,12 @@ export const useUpdateClient = () => {
 // Hook para excluir um cliente
 export const useDeleteClient = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<void, Error, string>({
     mutationFn: clientsService.deleteClient,
     onSuccess: () => {
       // Invalida a query de clientes para forçar uma nova busca
-      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 };
@@ -263,65 +273,62 @@ Os serviços são responsáveis pela comunicação com APIs externas:
 
 ```tsx
 // src/services/clientsService.ts
-import { supabase } from '@/lib/supabaseClient';
-import { Client, ClientInput } from '@/types/client';
+import { supabase } from "@/lib/supabaseClient";
+import { Client, ClientInput } from "@/types/client";
 
 export const clientsService = {
   // Buscar todos os clientes
   getClients: async (): Promise<Client[]> => {
     const { data, error } = await supabase
-      .from('clients')
-      .select('*')
-      .order('name');
-      
+      .from("clients")
+      .select("*")
+      .order("name");
+
     if (error) throw new Error(error.message);
     return data;
   },
-  
+
   // Buscar um cliente específico
   getClient: async (id: string): Promise<Client> => {
     const { data, error } = await supabase
-      .from('clients')
-      .select('*')
-      .eq('id', id)
+      .from("clients")
+      .select("*")
+      .eq("id", id)
       .single();
-      
+
     if (error) throw new Error(error.message);
     return data;
   },
-  
+
   // Criar um novo cliente
   createClient: async (client: ClientInput): Promise<Client> => {
     const { data, error } = await supabase
-      .from('clients')
+      .from("clients")
       .insert(client)
       .select()
       .single();
-      
+
     if (error) throw new Error(error.message);
     return data;
   },
-  
+
   // Atualizar um cliente existente
   updateClient: async (id: string, client: ClientInput): Promise<Client> => {
     const { data, error } = await supabase
-      .from('clients')
+      .from("clients")
       .update(client)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
-      
+
     if (error) throw new Error(error.message);
     return data;
   },
-  
+
   // Excluir um cliente
   deleteClient: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('clients')
-      .delete()
-      .eq('id', id);
-      
+    const { error } = await supabase.from("clients").delete().eq("id", id);
+
     if (error) throw new Error(error.message);
   },
 };
@@ -339,7 +346,7 @@ O cliente de API (Supabase, Axios, etc.) lida com a comunicação de baixo níve
 
 ```tsx
 // src/lib/supabaseClient.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -367,14 +374,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 ```tsx
 // src/pages/clients/index.tsx
-import React from 'react';
-import { NextPage } from 'next';
-import Head from 'next/head';
+import React from "react";
+import { NextPage } from "next";
+import Head from "next/head";
 
-import MainLayout from '@/components/layout/MainLayout';
-import ClientsTableStandardized from '@/components/clients/ClientsTableStandardized';
-import { useClients, useDeleteClient } from '@/hooks/useClients';
-import { useUIStore } from '@/stores/uiStore';
+import MainLayout from "@/components/layout/MainLayout";
+import ClientsTableStandardized from "@/components/clients/ClientsTableStandardized";
+import { useClients, useDeleteClient } from "@/hooks/useClients";
+import { useUIStore } from "@/stores/uiStore";
 
 const ClientsPage: NextPage = () => {
   // 1. Componente chama o hook useClients
@@ -394,12 +401,12 @@ const ClientsPage: NextPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Tem certeza que deseja excluir este cliente?')) {
+    if (window.confirm("Tem certeza que deseja excluir este cliente?")) {
       try {
         await deleteClient.mutateAsync(id);
-        addNotification('Cliente excluído com sucesso', 'success');
+        addNotification("Cliente excluído com sucesso", "success");
       } catch (error) {
-        addNotification(`Erro ao excluir cliente: ${error.message}`, 'error');
+        addNotification(`Erro ao excluir cliente: ${error.message}`, "error");
       }
     }
   };
@@ -460,19 +467,23 @@ export default ClientsPage;
 
 ```tsx
 // src/components/clients/ClientForm/ClientForm.tsx
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-import { useCreateClient, useUpdateClient, useClient } from '@/hooks/useClients';
-import { useUIStore } from '@/stores/uiStore';
-import { Client } from '@/types/client';
+import {
+  useCreateClient,
+  useUpdateClient,
+  useClient,
+} from "@/hooks/useClients";
+import { useUIStore } from "@/stores/uiStore";
+import { Client } from "@/types/client";
 
 // Schema de validação com Zod
 const clientSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email('Email inválido'),
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
   phone: z.string().optional(),
   address: z.string().optional(),
   notes: z.string().optional(),
@@ -487,17 +498,19 @@ interface ClientFormProps {
 
 const ClientForm: React.FC<ClientFormProps> = ({ clientId, onSuccess }) => {
   const isEditing = !!clientId;
-  
+
   // Busca dados do cliente se estiver editando
-  const { data: client, isLoading: isLoadingClient } = useClient(clientId || '');
-  
+  const { data: client, isLoading: isLoadingClient } = useClient(
+    clientId || "",
+  );
+
   // Hooks de mutação
   const createClient = useCreateClient();
   const updateClient = useUpdateClient();
-  
+
   // Estado global
   const { addNotification, closeClientModal } = useUIStore();
-  
+
   // React Hook Form
   const {
     register,
@@ -506,122 +519,144 @@ const ClientForm: React.FC<ClientFormProps> = ({ clientId, onSuccess }) => {
     formState: { errors, isSubmitting },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
-    defaultValues: isEditing ? {} : {
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      notes: '',
-    },
+    defaultValues: isEditing
+      ? {}
+      : {
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          notes: "",
+        },
   });
-  
+
   // Preenche o formulário quando os dados do cliente são carregados
   React.useEffect(() => {
     if (client) {
       reset({
         name: client.name,
         email: client.email,
-        phone: client.phone || '',
-        address: client.address || '',
-        notes: client.notes || '',
+        phone: client.phone || "",
+        address: client.address || "",
+        notes: client.notes || "",
       });
     }
   }, [client, reset]);
-  
+
   // Função para lidar com o envio do formulário
   const onSubmit = async (data: ClientFormData) => {
     try {
       if (isEditing && clientId) {
         // 3-4. Chama o hook de mutação para atualizar
         await updateClient.mutateAsync({ id: clientId, data });
-        addNotification('Cliente atualizado com sucesso', 'success');
+        addNotification("Cliente atualizado com sucesso", "success");
       } else {
         // 3-4. Chama o hook de mutação para criar
         await createClient.mutateAsync(data);
-        addNotification('Cliente criado com sucesso', 'success');
+        addNotification("Cliente criado com sucesso", "success");
         reset(); // Limpa o formulário após criar
       }
-      
+
       // Fecha o modal e chama callback de sucesso
       if (onSuccess) onSuccess();
       closeClientModal();
     } catch (error) {
-      addNotification(`Erro ao ${isEditing ? 'atualizar' : 'criar'} cliente: ${error.message}`, 'error');
+      addNotification(
+        `Erro ao ${isEditing ? "atualizar" : "criar"} cliente: ${
+          error.message
+        }`,
+        "error",
+      );
     }
   };
-  
+
   if (isEditing && isLoadingClient) {
     return <div>Carregando...</div>;
   }
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700"
+        >
           Nome *
         </label>
         <input
           id="name"
           type="text"
-          {...register('name')}
+          {...register("name")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
         {errors.name && (
           <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
         )}
       </div>
-      
+
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
           Email *
         </label>
         <input
           id="email"
           type="email"
-          {...register('email')}
+          {...register("email")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
-      
+
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="phone"
+          className="block text-sm font-medium text-gray-700"
+        >
           Telefone
         </label>
         <input
           id="phone"
           type="text"
-          {...register('phone')}
+          {...register("phone")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
       </div>
-      
+
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="address"
+          className="block text-sm font-medium text-gray-700"
+        >
           Endereço
         </label>
         <input
           id="address"
           type="text"
-          {...register('address')}
+          {...register("address")}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
       </div>
-      
+
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="notes"
+          className="block text-sm font-medium text-gray-700"
+        >
           Observações
         </label>
         <textarea
           id="notes"
-          {...register('notes')}
+          {...register("notes")}
           rows={3}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
         />
       </div>
-      
+
       <div className="flex justify-end space-x-3">
         <button
           type="button"
@@ -635,7 +670,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ clientId, onSuccess }) => {
           disabled={isSubmitting}
           className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
+          {isSubmitting ? "Salvando..." : isEditing ? "Atualizar" : "Criar"}
         </button>
       </div>
     </form>
@@ -659,7 +694,7 @@ O React Query fornece estratégias avançadas de cache:
 
 ```tsx
 // src/lib/queryClient.ts
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -687,27 +722,30 @@ Para evitar buscas desnecessárias após mutações, o React Query permite:
 // src/hooks/useClients.ts (trecho)
 export const useUpdateClient = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<Client, Error, { id: string; data: ClientInput }>(
     ({ id, data }) => clientsService.updateClient(id, data),
     {
       // Atualização otimista
       onMutate: async ({ id, data }) => {
         // Cancela quaisquer queries em andamento para evitar sobrescrever a atualização otimista
-        await queryClient.cancelQueries({ queryKey: ['clients', id] });
-        
+        await queryClient.cancelQueries({ queryKey: ["clients", id] });
+
         // Salva o estado anterior
-        const previousClient = queryClient.getQueryData<Client>(['clients', id]);
-        
+        const previousClient = queryClient.getQueryData<Client>([
+          "clients",
+          id,
+        ]);
+
         // Atualiza o cache com os novos dados (otimisticamente)
         if (previousClient) {
-          queryClient.setQueryData<Client>(['clients', id], {
+          queryClient.setQueryData<Client>(["clients", id], {
             ...previousClient,
             ...data,
           });
-          
+
           // Atualiza também na lista de clientes
-          queryClient.setQueryData<Client[]>(['clients'], (old) => {
+          queryClient.setQueryData<Client[]>(["clients"], (old) => {
             if (!old) return [];
             return old.map((client) => {
               if (client.id === id) {
@@ -717,17 +755,17 @@ export const useUpdateClient = () => {
             });
           });
         }
-        
+
         // Retorna o contexto com o estado anterior
         return { previousClient };
       },
-      
+
       // Em caso de erro, reverte para o estado anterior
       onError: (err, { id }, context) => {
         if (context?.previousClient) {
-          queryClient.setQueryData(['clients', id], context.previousClient);
-          
-          queryClient.setQueryData<Client[]>(['clients'], (old) => {
+          queryClient.setQueryData(["clients", id], context.previousClient);
+
+          queryClient.setQueryData<Client[]>(["clients"], (old) => {
             if (!old) return [];
             return old.map((client) => {
               if (client.id === id) {
@@ -738,13 +776,13 @@ export const useUpdateClient = () => {
           });
         }
       },
-      
+
       // Após a mutação, atualiza o cache com os dados reais do servidor
       onSettled: (data, error, { id }) => {
-        queryClient.invalidateQueries({ queryKey: ['clients', id] });
-        queryClient.invalidateQueries({ queryKey: ['clients'] });
+        queryClient.invalidateQueries({ queryKey: ["clients", id] });
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
       },
-    }
+    },
   );
 };
 ```
@@ -773,16 +811,16 @@ getPaginatedClients: async (page: number, pageSize: number): Promise<{ clients: 
   // Calcula o início com base na página e no tamanho da página
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
-  
+
   // Busca os clientes com paginação
   const { data, error, count } = await supabase
     .from('clients')
     .select('*', { count: 'exact' })
     .order('name')
     .range(from, to);
-    
+
   if (error) throw new Error(error.message);
-  
+
   return {
     clients: data,
     totalCount: count || 0,
@@ -807,7 +845,7 @@ getClient: async (id: string): Promise<Client> => {
       .select('*')
       .eq('id', id)
       .single();
-      
+
     if (error) {
       // Transforma erros do Supabase em mensagens mais amigáveis
       if (error.code === 'PGRST116') {
@@ -815,7 +853,7 @@ getClient: async (id: string): Promise<Client> => {
       }
       throw new Error(error.message);
     }
-    
+
     return data;
   } catch (error) {
     // Registra o erro para depuração

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,11 +8,11 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { useKanbanStages } from '@/hooks/useKanbanStages';
-import { MetricsFilters } from './MetricsFilters';
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useKanbanStages } from "@/hooks/useKanbanStages";
+import { MetricsFilters } from "./MetricsFilters";
 
 interface FunnelChartSettingsProps {
   selectedStages: string[];
@@ -29,12 +29,14 @@ export function FunnelChartSettings({
   customDate,
   setCustomDate,
   showNoShowRate = false,
-  onShowNoShowRateChange
+  onShowNoShowRateChange,
 }: FunnelChartSettingsProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { stages, loading } = useKanbanStages();
-  const [localSelectedStages, setLocalSelectedStages] = useState<string[]>(selectedStages);
-  const [localShowNoShowRate, setLocalShowNoShowRate] = useState<boolean>(showNoShowRate);
+  const [localSelectedStages, setLocalSelectedStages] =
+    useState<string[]>(selectedStages);
+  const [localShowNoShowRate, setLocalShowNoShowRate] =
+    useState<boolean>(showNoShowRate);
 
   const handleSave = () => {
     onStagesChange(localSelectedStages);
@@ -45,9 +47,9 @@ export function FunnelChartSettings({
   };
 
   const handleStageToggle = (stageTitle: string) => {
-    setLocalSelectedStages(prev => {
+    setLocalSelectedStages((prev) => {
       if (prev.includes(stageTitle)) {
-        return prev.filter(s => s !== stageTitle);
+        return prev.filter((s) => s !== stageTitle);
       } else {
         return [...prev, stageTitle];
       }
@@ -55,7 +57,7 @@ export function FunnelChartSettings({
   };
 
   const handleSelectAll = () => {
-    setLocalSelectedStages(stages.map(stage => stage.title));
+    setLocalSelectedStages(stages.map((stage) => stage.title));
   };
 
   const handleSelectNone = () => {
@@ -64,9 +66,9 @@ export function FunnelChartSettings({
 
   return (
     <>
-      <Button 
-        variant="ghost" 
-        size="icon" 
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={() => {
           setLocalSelectedStages(selectedStages);
           setLocalShowNoShowRate(showNoShowRate);
@@ -83,38 +85,52 @@ export function FunnelChartSettings({
           <DialogHeader>
             <DialogTitle>Configurações do Funil de Conversão</DialogTitle>
             <DialogDescription>
-              Personalize o período de análise e os estágios exibidos no gráfico.
+              Personalize o período de análise e os estágios exibidos no
+              gráfico.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-6">
             <div className="space-y-2">
               <h4 className="text-sm font-medium">Período de Análise</h4>
-              <MetricsFilters customDate={customDate} setCustomDate={setCustomDate} />
+              <MetricsFilters
+                customDate={customDate}
+                setCustomDate={setCustomDate}
+              />
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-medium">Estágios do Kanban</h4>
                 <div className="space-x-2">
-                  <Button variant="outline" size="sm" onClick={handleSelectAll}>Selecionar Todos</Button>
-                  <Button variant="outline" size="sm" onClick={handleSelectNone}>Limpar</Button>
+                  <Button variant="outline" size="sm" onClick={handleSelectAll}>
+                    Selecionar Todos
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSelectNone}
+                  >
+                    Limpar
+                  </Button>
                 </div>
               </div>
-              
+
               <div className="max-h-60 overflow-y-auto space-y-2 border rounded-md p-2">
                 {loading ? (
                   <div className="flex justify-center p-4">
                     <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : (
-                  stages.map(stage => (
+                  stages.map((stage) => (
                     <div key={stage.id} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`stage-${stage.id}`} 
+                      <Checkbox
+                        id={`stage-${stage.id}`}
                         checked={localSelectedStages.includes(stage.title)}
                         onCheckedChange={() => handleStageToggle(stage.title)}
                       />
-                      <Label htmlFor={`stage-${stage.id}`} className="text-sm">{stage.title}</Label>
+                      <Label htmlFor={`stage-${stage.id}`} className="text-sm">
+                        {stage.title}
+                      </Label>
                     </div>
                   ))
                 )}
@@ -123,17 +139,23 @@ export function FunnelChartSettings({
 
             {onShowNoShowRateChange && (
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="show-no-show-rate" 
+                <Checkbox
+                  id="show-no-show-rate"
                   checked={localShowNoShowRate}
-                  onCheckedChange={(checked) => setLocalShowNoShowRate(!!checked)}
+                  onCheckedChange={(checked) =>
+                    setLocalShowNoShowRate(!!checked)
+                  }
                 />
-                <Label htmlFor="show-no-show-rate" className="text-sm">Exibir Taxa de No-Show</Label>
+                <Label htmlFor="show-no-show-rate" className="text-sm">
+                  Exibir Taxa de No-Show
+                </Label>
               </div>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancelar
+            </Button>
             <Button onClick={handleSave}>Aplicar</Button>
           </DialogFooter>
         </DialogContent>

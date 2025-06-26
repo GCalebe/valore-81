@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Users } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -27,23 +26,23 @@ interface LeadsTableProps {
 const LeadsTable: React.FC<LeadsTableProps> = ({ leads, loading = false }) => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'entraram':
-        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'contato feito':
-        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
-      case 'conversa iniciada':
-        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'reunião':
-        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
-      case 'proposta':
-        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
-      case 'fechamento':
-        return 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300';
+      case "entraram":
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300";
+      case "contato feito":
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300";
+      case "conversa iniciada":
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300";
+      case "reunião":
+        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300";
+      case "proposta":
+        return "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300";
+      case "fechamento":
+        return "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300";
       default:
-        return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300';
+        return "bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300";
     }
   };
-  
+
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
@@ -73,7 +72,10 @@ const LeadsTable: React.FC<LeadsTableProps> = ({ leads, loading = false }) => {
               <TableBody>
                 {leads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-6 text-gray-500 dark:text-gray-400">
+                    <TableCell
+                      colSpan={3}
+                      className="text-center py-6 text-gray-500 dark:text-gray-400"
+                    >
                       Nenhum lead encontrado
                     </TableCell>
                   </TableRow>
@@ -83,8 +85,8 @@ const LeadsTable: React.FC<LeadsTableProps> = ({ leads, loading = false }) => {
                       <TableCell className="font-medium">{lead.name}</TableCell>
                       <TableCell>{lead.lastContact}</TableCell>
                       <TableCell>
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={`${getStatusColor(lead.status)} border-0`}
                         >
                           {lead.status}

@@ -24,7 +24,7 @@ CREATE TABLE n8n_chat_memory (
   data TEXT,
   hora TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
+
   -- Novos campos para suportar diferentes tipos de memória
   memory_type TEXT, -- 'contextual', 'semantic', 'episodic'
   memory_level TEXT, -- 'short_term', 'medium_term', 'long_term'
@@ -52,33 +52,33 @@ const sessionId = $input.item.json.sessionId;
 // Consultar memória contextual
 const response = await $node["Supabase"].query({
   sql: `
-    SELECT * FROM n8n_chat_memory 
-    WHERE session_id = '${sessionId}' 
-    AND memory_type = 'contextual' 
-    ORDER BY created_at DESC 
+    SELECT * FROM n8n_chat_memory
+    WHERE session_id = '${sessionId}'
+    AND memory_type = 'contextual'
+    ORDER BY created_at DESC
     LIMIT 10
-  `
+  `,
 });
 
 // Processar resultados
-const memories = response.map(memory => {
+const memories = response.map((memory) => {
   // Extrair conteúdo da mensagem
-  let content = '';
-  if (typeof memory.message === 'string') {
+  let content = "";
+  if (typeof memory.message === "string") {
     try {
-      content = JSON.parse(memory.message).content || '';
+      content = JSON.parse(memory.message).content || "";
     } catch (e) {
       content = memory.message;
     }
   } else if (memory.message && memory.message.content) {
     content = memory.message.content;
   }
-  
+
   return {
     id: memory.id,
     content,
     timestamp: memory.created_at || memory.hora || memory.data,
-    importance: memory.importance || 1
+    importance: memory.importance || 1,
   };
 });
 
@@ -99,21 +99,21 @@ const { sessionId, message, entities } = $input.item.json;
 // Preparar objeto de memória
 const memoryObject = {
   session_id: sessionId,
-  message: { content: message, type: 'assistant' },
+  message: { content: message, type: "assistant" },
   created_at: new Date().toISOString(),
-  memory_type: 'semantic',
-  memory_level: 'long_term',
+  memory_type: "semantic",
+  memory_level: "long_term",
   importance: 7,
   entities: entities || [],
   metadata: {
-    tags: ['knowledge_base', 'user_preference']
-  }
+    tags: ["knowledge_base", "user_preference"],
+  },
 };
 
 // Inserir na tabela de memória
 const response = await $node["Supabase"].insert({
   table: "n8n_chat_memory",
-  objects: [memoryObject]
+  objects: [memoryObject],
 });
 
 return { success: true, memoryId: response[0].id };
@@ -132,18 +132,18 @@ const { sessionId, entityName } = $input.item.json;
 // Consultar memórias que mencionam a entidade
 const response = await $node["Supabase"].query({
   sql: `
-    SELECT * FROM n8n_chat_memory 
-    WHERE session_id = '${sessionId}' 
-    AND entities::text ILIKE '%${entityName}%' 
-    ORDER BY importance DESC, created_at DESC 
+    SELECT * FROM n8n_chat_memory
+    WHERE session_id = '${sessionId}'
+    AND entities::text ILIKE '%${entityName}%'
+    ORDER BY importance DESC, created_at DESC
     LIMIT 5
-  `
+  `,
 });
 
 // Processar e retornar resultados
-return { 
+return {
   entityMemories: response,
-  count: response.length
+  count: response.length,
 };
 ```
 
@@ -161,12 +161,12 @@ const { memoryId, importance } = $input.item.json;
 const response = await $node["Supabase"].update({
   table: "n8n_chat_memory",
   id: memoryId,
-  data: { importance }
+  data: { importance },
 });
 
-return { 
-  success: true, 
-  updatedMemory: response 
+return {
+  success: true,
+  updatedMemory: response,
 };
 ```
 
@@ -183,17 +183,17 @@ const now = new Date().toISOString();
 // Remover memórias expiradas
 const response = await $node["Supabase"].query({
   sql: `
-    DELETE FROM n8n_chat_memory 
-    WHERE expiration_date IS NOT NULL 
-    AND expiration_date < '${now}' 
+    DELETE FROM n8n_chat_memory
+    WHERE expiration_date IS NOT NULL
+    AND expiration_date < '${now}'
     RETURNING id
-  `
+  `,
 });
 
-return { 
-  success: true, 
+return {
+  success: true,
   removedCount: response.length,
-  removedIds: response.map(r => r.id)
+  removedIds: response.map((r) => r.id),
 };
 ```
 

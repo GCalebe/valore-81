@@ -1,5 +1,4 @@
-
-import { CalendarEvent } from '@/types/calendar';
+import { CalendarEvent } from "@/types/calendar";
 
 const CACHE_KEY = "calendar-events-cache";
 const CACHE_DURATION_MS = 5 * 60 * 1000;
@@ -10,14 +9,16 @@ type CachedEventsData = {
   events: CalendarEvent[];
 };
 
-export function getCacheKey(date?: Date, range?: { start: Date, end: Date }) {
+export function getCacheKey(date?: Date, range?: { start: Date; end: Date }) {
   if (range) {
-    return `range:${range.start.toISOString().slice(0,10)}:${range.end.toISOString().slice(0,10)}`;
+    return `range:${range.start.toISOString().slice(0, 10)}:${range.end
+      .toISOString()
+      .slice(0, 10)}`;
   }
   if (date) {
-    return `date:${date.toISOString().slice(0,10)}`;
+    return `date:${date.toISOString().slice(0, 10)}`;
   }
-  return 'today';
+  return "today";
 }
 
 export function loadFromCache(key: string): CalendarEvent[] | null {
@@ -25,7 +26,7 @@ export function loadFromCache(key: string): CalendarEvent[] | null {
     const item = localStorage.getItem(CACHE_KEY);
     if (item) {
       const parsed: CachedEventsData[] = JSON.parse(item);
-      const entry = parsed.find(d => d.key === key);
+      const entry = parsed.find((d) => d.key === key);
       if (entry && Date.now() - entry.fetchedAt < CACHE_DURATION_MS) {
         return entry.events;
       }
@@ -42,7 +43,7 @@ export function saveToCache(key: string, events: CalendarEvent[]) {
     let arr: CachedEventsData[] = [];
     const item = localStorage.getItem(CACHE_KEY);
     if (item) arr = JSON.parse(item);
-    arr = arr.filter(d => d.key !== key);
+    arr = arr.filter((d) => d.key !== key);
     arr.unshift({
       key,
       events,

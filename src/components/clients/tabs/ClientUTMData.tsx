@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { supabase } from '@/lib/supabase';
-import { Contact } from '@/types/contact';
-import { UTMData } from '@/types/utmData';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/lib/supabase";
+import { Contact } from "@/types/contact";
+import { UTMData } from "@/types/utmData";
 
 interface ClientUTMDataProps {
   /**
    * Dados do contato do cliente
    */
   contact: Contact;
-  
+
   /**
    * Define se o componente deve ser exibido em modo compacto
    * @default false
@@ -30,23 +37,23 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
 }) => {
   const [utmData, setUtmData] = useState<UTMData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('summary');
+  const [activeTab, setActiveTab] = useState("summary");
 
   useEffect(() => {
     const fetchUTMData = async () => {
       if (!contact?.id) return;
-      
+
       try {
         setLoading(true);
         const { data, error } = await supabase
-          .from('utm_data')
-          .select('*')
-          .eq('contact_id', contact.id);
+          .from("utm_data")
+          .select("*")
+          .eq("contact_id", contact.id);
 
         if (error) throw error;
         setUtmData(data || []);
       } catch (error) {
-        console.error('Erro ao buscar dados UTM:', error);
+        console.error("Erro ao buscar dados UTM:", error);
       } finally {
         setLoading(false);
       }
@@ -57,65 +64,94 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
 
   // Cálculos para o resumo
   const totalInteractions = utmData.length;
-  const uniqueCampaigns = [...new Set(utmData.map(item => item.utm_campaign))].filter(Boolean).length;
+  const uniqueCampaigns = [
+    ...new Set(utmData.map((item) => item.utm_campaign)),
+  ].filter(Boolean).length;
   const conversionRate = contact?.converted ? 100 : 0; // Simplificado, ajustar conforme lógica real
 
   // Principais fontes
-  const sourcesCount = utmData.reduce((acc, item) => {
-    if (item.utm_source) {
-      acc[item.utm_source] = (acc[item.utm_source] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const sourcesCount = utmData.reduce(
+    (acc, item) => {
+      if (item.utm_source) {
+        acc[item.utm_source] = (acc[item.utm_source] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const topSources = Object.entries(sourcesCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
   // Principais campanhas
-  const campaignsCount = utmData.reduce((acc, item) => {
-    if (item.utm_campaign) {
-      acc[item.utm_campaign] = (acc[item.utm_campaign] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const campaignsCount = utmData.reduce(
+    (acc, item) => {
+      if (item.utm_campaign) {
+        acc[item.utm_campaign] = (acc[item.utm_campaign] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const topCampaigns = Object.entries(campaignsCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
   // Agrupar UTMs únicos para a tabela de configurações
-  const uniqueUTMCombinations = utmData.reduce((acc, item) => {
-    const key = `${item.utm_source || '-'}_${item.utm_medium || '-'}_${item.utm_campaign || '-'}_${item.utm_content || '-'}_${item.utm_term || '-'}`;
-    if (!acc[key]) {
-      acc[key] = {
-        source: item.utm_source || '-',
-        medium: item.utm_medium || '-',
-        campaign: item.utm_campaign || '-',
-        content: item.utm_content || '-',
-        term: item.utm_term || '-',
-        count: 0,
-      };
-    }
-    acc[key].count += 1;
-    return acc;
-  }, {} as Record<string, { source: string; medium: string; campaign: string; content: string; term: string; count: number }>);
+  const uniqueUTMCombinations = utmData.reduce(
+    (acc, item) => {
+      const key = `${item.utm_source || "-"}_${item.utm_medium || "-"}_${
+        item.utm_campaign || "-"
+      }_${item.utm_content || "-"}_${item.utm_term || "-"}`;
+      if (!acc[key]) {
+        acc[key] = {
+          source: item.utm_source || "-",
+          medium: item.utm_medium || "-",
+          campaign: item.utm_campaign || "-",
+          content: item.utm_content || "-",
+          term: item.utm_term || "-",
+          count: 0,
+        };
+      }
+      acc[key].count += 1;
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        source: string;
+        medium: string;
+        campaign: string;
+        content: string;
+        term: string;
+        count: number;
+      }
+    >,
+  );
 
-  const utmCombinations = Object.values(uniqueUTMCombinations).sort((a, b) => b.count - a.count);
+  const utmCombinations = Object.values(uniqueUTMCombinations).sort(
+    (a, b) => b.count - a.count,
+  );
 
   // Gerar nome amigável para UTM
-  const generateFriendlyName = (utm: { source: string; medium: string; campaign: string }) => {
+  const generateFriendlyName = (utm: {
+    source: string;
+    medium: string;
+    campaign: string;
+  }) => {
     const parts = [];
-    if (utm.source && utm.source !== '-') parts.push(utm.source);
-    if (utm.medium && utm.medium !== '-') parts.push(`via ${utm.medium}`);
-    if (utm.campaign && utm.campaign !== '-') parts.push(`(${utm.campaign})`);
-    
-    return parts.length > 0 ? parts.join(' ') : 'Direto';
+    if (utm.source && utm.source !== "-") parts.push(utm.source);
+    if (utm.medium && utm.medium !== "-") parts.push(`via ${utm.medium}`);
+    if (utm.campaign && utm.campaign !== "-") parts.push(`(${utm.campaign})`);
+
+    return parts.length > 0 ? parts.join(" ") : "Direto";
   };
 
   if (loading) {
     return (
-      <Card className={compact ? 'p-3' : 'p-4'}>
+      <Card className={compact ? "p-3" : "p-4"}>
         <CardHeader className="p-0 pb-3">
           <CardTitle className="text-lg">Dados UTM</CardTitle>
         </CardHeader>
@@ -132,7 +168,7 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
 
   if (utmData.length === 0) {
     return (
-      <Card className={compact ? 'p-3' : 'p-4'}>
+      <Card className={compact ? "p-3" : "p-4"}>
         <CardHeader className="p-0 pb-3">
           <CardTitle className="text-lg">Dados UTM</CardTitle>
         </CardHeader>
@@ -146,7 +182,7 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
   }
 
   return (
-    <Card className={compact ? 'p-3' : 'p-4'}>
+    <Card className={compact ? "p-3" : "p-4"}>
       <CardHeader className="p-0 pb-3">
         <CardTitle className="text-lg">Dados UTM</CardTitle>
       </CardHeader>
@@ -156,7 +192,7 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
             <TabsTrigger value="summary">Resumo</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="summary" className="space-y-4">
             {/* Cards de estatísticas */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -190,14 +226,19 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
                   {topSources.length > 0 ? (
                     <ul className="space-y-2">
                       {topSources.map(([source, count]) => (
-                        <li key={source} className="flex justify-between items-center">
+                        <li
+                          key={source}
+                          className="flex justify-between items-center"
+                        >
                           <span className="text-sm">{source}</span>
                           <Badge variant="secondary">{count}</Badge>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-gray-500 text-center py-2">Nenhuma fonte encontrada</p>
+                    <p className="text-sm text-gray-500 text-center py-2">
+                      Nenhuma fonte encontrada
+                    </p>
                   )}
                 </CardContent>
               </Card>
@@ -205,26 +246,33 @@ export const ClientUTMData: React.FC<ClientUTMDataProps> = ({
               {/* Principais campanhas */}
               <Card>
                 <CardHeader className="p-4 pb-2">
-                  <CardTitle className="text-md">Principais Campanhas</CardTitle>
+                  <CardTitle className="text-md">
+                    Principais Campanhas
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   {topCampaigns.length > 0 ? (
                     <ul className="space-y-2">
                       {topCampaigns.map(([campaign, count]) => (
-                        <li key={campaign} className="flex justify-between items-center">
+                        <li
+                          key={campaign}
+                          className="flex justify-between items-center"
+                        >
                           <span className="text-sm">{campaign}</span>
                           <Badge variant="secondary">{count}</Badge>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-gray-500 text-center py-2">Nenhuma campanha encontrada</p>
+                    <p className="text-sm text-gray-500 text-center py-2">
+                      Nenhuma campanha encontrada
+                    </p>
                   )}
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="settings">
             <div className="overflow-x-auto">
               <Table>

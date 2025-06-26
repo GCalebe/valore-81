@@ -1,7 +1,21 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 interface UTMCampaignChartProps {
   data: Array<{
@@ -13,7 +27,10 @@ interface UTMCampaignChartProps {
   loading?: boolean;
 }
 
-const UTMCampaignChart: React.FC<UTMCampaignChartProps> = ({ data, loading }) => {
+const UTMCampaignChart: React.FC<UTMCampaignChartProps> = ({
+  data,
+  loading,
+}) => {
   if (loading) {
     return (
       <Card>
@@ -40,18 +57,22 @@ const UTMCampaignChart: React.FC<UTMCampaignChartProps> = ({ data, loading }) =>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="name" 
+            <XAxis
+              dataKey="name"
               tick={{ fontSize: 12 }}
               angle={-45}
               textAnchor="end"
               height={80}
             />
             <YAxis />
-            <Tooltip 
+            <Tooltip
               formatter={(value, name) => [
-                name === 'value' ? `R$ ${value}` : value,
-                name === 'leads' ? 'Leads' : name === 'conversions' ? 'Conversões' : 'Valor'
+                name === "value" ? `R$ ${value}` : value,
+                name === "leads"
+                  ? "Leads"
+                  : name === "conversions"
+                    ? "Conversões"
+                    : "Valor",
               ]}
             />
             <Legend />

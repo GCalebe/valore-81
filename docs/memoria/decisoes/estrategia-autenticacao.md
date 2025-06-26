@@ -17,11 +17,13 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 ### 1. Implementação Própria
 
 **Prós:**
+
 - Controle total sobre o fluxo de autenticação
 - Personalização completa da experiência do usuário
 - Sem dependência de serviços externos
 
 **Contras:**
+
 - Alto risco de vulnerabilidades de segurança
 - Tempo de desenvolvimento significativo
 - Manutenção contínua e complexa
@@ -30,12 +32,14 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 ### 2. Auth0
 
 **Prós:**
+
 - Solução robusta e testada no mercado
 - Suporte a múltiplos métodos de autenticação
 - Dashboard de gerenciamento avançado
 - SDKs bem documentados
 
 **Contras:**
+
 - Custo elevado para escala
 - Dependência de serviço externo
 - Personalização limitada em alguns aspectos
@@ -44,12 +48,14 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 ### 3. Firebase Authentication
 
 **Prós:**
+
 - Fácil integração
 - Suporte a múltiplos provedores de autenticação
 - Boa documentação
 - Plano gratuito generoso
 
 **Contras:**
+
 - Dependência do ecossistema Google
 - Personalização limitada
 - Potenciais desafios de integração com PostgreSQL
@@ -57,6 +63,7 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 ### 4. Supabase Authentication (Escolhida)
 
 **Prós:**
+
 - Integração nativa com nosso backend Supabase
 - Suporte a múltiplos métodos de autenticação (email/senha, magic link, OAuth)
 - Integração perfeita com políticas RLS do PostgreSQL
@@ -64,6 +71,7 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 - Sem custos adicionais (incluído no plano Supabase)
 
 **Contras:**
+
 - Ecossistema mais recente e menos maduro que alternativas
 - Personalização de emails limitada
 - Dependência do Supabase como plataforma
@@ -73,16 +81,19 @@ O projeto Valore-81 necessita de um sistema de autenticação e autorização ro
 Adotamos o Supabase Authentication como nossa estratégia de autenticação, com as seguintes características:
 
 1. **Métodos de Autenticação**:
+
    - Email/Senha como método principal
    - Magic Link como alternativa sem senha
    - OAuth (Google, GitHub) para login social
 
 2. **Gerenciamento de Sessão**:
+
    - Tokens JWT para autenticação
    - Refresh tokens para renovação automática
    - Armazenamento seguro em localStorage com expiração
 
 3. **Autorização**:
+
    - Políticas RLS (Row Level Security) no Supabase para controle de acesso granular
    - Roles baseadas em perfis de usuário (admin, gerente, usuário)
    - Context API para gerenciamento de estado de autenticação no frontend
@@ -113,10 +124,12 @@ Adotamos o Supabase Authentication como nossa estratégia de autenticação, com
 Para validar o sucesso desta decisão, monitoraremos as seguintes métricas:
 
 1. **Segurança**:
+
    - Número de incidentes de segurança relacionados à autenticação
    - Tempo médio para resolver vulnerabilidades identificadas
 
 2. **Usabilidade**:
+
    - Taxa de sucesso de login na primeira tentativa
    - Tempo médio para completar o processo de registro
    - Número de solicitações de redefinição de senha
@@ -128,11 +141,13 @@ Para validar o sucesso desta decisão, monitoraremos as seguintes métricas:
 ## Plano de Implementação
 
 1. **Fase 1 (Janeiro 2025)**:
+
    - Configuração inicial do Supabase Authentication
    - Implementação de login com email/senha
    - Criação do AuthContext e ProtectedRoute
 
 2. **Fase 2 (Fevereiro 2025)**:
+
    - Adição de Magic Link e OAuth providers
    - Implementação de políticas RLS para todos os modelos de dados
    - Testes de segurança e penetração

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -27,11 +26,9 @@ export function CalendarHeaderBar({
       case "semana": {
         const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
-        return `Semana de ${format(weekStart, "dd/MM", { locale: pt })} a ${format(
-          weekEnd,
-          "dd/MM",
-          { locale: pt }
-        )}`;
+        return `Semana de ${format(weekStart, "dd/MM", {
+          locale: pt,
+        })} a ${format(weekEnd, "dd/MM", { locale: pt })}`;
       }
       case "agenda":
       case "mes":
@@ -39,7 +36,8 @@ export function CalendarHeaderBar({
         return format(currentMonth, "MMMM 'de' yyyy", { locale: pt });
     }
   };
-  const showNavigation = view === "mes" || view === "semana" || view === "dia" || view === "agenda";
+  const showNavigation =
+    view === "mes" || view === "semana" || view === "dia" || view === "agenda";
   return (
     <div className="flex items-center justify-between p-4 border-b">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-white">

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Contact } from '@/types/client';
-import UnifiedClientInfo from './UnifiedClientInfo';
-import { DynamicCategory } from './DynamicCategoryManager';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Contact } from "@/types/client";
+import UnifiedClientInfo from "./UnifiedClientInfo";
+import { DynamicCategory } from "./DynamicCategoryManager";
 
 interface ClientInfoProps {
   clientData: Contact | null;
@@ -13,7 +13,7 @@ interface ClientInfoProps {
     documents: DynamicCategory[];
   };
   onFieldUpdate?: (fieldId: string, newValue: any) => void;
-  context: 'chat' | 'table' | 'details' | 'edit';
+  context: "chat" | "table" | "details" | "edit";
   compact?: boolean;
 }
 
@@ -24,38 +24,43 @@ interface ClientInfoProps {
  */
 const ClientInfo: React.FC<ClientInfoProps> = ({
   clientData,
-  dynamicFields = { basic: [], commercial: [], personalized: [], documents: [] },
+  dynamicFields = {
+    basic: [],
+    commercial: [],
+    personalized: [],
+    documents: [],
+  },
   onFieldUpdate,
   context,
-  compact = false
+  compact = false,
 }) => {
   // Configurações específicas para cada contexto
   const contextConfig = {
     chat: {
-      title: 'Informações do Cliente',
-      description: 'Detalhes do cliente na conversa atual',
-      showTabs: ['basic', 'commercial', 'utm', 'custom', 'docs'],
-      readOnly: true
+      title: "Informações do Cliente",
+      description: "Detalhes do cliente na conversa atual",
+      showTabs: ["basic", "commercial", "utm", "custom", "docs"],
+      readOnly: true,
     },
     table: {
-      title: 'Resumo do Cliente',
-      description: 'Informações resumidas',
-      showTabs: ['basic', 'commercial'],
+      title: "Resumo do Cliente",
+      description: "Informações resumidas",
+      showTabs: ["basic", "commercial"],
       readOnly: true,
-      compact: true
+      compact: true,
     },
     details: {
-      title: 'Detalhes do Cliente',
-      description: 'Informações completas',
-      showTabs: ['basic', 'commercial', 'utm', 'custom', 'docs'],
-      readOnly: true
+      title: "Detalhes do Cliente",
+      description: "Informações completas",
+      showTabs: ["basic", "commercial", "utm", "custom", "docs"],
+      readOnly: true,
     },
     edit: {
-      title: 'Editar Cliente',
-      description: 'Edite as informações do cliente',
-      showTabs: ['basic', 'commercial', 'utm', 'custom', 'docs'],
-      readOnly: false
-    }
+      title: "Editar Cliente",
+      description: "Edite as informações do cliente",
+      showTabs: ["basic", "commercial", "utm", "custom", "docs"],
+      readOnly: false,
+    },
   };
 
   const config = contextConfig[context];

@@ -54,6 +54,7 @@ A nomenclatura segue convenções específicas para cada tipo de elemento:
 Os componentes seguem um padrão de estrutura e implementação consistente:
 
 - Cada componente está em seu próprio diretório com a seguinte estrutura:
+
   ```
   ComponentName/
   ├── ComponentName.tsx       # Implementação do componente
@@ -63,10 +64,11 @@ Os componentes seguem um padrão de estrutura e implementação consistente:
   ```
 
 - Os componentes são tipados com TypeScript usando interfaces para props:
+
   ```tsx
   interface ButtonProps {
-    variant?: 'primary' | 'secondary' | 'danger';
-    size?: 'small' | 'medium' | 'large';
+    variant?: "primary" | "secondary" | "danger";
+    size?: "small" | "medium" | "large";
     label: string;
     onClick?: () => void;
     disabled?: boolean;
@@ -84,6 +86,7 @@ Os componentes seguem um padrão de estrutura e implementação consistente:
 Os estilos seguem uma abordagem consistente usando CSS Modules e/ou Tailwind CSS:
 
 - **CSS Modules**: Para estilos específicos de componentes
+
   ```css
   /* Button.module.css */
   .button {
@@ -91,7 +94,7 @@ Os estilos seguem uma abordagem consistente usando CSS Modules e/ou Tailwind CSS
     border-radius: 0.25rem;
     font-weight: 600;
   }
-  
+
   .primary {
     background-color: var(--color-primary);
     color: white;
@@ -120,8 +123,8 @@ Os formulários seguem um padrão consistente usando React Hook Form e Zod para 
 ```tsx
 // Schema de validação com Zod
 const clientSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email('Email inválido'),
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
   phone: z.string().optional(),
 });
 
@@ -181,7 +184,7 @@ interface ClientsTableStandardizedProps {
   onViewDetails?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  columns?: Array<keyof Client | 'actions'>;
+  columns?: Array<keyof Client | "actions">;
   pageSize?: number;
   currentPage?: number;
   totalCount?: number;
@@ -202,8 +205,8 @@ Com o design definido, o componente padronizado é implementado:
 
 ```tsx
 // src/components/clients/ClientsTableStandardized/ClientsTableStandardized.tsx
-import React from 'react';
-import { Client } from '@/types/client';
+import React from "react";
+import { Client } from "@/types/client";
 
 interface ClientsTableStandardizedProps {
   clients: Client[];
@@ -211,7 +214,7 @@ interface ClientsTableStandardizedProps {
   onViewDetails?: (id: string) => void;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  columns?: Array<keyof Client | 'actions'>;
+  columns?: Array<keyof Client | "actions">;
   pageSize?: number;
   currentPage?: number;
   totalCount?: number;
@@ -224,14 +227,14 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
   onViewDetails,
   onEdit,
   onDelete,
-  columns = ['name', 'email', 'phone', 'actions'],
+  columns = ["name", "email", "phone", "actions"],
   pageSize = 10,
   currentPage = 1,
   totalCount,
   onPageChange,
 }) => {
   // Implementação do componente
-  
+
   return (
     <div>
       {isLoading ? (
@@ -241,23 +244,35 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {columns.includes('name') && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {columns.includes("name") && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Nome
                   </th>
                 )}
-                {columns.includes('email') && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {columns.includes("email") && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Email
                   </th>
                 )}
-                {columns.includes('phone') && (
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {columns.includes("phone") && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Telefone
                   </th>
                 )}
-                {columns.includes('actions') && (
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {columns.includes("actions") && (
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Ações
                   </th>
                 )}
@@ -266,22 +281,28 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
             <tbody className="bg-white divide-y divide-gray-200">
               {clients.map((client) => (
                 <tr key={client.id}>
-                  {columns.includes('name') && (
+                  {columns.includes("name") && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{client.name}</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {client.name}
+                      </div>
                     </td>
                   )}
-                  {columns.includes('email') && (
+                  {columns.includes("email") && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{client.email}</div>
+                      <div className="text-sm text-gray-500">
+                        {client.email}
+                      </div>
                     </td>
                   )}
-                  {columns.includes('phone') && (
+                  {columns.includes("phone") && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{client.phone}</div>
+                      <div className="text-sm text-gray-500">
+                        {client.phone}
+                      </div>
                     </td>
                   )}
-                  {columns.includes('actions') && (
+                  {columns.includes("actions") && (
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {onViewDetails && (
                         <button
@@ -313,7 +334,7 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
               ))}
             </tbody>
           </table>
-          
+
           {totalCount && onPageChange && (
             <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
               <div className="flex-1 flex justify-between sm:hidden">
@@ -335,15 +356,23 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Mostrando <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> a{' '}
+                    Mostrando{" "}
+                    <span className="font-medium">
+                      {(currentPage - 1) * pageSize + 1}
+                    </span>{" "}
+                    a{" "}
                     <span className="font-medium">
                       {Math.min(currentPage * pageSize, totalCount)}
-                    </span>{' '}
-                    de <span className="font-medium">{totalCount}</span> resultados
+                    </span>{" "}
+                    de <span className="font-medium">{totalCount}</span>{" "}
+                    resultados
                   </p>
                 </div>
                 <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <nav
+                    className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                    aria-label="Pagination"
+                  >
                     <button
                       onClick={() => onPageChange(currentPage - 1)}
                       disabled={currentPage === 1}
@@ -352,11 +381,17 @@ const ClientsTableStandardized: React.FC<ClientsTableStandardizedProps> = ({
                       Anterior
                     </button>
                     {/* Páginas */}
-                    {Array.from({ length: Math.ceil(totalCount / pageSize) }).map((_, index) => (
+                    {Array.from({
+                      length: Math.ceil(totalCount / pageSize),
+                    }).map((_, index) => (
                       <button
                         key={index}
                         onClick={() => onPageChange(index + 1)}
-                        className={`relative inline-flex items-center px-4 py-2 border ${currentPage === index + 1 ? 'bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'} text-sm font-medium`}
+                        className={`relative inline-flex items-center px-4 py-2 border ${
+                          currentPage === index + 1
+                            ? "bg-indigo-50 border-indigo-500 text-indigo-600"
+                            : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                        } text-sm font-medium`}
                       >
                         {index + 1}
                       </button>
@@ -425,36 +460,34 @@ A documentação do componente padronizado é essencial para garantir seu uso co
 
 **Exemplo**: Documentação do componente `ClientsTableStandardized`:
 
-```markdown
+````markdown
 # ClientsTableStandardized
 
 Um componente de tabela padronizado para exibir listas de clientes com suporte a paginação, ordenação e ações personalizáveis.
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|------------|--------|------------|
-| clients | Client[] | Sim | - | Lista de clientes a serem exibidos |
-| isLoading | boolean | Não | false | Indica se os dados estão sendo carregados |
-| onViewDetails | (id: string) => void | Não | - | Função chamada quando o botão "Detalhes" é clicado |
-| onEdit | (id: string) => void | Não | - | Função chamada quando o botão "Editar" é clicado |
-| onDelete | (id: string) => void | Não | - | Função chamada quando o botão "Excluir" é clicado |
-| columns | Array<keyof Client \| 'actions'> | Não | ['name', 'email', 'phone', 'actions'] | Colunas a serem exibidas |
-| pageSize | number | Não | 10 | Número de itens por página |
-| currentPage | number | Não | 1 | Página atual |
-| totalCount | number | Não | - | Número total de itens (necessário para paginação) |
-| onPageChange | (page: number) => void | Não | - | Função chamada quando a página é alterada |
+| Prop          | Tipo                             | Obrigatório | Padrão                                | Descrição                                          |
+| ------------- | -------------------------------- | ----------- | ------------------------------------- | -------------------------------------------------- |
+| clients       | Client[]                         | Sim         | -                                     | Lista de clientes a serem exibidos                 |
+| isLoading     | boolean                          | Não         | false                                 | Indica se os dados estão sendo carregados          |
+| onViewDetails | (id: string) => void             | Não         | -                                     | Função chamada quando o botão "Detalhes" é clicado |
+| onEdit        | (id: string) => void             | Não         | -                                     | Função chamada quando o botão "Editar" é clicado   |
+| onDelete      | (id: string) => void             | Não         | -                                     | Função chamada quando o botão "Excluir" é clicado  |
+| columns       | Array<keyof Client \| 'actions'> | Não         | ['name', 'email', 'phone', 'actions'] | Colunas a serem exibidas                           |
+| pageSize      | number                           | Não         | 10                                    | Número de itens por página                         |
+| currentPage   | number                           | Não         | 1                                     | Página atual                                       |
+| totalCount    | number                           | Não         | -                                     | Número total de itens (necessário para paginação)  |
+| onPageChange  | (page: number) => void           | Não         | -                                     | Função chamada quando a página é alterada          |
 
 ## Exemplos de Uso
 
 ### Tabela Básica
 
 ```tsx
-<ClientsTableStandardized
-  clients={clients}
-  isLoading={isLoading}
-/>
+<ClientsTableStandardized clients={clients} isLoading={isLoading} />
 ```
+````
 
 ### Tabela com Ações
 
@@ -487,9 +520,10 @@ Um componente de tabela padronizado para exibir listas de clientes com suporte a
 <ClientsTableStandardized
   clients={clients}
   isLoading={isLoading}
-  columns={['name', 'email', 'actions']}
+  columns={["name", "email", "actions"]}
 />
 ```
+
 ```
 
 ## Benefícios da Padronização
@@ -551,3 +585,4 @@ A padronização é um processo contínuo que traz diversos benefícios para o p
 O processo de padronização de componentes, em particular, é uma parte importante desse esforço, permitindo a criação de uma biblioteca de componentes reutilizáveis que podem ser facilmente adaptados para diferentes necessidades.
 
 A documentação adequada dos padrões e componentes é essencial para garantir que todos os membros da equipe possam seguir e contribuir para o processo de padronização, mantendo a consistência e qualidade do código em todo o projeto.
+```

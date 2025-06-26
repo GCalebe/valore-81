@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from 'lucide-react';
-import { Contact } from '@/types/client';
+import { Trash2 } from "lucide-react";
+import { Contact } from "@/types/client";
 
 interface DeleteClientDialogProps {
   isOpen: boolean;
@@ -38,13 +37,17 @@ const DeleteClientDialog = ({
         <DialogHeader>
           <DialogTitle>Confirmar exclusão</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja excluir o cliente {selectedContact.name}? 
+            Tem certeza que deseja excluir o cliente {selectedContact.name}?
             Esta ação não pode ser desfeita.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button variant="destructive" onClick={handleDeleteContact}>Confirmar Exclusão</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={handleDeleteContact}>
+            Confirmar Exclusão
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

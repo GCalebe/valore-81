@@ -1,46 +1,46 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { CustomField } from '@/types/customField';
-import { ClientFilters } from '@/types/client';
-import { FilterCategory } from '@/components/clients/FilterCategory';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { DatePicker } from '@/components/ui/date-picker';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { CustomField } from "@/types/customField";
+import { ClientFilters } from "@/types/client";
+import { FilterCategory } from "@/components/clients/FilterCategory";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { DatePicker } from "@/components/ui/date-picker";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export interface FilterComponentProps {
   /**
    * Estado atual dos filtros aplicados
    */
   filters: ClientFilters;
-  
+
   /**
    * Função para atualizar os filtros
    */
   setFilters: (filters: ClientFilters) => void;
-  
+
   /**
    * Lista de campos personalizados disponíveis para filtro
    * @default []
    */
   customFields?: CustomField[];
-  
+
   /**
    * Função chamada quando os filtros são aplicados
    */
   onApplyFilters: () => void;
-  
+
   /**
    * Função chamada quando os filtros são resetados
    */
   onResetFilters: () => void;
-  
+
   /**
    * Conteúdo adicional a ser renderizado no componente
    * @default null
    */
   children?: React.ReactNode;
-  
+
   /**
    * Classes CSS adicionais para o componente
    * @default ''
@@ -59,24 +59,24 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
   onApplyFilters,
   onResetFilters,
   children,
-  className = '',
+  className = "",
 }) => {
   // Status disponíveis para filtro
   const availableStatuses = [
-    { id: 'active', label: 'Ativo' },
-    { id: 'inactive', label: 'Inativo' },
-    { id: 'lead', label: 'Lead' },
-    { id: 'client', label: 'Cliente' },
-    { id: 'prospect', label: 'Prospecto' },
+    { id: "active", label: "Ativo" },
+    { id: "inactive", label: "Inativo" },
+    { id: "lead", label: "Lead" },
+    { id: "client", label: "Cliente" },
+    { id: "prospect", label: "Prospecto" },
   ];
 
   // Segmentos disponíveis para filtro
   const availableSegments = [
-    { id: 'retail', label: 'Varejo' },
-    { id: 'wholesale', label: 'Atacado' },
-    { id: 'corporate', label: 'Corporativo' },
-    { id: 'government', label: 'Governo' },
-    { id: 'education', label: 'Educação' },
+    { id: "retail", label: "Varejo" },
+    { id: "wholesale", label: "Atacado" },
+    { id: "corporate", label: "Corporativo" },
+    { id: "government", label: "Governo" },
+    { id: "education", label: "Educação" },
   ];
 
   // Handlers para atualização de filtros
@@ -130,7 +130,7 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
 
   const handleCustomFieldChange = (
     fieldId: string,
-    value: string | string[] | number | boolean | null
+    value: string | string[] | number | boolean | null,
   ) => {
     setFilters({
       ...filters,
@@ -146,29 +146,32 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
     const currentValue = filters.customFields[field.id];
 
     switch (field.type) {
-      case 'text':
-      case 'email':
-      case 'phone':
+      case "text":
+      case "email":
+      case "phone":
         return (
           <input
             type="text"
             className="w-full p-2 border rounded"
-            value={currentValue as string || ''}
+            value={(currentValue as string) || ""}
             onChange={(e) => handleCustomFieldChange(field.id, e.target.value)}
             placeholder={`Filtrar por ${field.label}`}
           />
         );
-      case 'select':
+      case "select":
         return (
           <div className="space-y-2">
             {field.options?.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <Checkbox
                   id={`${field.id}-${option.value}`}
-                  checked={Array.isArray(currentValue) && currentValue.includes(option.value)}
+                  checked={
+                    Array.isArray(currentValue) &&
+                    currentValue.includes(option.value)
+                  }
                   onCheckedChange={(checked) => {
                     if (checked) {
-                      const newValue = Array.isArray(currentValue) 
+                      const newValue = Array.isArray(currentValue)
                         ? [...currentValue, option.value]
                         : [option.value];
                       handleCustomFieldChange(field.id, newValue);
@@ -180,12 +183,14 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
                     }
                   }}
                 />
-                <Label htmlFor={`${field.id}-${option.value}`}>{option.label}</Label>
+                <Label htmlFor={`${field.id}-${option.value}`}>
+                  {option.label}
+                </Label>
               </div>
             ))}
           </div>
         );
-      case 'boolean':
+      case "boolean":
         return (
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -198,11 +203,13 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
             <Label htmlFor={field.id}>{field.label}</Label>
           </div>
         );
-      case 'date':
+      case "date":
         return (
           <DatePicker
             date={currentValue ? new Date(currentValue as string) : null}
-            setDate={(date) => handleCustomFieldChange(field.id, date?.toISOString() || null)}
+            setDate={(date) =>
+              handleCustomFieldChange(field.id, date?.toISOString() || null)
+            }
             placeholder={`Selecione uma data`}
           />
         );
@@ -222,7 +229,9 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
                   <Checkbox
                     id={`status-${status.id}`}
                     checked={filters.status.includes(status.id)}
-                    onCheckedChange={(checked) => handleStatusChange(status.id, Boolean(checked))}
+                    onCheckedChange={(checked) =>
+                      handleStatusChange(status.id, Boolean(checked))
+                    }
                   />
                   <Label htmlFor={`status-${status.id}`}>{status.label}</Label>
                 </div>
@@ -237,9 +246,13 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
                   <Checkbox
                     id={`segment-${segment.id}`}
                     checked={filters.segment.includes(segment.id)}
-                    onCheckedChange={(checked) => handleSegmentChange(segment.id, Boolean(checked))}
+                    onCheckedChange={(checked) =>
+                      handleSegmentChange(segment.id, Boolean(checked))
+                    }
                   />
-                  <Label htmlFor={`segment-${segment.id}`}>{segment.label}</Label>
+                  <Label htmlFor={`segment-${segment.id}`}>
+                    {segment.label}
+                  </Label>
                 </div>
               ))}
             </div>
@@ -286,7 +299,9 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
       </ScrollArea>
 
       <div className="filter-actions flex justify-between pt-4 border-t mt-4">
-        <Button variant="outline" onClick={onResetFilters}>Resetar</Button>
+        <Button variant="outline" onClick={onResetFilters}>
+          Resetar
+        </Button>
         <Button onClick={onApplyFilters}>Aplicar Filtros</Button>
       </div>
     </div>

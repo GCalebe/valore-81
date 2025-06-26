@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { toast } from "sonner";
 import type { CalendarEvent, EventFormData } from "@/types/calendar";
@@ -8,17 +7,15 @@ import type { CalendarEvent, EventFormData } from "@/types/calendar";
  * Retorna true em caso de sucesso.
  */
 export async function addCalendarEvent(
-  formData: EventFormData
+  formData: EventFormData,
 ): Promise<boolean> {
   try {
-    const startDateTime = `${format(
-      formData.date,
-      "yyyy-MM-dd"
-    )}T${formData.startTime}:00-03:00`;
-    const endDateTime = `${format(
-      formData.date,
-      "yyyy-MM-dd"
-    )}T${formData.endTime}:00-03:00`;
+    const startDateTime = `${format(formData.date, "yyyy-MM-dd")}T${
+      formData.startTime
+    }:00-03:00`;
+    const endDateTime = `${format(formData.date, "yyyy-MM-dd")}T${
+      formData.endTime
+    }:00-03:00`;
     const eventData = {
       summary: formData.summary,
       description: formData.description,
@@ -33,11 +30,11 @@ export async function addCalendarEvent(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(eventData),
-      }
+      },
     );
     if (!response.ok)
       throw new Error(
-        `Erro ao adicionar evento: ${response.status} ${response.statusText}`
+        `Erro ao adicionar evento: ${response.status} ${response.statusText}`,
       );
     toast.success("Evento adicionado com sucesso!");
     return true;
@@ -53,17 +50,15 @@ export async function addCalendarEvent(
  */
 export async function editCalendarEvent(
   eventId: string,
-  formData: EventFormData
+  formData: EventFormData,
 ): Promise<boolean> {
   try {
-    const startDateTime = `${format(
-      formData.date,
-      "yyyy-MM-dd"
-    )}T${formData.startTime}:00-03:00`;
-    const endDateTime = `${format(
-      formData.date,
-      "yyyy-MM-dd"
-    )}T${formData.endTime}:00-03:00`;
+    const startDateTime = `${format(formData.date, "yyyy-MM-dd")}T${
+      formData.startTime
+    }:00-03:00`;
+    const endDateTime = `${format(formData.date, "yyyy-MM-dd")}T${
+      formData.endTime
+    }:00-03:00`;
     const eventData = {
       id: eventId,
       summary: formData.summary,
@@ -79,11 +74,11 @@ export async function editCalendarEvent(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(eventData),
-      }
+      },
     );
     if (!response.ok)
       throw new Error(
-        `Erro ao editar evento: ${response.status} ${response.statusText}`
+        `Erro ao editar evento: ${response.status} ${response.statusText}`,
       );
     toast.success("Evento editado com sucesso!");
     return true;
@@ -98,7 +93,7 @@ export async function editCalendarEvent(
  * Remove um evento via id, recebendo o próprio evento para manter compatibilidade.
  */
 export async function deleteCalendarEvent(
-  event: CalendarEvent
+  event: CalendarEvent,
 ): Promise<boolean> {
   try {
     const eventData = {
@@ -116,11 +111,11 @@ export async function deleteCalendarEvent(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(eventData),
-      }
+      },
     );
     if (!response.ok)
       throw new Error(
-        `Erro ao excluir evento: ${response.status} ${response.statusText}`
+        `Erro ao excluir evento: ${response.status} ${response.statusText}`,
       );
     toast.success("Evento excluído com sucesso!");
     return true;

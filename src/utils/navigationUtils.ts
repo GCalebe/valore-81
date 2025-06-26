@@ -1,5 +1,4 @@
-
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export const useClientNavigation = () => {
   const navigate = useNavigate();
@@ -14,6 +13,6 @@ export const useClientNavigation = () => {
 
   return {
     navigateToClientChat,
-    navigateToClientDetail
+    navigateToClientDetail,
   };
 };

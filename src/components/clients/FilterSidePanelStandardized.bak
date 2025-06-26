@@ -13,18 +13,18 @@ export interface FilterSidePanelProps extends Omit<FilterComponentProps, 'classN
    * Define se o painel lateral está aberto
    */
   isOpen: boolean;
-  
+
   /**
    * Função chamada quando o painel é fechado
    */
   onClose: () => void;
-  
+
   /**
    * Título do painel lateral
    * @default 'Filtros'
    */
   title?: string;
-  
+
   /**
    * Descrição do painel lateral
    * @default 'Filtre os clientes por diferentes critérios'

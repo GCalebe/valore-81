@@ -139,13 +139,13 @@ export const ClientsTableStandardized: FC<ClientsTableStandardizedProps> = ({
 };
 
 // Uso do componente padronizado
-<ClientsTableStandardized 
+<ClientsTableStandardized
   contacts={allClients}
   onEditClient={handleEdit}
   onDeleteClient={handleDelete}
 />
 
-<ClientsTableStandardized 
+<ClientsTableStandardized
   contacts={filteredClients}
   onEditClient={handleEdit}
   onDeleteClient={() => {}}

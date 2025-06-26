@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 
@@ -28,12 +27,12 @@ export const CalendarViewSwitcher: React.FC<CalendarViewSwitcherProps> = ({
               ? "bg-white text-blue-700 shadow-md"
               : "text-white hover:bg-white/20"
           }
-          style={{ 
-            minWidth: 60, 
+          style={{
+            minWidth: 60,
             height: 32,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
           onClick={() => onChange(item.key as any)}
         >

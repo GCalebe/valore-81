@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Contact } from '@/types/client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDynamicFields } from '@/hooks/useDynamicFields';
-import ClientInfo from './ClientInfo';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Contact } from "@/types/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDynamicFields } from "@/hooks/useDynamicFields";
+import ClientInfo from "./ClientInfo";
 
 interface NewClientFormProps {
   isOpen: boolean;
@@ -18,26 +24,26 @@ interface NewClientFormProps {
 const NewClientForm: React.FC<NewClientFormProps> = ({
   isOpen,
   onClose,
-  onSave
+  onSave,
 }) => {
   const [contact, setContact] = useState<Contact>(() => ({
-    id: '',
-    name: '',
-    email: '',
-    phone: '',
-    clientType: '',
-    clientSize: '',
-    status: 'lead',
+    id: "",
+    name: "",
+    email: "",
+    phone: "",
+    clientType: "",
+    clientSize: "",
+    status: "lead",
     lastContact: new Date().toISOString(),
-    kanbanStage: 'lead',
+    kanbanStage: "lead",
     sales: 0,
     budget: 0,
     customValues: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   }));
-  
-  const [activeTab, setActiveTab] = useState('principal');
+
+  const [activeTab, setActiveTab] = useState("principal");
   const [isSaving, setIsSaving] = useState(false);
   const { dynamicFields, loadDynamicFields } = useDynamicFields();
 
@@ -49,18 +55,18 @@ const NewClientForm: React.FC<NewClientFormProps> = ({
 
   const handleFieldUpdate = (fieldId: string, newValue: any) => {
     // Verifica se é um campo personalizado ou um campo padrão
-    if (fieldId.startsWith('custom_')) {
+    if (fieldId.startsWith("custom_")) {
       setContact({
         ...contact,
         customValues: {
           ...contact.customValues,
-          [fieldId]: newValue
-        }
+          [fieldId]: newValue,
+        },
       });
     } else {
       setContact({
         ...contact,
-        [fieldId]: newValue
+        [fieldId]: newValue,
       });
     }
   };
@@ -71,7 +77,7 @@ const NewClientForm: React.FC<NewClientFormProps> = ({
       await onSave(contact);
       onClose();
     } catch (error) {
-      console.error('Erro ao criar cliente:', error);
+      console.error("Erro ao criar cliente:", error);
     } finally {
       setIsSaving(false);
     }
@@ -98,7 +104,7 @@ const NewClientForm: React.FC<NewClientFormProps> = ({
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
                 context="edit" // Usamos o contexto edit para permitir edição
-                showTabs={['basic', 'commercial']}
+                showTabs={["basic", "commercial"]}
               />
             </TabsContent>
 
@@ -108,7 +114,7 @@ const NewClientForm: React.FC<NewClientFormProps> = ({
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
                 context="edit"
-                showTabs={['custom']}
+                showTabs={["custom"]}
               />
             </TabsContent>
 
@@ -118,16 +124,18 @@ const NewClientForm: React.FC<NewClientFormProps> = ({
                 dynamicFields={dynamicFields}
                 onFieldUpdate={handleFieldUpdate}
                 context="edit"
-                showTabs={['docs']}
+                showTabs={["docs"]}
               />
             </TabsContent>
           </Tabs>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Salvando...' : 'Criar Cliente'}
+            {isSaving ? "Salvando..." : "Criar Cliente"}
           </Button>
         </DialogFooter>
       </DialogContent>

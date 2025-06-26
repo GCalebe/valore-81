@@ -1,17 +1,20 @@
-
-import React from 'react';
-import { format } from 'date-fns';
-import { CalendarEvent } from '@/types/calendar';
-import { 
-  Card, CardHeader, CardTitle, CardDescription, 
-  CardContent, CardFooter 
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Search, LoaderCircle, ShipWheel } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { EventsTable } from './EventsTable';
+import React from "react";
+import { format } from "date-fns";
+import { CalendarEvent } from "@/types/calendar";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Search, LoaderCircle, ShipWheel } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EventsTable } from "./EventsTable";
 
 interface EventsCardProps {
   events: CalendarEvent[];
@@ -42,7 +45,7 @@ export function EventsCard({
   onTabChange,
   onEditEvent,
   onDeleteEvent,
-  onOpenEventLink
+  onOpenEventLink,
 }: EventsCardProps) {
   return (
     <Card>
@@ -54,26 +57,31 @@ export function EventsCard({
               Agenda Náutica Valore
             </CardTitle>
             <CardDescription>
-              {selectedTab === 'day' 
-                ? `Visualizando ${filteredEvents.length} eventos para ${selectedDate ? format(selectedDate, "dd/MM/yyyy") : 'hoje'}`
-                : `Visualizando todos os ${filteredEvents.length} eventos`
-              }
+              {selectedTab === "day"
+                ? `Visualizando ${filteredEvents.length} eventos para ${
+                    selectedDate ? format(selectedDate, "dd/MM/yyyy") : "hoje"
+                  }`
+                : `Visualizando todos os ${filteredEvents.length} eventos`}
             </CardDescription>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-              <Input 
-                type="search" 
-                placeholder="Buscar eventos..." 
-                className="pl-9" 
-                value={searchTerm} 
-                onChange={e => onSearchChange(e.target.value)}
+              <Input
+                type="search"
+                placeholder="Buscar eventos..."
+                className="pl-9"
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
               />
             </div>
-            
-            <Tabs defaultValue={selectedTab} className="w-full sm:w-auto" onValueChange={onTabChange}>
+
+            <Tabs
+              defaultValue={selectedTab}
+              className="w-full sm:w-auto"
+              onValueChange={onTabChange}
+            >
               <TabsList>
                 <TabsTrigger value="day">Diário</TabsTrigger>
                 <TabsTrigger value="all">Todos</TabsTrigger>
@@ -87,7 +95,8 @@ export function EventsCard({
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Não conseguimos atualizar os eventos, tentando novamente em breve...
+              Não conseguimos atualizar os eventos, tentando novamente em
+              breve...
             </AlertDescription>
           </Alert>
         )}
@@ -100,7 +109,7 @@ export function EventsCard({
             <Skeleton className="h-12 w-full" />
           </div>
         ) : (
-          <EventsTable 
+          <EventsTable
             events={filteredEvents}
             isLoading={isLoading}
             onEditEvent={onEditEvent}

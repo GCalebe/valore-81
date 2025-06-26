@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import type { CalendarEvent, EventFormData } from "@/types/calendar";
 import { fetchCalendarEvents } from "./useFetchCalendarEvents";
@@ -15,7 +14,7 @@ type DateRange = { start: Date; end: Date };
 
 export function useCalendarEvents(
   selectedDate?: Date | null,
-  dateRange?: DateRange | null
+  dateRange?: DateRange | null,
 ) {
   const [events, setEvents] = React.useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -32,38 +31,41 @@ export function useCalendarEvents(
     propsRef.current = { selectedDate, dateRange };
   }, [selectedDate, dateRange]);
 
-  const fetchFromNetwork = React.useCallback(async (isManualRefresh: boolean) => {
-    if (isManualRefresh) setIsLoading(true);
-    
-    const { selectedDate, dateRange } = propsRef.current;
-    const cacheKey = getCacheKey(selectedDate, dateRange);
+  const fetchFromNetwork = React.useCallback(
+    async (isManualRefresh: boolean) => {
+      if (isManualRefresh) setIsLoading(true);
 
-    try {
-      const apiEvents = await fetchCalendarEvents(selectedDate, dateRange);
-      setEvents(apiEvents);
-      lastCacheEvents.current = apiEvents;
-      setLastUpdated(new Date());
-      saveToCache(cacheKey, apiEvents);
-      setError(null);
-      if (isManualRefresh) {
-        toast.success("Agenda atualizada com sucesso!");
+      const { selectedDate, dateRange } = propsRef.current;
+      const cacheKey = getCacheKey(selectedDate, dateRange);
+
+      try {
+        const apiEvents = await fetchCalendarEvents(selectedDate, dateRange);
+        setEvents(apiEvents);
+        lastCacheEvents.current = apiEvents;
+        setLastUpdated(new Date());
+        saveToCache(cacheKey, apiEvents);
+        setError(null);
+        if (isManualRefresh) {
+          toast.success("Agenda atualizada com sucesso!");
+        }
+        lastUpdateRef.current = Date.now();
+      } catch (err: any) {
+        setError(err instanceof Error ? err : new Error("Erro desconhecido"));
+        toast.error("Erro ao buscar eventos. Verifique sua conexão.");
+      } finally {
+        if (isManualRefresh) setIsLoading(false);
       }
-      lastUpdateRef.current = Date.now();
-    } catch (err: any) {
-      setError(err instanceof Error ? err : new Error("Erro desconhecido"));
-      toast.error("Erro ao buscar eventos. Verifique sua conexão.");
-    } finally {
-      if (isManualRefresh) setIsLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const loadData = React.useCallback(() => {
     const { selectedDate, dateRange } = propsRef.current;
     const cacheKey = getCacheKey(selectedDate, dateRange);
     const cached = loadFromCache(cacheKey);
-    
+
     setIsLoading(true);
-    
+
     if (cached) {
       setEvents(cached);
       lastCacheEvents.current = cached;
@@ -95,7 +97,9 @@ export function useCalendarEvents(
       if (document.visibilityState === "visible") {
         const now = Date.now();
         if (now - lastUpdateRef.current > 2.5 * 60 * 1000) {
-          console.log("[useCalendarEvents] Sincronizando agenda ao focar na aba.");
+          console.log(
+            "[useCalendarEvents] Sincronizando agenda ao focar na aba.",
+          );
           fetchFromNetwork(false).then(() => {
             toast.info("Agenda sincronizada.");
           });
@@ -103,7 +107,8 @@ export function useCalendarEvents(
       }
     };
     window.addEventListener("visibilitychange", onVisibilityChange);
-    return () => window.removeEventListener("visibilitychange", onVisibilityChange);
+    return () =>
+      window.removeEventListener("visibilitychange", onVisibilityChange);
   }, [fetchFromNetwork]);
 
   const addEvent = React.useCallback(
@@ -114,7 +119,7 @@ export function useCalendarEvents(
       setIsSubmitting(false);
       return ok;
     },
-    [refreshEventsPost]
+    [refreshEventsPost],
   );
 
   const editEvent = React.useCallback(
@@ -125,7 +130,7 @@ export function useCalendarEvents(
       setIsSubmitting(false);
       return ok;
     },
-    [refreshEventsPost]
+    [refreshEventsPost],
   );
 
   const deleteEvent = React.useCallback(
@@ -142,7 +147,7 @@ export function useCalendarEvents(
       setIsSubmitting(false);
       return ok;
     },
-    [refreshEventsPost, events]
+    [refreshEventsPost, events],
   );
 
   return {

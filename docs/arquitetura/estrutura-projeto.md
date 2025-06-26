@@ -92,6 +92,7 @@ Contém todo o código-fonte da aplicação, organizado em subpastas por respons
 Componentes React reutilizáveis, organizados por domínio ou função:
 
 - **common/**: Componentes básicos e genéricos que são utilizados em toda a aplicação, como botões, inputs, cards, etc.
+
   ```
   common/
   ├── Button/
@@ -109,6 +110,7 @@ Componentes React reutilizáveis, organizados por domínio ou função:
   ```
 
 - **layout/**: Componentes relacionados à estrutura de layout da aplicação, como header, footer, sidebar, etc.
+
   ```
   layout/
   ├── Header/
@@ -130,6 +132,7 @@ Componentes React reutilizáveis, organizados por domínio ou função:
   ```
 
 - **clients/**: Componentes específicos para a funcionalidade de clientes, incluindo tabelas, formulários, detalhes, etc.
+
   ```
   clients/
   ├── ClientsTableStandardized/
@@ -303,12 +306,15 @@ supabase/
 ### Arquivos e Diretórios
 
 - **Componentes**: PascalCase para nomes de componentes e seus diretórios
+
   - Exemplo: `Button.tsx`, `ClientsTable.tsx`
 
 - **Hooks**: camelCase com prefixo "use"
+
   - Exemplo: `useClients.ts`, `useForm.ts`
 
 - **Utilitários**: camelCase
+
   - Exemplo: `formatters.ts`, `validators.ts`
 
 - **Páginas**: kebab-case para URLs, mas camelCase ou PascalCase para nomes de arquivos
@@ -317,6 +323,7 @@ supabase/
 ### Componentes
 
 - Cada componente deve estar em seu próprio diretório com a seguinte estrutura:
+
   ```
   ComponentName/
   ├── ComponentName.tsx       # Implementação do componente
@@ -327,8 +334,8 @@ supabase/
 
 - O arquivo `index.ts` deve exportar o componente como exportação padrão:
   ```typescript
-  export { default } from './ComponentName';
-  export * from './ComponentName'; // Para exportações nomeadas adicionais
+  export { default } from "./ComponentName";
+  export * from "./ComponentName"; // Para exportações nomeadas adicionais
   ```
 
 ### Importações
@@ -340,17 +347,17 @@ supabase/
   4. Importações de estilos
 
 ```typescript
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import Button from '@/components/common/Button';
-import Card from '@/components/common/Card';
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
 
-import { useClients } from '@/hooks/useClients';
-import { formatCurrency } from '@/utils/formatters';
-import type { Client } from '@/types/client';
+import { useClients } from "@/hooks/useClients";
+import { formatCurrency } from "@/utils/formatters";
+import type { Client } from "@/types/client";
 
-import styles from './ComponentName.module.css';
+import styles from "./ComponentName.module.css";
 ```
 
 ## Padrões de Código
@@ -401,7 +408,7 @@ export default Button;
 - Retornam valores e funções em um objeto para facilitar o destructuring
 
 ```typescript
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 interface UseToggleReturn {
   value: boolean;
@@ -414,7 +421,7 @@ interface UseToggleReturn {
 export const useToggle = (initialValue = false): UseToggleReturn => {
   const [value, setValue] = useState(initialValue);
 
-  const toggle = useCallback(() => setValue(v => !v), []);
+  const toggle = useCallback(() => setValue((v) => !v), []);
   const setTrue = useCallback(() => setValue(true), []);
   const setFalse = useCallback(() => setValue(false), []);
 

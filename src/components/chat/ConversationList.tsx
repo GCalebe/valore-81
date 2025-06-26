@@ -1,11 +1,10 @@
-
-import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Pause, Play, RefreshCw } from 'lucide-react';
-import { Conversation } from '@/types/chat';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import React from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Pause, Play, RefreshCw } from "lucide-react";
+import { Conversation } from "@/types/chat";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -24,15 +23,15 @@ const ConversationList = ({
   isLoading,
   openPauseDialog,
   startBot,
-  loading
+  loading,
 }: ConversationListProps) => {
   const { settings } = useThemeSettings();
 
-  console.log('🎨 ConversationList renderizando com:');
-  console.log('📊 Número de conversas:', conversations.length);
-  console.log('📋 Conversas:', conversations);
-  console.log('⏳ Loading:', loading);
-  console.log('🎯 Chat selecionado:', selectedChat);
+  console.log("🎨 ConversationList renderizando com:");
+  console.log("📊 Número de conversas:", conversations.length);
+  console.log("📋 Conversas:", conversations);
+  console.log("⏳ Loading:", loading);
+  console.log("🎯 Chat selecionado:", selectedChat);
 
   return (
     <div className="h-full flex flex-col">
@@ -69,21 +68,26 @@ const ConversationList = ({
             </div>
           ) : (
             conversations.map((conversation) => {
-              console.log('🔄 Renderizando conversa:', conversation.name, 'ID:', conversation.id);
+              console.log(
+                "🔄 Renderizando conversa:",
+                conversation.name,
+                "ID:",
+                conversation.id,
+              );
               return (
                 <div
                   key={conversation.id}
                   className={`relative p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
                     selectedChat === conversation.id
-                      ? 'border-blue-300 dark:border-blue-600 shadow-sm'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      ? "border-blue-300 dark:border-blue-600 shadow-sm"
+                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                   } ${
                     selectedChat === conversation.id
-                      ? 'bg-blue-50 dark:bg-blue-900/20'
-                      : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      ? "bg-blue-50 dark:bg-blue-900/20"
+                      : "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
                   onClick={() => {
-                    console.log('🖱️ Clicando na conversa:', conversation.id);
+                    console.log("🖱️ Clicando na conversa:", conversation.id);
                     setSelectedChat(conversation.id);
                   }}
                 >
@@ -110,18 +114,20 @@ const ConversationList = ({
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {conversation.time}
                       </span>
-                      
+
                       {/* Bot control buttons */}
                       <div className="flex gap-1">
                         <Button
                           variant="outline"
                           size="xs"
-                          onClick={(e) => openPauseDialog(conversation.phone, e)}
+                          onClick={(e) =>
+                            openPauseDialog(conversation.phone, e)
+                          }
                           disabled={isLoading[`pause-${conversation.phone}`]}
                           className="h-6 px-2 text-xs"
-                          style={{ 
+                          style={{
                             borderColor: settings.primaryColor,
-                            color: settings.primaryColor 
+                            color: settings.primaryColor,
                           }}
                         >
                           {isLoading[`pause-${conversation.phone}`] ? (
@@ -133,16 +139,16 @@ const ConversationList = ({
                             </>
                           )}
                         </Button>
-                        
+
                         <Button
                           variant="outline"
                           size="xs"
                           onClick={(e) => startBot(conversation.phone, e)}
                           disabled={isLoading[`start-${conversation.phone}`]}
                           className="h-6 px-2 text-xs"
-                          style={{ 
+                          style={{
                             borderColor: settings.secondaryColor,
-                            color: settings.secondaryColor 
+                            color: settings.secondaryColor,
                           }}
                         >
                           {isLoading[`start-${conversation.phone}`] ? (

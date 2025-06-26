@@ -10,10 +10,10 @@ export interface Contact {
   cpfCnpj: string | null;
   asaasCustomerId: string | null;
   payments?: any;
-  status: 'Active' | 'Inactive';
+  status: "Active" | "Inactive";
   notes?: string;
   lastContact: string;
-  kanbanStage: string;  // << aqui: permitir qualquer valor de stage
+  kanbanStage: string; // << aqui: permitir qualquer valor de stage
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;
@@ -31,7 +31,17 @@ export interface Contact {
   contractDate?: string;
   payment?: string;
   uploadedFiles?: string[];
-  consultationStage?: 'Nova consulta' | 'Qualificado' | 'Chamada agendada' | 'Preparando proposta' | 'Proposta enviada' | 'Acompanhamento' | 'Negociação' | 'Fatura enviada' | 'Fatura paga – ganho' | 'Projeto cancelado – perdido';
+  consultationStage?:
+    | "Nova consulta"
+    | "Qualificado"
+    | "Chamada agendada"
+    | "Preparando proposta"
+    | "Proposta enviada"
+    | "Acompanhamento"
+    | "Negociação"
+    | "Fatura enviada"
+    | "Fatura paga – ganho"
+    | "Projeto cancelado – perdido";
   // Campos personalizados
   customValues?: CustomFieldValue[];
 }

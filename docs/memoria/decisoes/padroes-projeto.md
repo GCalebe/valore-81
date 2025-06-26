@@ -17,11 +17,13 @@ Com o crescimento do projeto Valore-81, tornou-se evidente a necessidade de esta
 ### 1. Atomic Design
 
 **Prós:**
+
 - Metodologia bem estabelecida e documentada
 - Facilita a criação de um design system
 - Promove a reutilização de componentes
 
 **Contras:**
+
 - Pode ser excessivamente estruturado para projetos menores
 - Curva de aprendizado inicial
 - Pode levar a uma proliferação excessiva de componentes
@@ -29,11 +31,13 @@ Com o crescimento do projeto Valore-81, tornou-se evidente a necessidade de esta
 ### 2. Feature-First Architecture
 
 **Prós:**
+
 - Organização clara por funcionalidade
 - Facilita o trabalho em equipes por domínio
 - Melhor encapsulamento de lógica relacionada
 
 **Contras:**
+
 - Pode levar a duplicação de código entre features
 - Dificuldade em compartilhar componentes comuns
 - Menos adequado para projetos com muitas funcionalidades compartilhadas
@@ -41,11 +45,13 @@ Com o crescimento do projeto Valore-81, tornou-se evidente a necessidade de esta
 ### 3. Abordagem Híbrida (Escolhida)
 
 **Prós:**
+
 - Combina os benefícios de múltiplas abordagens
 - Flexibilidade para adaptar a diferentes partes do projeto
 - Permite evolução gradual dos padrões
 
 **Contras:**
+
 - Requer documentação clara para evitar confusão
 - Pode levar a inconsistências se não for bem gerenciada
 - Necessita de revisões periódicas para garantir aderência
@@ -55,16 +61,19 @@ Com o crescimento do projeto Valore-81, tornou-se evidente a necessidade de esta
 Adotamos uma abordagem híbrida que combina elementos de Atomic Design para componentes de UI e uma organização Feature-First para a estrutura geral do projeto, com as seguintes características:
 
 1. **Componentes de UI Padronizados**:
+
    - Seguindo princípios do Atomic Design para componentes básicos
    - Nomenclatura padronizada com sufixo `Standardized` para componentes base
    - Documentação detalhada de props e comportamentos
 
 2. **Organização por Domínio**:
+
    - Estrutura de pastas organizada por domínios funcionais (clients, chat, dashboard, etc.)
    - Cada domínio contém seus componentes, hooks e utilitários específicos
    - Lógica de negócio encapsulada em hooks personalizados por domínio
 
 3. **Padrões de Gerenciamento de Estado**:
+
    - Context API para estado global compartilhado
    - React Query para estado do servidor
    - Zustand para estado global simples
@@ -96,10 +105,12 @@ Adotamos uma abordagem híbrida que combina elementos de Atomic Design para comp
 Para validar o sucesso desta decisão, monitoraremos as seguintes métricas:
 
 1. **Velocidade de Desenvolvimento**:
+
    - Tempo médio para implementar novos recursos
    - Tempo médio para corrigir bugs
 
 2. **Qualidade de Código**:
+
    - Cobertura de testes
    - Número de bugs reportados
    - Complexidade ciclomática
@@ -111,11 +122,13 @@ Para validar o sucesso desta decisão, monitoraremos as seguintes métricas:
 ## Plano de Implementação
 
 1. **Fase 1 (Fevereiro 2025)**:
+
    - Documentação inicial dos padrões
    - Criação de componentes base padronizados
    - Treinamento da equipe
 
 2. **Fase 2 (Março 2025)**:
+
    - Refatoração gradual de componentes existentes
    - Implementação de novos recursos seguindo os padrões
 

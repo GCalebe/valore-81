@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import { AlertCircle } from "lucide-react";
 
 interface ValidationErrorAlertProps {
   errors: { [key: string]: string };

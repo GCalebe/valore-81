@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Target } from "lucide-react";
 
 interface AverageClosingTimeCardProps {
   avgClosingTime: number;
@@ -9,10 +8,10 @@ interface AverageClosingTimeCardProps {
   trend?: string;
 }
 
-const AverageClosingTimeCard: React.FC<AverageClosingTimeCardProps> = ({ 
-  avgClosingTime, 
+const AverageClosingTimeCard: React.FC<AverageClosingTimeCardProps> = ({
+  avgClosingTime,
   loading = false,
-  trend 
+  trend,
 }) => {
   const formatTime = (days: number) => {
     if (days < 1) {

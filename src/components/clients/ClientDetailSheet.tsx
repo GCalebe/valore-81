@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Contact } from '@/types/client';
-import { MessageCircle, Edit, Trash } from 'lucide-react';
-import ClientInfo from './ClientInfo';
-import { DynamicCategory } from './DynamicCategoryManager';
-import { useDynamicFields } from '@/hooks/useDynamicFields';
+import React, { useState, useEffect } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Contact } from "@/types/client";
+import { MessageCircle, Edit, Trash } from "lucide-react";
+import ClientInfo from "./ClientInfo";
+import { DynamicCategory } from "./DynamicCategoryManager";
+import { useDynamicFields } from "@/hooks/useDynamicFields";
 
 interface ClientDetailSheetProps {
   isOpen: boolean;
@@ -25,27 +30,27 @@ const ClientDetailSheet: React.FC<ClientDetailSheetProps> = ({
   contact,
   onSendMessage,
   onEditClient,
-  onDeleteClient
+  onDeleteClient,
 }) => {
   // Inicializando dynamicFields com um objeto vazio para evitar o erro
   const [dynamicFields, setDynamicFields] = useState({
     basic: [],
     commercial: [],
     personalized: [],
-    documents: []
+    documents: [],
   });
 
   useEffect(() => {
     if (isOpen && contact) {
       // Verificando no console os dados recebidos
-      console.log('ClientDetailSheet - Props:', {
+      console.log("ClientDetailSheet - Props:", {
         isOpen,
         contact,
         onSendMessage,
         onEditClient,
-        onDeleteClient
+        onDeleteClient,
       });
-      
+
       // Se necessário, podemos carregar os campos dinâmicos aqui usando o ID do contato
       // Exemplo: fetchDynamicFieldsForContact(contact.id);
     }
@@ -77,7 +82,7 @@ const ClientDetailSheet: React.FC<ClientDetailSheetProps> = ({
       <SheetContent className="sm:max-w-md md:max-w-lg lg:max-w-xl overflow-y-auto">
         <SheetHeader className="mb-4">
           <SheetTitle className="text-xl font-bold">
-            {contact?.name || 'Detalhes do Cliente'}
+            {contact?.name || "Detalhes do Cliente"}
           </SheetTitle>
         </SheetHeader>
 
@@ -99,7 +104,7 @@ const ClientDetailSheet: React.FC<ClientDetailSheetProps> = ({
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Enviar Mensagem
               </Button>
-              
+
               <Button
                 variant="outline"
                 className="flex-1"

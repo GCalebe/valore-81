@@ -1,16 +1,17 @@
-
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { ShipWheel, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { ShipWheel, Mail, Lock, Eye, EyeOff, User } from "lucide-react";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const signupSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
-  password: z.string().min(6, { message: "Senha deve ter pelo menos 6 caracteres" }),
-  name: z.string().min(2, { message: "Nome deve ter pelo menos 2 caracteres" })
+  password: z
+    .string()
+    .min(6, { message: "Senha deve ter pelo menos 6 caracteres" }),
+  name: z.string().min(2, { message: "Nome deve ter pelo menos 2 caracteres" }),
 });
 
 const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
@@ -18,9 +19,9 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: ''
+    email: "",
+    password: "",
+    name: "",
   });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -34,16 +35,16 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear specific error when user starts typing
     if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: undefined
+        [name]: undefined,
       }));
     }
   };
@@ -60,13 +61,13 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
           password?: string;
           name?: string;
         } = {};
-        
-        error.errors.forEach(err => {
+
+        error.errors.forEach((err) => {
           if (err.path[0]) {
             newErrors[err.path[0] as keyof typeof newErrors] = err.message;
           }
         });
-        
+
         setErrors(newErrors);
       }
       return false;
@@ -75,42 +76,39 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
-            name: formData.name
-          }
-        }
+            name: formData.name,
+          },
+        },
       });
-      
+
       if (error) {
-        console.error('Signup error:', error);
-        toast.error(error.message || 'Erro ao criar conta. Tente novamente.');
+        console.error("Signup error:", error);
+        toast.error(error.message || "Erro ao criar conta. Tente novamente.");
       } else {
-        toast.success('Conta criada com sucesso!');
+        toast.success("Conta criada com sucesso!");
         onSuccess();
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
-      toast.error('Erro ao criar conta. Tente novamente.');
+      console.error("Unexpected error:", error);
+      toast.error("Erro ao criar conta. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form 
-      onSubmit={handleSubmit} 
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit} className="space-y-6">
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         Crie sua conta
       </h1>
@@ -127,9 +125,13 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="Nome completo"
             value={formData.name}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.name ? 'border-red-400' : 'focus:border-valore-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${
+              errors.name ? "border-red-400" : "focus:border-valore-gold"
+            }`}
           />
-          {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
+          {errors.name && (
+            <p className="text-red-400 text-sm mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div className="relative group">
@@ -140,9 +142,13 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.email ? 'border-red-400' : 'focus:border-valore-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${
+              errors.email ? "border-red-400" : "focus:border-valore-gold"
+            }`}
           />
-          {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
+          {errors.email && (
+            <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+          )}
         </div>
 
         <div className="relative group">
@@ -153,16 +159,24 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="Senha"
             value={formData.password}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${errors.password ? 'border-red-400' : 'focus:border-valore-gold'}`}
+            className={`pl-10 h-12 bg-white/10 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${
+              errors.password ? "border-red-400" : "focus:border-valore-gold"
+            }`}
           />
-          <button 
+          <button
             type="button"
             onClick={togglePasswordVisibility}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5 hover:text-valore-gold transition-colors duration-300"
           >
-            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
-          {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-red-400 text-sm mt-1">{errors.password}</p>
+          )}
         </div>
       </div>
 
@@ -170,17 +184,17 @@ const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
         type="submit"
         disabled={isLoading}
         className="w-full button-hover-effect font-bold py-3 px-4 rounded-md flex items-center justify-center transition-all duration-300"
-        style={{ 
+        style={{
           backgroundColor: settings.secondaryColor,
-          color: settings.accentColor
+          color: settings.accentColor,
         }}
       >
         {isLoading ? (
-          <div 
+          <div
             className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin mr-2"
-            style={{ 
+            style={{
               borderColor: settings.accentColor,
-              borderTopColor: 'transparent'
+              borderTopColor: "transparent",
             }}
           ></div>
         ) : (

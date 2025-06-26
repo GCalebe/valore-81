@@ -1,10 +1,13 @@
-
-import React from 'react';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import ConversationList from './ConversationList';
-import ChatArea from './ChatArea';
-import ClientInfoPanel from './ClientInfoPanel';
-import { Conversation, ChatMessage } from '@/types/chat';
+import React from "react";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import ConversationList from "./ConversationList";
+import ChatArea from "./ChatArea";
+import ClientInfoPanel from "./ClientInfoPanel";
+import { Conversation, ChatMessage } from "@/types/chat";
 
 interface ChatLayoutProps {
   conversations: Conversation[];
@@ -31,20 +34,24 @@ const ChatLayout = ({
   messages,
   handleNewMessage,
   selectedConversation,
-  markConversationRead
+  markConversationRead,
 }: ChatLayoutProps) => {
-  
   const handleSelectChat = (id: string) => {
     console.log(`Selecting chat with ID: ${id}`);
     setSelectedChat(id);
     markConversationRead(id);
   };
-  
+
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
-      <ResizablePanel defaultSize={25} minSize={20} maxSize={30} className="bg-white dark:bg-gray-800">
-        <ConversationList 
-          conversations={conversations} 
+      <ResizablePanel
+        defaultSize={25}
+        minSize={20}
+        maxSize={30}
+        className="bg-white dark:bg-gray-800"
+      >
+        <ConversationList
+          conversations={conversations}
           selectedChat={selectedChat}
           setSelectedChat={handleSelectChat}
           isLoading={isLoading}
@@ -56,8 +63,12 @@ const ChatLayout = ({
 
       <ResizableHandle withHandle />
 
-      <ResizablePanel defaultSize={50} minSize={40} className="bg-gray-50 dark:bg-gray-900 flex flex-col">
-        <ChatArea 
+      <ResizablePanel
+        defaultSize={50}
+        minSize={40}
+        className="bg-gray-50 dark:bg-gray-900 flex flex-col"
+      >
+        <ChatArea
           selectedChat={selectedChat}
           selectedConversation={selectedConversation}
           messages={messages}
@@ -67,8 +78,13 @@ const ChatLayout = ({
 
       <ResizableHandle withHandle />
 
-      <ResizablePanel defaultSize={25} minSize={20} maxSize={30} className="bg-white dark:bg-gray-800">
-        <ClientInfoPanel 
+      <ResizablePanel
+        defaultSize={25}
+        minSize={20}
+        maxSize={30}
+        className="bg-white dark:bg-gray-800"
+      >
+        <ClientInfoPanel
           selectedChat={selectedChat}
           selectedConversation={selectedConversation}
         />

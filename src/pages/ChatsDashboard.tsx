@@ -1,45 +1,46 @@
-
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/hooks/use-toast';
-import ChatHeader from '@/components/chat/ChatHeader';
-import ChatLayout from '@/components/chat/ChatLayout';
-import { useConversations } from '@/hooks/useConversations';
-import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
-import { useChatMessages } from '@/hooks/useChatMessages';
-import PauseDurationDialog from '@/components/PauseDurationDialog';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import ChatHeader from "@/components/chat/ChatHeader";
+import ChatLayout from "@/components/chat/ChatLayout";
+import { useConversations } from "@/hooks/useConversations";
+import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
+import { useChatMessages } from "@/hooks/useChatMessages";
+import PauseDurationDialog from "@/components/PauseDurationDialog";
 
 const ChatsDashboard = () => {
   const { user, signOut } = useAuth();
   const [searchParams] = useSearchParams();
-  const selectedChatFromUrl = searchParams.get('selectedChat');
-  
-  const [selectedChat, setSelectedChat] = useState<string | null>(selectedChatFromUrl);
+  const selectedChatFromUrl = searchParams.get("selectedChat");
+
+  const [selectedChat, setSelectedChat] = useState<string | null>(
+    selectedChatFromUrl,
+  );
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
-  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('');
+  const [selectedPhoneNumber, setSelectedPhoneNumber] = useState("");
   const [pauseDialogOpen, setPauseDialogOpen] = useState(false);
   const { toast } = useToast();
-  
+
   // Use custom hooks for data fetching and state management
-  const { 
-    conversations, 
-    setConversations, 
-    loading: conversationsLoading, 
-    updateConversationLastMessage, 
-    fetchConversations 
+  const {
+    conversations,
+    setConversations,
+    loading: conversationsLoading,
+    updateConversationLastMessage,
+    fetchConversations,
   } = useConversations();
-  
-  const { 
-    messages, 
-    loading: messagesLoading, 
-    handleNewMessage 
+
+  const {
+    messages,
+    loading: messagesLoading,
+    handleNewMessage,
   } = useChatMessages(selectedChat);
-  
+
   // Set up real-time listeners for new chat messages
-  useRealtimeUpdates({ 
-    updateConversationLastMessage, 
-    fetchConversations 
+  useRealtimeUpdates({
+    updateConversationLastMessage,
+    fetchConversations,
   });
 
   // Update selectedChat when URL changes
@@ -50,7 +51,9 @@ const ChatsDashboard = () => {
   }, [selectedChatFromUrl]);
 
   // Find the currently selected conversation
-  const selectedConversation = conversations.find(conv => conv.id === selectedChat);
+  const selectedConversation = conversations.find(
+    (conv) => conv.id === selectedChat,
+  );
 
   const openPauseDialog = (phoneNumber: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -64,38 +67,48 @@ const ChatsDashboard = () => {
 
   const pauseBot = async (duration: number | null) => {
     try {
-      setIsLoading(prev => ({ ...prev, [`pause-${selectedPhoneNumber}`]: true }));
-      
-      const response = await fetch('https://webhook.comercial247.com.br/webhook/pausa_bot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      setIsLoading((prev) => ({
+        ...prev,
+        [`pause-${selectedPhoneNumber}`]: true,
+      }));
+
+      const response = await fetch(
+        "https://webhook.comercial247.com.br/webhook/pausa_bot",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phoneNumber: selectedPhoneNumber,
+            duration,
+            unit: "seconds",
+          }),
         },
-        body: JSON.stringify({ 
-          phoneNumber: selectedPhoneNumber,
-          duration,
-          unit: 'seconds'
-        }),
-      });
-      
+      );
+
       if (!response.ok) {
-        throw new Error('Erro ao pausar o bot');
+        throw new Error("Erro ao pausar o bot");
       }
-      
+
       toast({
         title: "Bot pausado",
-        description: duration ? `Bot pausado com sucesso para ${selectedPhoneNumber} por ${duration} segundos` : `Bot não foi pausado para ${selectedPhoneNumber}`,
+        description: duration
+          ? `Bot pausado com sucesso para ${selectedPhoneNumber} por ${duration} segundos`
+          : `Bot não foi pausado para ${selectedPhoneNumber}`,
       });
-      
     } catch (error) {
-      console.error('Erro ao pausar bot:', error);
+      console.error("Erro ao pausar bot:", error);
       toast({
         title: "Erro ao pausar bot",
         description: "Ocorreu um erro ao pausar o bot.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
-      setIsLoading(prev => ({ ...prev, [`pause-${selectedPhoneNumber}`]: false }));
+      setIsLoading((prev) => ({
+        ...prev,
+        [`pause-${selectedPhoneNumber}`]: false,
+      }));
       closePauseDialog();
     }
   };
@@ -103,53 +116,56 @@ const ChatsDashboard = () => {
   const startBot = async (phoneNumber: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      setIsLoading(prev => ({ ...prev, [`start-${phoneNumber}`]: true }));
-      
-      const response = await fetch('https://webhook.comercial247.com.br/webhook/inicia_bot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      setIsLoading((prev) => ({ ...prev, [`start-${phoneNumber}`]: true }));
+
+      const response = await fetch(
+        "https://webhook.comercial247.com.br/webhook/inicia_bot",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phoneNumber }),
         },
-        body: JSON.stringify({ phoneNumber }),
-      });
-      
+      );
+
       if (!response.ok) {
-        throw new Error('Erro ao iniciar o bot');
+        throw new Error("Erro ao iniciar o bot");
       }
-      
+
       toast({
         title: "Bot ativado",
-        description: `Bot ativado com sucesso para ${phoneNumber}`
+        description: `Bot ativado com sucesso para ${phoneNumber}`,
       });
     } catch (error) {
-      console.error('Erro ao iniciar bot:', error);
+      console.error("Erro ao iniciar bot:", error);
       toast({
         title: "Erro ao ativar bot",
         description: "Ocorreu um erro ao ativar o bot.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
-      setIsLoading(prev => ({ ...prev, [`start-${phoneNumber}`]: false }));
+      setIsLoading((prev) => ({ ...prev, [`start-${phoneNumber}`]: false }));
     }
   };
 
   // Mark a conversation as read when selected
   const markConversationRead = (sessionId: string) => {
-    setConversations(currentConversations => 
-      currentConversations.map(conv => {
+    setConversations((currentConversations) =>
+      currentConversations.map((conv) => {
         if (conv.id === sessionId) {
           return { ...conv, unread: 0 };
         }
         return conv;
-      })
+      }),
     );
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <ChatHeader signOut={signOut} />
-      
-      <PauseDurationDialog 
+
+      <PauseDurationDialog
         isOpen={pauseDialogOpen}
         onClose={closePauseDialog}
         onConfirm={pauseBot}
@@ -157,7 +173,7 @@ const ChatsDashboard = () => {
       />
 
       <div className="flex-1 overflow-hidden">
-        <ChatLayout 
+        <ChatLayout
           conversations={conversations}
           selectedChat={selectedChat}
           setSelectedChat={setSelectedChat}

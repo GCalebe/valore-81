@@ -4,24 +4,24 @@ O componente `ClientsTable` é responsável por exibir uma tabela de clientes co
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|-------------|--------|------------|
-| contacts | Contact[] | Sim | - | Array de contatos/clientes a serem exibidos na tabela |
-| isLoading | boolean | Não | false | Indica se os dados estão sendo carregados |
-| searchTerm | string | Não | '' | Termo de busca para filtrar os contatos |
-| statusFilter | string | Não | 'all' | Filtro por status do cliente |
-| segmentFilter | string | Não | 'all' | Filtro por segmento do cliente |
-| lastContactFilter | string | Não | 'all' | Filtro por data do último contato |
-| customFieldFilters | object | Não | {} | Filtros por campos personalizados |
-| onViewDetails | function | Sim | - | Função chamada quando o usuário clica para ver detalhes de um cliente |
-| onEditClient | function | Sim | - | Função chamada quando o usuário clica para editar um cliente |
-| onDeleteClient | function | Sim | - | Função chamada quando o usuário clica para excluir um cliente |
-| onSendMessage | function | Sim | - | Função chamada quando o usuário clica para enviar mensagem a um cliente |
+| Prop               | Tipo      | Obrigatório | Padrão | Descrição                                                               |
+| ------------------ | --------- | ----------- | ------ | ----------------------------------------------------------------------- |
+| contacts           | Contact[] | Sim         | -      | Array de contatos/clientes a serem exibidos na tabela                   |
+| isLoading          | boolean   | Não         | false  | Indica se os dados estão sendo carregados                               |
+| searchTerm         | string    | Não         | ''     | Termo de busca para filtrar os contatos                                 |
+| statusFilter       | string    | Não         | 'all'  | Filtro por status do cliente                                            |
+| segmentFilter      | string    | Não         | 'all'  | Filtro por segmento do cliente                                          |
+| lastContactFilter  | string    | Não         | 'all'  | Filtro por data do último contato                                       |
+| customFieldFilters | object    | Não         | {}     | Filtros por campos personalizados                                       |
+| onViewDetails      | function  | Sim         | -      | Função chamada quando o usuário clica para ver detalhes de um cliente   |
+| onEditClient       | function  | Sim         | -      | Função chamada quando o usuário clica para editar um cliente            |
+| onDeleteClient     | function  | Sim         | -      | Função chamada quando o usuário clica para excluir um cliente           |
+| onSendMessage      | function  | Sim         | -      | Função chamada quando o usuário clica para enviar mensagem a um cliente |
 
 ## Exemplos de Uso
 
 ```tsx
-<ClientsTable 
+<ClientsTable
   contacts={clients}
   isLoading={loading}
   searchTerm={searchQuery}
@@ -52,12 +52,10 @@ O componente utiliza o componente `ClientTableRow` para renderizar cada linha da
 
 ```tsx
 <Table>
-  <TableHeader>
-    {/* Cabeçalhos das colunas */}
-  </TableHeader>
+  <TableHeader>{/* Cabeçalhos das colunas */}</TableHeader>
   <TableBody>
-    {filteredContacts.map(contact => (
-      <ClientTableRow 
+    {filteredContacts.map((contact) => (
+      <ClientTableRow
         key={contact.id}
         contact={contact}
         onViewDetails={onViewDetails}

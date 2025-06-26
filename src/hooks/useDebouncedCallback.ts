@@ -1,4 +1,3 @@
-
 import * as React from "react";
 
 /**
@@ -8,7 +7,7 @@ import * as React from "react";
  */
 export function useDebouncedCallback<T extends (...args: any[]) => void>(
   callback: T,
-  delay: number = 400
+  delay: number = 400,
 ) {
   const timeout = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -17,7 +16,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => void>(
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = setTimeout(() => callback(...args), delay);
     },
-    [callback, delay]
+    [callback, delay],
   );
 
   // cleanup (evita vazamento de timers)

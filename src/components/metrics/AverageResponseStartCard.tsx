@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Clock } from "lucide-react";
 
 interface AverageResponseStartCardProps {
   avgStartTime: number;
@@ -9,10 +8,10 @@ interface AverageResponseStartCardProps {
   trend?: string;
 }
 
-const AverageResponseStartCard: React.FC<AverageResponseStartCardProps> = ({ 
-  avgStartTime, 
+const AverageResponseStartCard: React.FC<AverageResponseStartCardProps> = ({
+  avgStartTime,
   loading = false,
-  trend 
+  trend,
 }) => {
   const formatTime = (minutes: number) => {
     if (minutes < 60) {

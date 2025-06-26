@@ -1,7 +1,7 @@
-import React from 'react';
-import { Contact } from '@/types/client';
-import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
-import ClientInfo from '@/components/clients/ClientInfo';
+import React from "react";
+import { Contact } from "@/types/client";
+import { DynamicCategory } from "@/components/clients/DynamicCategoryManager";
+import ClientInfo from "@/components/clients/ClientInfo";
 
 interface ClientInfoExampleProps {
   clientData: Contact | null;
@@ -21,7 +21,7 @@ interface ClientInfoExampleProps {
 const ClientInfoExample: React.FC<ClientInfoExampleProps> = ({
   clientData,
   dynamicFields,
-  onFieldUpdate
+  onFieldUpdate,
 }) => {
   return (
     <div className="mt-4">
@@ -39,20 +39,20 @@ export default ClientInfoExample;
 
 /**
  * Instruções para implementação:
- * 
+ *
  * Exemplo de uso no componente pai:
- * 
+ *
  * import ClientInfoExample from './ClientInfoExample';
- * 
+ *
  * // Substitua
- * <ClientInfoTabs 
+ * <ClientInfoTabs
  *   clientData={clientData}
  *   dynamicFields={dynamicFields}
  *   onFieldUpdate={handleFieldUpdate}
  * />
- * 
+ *
  * // Por
- * <ClientInfoExample 
+ * <ClientInfoExample
  *   clientData={clientData}
  *   dynamicFields={dynamicFields}
  *   onFieldUpdate={handleFieldUpdate}

@@ -1,22 +1,21 @@
-
-import { supabase } from '@/integrations/supabase/client';
-import { Contact } from '@/types/client';
+import { supabase } from "@/integrations/supabase/client";
+import { Contact } from "@/types/client";
 
 export const useContactsService = () => {
   const fetchAllContacts = async (): Promise<Contact[]> => {
     try {
       // Since the view doesn't exist, we'll use the contacts table directly
       const { data: contactsData, error: contactsError } = await supabase
-        .from('contacts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("contacts")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (contactsError) {
         throw new Error(`Failed to fetch contacts: ${contactsError.message}`);
       }
 
       // Transform the data to match the Contact interface
-      return (contactsData || []).map(contact => ({
+      return (contactsData || []).map((contact) => ({
         id: contact.id,
         name: contact.name,
         email: contact.email,
@@ -27,7 +26,10 @@ export const useContactsService = () => {
         clientType: contact.client_type,
         cpfCnpj: contact.cpf_cnpj,
         asaasCustomerId: contact.asaas_customer_id,
-        status: (contact.status === 'Active' || contact.status === 'Inactive') ? contact.status : 'Active',
+        status:
+          contact.status === "Active" || contact.status === "Inactive"
+            ? contact.status
+            : "Active",
         notes: contact.notes,
         lastContact: contact.last_contact,
         lastMessage: contact.last_message,
@@ -46,31 +48,46 @@ export const useContactsService = () => {
         contractDate: contact.contract_date,
         payment: contact.payment,
         uploadedFiles: contact.uploaded_files || [],
-        consultationStage: (contact.consultation_stage && 
-          ['Nova consulta', 'Qualificado', 'Chamada agendada', 'Preparando proposta', 'Proposta enviada', 'Acompanhamento', 'Negociação', 'Fatura enviada', 'Fatura paga – ganho', 'Projeto cancelado – perdido'].includes(contact.consultation_stage)
-          ? contact.consultation_stage as Contact['consultationStage']
-          : 'Nova consulta'),
-        kanbanStage: contact.kanban_stage || 'Entraram'
+        consultationStage:
+          contact.consultation_stage &&
+          [
+            "Nova consulta",
+            "Qualificado",
+            "Chamada agendada",
+            "Preparando proposta",
+            "Proposta enviada",
+            "Acompanhamento",
+            "Negociação",
+            "Fatura enviada",
+            "Fatura paga – ganho",
+            "Projeto cancelado – perdido",
+          ].includes(contact.consultation_stage)
+            ? (contact.consultation_stage as Contact["consultationStage"])
+            : "Nova consulta",
+        kanbanStage: contact.kanban_stage || "Entraram",
       }));
     } catch (error) {
-      console.error('Error in fetchAllContacts:', error);
+      console.error("Error in fetchAllContacts:", error);
       throw error;
     }
   };
 
-  const updateContactKanbanStage = async (contactId: string, stageTitle: string) => {
+  const updateContactKanbanStage = async (
+    contactId: string,
+    stageTitle: string,
+  ) => {
     try {
       // Update the contact with the stage directly
       const { error: updateError } = await supabase
-        .from('contacts')
+        .from("contacts")
         .update({ kanban_stage: stageTitle })
-        .eq('id', contactId);
+        .eq("id", contactId);
 
       if (updateError) {
         throw new Error(`Failed to update contact: ${updateError.message}`);
       }
     } catch (error) {
-      console.error('Error in updateContactKanbanStage:', error);
+      console.error("Error in updateContactKanbanStage:", error);
       throw error;
     }
   };

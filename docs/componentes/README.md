@@ -38,26 +38,24 @@ Os componentes padronizados seguem o seguinte padrão de nomenclatura:
 
 Para documentar um novo componente padronizado, crie um arquivo Markdown na pasta correspondente à categoria do componente, seguindo o modelo abaixo:
 
-```markdown
+````markdown
 # Nome do Componente
 
 Breve descrição do componente e seu propósito.
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|-------------|--------|------------|
-| prop1 | string | Sim | - | Descrição da prop1 |
-| prop2 | number | Não | 0 | Descrição da prop2 |
+| Prop  | Tipo   | Obrigatório | Padrão | Descrição          |
+| ----- | ------ | ----------- | ------ | ------------------ |
+| prop1 | string | Sim         | -      | Descrição da prop1 |
+| prop2 | number | Não         | 0      | Descrição da prop2 |
 
 ## Exemplos de Uso
 
 ```tsx
-<ComponenteStandardized 
-  prop1="valor" 
-  prop2={42} 
-/>
+<ComponenteStandardized prop1="valor" prop2={42} />
 ```
+````
 
 ## Comportamento
 
@@ -70,6 +68,7 @@ Lista de dependências do componente (outros componentes, hooks, etc.).
 ## Notas de Implementação
 
 Informações adicionais sobre a implementação do componente, decisões de design, etc.
+
 ```
 
 ## Boas Práticas
@@ -78,3 +77,4 @@ Informações adicionais sobre a implementação do componente, decisões de des
 2. **Inclua exemplos de uso**: Exemplos ajudam outros desenvolvedores a entender como usar o componente
 3. **Documente todas as props**: Mesmo as props opcionais devem ser documentadas
 4. **Explique comportamentos complexos**: Se o componente tem comportamentos complexos, explique-os em detalhes
+```

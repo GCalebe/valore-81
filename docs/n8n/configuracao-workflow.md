@@ -38,6 +38,7 @@ O workflow fornece três endpoints HTTP que podem ser usados para interagir com 
 **Endpoint**: `POST /webhook/memoria/consultar`
 
 **Payload de exemplo**:
+
 ```json
 {
   "sessionId": "abc123",
@@ -47,6 +48,7 @@ O workflow fornece três endpoints HTTP que podem ser usados para interagir com 
 ```
 
 **Resposta esperada**:
+
 ```json
 {
   "memories": [
@@ -76,6 +78,7 @@ O workflow fornece três endpoints HTTP que podem ser usados para interagir com 
 **Endpoint**: `POST /webhook/memoria/armazenar`
 
 **Payload de exemplo**:
+
 ```json
 {
   "sessionId": "abc123",
@@ -103,6 +106,7 @@ O workflow fornece três endpoints HTTP que podem ser usados para interagir com 
 ```
 
 **Resposta esperada**:
+
 ```json
 {
   "success": true,
@@ -118,6 +122,7 @@ O workflow fornece três endpoints HTTP que podem ser usados para interagir com 
 **Payload**: Não é necessário payload
 
 **Resposta esperada**:
+
 ```json
 {
   "success": true,
@@ -135,39 +140,39 @@ Para integrar o workflow com a aplicação, você precisará atualizar o arquivo
 ```typescript
 // Exemplo de como atualizar o chatService.ts para usar o n8n
 
-import axios from 'axios';
-import { N8nChatHistory } from '@/types/chat';
+import axios from "axios";
+import { N8nChatHistory } from "@/types/chat";
 
 // URL base do n8n
-const N8N_BASE_URL = process.env.N8N_BASE_URL || 'http://localhost:5678';
+const N8N_BASE_URL = process.env.N8N_BASE_URL || "http://localhost:5678";
 
 // Endpoints do workflow
 const ENDPOINTS = {
   CONSULTAR: `${N8N_BASE_URL}/webhook/memoria/consultar`,
   ARMAZENAR: `${N8N_BASE_URL}/webhook/memoria/armazenar`,
-  LIMPAR: `${N8N_BASE_URL}/webhook/memoria/limpar-expiradas`
+  LIMPAR: `${N8N_BASE_URL}/webhook/memoria/limpar-expiradas`,
 };
 
 export async function fetchChatHistory(conversationId: string) {
   try {
     const response = await axios.post(ENDPOINTS.CONSULTAR, {
       sessionId: conversationId,
-      memoryType: 'contextual'
+      memoryType: "contextual",
     });
-    
+
     // Converter para o formato N8nChatHistory
     return response.data.memories.map((memory: any) => ({
       id: memory.id,
       session_id: memory.sessionId,
       message: {
         content: memory.content,
-        type: memory.type
+        type: memory.type,
       },
       data: memory.timestamp,
-      hora: memory.timestamp
+      hora: memory.timestamp,
     })) as N8nChatHistory[];
   } catch (error) {
-    console.error('Erro ao buscar histórico de chat:', error);
+    console.error("Erro ao buscar histórico de chat:", error);
     return [] as N8nChatHistory[];
   }
 }
@@ -177,12 +182,12 @@ export async function storeMessage(conversationId: string, message: any) {
     await axios.post(ENDPOINTS.ARMAZENAR, {
       sessionId: conversationId,
       message,
-      memoryType: 'contextual',
-      memoryLevel: 'short_term'
+      memoryType: "contextual",
+      memoryLevel: "short_term",
     });
     return true;
   } catch (error) {
-    console.error('Erro ao armazenar mensagem:', error);
+    console.error("Erro ao armazenar mensagem:", error);
     return false;
   }
 }

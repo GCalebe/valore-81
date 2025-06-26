@@ -1,16 +1,29 @@
-
-import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, RotateCcw, Palette, Sun, Moon, Monitor } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { useTheme } from '@/context/ThemeContext';
-import { useToast } from '@/hooks/use-toast';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Upload,
+  RotateCcw,
+  Palette,
+  Sun,
+  Moon,
+  Monitor,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { useTheme } from "@/context/ThemeContext";
+import { useToast } from "@/hooks/use-toast";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 
 const ThemeSettings = () => {
   const navigate = useNavigate();
@@ -53,11 +66,16 @@ const ThemeSettings = () => {
   };
 
   const handleThemeChange = (value: string) => {
-    if (value && (value === 'light' || value === 'dark' || value === 'system')) {
+    if (
+      value &&
+      (value === "light" || value === "dark" || value === "system")
+    ) {
       setTheme(value);
       toast({
         title: "Tema alterado",
-        description: `Tema alterado para ${value === 'light' ? 'claro' : value === 'dark' ? 'escuro' : 'sistema'}.`,
+        description: `Tema alterado para ${
+          value === "light" ? "claro" : value === "dark" ? "escuro" : "sistema"
+        }.`,
       });
     }
   };
@@ -65,13 +83,13 @@ const ThemeSettings = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <DashboardHeader />
-      
+
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => navigate('/dashboard')}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
             className="text-gray-600 dark:text-gray-300"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -92,7 +110,8 @@ const ThemeSettings = () => {
               <CardHeader>
                 <CardTitle>Modo de Tema</CardTitle>
                 <CardDescription>
-                  Escolha entre tema claro, escuro ou seguir as configurações do sistema
+                  Escolha entre tema claro, escuro ou seguir as configurações do
+                  sistema
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -130,7 +149,8 @@ const ThemeSettings = () => {
                     </ToggleGroupItem>
                   </ToggleGroup>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    O modo sistema segue as configurações de tema do seu dispositivo
+                    O modo sistema segue as configurações de tema do seu
+                    dispositivo
                   </p>
                 </div>
               </CardContent>
@@ -150,7 +170,9 @@ const ThemeSettings = () => {
                   <Input
                     id="brandName"
                     value={settings.brandName}
-                    onChange={(e) => updateSettings({ brandName: e.target.value })}
+                    onChange={(e) =>
+                      updateSettings({ brandName: e.target.value })
+                    }
                     placeholder="Digite o nome da sua marca"
                   />
                 </div>
@@ -168,8 +190,8 @@ const ThemeSettings = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => fileInputRef.current?.click()}
                       className="flex items-center gap-2"
                     >
@@ -177,8 +199,8 @@ const ThemeSettings = () => {
                       Fazer Upload
                     </Button>
                     {settings.logo && (
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         onClick={() => updateSettings({ logo: null })}
                         className="text-red-600 hover:text-red-700"
                       >
@@ -195,9 +217,9 @@ const ThemeSettings = () => {
                   />
                   {settings.logo && (
                     <div className="flex items-center gap-2">
-                      <img 
-                        src={settings.logo} 
-                        alt="Logo preview" 
+                      <img
+                        src={settings.logo}
+                        alt="Logo preview"
                         className="h-12 w-12 object-contain rounded border"
                       />
                       <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -226,12 +248,16 @@ const ThemeSettings = () => {
                         id="primaryColor"
                         type="color"
                         value={settings.primaryColor}
-                        onChange={(e) => updateSettings({ primaryColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ primaryColor: e.target.value })
+                        }
                         className="w-12 h-10 rounded border cursor-pointer"
                       />
                       <Input
                         value={settings.primaryColor}
-                        onChange={(e) => updateSettings({ primaryColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ primaryColor: e.target.value })
+                        }
                         placeholder="#1a365d"
                         className="flex-1"
                       />
@@ -245,12 +271,16 @@ const ThemeSettings = () => {
                         id="secondaryColor"
                         type="color"
                         value={settings.secondaryColor}
-                        onChange={(e) => updateSettings({ secondaryColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ secondaryColor: e.target.value })
+                        }
                         className="w-12 h-10 rounded border cursor-pointer"
                       />
                       <Input
                         value={settings.secondaryColor}
-                        onChange={(e) => updateSettings({ secondaryColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ secondaryColor: e.target.value })
+                        }
                         placeholder="#fbbf24"
                         className="flex-1"
                       />
@@ -264,12 +294,16 @@ const ThemeSettings = () => {
                         id="accentColor"
                         type="color"
                         value={settings.accentColor}
-                        onChange={(e) => updateSettings({ accentColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ accentColor: e.target.value })
+                        }
                         className="w-12 h-10 rounded border cursor-pointer"
                       />
                       <Input
                         value={settings.accentColor}
-                        onChange={(e) => updateSettings({ accentColor: e.target.value })}
+                        onChange={(e) =>
+                          updateSettings({ accentColor: e.target.value })
+                        }
                         placeholder="#172554"
                         className="flex-1"
                       />
@@ -281,7 +315,11 @@ const ThemeSettings = () => {
 
             {/* Ações */}
             <div className="flex gap-4">
-              <Button onClick={handleReset} variant="outline" className="flex items-center gap-2">
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
                 <RotateCcw className="h-4 w-4" />
                 Resetar Configurações
               </Button>
@@ -299,30 +337,34 @@ const ThemeSettings = () => {
               </CardHeader>
               <CardContent>
                 <div className="border rounded-lg overflow-hidden">
-                  <div 
+                  <div
                     className="px-4 py-4 text-white"
                     style={{ backgroundColor: settings.primaryColor }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {settings.logo ? (
-                          <img 
-                            src={settings.logo} 
-                            alt="Logo" 
+                          <img
+                            src={settings.logo}
+                            alt="Logo"
                             className="h-8 w-8 object-contain"
                           />
                         ) : (
-                          <div 
+                          <div
                             className="h-8 w-8 rounded"
                             style={{ backgroundColor: settings.secondaryColor }}
                           />
                         )}
-                        <h1 className="text-xl font-bold">{settings.brandName}</h1>
+                        <h1 className="text-xl font-bold">
+                          {settings.brandName}
+                        </h1>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div 
+                        <div
                           className="px-3 py-1 rounded text-sm"
-                          style={{ backgroundColor: `${settings.accentColor}88` }}
+                          style={{
+                            backgroundColor: `${settings.accentColor}88`,
+                          }}
                         >
                           Preview
                         </div>

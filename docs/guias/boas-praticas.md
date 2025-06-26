@@ -23,12 +23,12 @@ interface User {
   age?: number; // Opcional
 }
 
-type UserRole = 'admin' | 'user' | 'guest';
+type UserRole = "admin" | "user" | "guest";
 
 enum UserStatus {
-  Active = 'active',
-  Inactive = 'inactive',
-  Suspended = 'suspended',
+  Active = "active",
+  Inactive = "inactive",
+  Suspended = "suspended",
 }
 
 async function fetchUser(id: string): Promise<User | undefined> {
@@ -36,7 +36,7 @@ async function fetchUser(id: string): Promise<User | undefined> {
     const response = await api.get(`/users/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     return undefined;
   }
 }
@@ -56,14 +56,14 @@ Exemplo:
 type ButtonProps = {
   label: string;
   onClick: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
 };
 
 const Button: FC<ButtonProps> = ({
   label,
   onClick,
-  variant = 'primary',
+  variant = "primary",
   disabled = false,
 }) => {
   const handleClick = useCallback(() => {
@@ -73,7 +73,7 @@ const Button: FC<ButtonProps> = ({
   }, [onClick, disabled]);
 
   const buttonClass = useMemo(() => {
-    return `btn btn-${variant} ${disabled ? 'btn-disabled' : ''}`;
+    return `btn btn-${variant} ${disabled ? "btn-disabled" : ""}`;
   }, [variant, disabled]);
 
   return (
@@ -95,8 +95,12 @@ Exemplo:
 
 ```tsx
 <div className="flex flex-col space-y-4 p-4 bg-background rounded-lg shadow-md dark:bg-background-dark">
-  <h2 className="text-xl font-bold text-foreground dark:text-foreground-dark">Título</h2>
-  <p className="text-muted-foreground dark:text-muted-foreground-dark">Conteúdo</p>
+  <h2 className="text-xl font-bold text-foreground dark:text-foreground-dark">
+    Título
+  </h2>
+  <p className="text-muted-foreground dark:text-muted-foreground-dark">
+    Conteúdo
+  </p>
   <Button variant="primary">Ação</Button>
 </div>
 ```

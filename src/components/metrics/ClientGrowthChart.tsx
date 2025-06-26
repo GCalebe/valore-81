@@ -1,15 +1,28 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Area, AreaChart, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  LineChart,
+  Area,
+  AreaChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 interface ClientGrowthChartProps {
   data: Array<{ month: string; clients: number }>;
   loading?: boolean;
 }
 
-const ClientGrowthChart: React.FC<ClientGrowthChartProps> = ({ data, loading = false }) => {
+const ClientGrowthChart: React.FC<ClientGrowthChartProps> = ({
+  data,
+  loading = false,
+}) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
@@ -28,10 +41,10 @@ const ClientGrowthChart: React.FC<ClientGrowthChartProps> = ({ data, loading = f
             <ChartContainer
               config={{
                 clients: {
-                  label: 'Clientes',
+                  label: "Clientes",
                   theme: {
-                    light: '#8B5CF6',
-                    dark: '#A78BFA',
+                    light: "#8B5CF6",
+                    dark: "#A78BFA",
                   },
                 },
               }}
@@ -41,9 +54,23 @@ const ClientGrowthChart: React.FC<ClientGrowthChartProps> = ({ data, loading = f
                 margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
               >
                 <defs>
-                  <linearGradient id="clientsGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-clients)" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="var(--color-clients)" stopOpacity={0} />
+                  <linearGradient
+                    id="clientsGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="var(--color-clients)"
+                      stopOpacity={0.2}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-clients)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <XAxis
@@ -52,8 +79,16 @@ const ClientGrowthChart: React.FC<ClientGrowthChartProps> = ({ data, loading = f
                   tickLine={false}
                   tick={{ fontSize: 12 }}
                 />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.2} />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <CartesianGrid
+                  vertical={false}
+                  strokeDasharray="3 3"
+                  opacity={0.2}
+                />
                 <ChartTooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {

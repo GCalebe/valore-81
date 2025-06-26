@@ -1,7 +1,7 @@
-import React, { useRef, useState, useCallback } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-import KanbanStageColumn from './KanbanStageColumn';
-import { Contact } from '@/types/client';
+import React, { useRef, useState, useCallback } from "react";
+import { DragDropContext } from "react-beautiful-dnd";
+import KanbanStageColumn from "./KanbanStageColumn";
+import { Contact } from "@/types/client";
 import { KanbanStage } from "@/hooks/useKanbanStages";
 import { useContactsByKanbanStage } from "@/hooks/useContactsByKanbanStage";
 
@@ -30,11 +30,14 @@ const KanbanView = ({
   const [scrollLeft, setScrollLeft] = useState(0);
 
   // Filtragem de contatos
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (contact.email && contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.clientName && contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (contact.phone && contact.phone.includes(searchTerm))
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (contact.email &&
+        contact.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.clientName &&
+        contact.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (contact.phone && contact.phone.includes(searchTerm)),
   );
 
   // Agrupamento de contatos por estágio usando hook refatorado
@@ -42,8 +45,14 @@ const KanbanView = ({
 
   // Log para diagnosticar dados recebidos
   React.useEffect(() => {
-    console.log("[KanbanView] Stages disponíveis:", stages.map(s => s.title));
-    console.log("[KanbanView] Total de contatos filtrados:", filteredContacts.length);
+    console.log(
+      "[KanbanView] Stages disponíveis:",
+      stages.map((s) => s.title),
+    );
+    console.log(
+      "[KanbanView] Total de contatos filtrados:",
+      filteredContacts.length,
+    );
     console.log("[KanbanView] Agrupamento final:", contactsByStage);
   }, [filteredContacts, stages, contactsByStage]);
 
@@ -63,7 +72,7 @@ const KanbanView = ({
 
     if (
       e.target === scrollContainerRef.current ||
-      (e.target as Element).closest('.kanban-drag-area')
+      (e.target as Element).closest(".kanban-drag-area")
     ) {
       setIsDragging(true);
       setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
@@ -81,7 +90,7 @@ const KanbanView = ({
       const walk = (x - startX) * 2;
       scrollContainerRef.current.scrollLeft = scrollLeft - walk;
     },
-    [isDragging, startX, scrollLeft]
+    [isDragging, startX, scrollLeft],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -97,11 +106,11 @@ const KanbanView = ({
       <div
         ref={scrollContainerRef}
         className={`overflow-x-auto overflow-y-hidden h-full select-none transition-all duration-200 ${
-          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          isDragging ? "cursor-grabbing" : "cursor-grab"
         } [&::-webkit-scrollbar]:hidden`}
         style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

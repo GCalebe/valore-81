@@ -13,12 +13,14 @@ Este documento registra as alterações importantes realizadas no projeto Valore
 **Alterações**:
 
 1. Criação de componentes padronizados:
+
    - `ClientsTableStandardized.tsx`
    - `ClientDetailSheetStandardized.tsx`
    - `EditClientFormStandardized.tsx`
    - `NewClientFormStandardized.tsx`
 
 2. Atualização de importações nos arquivos:
+
    - `ClientsModals.tsx`
    - `ClientsDashboard.tsx`
 

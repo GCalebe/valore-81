@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
 
 interface Product {
   id: number;
@@ -17,10 +17,10 @@ interface Product {
 const ProductsTab = () => {
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState<Omit<Product, 'id'>>({ 
-    name: '', 
-    price: 0, 
-    isPromotion: false 
+  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>({
+    name: "",
+    price: 0,
+    isPromotion: false,
   });
 
   const handleAddProduct = () => {
@@ -35,11 +35,11 @@ const ProductsTab = () => {
 
     const product: Product = {
       id: Date.now(),
-      ...newProduct
+      ...newProduct,
     };
 
     setProducts([...products, product]);
-    setNewProduct({ name: '', price: 0, isPromotion: false });
+    setNewProduct({ name: "", price: 0, isPromotion: false });
 
     toast({
       title: "Produto adicionado",
@@ -61,7 +61,9 @@ const ProductsTab = () => {
                 id="name"
                 placeholder="Ex., Consultoria"
                 value={newProduct.name}
-                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, name: e.target.value })
+                }
               />
             </div>
             <div className="col-span-3 grid gap-2">
@@ -70,16 +72,24 @@ const ProductsTab = () => {
                 id="price"
                 type="number"
                 placeholder="Ex. 100,00"
-                value={newProduct.price || ''}
-                onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
+                value={newProduct.price || ""}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    price: parseFloat(e.target.value),
+                  })
+                }
               />
             </div>
             <div className="col-span-2 flex items-center space-x-2 h-10">
               <Checkbox
                 id="promotion"
                 checked={newProduct.isPromotion}
-                onCheckedChange={(checked) => 
-                  setNewProduct({ ...newProduct, isPromotion: checked as boolean })
+                onCheckedChange={(checked) =>
+                  setNewProduct({
+                    ...newProduct,
+                    isPromotion: checked as boolean,
+                  })
                 }
               />
               <Label htmlFor="promotion">Promoção</Label>

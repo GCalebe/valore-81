@@ -21,10 +21,12 @@ No início do projeto Valore-81, foi necessário definir o stack tecnológico qu
 ### Frontend
 
 1. **React + TypeScript**
+
    - Prós: Tipagem estática, ecossistema maduro, grande comunidade, experiência prévia da equipe
    - Contras: Curva de aprendizado para TypeScript, configuração inicial mais complexa
 
 2. **Vue.js**
+
    - Prós: Documentação excelente, curva de aprendizado suave, bom desempenho
    - Contras: Ecossistema menor que React, menos experiência na equipe
 
@@ -35,10 +37,12 @@ No início do projeto Valore-81, foi necessário definir o stack tecnológico qu
 ### Backend
 
 1. **Node.js + Express + TypeScript**
+
    - Prós: Compartilhamento de código com frontend, mesma linguagem, experiência da equipe
    - Contras: Desempenho em operações CPU-intensivas, gerenciamento de assincronicidade
 
 2. **Django (Python)**
+
    - Prós: Rápido desenvolvimento, ORM poderoso, admin integrado
    - Contras: Menos experiência na equipe, integração com frontend TypeScript
 
@@ -49,10 +53,12 @@ No início do projeto Valore-81, foi necessário definir o stack tecnológico qu
 ### Banco de Dados
 
 1. **PostgreSQL**
+
    - Prós: Open-source, robusto, suporte a JSON, extensível
    - Contras: Configuração mais complexa para alta disponibilidade
 
 2. **MySQL**
+
    - Prós: Popular, bem documentado, fácil de usar
    - Contras: Menos recursos avançados que PostgreSQL
 
@@ -63,10 +69,12 @@ No início do projeto Valore-81, foi necessário definir o stack tecnológico qu
 ### Infraestrutura
 
 1. **Supabase**
+
    - Prós: Backend-as-a-Service, PostgreSQL, autenticação integrada, realtime
    - Contras: Menos controle, limitações em funcionalidades personalizadas
 
 2. **Firebase**
+
    - Prós: Fácil de usar, escalável, diversos serviços integrados
    - Contras: Vendor lock-in, limitações em consultas complexas
 
@@ -79,6 +87,7 @@ No início do projeto Valore-81, foi necessário definir o stack tecnológico qu
 Após análise e discussão, a equipe decidiu adotar o seguinte stack tecnológico:
 
 ### Frontend
+
 - **React 18+ com TypeScript**
 - **Next.js** para SSR, SSG e roteamento
 - **Tailwind CSS** para estilização
@@ -87,12 +96,14 @@ Após análise e discussão, a equipe decidiu adotar o seguinte stack tecnológi
 - **React Hook Form** com **Zod** para formulários e validação
 
 ### Backend
+
 - **Supabase** como plataforma principal
 - **PostgreSQL** como banco de dados
 - **Edge Functions** do Supabase para lógica de negócios complexa
 - **Row Level Security (RLS)** para controle de acesso
 
 ### Infraestrutura
+
 - **Vercel** para hospedagem do frontend
 - **Supabase** para backend e banco de dados
 - **GitHub Actions** para CI/CD

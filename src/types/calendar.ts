@@ -1,7 +1,7 @@
 // Define event types based on the API response
 export type CalendarAttendee = {
   email?: string;
-  responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+  responseStatus?: "needsAction" | "declined" | "tentative" | "accepted";
 };
 
 export type CalendarEvent = {
@@ -29,7 +29,7 @@ export type EventFormData = {
 };
 
 // Appointment types (mock data)
-export type AppointmentStatus = 'confirmado' | 'pendente' | 'cancelado';
+export type AppointmentStatus = "confirmado" | "pendente" | "cancelado";
 
 export type Appointment = {
   id: number;
@@ -42,4 +42,4 @@ export type Appointment = {
   notes: string;
 };
 
-export type AppointmentFormData = Omit<Appointment, 'id'>;
+export type AppointmentFormData = Omit<Appointment, "id">;

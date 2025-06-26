@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS n8n_chat_memory (
   data TEXT,
   hora TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
+
   -- Novos campos para suportar diferentes tipos de memória
   memory_type TEXT, -- 'contextual', 'semantic', 'episodic'
   memory_level TEXT, -- 'short_term', 'medium_term', 'long_term'
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS n8n_chat_memory (
   relationships JSONB, -- Para armazenar relacionamentos entre entidades
   context JSONB, -- Contexto adicional para a memória
   metadata JSONB, -- Metadados adicionais (tags, categorias, etc.)
-  
+
   -- Índices para melhorar performance de consultas
   CONSTRAINT unique_session_message UNIQUE (session_id, id)
 );
@@ -32,22 +32,22 @@ CREATE INDEX IF NOT EXISTS idx_n8n_chat_memory_created_at ON n8n_chat_memory(cre
 
 -- 3. Migrar dados da tabela n8n_chat_histories para a nova tabela
 INSERT INTO n8n_chat_memory (session_id, message, data, hora, created_at)
-SELECT 
-  session_id, 
-  message, 
-  data, 
-  hora, 
+SELECT
+  session_id,
+  message,
+  data,
+  hora,
   COALESCE(hora::timestamp with time zone, data::timestamp with time zone, NOW())
 FROM n8n_chat_histories
 ON CONFLICT (session_id, id) DO NOTHING;
 
 -- 4. Migrar dados da tabela n8n_chat_history para a nova tabela
 INSERT INTO n8n_chat_memory (session_id, message, data, hora, created_at)
-SELECT 
-  session_id, 
-  message, 
-  data, 
-  hora, 
+SELECT
+  session_id,
+  message,
+  data,
+  hora,
   COALESCE(created_at::timestamp with time zone, hora::timestamp with time zone, data::timestamp with time zone, NOW())
 FROM n8n_chat_history
 ON CONFLICT (session_id, id) DO NOTHING;

@@ -1,12 +1,17 @@
-
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Edit, Check, X } from 'lucide-react';
-import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
+import React, { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Edit, Check, X } from "lucide-react";
+import { DynamicCategory } from "@/components/clients/DynamicCategoryManager";
 
 interface EditableDynamicFieldProps {
   field: DynamicCategory;
@@ -14,7 +19,11 @@ interface EditableDynamicFieldProps {
   readOnly?: boolean;
 }
 
-const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDynamicFieldProps) => {
+const EditableDynamicField = ({
+  field,
+  onUpdate,
+  readOnly = false,
+}: EditableDynamicFieldProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(field.value);
 
@@ -31,57 +40,63 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
   const renderFieldValue = () => {
     if (isEditing) {
       switch (field.type) {
-        case 'text':
+        case "text":
           return (
             <Input
-              value={editValue || ''}
+              value={editValue || ""}
               onChange={(e) => setEditValue(e.target.value)}
               className="text-sm"
               autoFocus
             />
           );
-        
-        case 'single_select':
+
+        case "single_select":
           return (
-            <Select value={editValue || 'none'} onValueChange={setEditValue}>
+            <Select value={editValue || "none"} onValueChange={setEditValue}>
               <SelectTrigger className="text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Nenhum</SelectItem>
-                {field.options && Array.isArray(field.options) && field.options.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
+                {field.options &&
+                  Array.isArray(field.options) &&
+                  field.options.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           );
-        
-        case 'multi_select':
+
+        case "multi_select":
           const selectedValues = Array.isArray(editValue) ? editValue : [];
           return (
             <div className="space-y-2">
-              {field.options && Array.isArray(field.options) && field.options.map((option) => (
-                <label key={option} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedValues.includes(option)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setEditValue([...selectedValues, option]);
-                      } else {
-                        setEditValue(selectedValues.filter((v: string) => v !== option));
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <span className="text-sm">{option}</span>
-                </label>
-              ))}
+              {field.options &&
+                Array.isArray(field.options) &&
+                field.options.map((option) => (
+                  <label key={option} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedValues.includes(option)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setEditValue([...selectedValues, option]);
+                        } else {
+                          setEditValue(
+                            selectedValues.filter((v: string) => v !== option),
+                          );
+                        }
+                      }}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">{option}</span>
+                  </label>
+                ))}
             </div>
           );
-        
+
         default:
           return <span>Tipo de campo não suportado para edição</span>;
       }
@@ -89,13 +104,13 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
 
     // Display mode
     switch (field.type) {
-      case 'text':
-        return field.value || 'Não informado';
-      
-      case 'single_select':
-        return field.value || 'Não selecionado';
-      
-      case 'multi_select':
+      case "text":
+        return field.value || "Não informado";
+
+      case "single_select":
+        return field.value || "Não selecionado";
+
+      case "multi_select":
         if (Array.isArray(field.value) && field.value.length > 0) {
           return (
             <div className="flex flex-wrap gap-1 mt-1">
@@ -107,21 +122,21 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
             </div>
           );
         }
-        return 'Nenhum selecionado';
-      
+        return "Nenhum selecionado";
+
       default:
-        return 'Tipo de campo desconhecido';
+        return "Tipo de campo desconhecido";
     }
   };
 
   const getFieldTypeLabel = (type: string) => {
     switch (type) {
-      case 'text':
-        return 'Texto';
-      case 'single_select':
-        return 'Seleção Única';
-      case 'multi_select':
-        return 'Seleção Múltipla';
+      case "text":
+        return "Texto";
+      case "single_select":
+        return "Seleção Única";
+      case "multi_select":
+        return "Seleção Múltipla";
       default:
         return type;
     }
@@ -136,7 +151,7 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
             {getFieldTypeLabel(field.type)}
           </Badge>
         </div>
-        
+
         {!readOnly && (
           <div className="flex items-center gap-1">
             {isEditing ? (
@@ -171,7 +186,7 @@ const EditableDynamicField = ({ field, onUpdate, readOnly = false }: EditableDyn
           </div>
         )}
       </div>
-      
+
       <div className="text-sm text-gray-600 dark:text-gray-300">
         {renderFieldValue()}
       </div>

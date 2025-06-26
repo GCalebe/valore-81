@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,24 +14,24 @@ interface KanbanStageColumnProps {
 }
 
 const STAGE_COLORS: { [key: string]: string } = {
-  "Entraram": "bg-gray-100 dark:bg-gray-800/50",
-  "Conversaram": "bg-blue-100 dark:bg-blue-900/40",
-  "Agendaram": "bg-yellow-100 dark:bg-yellow-900/40",
-  "Compareceram": "bg-green-100 dark:bg-green-900/40",
-  "Negociaram": "bg-purple-100 dark:bg-purple-900/40",
-  "Postergaram": "bg-orange-100 dark:bg-orange-900/40",
-  "Converteram": "bg-emerald-100 dark:bg-emerald-900/40",
+  Entraram: "bg-gray-100 dark:bg-gray-800/50",
+  Conversaram: "bg-blue-100 dark:bg-blue-900/40",
+  Agendaram: "bg-yellow-100 dark:bg-yellow-900/40",
+  Compareceram: "bg-green-100 dark:bg-green-900/40",
+  Negociaram: "bg-purple-100 dark:bg-purple-900/40",
+  Postergaram: "bg-orange-100 dark:bg-orange-900/40",
+  Converteram: "bg-emerald-100 dark:bg-emerald-900/40",
 };
 const DEFAULT_STAGE_COLOR = "bg-gray-50 dark:bg-gray-900/40";
 
 const STAGE_HEADER_COLORS: { [key: string]: string } = {
-  "Entraram": "text-gray-500 dark:text-gray-400",
-  "Conversaram": "text-blue-500 dark:text-blue-400",
-  "Agendaram": "text-yellow-500 dark:text-yellow-400",
-  "Compareceram": "text-green-500 dark:text-green-400",
-  "Negociaram": "text-purple-500 dark:text-purple-400",
-  "Postergaram": "text-orange-500 dark:text-orange-400",
-  "Converteram": "text-emerald-500 dark:text-emerald-400",
+  Entraram: "text-gray-500 dark:text-gray-400",
+  Conversaram: "text-blue-500 dark:text-blue-400",
+  Agendaram: "text-yellow-500 dark:text-yellow-400",
+  Compareceram: "text-green-500 dark:text-green-400",
+  Negociaram: "text-purple-500 dark:text-purple-400",
+  Postergaram: "text-orange-500 dark:text-orange-400",
+  Converteram: "text-emerald-500 dark:text-emerald-400",
 };
 const DEFAULT_HEADER_COLOR = "text-gray-500 dark:text-gray-400";
 
@@ -44,10 +43,16 @@ const KanbanStageColumn: React.FC<KanbanStageColumnProps> = ({
   isCompact,
 }) => (
   <div className="w-[280px] md:w-[320px] flex-shrink-0">
-    <Card className={`h-full flex flex-col ${STAGE_COLORS[stage] ?? DEFAULT_STAGE_COLOR}`}>
+    <Card
+      className={`h-full flex flex-col ${
+        STAGE_COLORS[stage] ?? DEFAULT_STAGE_COLOR
+      }`}
+    >
       <CardHeader className="p-2 border-b-2 border-border/80">
         <CardTitle className="text-sm font-semibold flex items-center justify-between">
-          <span className={STAGE_HEADER_COLORS[stage] ?? DEFAULT_HEADER_COLOR}>{stage}</span>
+          <span className={STAGE_HEADER_COLORS[stage] ?? DEFAULT_HEADER_COLOR}>
+            {stage}
+          </span>
           <Badge variant="secondary" className="text-xs h-5">
             {contacts.length}
           </Badge>

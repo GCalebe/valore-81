@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export interface FilterCategoryProps {
   /**
    * Título da categoria de filtro
    */
   title: string;
-  
+
   /**
    * Conteúdo da categoria (controles de filtro)
    */
   children: React.ReactNode;
-  
+
   /**
    * Define se a categoria deve iniciar expandida ou colapsada
    * @default true
    */
   defaultExpanded?: boolean;
-  
+
   /**
    * Classes CSS adicionais para o componente
    * @default ''
@@ -32,7 +32,7 @@ export const FilterCategory: React.FC<FilterCategoryProps> = ({
   title,
   children,
   defaultExpanded = true,
-  className = '',
+  className = "",
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
@@ -41,7 +41,9 @@ export const FilterCategory: React.FC<FilterCategoryProps> = ({
   };
 
   return (
-    <div className={`filter-category border rounded-md overflow-hidden ${className}`}>
+    <div
+      className={`filter-category border rounded-md overflow-hidden ${className}`}
+    >
       <button
         type="button"
         className="w-full flex items-center justify-between p-3 bg-muted/50 hover:bg-muted transition-colors"
@@ -55,11 +57,7 @@ export const FilterCategory: React.FC<FilterCategoryProps> = ({
           <ChevronDown className="h-4 w-4" />
         )}
       </button>
-      {isExpanded && (
-        <div className="p-3 border-t">
-          {children}
-        </div>
-      )}
+      {isExpanded && <div className="p-3 border-t">{children}</div>}
     </div>
   );
 };

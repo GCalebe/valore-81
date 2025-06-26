@@ -1,14 +1,22 @@
-
-import React, { useState } from 'react';
-import { Save, RotateCcw, User, MessageSquare, Heart, Zap, Volume2, VolumeX } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
-import { useToast } from '@/hooks/use-toast';
-import { Switch } from '@/components/ui/switch';
+import React, { useState } from "react";
+import {
+  Save,
+  RotateCcw,
+  User,
+  MessageSquare,
+  Heart,
+  Zap,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 interface PersonalitySettings {
   name: string;
@@ -32,73 +40,83 @@ interface PersonalitySettings {
 const AIPersonalityTab = () => {
   const { toast } = useToast();
   const [settings, setSettings] = useState<PersonalitySettings>({
-    name: 'Assistente Virtual',
-    description: 'Assistente especializado em atendimento ao cliente',
-    tone: 'amigável e profissional',
-    personality: 'Sou um assistente virtual dedicado a ajudar você da melhor forma possível. Tenho conhecimento sobre nossos serviços e estou sempre disposto a esclarecer suas dúvidas.',
+    name: "Assistente Virtual",
+    description: "Assistente especializado em atendimento ao cliente",
+    tone: "amigável e profissional",
+    personality:
+      "Sou um assistente virtual dedicado a ajudar você da melhor forma possível. Tenho conhecimento sobre nossos serviços e estou sempre disposto a esclarecer suas dúvidas.",
     formality: 3,
     empathy: 4,
     creativity: 3,
     directness: 3,
-    greeting: 'Olá! Como posso ajudá-lo hoje?',
-    farewell: 'Foi um prazer ajudá-lo! Tenha um ótimo dia!',
-    specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente. Se não souber algo, admita e direcione para um humano.',
+    greeting: "Olá! Como posso ajudá-lo hoje?",
+    farewell: "Foi um prazer ajudá-lo! Tenha um ótimo dia!",
+    specialInstructions:
+      "Sempre seja cordial e tente resolver o problema do cliente. Se não souber algo, admita e direcione para um humano.",
     maxResponses: 3,
     messageSize: 3,
     responseTime: 3,
     audioResponse: false,
-    responseCreativity: 3
+    responseCreativity: 3,
   });
 
   const [hasChanges, setHasChanges] = useState(false);
 
-  const handleInputChange = (field: keyof PersonalitySettings, value: string | number | boolean) => {
-    setSettings(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof PersonalitySettings,
+    value: string | number | boolean,
+  ) => {
+    setSettings((prev) => ({ ...prev, [field]: value }));
     setHasChanges(true);
   };
 
-  const handleSliderChange = (field: keyof PersonalitySettings, values: number[]) => {
-    setSettings(prev => ({ ...prev, [field]: values[0] }));
+  const handleSliderChange = (
+    field: keyof PersonalitySettings,
+    values: number[],
+  ) => {
+    setSettings((prev) => ({ ...prev, [field]: values[0] }));
     setHasChanges(true);
   };
 
   const handleSave = () => {
     // Here you would normally save to a backend
-    console.log('Saving personality settings:', settings);
-    
+    console.log("Saving personality settings:", settings);
+
     toast({
       title: "Configurações salvas",
       description: "A personalidade da IA foi atualizada com sucesso!",
     });
-    
+
     setHasChanges(false);
   };
 
   const handleReset = () => {
     setSettings({
-      name: 'Assistente Virtual',
-      description: 'Assistente especializado em atendimento ao cliente',
-      tone: 'amigável e profissional',
-      personality: 'Sou um assistente virtual dedicado a ajudar você da melhor forma possível.',
+      name: "Assistente Virtual",
+      description: "Assistente especializado em atendimento ao cliente",
+      tone: "amigável e profissional",
+      personality:
+        "Sou um assistente virtual dedicado a ajudar você da melhor forma possível.",
       formality: 3,
       empathy: 4,
       creativity: 3,
       directness: 3,
-      greeting: 'Olá! Como posso ajudá-lo hoje?',
-      farewell: 'Foi um prazer ajudá-lo! Tenha um ótimo dia!',
-      specialInstructions: 'Sempre seja cordial e tente resolver o problema do cliente.',
+      greeting: "Olá! Como posso ajudá-lo hoje?",
+      farewell: "Foi um prazer ajudá-lo! Tenha um ótimo dia!",
+      specialInstructions:
+        "Sempre seja cordial e tente resolver o problema do cliente.",
       maxResponses: 3,
       messageSize: 3,
       responseTime: 3,
       audioResponse: false,
-      responseCreativity: 3
+      responseCreativity: 3,
     });
     setHasChanges(true);
   };
 
   const getSliderLabel = (value: number) => {
-    const labels = ['Muito Baixo', 'Baixo', 'Moderado', 'Alto', 'Muito Alto'];
-    return labels[value - 1] || 'Moderado';
+    const labels = ["Muito Baixo", "Baixo", "Moderado", "Alto", "Muito Alto"];
+    return labels[value - 1] || "Moderado";
   };
 
   return (
@@ -112,7 +130,7 @@ const AIPersonalityTab = () => {
             Defina como a IA deve se comportar e interagir com os usuários
           </p>
         </div>
-        
+
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleReset}>
             <RotateCcw className="h-4 w-4 mr-2" />
@@ -140,37 +158,41 @@ const AIPersonalityTab = () => {
               <Input
                 id="name"
                 value={settings.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Ex: Assistente Virtual"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="description">Descrição</Label>
               <Input
                 id="description"
                 value={settings.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 placeholder="Breve descrição do papel da IA"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="tone">Tom de Voz</Label>
               <Input
                 id="tone"
                 value={settings.tone}
-                onChange={(e) => handleInputChange('tone', e.target.value)}
+                onChange={(e) => handleInputChange("tone", e.target.value)}
                 placeholder="Ex: amigável e profissional"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="personality">Descrição da Personalidade</Label>
               <Textarea
                 id="personality"
                 value={settings.personality}
-                onChange={(e) => handleInputChange('personality', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("personality", e.target.value)
+                }
                 placeholder="Descreva como a IA deve se apresentar..."
                 rows={4}
               />
@@ -190,56 +212,70 @@ const AIPersonalityTab = () => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Formalidade</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.formality)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.formality)}
+                </span>
               </div>
               <Slider
                 value={[settings.formality]}
-                onValueChange={(value) => handleSliderChange('formality', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("formality", value)
+                }
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Empatia</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.empathy)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.empathy)}
+                </span>
               </div>
               <Slider
                 value={[settings.empathy]}
-                onValueChange={(value) => handleSliderChange('empathy', value)}
+                onValueChange={(value) => handleSliderChange("empathy", value)}
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Criatividade das respostas</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.responseCreativity)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.responseCreativity)}
+                </span>
               </div>
               <Slider
                 value={[settings.responseCreativity]}
-                onValueChange={(value) => handleSliderChange('responseCreativity', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("responseCreativity", value)
+                }
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Objetividade</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.directness)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.directness)}
+                </span>
               </div>
               <Slider
                 value={[settings.directness]}
-                onValueChange={(value) => handleSliderChange('directness', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("directness", value)
+                }
                 min={1}
                 max={5}
                 step={1}
@@ -250,54 +286,68 @@ const AIPersonalityTab = () => {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Número máximo de respostas</Label>
-                <span className="text-sm text-gray-500">{settings.maxResponses}</span>
+                <span className="text-sm text-gray-500">
+                  {settings.maxResponses}
+                </span>
               </div>
               <Slider
                 value={[settings.maxResponses]}
-                onValueChange={(value) => handleSliderChange('maxResponses', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("maxResponses", value)
+                }
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Tamanho das mensagens</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.messageSize)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.messageSize)}
+                </span>
               </div>
               <Slider
                 value={[settings.messageSize]}
-                onValueChange={(value) => handleSliderChange('messageSize', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("messageSize", value)
+                }
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-2">
                 <Label>Tempo para resposta</Label>
-                <span className="text-sm text-gray-500">{getSliderLabel(settings.responseTime)}</span>
+                <span className="text-sm text-gray-500">
+                  {getSliderLabel(settings.responseTime)}
+                </span>
               </div>
               <Slider
                 value={[settings.responseTime]}
-                onValueChange={(value) => handleSliderChange('responseTime', value)}
+                onValueChange={(value) =>
+                  handleSliderChange("responseTime", value)
+                }
                 min={1}
                 max={5}
                 step={1}
                 className="w-full"
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => handleInputChange('audioResponse', !settings.audioResponse)}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    handleInputChange("audioResponse", !settings.audioResponse)
+                  }
                   className="p-0 h-6 w-6"
                 >
                   {settings.audioResponse ? (
@@ -311,7 +361,9 @@ const AIPersonalityTab = () => {
               <Switch
                 id="audioResponse"
                 checked={settings.audioResponse}
-                onCheckedChange={(checked) => handleInputChange('audioResponse', checked)}
+                onCheckedChange={(checked) =>
+                  handleInputChange("audioResponse", checked)
+                }
               />
             </div>
           </CardContent>
@@ -331,18 +383,18 @@ const AIPersonalityTab = () => {
               <Textarea
                 id="greeting"
                 value={settings.greeting}
-                onChange={(e) => handleInputChange('greeting', e.target.value)}
+                onChange={(e) => handleInputChange("greeting", e.target.value)}
                 placeholder="Mensagem de boas-vindas..."
                 rows={2}
               />
             </div>
-            
+
             <div>
               <Label htmlFor="farewell">Despedida</Label>
               <Textarea
                 id="farewell"
                 value={settings.farewell}
-                onChange={(e) => handleInputChange('farewell', e.target.value)}
+                onChange={(e) => handleInputChange("farewell", e.target.value)}
                 placeholder="Mensagem de despedida..."
                 rows={2}
               />
@@ -360,11 +412,15 @@ const AIPersonalityTab = () => {
           </CardHeader>
           <CardContent>
             <div>
-              <Label htmlFor="specialInstructions">Diretrizes de Comportamento</Label>
+              <Label htmlFor="specialInstructions">
+                Diretrizes de Comportamento
+              </Label>
               <Textarea
                 id="specialInstructions"
                 value={settings.specialInstructions}
-                onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("specialInstructions", e.target.value)
+                }
                 placeholder="Instruções específicas sobre como a IA deve agir..."
                 rows={6}
               />
@@ -384,10 +440,18 @@ const AIPersonalityTab = () => {
         <CardContent>
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
             <div className="space-y-2 text-sm">
-              <div><strong>Nome:</strong> {settings.name}</div>
-              <div><strong>Tom:</strong> {settings.tone}</div>
-              <div><strong>Saudação:</strong> "{settings.greeting}"</div>
-              <div><strong>Personalidade:</strong> {settings.personality}</div>
+              <div>
+                <strong>Nome:</strong> {settings.name}
+              </div>
+              <div>
+                <strong>Tom:</strong> {settings.tone}
+              </div>
+              <div>
+                <strong>Saudação:</strong> "{settings.greeting}"
+              </div>
+              <div>
+                <strong>Personalidade:</strong> {settings.personality}
+              </div>
             </div>
           </div>
         </CardContent>

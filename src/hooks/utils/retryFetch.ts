@@ -1,4 +1,3 @@
-
 /**
  * Função utilitária para tentar fetch com retry exponencial.
  * @param fn Função async a executar
@@ -14,7 +13,7 @@ export async function retryFetch<T>(
     return await fn();
   } catch (err) {
     if (retries <= 0) throw err;
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
     return retryFetch(fn, retries - 1, delay * 2);
   }
 }

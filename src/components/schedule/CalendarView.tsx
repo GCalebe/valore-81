@@ -1,12 +1,19 @@
-
-import React, { useCallback, useMemo } from 'react';
-import { startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
-import { CalendarEvent } from '@/types/calendar';
-import { CalendarGridHeader } from './CalendarGridHeader';
-import { CalendarWeek } from './CalendarWeek';
-import { DayEventsView } from './DayEventsView';
-import { CalendarHeaderBar } from './CalendarHeaderBar';
-import { groupEventsByDay } from '@/utils/eventUtils';
+import React, { useCallback, useMemo } from "react";
+import {
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  startOfWeek,
+  endOfWeek,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
+import { CalendarEvent } from "@/types/calendar";
+import { CalendarGridHeader } from "./CalendarGridHeader";
+import { CalendarWeek } from "./CalendarWeek";
+import { DayEventsView } from "./DayEventsView";
+import { CalendarHeaderBar } from "./CalendarHeaderBar";
+import { groupEventsByDay } from "@/utils/eventUtils";
 
 interface CalendarViewProps {
   selectedDate: Date;
@@ -14,7 +21,7 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   currentMonth: Date;
   onMonthChange: (month: Date) => void;
-  view: 'mes' | 'semana' | 'dia' | 'agenda';
+  view: "mes" | "semana" | "dia" | "agenda";
   onEventClick?: (event: CalendarEvent) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
   goToPrevious: () => void;
@@ -31,26 +38,26 @@ export function CalendarView({
   onEventClick,
   onPeriodChange,
   goToPrevious,
-  goToNext
+  goToNext,
 }: CalendarViewProps) {
   // Determinar o período de exibição com useMemo para otimização
   const displayPeriod = useMemo(() => {
     switch (view) {
-      case 'dia':
+      case "dia":
         return {
           start: startOfDay(selectedDate),
-          end: endOfDay(selectedDate)
+          end: endOfDay(selectedDate),
         };
-      case 'semana': {
+      case "semana": {
         const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
         const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 0 });
         return { start: weekStart, end: weekEnd };
       }
-      case 'mes':
+      case "mes":
       default:
         return {
           start: startOfMonth(currentMonth),
-          end: endOfMonth(currentMonth)
+          end: endOfMonth(currentMonth),
         };
     }
   }, [view, selectedDate, currentMonth]);
@@ -61,16 +68,22 @@ export function CalendarView({
     }
   }, [onPeriodChange, displayPeriod.start, displayPeriod.end]);
 
-  const days = eachDayOfInterval({ start: displayPeriod.start, end: displayPeriod.end });
+  const days = eachDayOfInterval({
+    start: displayPeriod.start,
+    end: displayPeriod.end,
+  });
 
-  const handleEventClick = useCallback((event: CalendarEvent, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onEventClick) {
-      onEventClick(event);
-    }
-  }, [onEventClick]);
+  const handleEventClick = useCallback(
+    (event: CalendarEvent, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (onEventClick) {
+        onEventClick(event);
+      }
+    },
+    [onEventClick],
+  );
 
-  const isMonthOrWeekMode = view === 'mes' || view === 'semana';
+  const isMonthOrWeekMode = view === "mes" || view === "semana";
 
   const buildWeeks = () => {
     const daysArr = [...days];
@@ -116,7 +129,9 @@ export function CalendarView({
         ) : (
           <DayEventsView
             selectedDate={selectedDate}
-            dayEvents={eventsByDay.get(startOfDay(selectedDate).toISOString()) || []}
+            dayEvents={
+              eventsByDay.get(startOfDay(selectedDate).toISOString()) || []
+            }
             onEventClick={handleEventClick}
           />
         )}

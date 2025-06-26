@@ -1,6 +1,5 @@
-
-import React from 'react';
-import ClientUTMData from '../ClientUTMData';
+import React from "react";
+import ClientUTMData from "../ClientUTMData";
 
 interface UTMTabProps {
   contactId?: string;

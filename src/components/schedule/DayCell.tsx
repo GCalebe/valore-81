@@ -1,4 +1,3 @@
-
 import React from "react";
 import { isSameDay, isSameMonth, parseISO, format } from "date-fns";
 import { CalendarEvent } from "@/types/calendar";
@@ -29,11 +28,15 @@ export const DayCell = React.memo(function DayCell({
       key={day.toISOString()}
       onClick={() => onDateChange(day)}
       className={`
-        relative px-1 pt-1 pb-4 h-full min-h-[90px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700 
+        relative px-1 pt-1 pb-4 h-full min-h-[90px] cursor-pointer border-l first:border-l-0 border-gray-100 dark:border-gray-700
         group transition-colors
         ${isToday ? "bg-blue-50 dark:bg-blue-900/20" : ""}
         ${isSelected ? "ring-2 ring-blue-500 z-10" : ""}
-        ${!isCurrentMonth ? "bg-gray-50 dark:bg-gray-900/20 text-gray-400 dark:text-gray-500" : ""}
+        ${
+          !isCurrentMonth
+            ? "bg-gray-50 dark:bg-gray-900/20 text-gray-400 dark:text-gray-500"
+            : ""
+        }
         hover:bg-gray-100/60 dark:hover:bg-gray-700
       `}
       style={{ minWidth: 0 }}
@@ -44,7 +47,13 @@ export const DayCell = React.memo(function DayCell({
       <div
         className={`
           flex items-center justify-between z-10 relative
-          ${isToday ? "text-blue-600 font-bold" : isSelected ? "text-blue-700 font-bold" : ""}
+          ${
+            isToday
+              ? "text-blue-600 font-bold"
+              : isSelected
+                ? "text-blue-700 font-bold"
+                : ""
+          }
           pl-2 pr-1
         `}
       >
@@ -64,7 +73,7 @@ export const DayCell = React.memo(function DayCell({
             title={event.summary}
             onClick={(e) => onEventClick(event, e)}
             className={`
-              truncate rounded px-2 py-1 text-xs font-medium cursor-pointer 
+              truncate rounded px-2 py-1 text-xs font-medium cursor-pointer
               mb-[2px]
               bg-blue-100 text-blue-900
               dark:bg-blue-800/60 dark:text-white
@@ -84,7 +93,9 @@ export const DayCell = React.memo(function DayCell({
           </div>
         ))}
         {dayEvents.length > 4 && (
-          <div className="text-[11px] text-gray-400 mt-1 pl-2">+{dayEvents.length - 4} mais</div>
+          <div className="text-[11px] text-gray-400 mt-1 pl-2">
+            +{dayEvents.length - 4} mais
+          </div>
         )}
       </div>
     </div>

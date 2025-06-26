@@ -32,9 +32,15 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Install pre-commit hooks (opcional)
+python -m pip install pre-commit
+pre-commit install
+
+# Step 5: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
+
+Para mais informações sobre o pre-commit, consulte o [guia de uso do pre-commit](docs/guias/pre-commit.md).
 
 **Edit a file directly in GitHub**
 

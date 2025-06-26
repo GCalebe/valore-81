@@ -1,62 +1,68 @@
-
-import React, { useState, useRef } from 'react';
-import { Send, Paperclip, Smile } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Conversation } from '@/types/chat';
-import { useToast } from '@/hooks/use-toast';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
+import React, { useState, useRef } from "react";
+import { Send, Paperclip, Smile } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Conversation } from "@/types/chat";
+import { useToast } from "@/hooks/use-toast";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
 
 interface MessageInputProps {
   selectedChat: string | null;
   selectedConversation?: Conversation;
 }
 
-const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps) => {
-  const [newMessage, setNewMessage] = useState('');
+const MessageInput = ({
+  selectedChat,
+  selectedConversation,
+}: MessageInputProps) => {
+  const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { settings } = useThemeSettings();
 
   // Common emojis for quick access
-  const quickEmojis = ['😊', '👍', '❤️', '😂', '🤔', '👋', '🙏', '✅'];
+  const quickEmojis = ["😊", "👍", "❤️", "😂", "🤔", "👋", "🙏", "✅"];
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedChat || !selectedConversation?.phone) return;
-    
+    if (!newMessage.trim() || !selectedChat || !selectedConversation?.phone)
+      return;
+
     try {
       setIsSending(true);
-      
-      const response = await fetch('https://webhook.comercial247.com.br/webhook/envia_mensagem', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+
+      const response = await fetch(
+        "https://webhook.comercial247.com.br/webhook/envia_mensagem",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: newMessage,
+            phoneNumber: selectedConversation.phone,
+          }),
         },
-        body: JSON.stringify({
-          message: newMessage,
-          phoneNumber: selectedConversation.phone,
-        }),
-      });
-      
+      );
+
       if (!response.ok) {
-        throw new Error('Falha ao enviar mensagem');
+        throw new Error("Falha ao enviar mensagem");
       }
-      
-      setNewMessage('');
-      
+
+      setNewMessage("");
+
       toast({
-        title: 'Mensagem navegou com sucesso',
-        description: 'Sua mensagem foi enviada pelas águas digitais.',
+        title: "Mensagem navegou com sucesso",
+        description: "Sua mensagem foi enviada pelas águas digitais.",
       });
-      
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       toast({
-        title: 'Erro na navegação',
-        description: 'Não foi possível enviar sua mensagem. Tente navegar novamente.',
-        variant: 'destructive',
+        title: "Erro na navegação",
+        description:
+          "Não foi possível enviar sua mensagem. Tente navegar novamente.",
+        variant: "destructive",
       });
     } finally {
       setIsSending(false);
@@ -72,14 +78,14 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
     if (file) {
       // For now, just show a toast - file upload functionality would need backend implementation
       toast({
-        title: 'Arquivo selecionado',
+        title: "Arquivo selecionado",
         description: `Arquivo "${file.name}" pronto para envio`,
       });
     }
   };
 
   const addEmoji = (emoji: string) => {
-    setNewMessage(prev => prev + emoji);
+    setNewMessage((prev) => prev + emoji);
   };
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -107,8 +113,11 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
           </div>
         </div>
       )}
-      
-      <form onSubmit={handleSendMessage} className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+
+      <form
+        onSubmit={handleSendMessage}
+        className="p-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
+      >
         <div className="flex items-center gap-2">
           <input
             type="file"
@@ -117,7 +126,7 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
             className="hidden"
             accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
           />
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -128,7 +137,7 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
           >
             <Paperclip size={18} />
           </Button>
-          
+
           <Button
             type="button"
             variant="ghost"
@@ -139,7 +148,7 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
           >
             <Smile size={18} />
           </Button>
-          
+
           <Input
             placeholder="Digite sua mensagem para navegar..."
             className="flex-1"
@@ -147,10 +156,10 @@ const MessageInput = ({ selectedChat, selectedConversation }: MessageInputProps)
             onChange={(e) => setNewMessage(e.target.value)}
             disabled={isSending}
           />
-          
-          <Button 
-            type="submit" 
-            size="icon" 
+
+          <Button
+            type="submit"
+            size="icon"
             className="text-white"
             style={{ backgroundColor: settings.primaryColor }}
             disabled={isSending}

@@ -1,9 +1,9 @@
-import React from 'react';
-import { EventFormDialog } from '@/components/EventFormDialog';
-import { DeleteEventDialog } from '@/components/DeleteEventDialog';
-import { AppointmentsSection } from '@/components/schedule/AppointmentsSection';
-import { CalendarEvent, EventFormData } from '@/hooks/useCalendarEvents';
-import { Appointment, AppointmentFormData } from '@/types/calendar';
+import React from "react";
+import { EventFormDialog } from "@/components/EventFormDialog";
+import { DeleteEventDialog } from "@/components/DeleteEventDialog";
+import { AppointmentsSection } from "@/components/schedule/AppointmentsSection";
+import { CalendarEvent, EventFormData } from "@/hooks/useCalendarEvents";
+import { Appointment, AppointmentFormData } from "@/types/calendar";
 
 interface ScheduleDialogsProps {
   // Event dialog props
@@ -18,7 +18,7 @@ interface ScheduleDialogsProps {
   onAddEvent: (formData: EventFormData) => void;
   onEditEvent: (formData: EventFormData) => void;
   onDeleteEvent: () => void;
-  
+
   // Appointment dialog props
   appointments: Appointment[];
   isAddDialogOpen: boolean;
@@ -47,7 +47,7 @@ export function ScheduleDialogs({
   onAddEvent,
   onEditEvent,
   onDeleteEvent,
-  
+
   // Appointment dialog props
   appointments,
   isAddDialogOpen,
@@ -60,7 +60,7 @@ export function ScheduleDialogs({
   formData,
   setFormData,
   handleSubmit,
-  confirmDelete
+  confirmDelete,
 }: ScheduleDialogsProps) {
   return (
     <>
@@ -93,7 +93,7 @@ export function ScheduleDialogs({
         isDeleting={isSubmitting}
       />
 
-      <AppointmentsSection 
+      <AppointmentsSection
         appointments={appointments}
         isAddDialogOpen={isAddDialogOpen}
         setIsAddDialogOpen={setIsAddDialogOpen}

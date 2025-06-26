@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 import { Contact } from "@/types/client";
 import { KanbanStage } from "@/hooks/useKanbanStages";
@@ -10,7 +9,7 @@ import { KanbanStage } from "@/hooks/useKanbanStages";
  */
 export function useContactsByKanbanStage(
   contacts: Contact[],
-  stages: KanbanStage[]
+  stages: KanbanStage[],
 ): Record<string, Contact[]> {
   return useMemo(() => {
     const stageTitles = stages.map((s) => s.title);
@@ -26,7 +25,7 @@ export function useContactsByKanbanStage(
       let assignedStage = contact.kanbanStage;
       if (!stageTitles.includes(assignedStage)) {
         console.warn(
-          `[useContactsByKanbanStage] Cliente "${contact.name}" (ID ${contact.id}) está com kanbanStage="${assignedStage}" não encontrado. Realocando para "${stageTitles[0]}"`
+          `[useContactsByKanbanStage] Cliente "${contact.name}" (ID ${contact.id}) está com kanbanStage="${assignedStage}" não encontrado. Realocando para "${stageTitles[0]}"`,
         );
         assignedStage = stageTitles[0] || "";
       }
@@ -39,7 +38,10 @@ export function useContactsByKanbanStage(
     }
 
     // Diagnóstico: mostra o agrupamento resultante
-    console.log("[useContactsByKanbanStage] Resultado agrupamento:", contactsByStage);
+    console.log(
+      "[useContactsByKanbanStage] Resultado agrupamento:",
+      contactsByStage,
+    );
 
     return contactsByStage;
   }, [contacts, stages]);

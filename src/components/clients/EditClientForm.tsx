@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Contact } from '@/types/client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDynamicFields } from '@/hooks/useDynamicFields';
-import ClientInfo from './ClientInfo';
-import ClientUTMData from './ClientUTMData';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Contact } from "@/types/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDynamicFields } from "@/hooks/useDynamicFields";
+import ClientInfo from "./ClientInfo";
+import ClientUTMData from "./ClientUTMData";
 
 interface EditClientFormProps {
   isOpen: boolean;
@@ -21,10 +27,10 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
   isOpen,
   onClose,
   selectedContact,
-  onSave
+  onSave,
 }) => {
   const [contact, setContact] = useState<Contact | null>(null);
-  const [activeTab, setActiveTab] = useState('principal');
+  const [activeTab, setActiveTab] = useState("principal");
   const [isSaving, setIsSaving] = useState(false);
   const { dynamicFields, loadDynamicFields } = useDynamicFields();
 
@@ -39,31 +45,31 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
     if (!contact) return;
 
     // Verifica se é um campo personalizado ou um campo padrão
-    if (fieldId.startsWith('custom_')) {
+    if (fieldId.startsWith("custom_")) {
       setContact({
         ...contact,
         customValues: {
           ...contact.customValues,
-          [fieldId]: newValue
-        }
+          [fieldId]: newValue,
+        },
       });
     } else {
       setContact({
         ...contact,
-        [fieldId]: newValue
+        [fieldId]: newValue,
       });
     }
   };
 
   const handleSave = async () => {
     if (!contact) return;
-    
+
     try {
       setIsSaving(true);
       await onSave(contact);
       onClose();
     } catch (error) {
-      console.error('Erro ao salvar cliente:', error);
+      console.error("Erro ao salvar cliente:", error);
     } finally {
       setIsSaving(false);
     }
@@ -92,7 +98,7 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={['basic', 'commercial']}
+                  showTabs={["basic", "commercial"]}
                 />
               )}
             </TabsContent>
@@ -114,7 +120,7 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={['custom']}
+                  showTabs={["custom"]}
                 />
               )}
             </TabsContent>
@@ -126,7 +132,7 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={['docs']}
+                  showTabs={["docs"]}
                 />
               )}
             </TabsContent>
@@ -134,9 +140,11 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Salvando...' : 'Salvar Alterações'}
+            {isSaving ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </DialogFooter>
       </DialogContent>

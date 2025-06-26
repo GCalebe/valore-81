@@ -85,6 +85,7 @@ Aprendemos a focar nos testes de comportamento em vez de detalhes de implementa�
 ### 3. Equilíbrio na Pirâmide de Testes
 
 Encontramos um equilíbrio eficaz na pirâmide de testes:
+
 - Base ampla de testes unitários (70%)
 - Camada intermediária de testes de integração (20%)
 - Camada superior de testes E2E (10%)
@@ -94,6 +95,7 @@ Este equilíbrio proporcionou boa cobertura sem comprometer a velocidade de exec
 ### 4. Mocks Inteligentes
 
 Aprendemos a usar mocks de forma mais eficiente:
+
 - Minimizar o uso de mocks quando possível
 - Usar MSW para simular APIs em vez de mocks manuais
 - Criar factories para dados de teste reutilizáveis

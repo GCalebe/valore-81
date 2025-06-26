@@ -57,13 +57,13 @@ Implementamos virtualização para renderizar apenas os itens visíveis na viewp
 ```tsx
 // Antes: Renderização de todos os itens
 <div className="clients-list">
-  {clients.map(client => (
+  {clients.map((client) => (
     <ClientRow key={client.id} client={client} />
   ))}
-</div>
+</div>;
 
 // Depois: Virtualização com react-window
-import { FixedSizeList } from 'react-window';
+import { FixedSizeList } from "react-window";
 
 <FixedSizeList
   height={500}
@@ -71,13 +71,8 @@ import { FixedSizeList } from 'react-window';
   itemCount={clients.length}
   itemSize={60}
 >
-  {({ index, style }) => (
-    <ClientRow 
-      style={style} 
-      client={clients[index]} 
-    />
-  )}
-</FixedSizeList>
+  {({ index, style }) => <ClientRow style={style} client={clients[index]} />}
+</FixedSizeList>;
 ```
 
 Resultado: Redução de 70% no tempo de renderização para listas com mais de 100 itens.
@@ -89,15 +84,15 @@ Refatoramos as consultas para utilizar recursos do Supabase de forma mais eficie
 ```tsx
 // Antes: Consulta ineficiente
 const { data: clients } = await supabase
-  .from('clients')
-  .select('*')
-  .order('created_at', { ascending: false });
+  .from("clients")
+  .select("*")
+  .order("created_at", { ascending: false });
 
 // Depois: Consulta otimizada com paginação e seleção de campos
 const { data: clients } = await supabase
-  .from('clients')
-  .select('id, name, email, phone, status')
-  .order('created_at', { ascending: false })
+  .from("clients")
+  .select("id, name, email, phone, status")
+  .order("created_at", { ascending: false })
   .range(startIndex, endIndex);
 ```
 
@@ -119,9 +114,11 @@ const ClientRow = React.memo(
     // Implementação do componente
   },
   (prevProps, nextProps) => {
-    return prevProps.client.id === nextProps.client.id &&
-      prevProps.client.updatedAt === nextProps.client.updatedAt;
-  }
+    return (
+      prevProps.client.id === nextProps.client.id &&
+      prevProps.client.updatedAt === nextProps.client.updatedAt
+    );
+  },
 );
 
 // Memoização de funções de callback
@@ -138,10 +135,10 @@ Implementamos estratégias para otimizar o carregamento de recursos:
 
 ```tsx
 // Antes: Carregamento de imagem sem otimização
-<img src={client.avatar} alt={client.name} />
+<img src={client.avatar} alt={client.name} />;
 
 // Depois: Imagem otimizada com Next.js Image
-import Image from 'next/image';
+import Image from "next/image";
 
 <Image
   src={client.avatar}
@@ -151,7 +148,7 @@ import Image from 'next/image';
   loading="lazy"
   placeholder="blur"
   blurDataURL="data:image/svg+xml,..."
-/>
+/>;
 ```
 
 Resultado: Melhoria de 50% no LCP (Largest Contentful Paint) e redução de 30% no CLS (Cumulative Layout Shift).
@@ -170,10 +167,8 @@ useEffect(() => {
   const fetchClients = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*');
-      
+      const { data, error } = await supabase.from("clients").select("*");
+
       if (error) throw error;
       setClients(data);
     } catch (err) {
@@ -182,19 +177,19 @@ useEffect(() => {
       setIsLoading(false);
     }
   };
-  
+
   fetchClients();
 }, []);
 
 // Depois: Implementação com React Query
-const { data: clients, isLoading, error } = useQuery(
-  ['clients', page, pageSize],
-  () => fetchClients(page, pageSize),
-  {
-    keepPreviousData: true,
-    staleTime: 5 * 60 * 1000, // 5 minutos
-  }
-);
+const {
+  data: clients,
+  isLoading,
+  error,
+} = useQuery(["clients", page, pageSize], () => fetchClients(page, pageSize), {
+  keepPreviousData: true,
+  staleTime: 5 * 60 * 1000, // 5 minutos
+});
 ```
 
 Resultado: Redução de 60% nas requisições ao servidor e melhoria significativa na experiência do usuário com dados em cache.
@@ -239,14 +234,14 @@ O React Query simplificou significativamente o gerenciamento de estado do servid
 
 ## Métricas de Melhoria
 
-| Métrica | Antes | Depois | Melhoria |
-|---------|-------|--------|----------|
-| Tempo de Carregamento Inicial | 3.2s | 1.1s | 65% |
-| Tempo de Resposta (Paginação) | 1.8s | 0.3s | 83% |
-| Uso de Memória | 120MB | 45MB | 62% |
-| Transferência de Dados | 1.2MB | 180KB | 85% |
-| First Input Delay | 350ms | 80ms | 77% |
-| Largest Contentful Paint | 2.8s | 1.4s | 50% |
+| Métrica                       | Antes | Depois | Melhoria |
+| ----------------------------- | ----- | ------ | -------- |
+| Tempo de Carregamento Inicial | 3.2s  | 1.1s   | 65%      |
+| Tempo de Resposta (Paginação) | 1.8s  | 0.3s   | 83%      |
+| Uso de Memória                | 120MB | 45MB   | 62%      |
+| Transferência de Dados        | 1.2MB | 180KB  | 85%      |
+| First Input Delay             | 350ms | 80ms   | 77%      |
+| Largest Contentful Paint      | 2.8s  | 1.4s   | 50%      |
 
 ## Ferramentas Utilizadas
 

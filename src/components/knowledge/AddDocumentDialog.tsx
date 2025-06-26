@@ -1,7 +1,6 @@
-
-import React, { useState } from 'react';
-import { FileUp, Upload, Loader2, FileText } from 'lucide-react';
-import { 
+import React, { useState } from "react";
+import { FileUp, Upload, Loader2, FileText } from "lucide-react";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -9,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AddDocumentDialogProps {
   onAddDocument: (file: File, category: string) => Promise<void>;
@@ -20,13 +19,13 @@ interface AddDocumentDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({ 
-  onAddDocument, 
-  isOpen, 
-  onOpenChange 
+const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
+  onAddDocument,
+  isOpen,
+  onOpenChange,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileCategory, setFileCategory] = useState('');
+  const [fileCategory, setFileCategory] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
   // Handle file selection
@@ -43,7 +42,7 @@ const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
       try {
         await onAddDocument(selectedFile, fileCategory);
         setSelectedFile(null);
-        setFileCategory('');
+        setFileCategory("");
         onOpenChange(false);
       } finally {
         setIsUploading(false);
@@ -57,7 +56,8 @@ const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Adicionar Novo Documento</DialogTitle>
           <DialogDescription>
-            Selecione um arquivo do seu computador para adicionar à base de conhecimento.
+            Selecione um arquivo do seu computador para adicionar à base de
+            conhecimento.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -81,7 +81,7 @@ const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
               </p>
             </label>
           </div>
-          
+
           {selectedFile && (
             <Alert>
               <FileText className="h-4 w-4" />
@@ -91,9 +91,12 @@ const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
               </AlertDescription>
             </Alert>
           )}
-          
+
           <div>
-            <label htmlFor="category" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium mb-1"
+            >
               Categoria
             </label>
             <Input
@@ -105,14 +108,14 @@ const AddDocumentDialog: React.FC<AddDocumentDialogProps> = ({
           </div>
         </div>
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isUploading}
           >
             Cancelar
           </Button>
-          <Button 
+          <Button
             onClick={handleUpload}
             disabled={!selectedFile || !fileCategory || isUploading}
           >

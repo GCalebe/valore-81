@@ -1,8 +1,7 @@
-
-import { useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { mockConversationMetrics } from '@/mocks/metricsMock';
+import { useState, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { mockConversationMetrics } from "@/mocks/metricsMock";
 
 interface LeadData {
   id: string;
@@ -63,10 +62,13 @@ interface ConversationMetrics {
   isStale: boolean;
 }
 
-export function useConversationMetrics(dateFilter: string = 'week', customDate?: Date) {
+export function useConversationMetrics(
+  dateFilter: string = "week",
+  customDate?: Date,
+) {
   const [metrics, setMetrics] = useState<ConversationMetrics>({
     ...mockConversationMetrics,
-    totalNegotiatingValue: 125000 // Nova métrica
+    totalNegotiatingValue: 125000, // Nova métrica
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -74,7 +76,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
   const refetchMetrics = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Using mock data for conversation metrics...');
+      console.log("Using mock data for conversation metrics...");
 
       // Ensure all arrays are properly initialized to prevent undefined errors
       const safeMetrics = {
@@ -82,26 +84,29 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         totalNegotiatingValue: 125000, // Valor total sendo negociado
         conversationData: mockConversationMetrics.conversationData || [],
         funnelData: mockConversationMetrics.funnelData || [],
-        conversionByTimeData: mockConversationMetrics.conversionByTimeData || [],
-        leadsAverageByTimeData: mockConversationMetrics.leadsAverageByTimeData || [], // Nova métrica
+        conversionByTimeData:
+          mockConversationMetrics.conversionByTimeData || [],
+        leadsAverageByTimeData:
+          mockConversationMetrics.leadsAverageByTimeData || [], // Nova métrica
         leadsData: mockConversationMetrics.leadsData || [],
         leadsBySource: mockConversationMetrics.leadsBySource || [],
         leadsOverTime: mockConversationMetrics.leadsOverTime || [],
-        leadsByArrivalFunnel: mockConversationMetrics.leadsByArrivalFunnel || []
+        leadsByArrivalFunnel:
+          mockConversationMetrics.leadsByArrivalFunnel || [],
       };
 
       setMetrics(safeMetrics);
 
-      console.log('Mock conversation metrics loaded successfully');
-
+      console.log("Mock conversation metrics loaded successfully");
     } catch (error) {
-      console.error('Error loading conversation metrics:', error);
+      console.error("Error loading conversation metrics:", error);
       toast({
         title: "Erro ao atualizar métricas",
-        description: "Problema ao buscar as métricas de conversas. Usando dados de exemplo.",
-        variant: "destructive"
+        description:
+          "Problema ao buscar as métricas de conversas. Usando dados de exemplo.",
+        variant: "destructive",
       });
-      
+
       // Even in error case, ensure safe data structure
       const safeMetrics = {
         ...mockConversationMetrics,
@@ -113,7 +118,7 @@ export function useConversationMetrics(dateFilter: string = 'week', customDate?:
         leadsData: [],
         leadsBySource: [],
         leadsOverTime: [],
-        leadsByArrivalFunnel: []
+        leadsByArrivalFunnel: [],
       };
       setMetrics(safeMetrics);
     } finally {

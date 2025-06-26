@@ -31,7 +31,7 @@ startup:
   - Wait for user request before any tool use
   - Match request to resources, offer numbered options if unclear
   - Load resources only when explicitly requested
-commands:  # All commands require * prefix when used (e.g., *help)
+commands: # All commands require * prefix when used (e.g., *help)
   - help: Show commands
   - chat: Advanced elicitation + KB mode
   - status: Current context

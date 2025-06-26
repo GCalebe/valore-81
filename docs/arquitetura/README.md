@@ -32,6 +32,7 @@ O projeto adota um padrão de componentes padronizados para garantir consistênc
 2. **Componente Adapter**: Quando necessário, adapta o componente padronizado para contextos específicos
 
 Exemplo:
+
 - `ClientsTableStandardized.tsx`: Implementação padronizada da tabela de clientes
 - `ClientDetailSheetStandardized.tsx`: Implementação padronizada da folha de detalhes do cliente
 

@@ -8,18 +8,18 @@ O objetivo deste componente é padronizar a exibição de informações do clien
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|-------------|--------|------------|
-| contact | Contact | Sim | - | Dados do contato do cliente |
-| customFields | CustomField[] | Não | [] | Lista de campos personalizados do cliente |
-| documents | Document[] | Não | [] | Lista de documentos do cliente |
-| notes | Note[] | Não | [] | Lista de anotações sobre o cliente |
-| onAddNote | (note: string) => Promise<void> | Não | - | Função para adicionar uma nova anotação |
-| onDeleteNote | (noteId: string) => Promise<void> | Não | - | Função para excluir uma anotação |
-| onUploadDocument | (file: File) => Promise<void> | Não | - | Função para fazer upload de um documento |
-| onDeleteDocument | (documentId: string) => Promise<void> | Não | - | Função para excluir um documento |
-| onUpdateCustomField | (fieldId: string, value: any) => Promise<void> | Não | - | Função para atualizar um campo personalizado |
-| className | string | Não | '' | Classes CSS adicionais para o componente |
+| Prop                | Tipo                                           | Obrigatório | Padrão | Descrição                                    |
+| ------------------- | ---------------------------------------------- | ----------- | ------ | -------------------------------------------- |
+| contact             | Contact                                        | Sim         | -      | Dados do contato do cliente                  |
+| customFields        | CustomField[]                                  | Não         | []     | Lista de campos personalizados do cliente    |
+| documents           | Document[]                                     | Não         | []     | Lista de documentos do cliente               |
+| notes               | Note[]                                         | Não         | []     | Lista de anotações sobre o cliente           |
+| onAddNote           | (note: string) => Promise<void>                | Não         | -      | Função para adicionar uma nova anotação      |
+| onDeleteNote        | (noteId: string) => Promise<void>              | Não         | -      | Função para excluir uma anotação             |
+| onUploadDocument    | (file: File) => Promise<void>                  | Não         | -      | Função para fazer upload de um documento     |
+| onDeleteDocument    | (documentId: string) => Promise<void>          | Não         | -      | Função para excluir um documento             |
+| onUpdateCustomField | (fieldId: string, value: any) => Promise<void> | Não         | -      | Função para atualizar um campo personalizado |
+| className           | string                                         | Não         | ''     | Classes CSS adicionais para o componente     |
 
 ## Interfaces
 
@@ -38,7 +38,7 @@ interface Contact {
 interface CustomField {
   id: string;
   label: string;
-  type: 'text' | 'email' | 'phone' | 'select' | 'boolean' | 'date';
+  type: "text" | "email" | "phone" | "select" | "boolean" | "date";
   options?: { value: string; label: string }[];
   value?: any;
 }
@@ -65,9 +65,7 @@ interface Note {
 ### Uso Básico
 
 ```tsx
-<ClientInfoTabs
-  contact={contact}
-/>
+<ClientInfoTabs contact={contact} />
 ```
 
 ### Com Campos Personalizados e Documentos
@@ -114,7 +112,7 @@ const ClientInfoTabs: React.FC<ClientInfoTabsProps> = ({
   onUploadDocument,
   onDeleteDocument,
   onUpdateCustomField,
-  className = '',
+  className = "",
 }) => {
   return (
     <Tabs defaultValue="info" className={className}>
@@ -124,22 +122,18 @@ const ClientInfoTabs: React.FC<ClientInfoTabsProps> = ({
         <TabsTrigger value="documents">Documentos</TabsTrigger>
         <TabsTrigger value="notes">Anotações</TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="info">
         {/* Informações básicas do cliente */}
       </TabsContent>
-      
+
       <TabsContent value="custom">
         {/* Campos personalizados do cliente */}
       </TabsContent>
-      
-      <TabsContent value="documents">
-        {/* Documentos do cliente */}
-      </TabsContent>
-      
-      <TabsContent value="notes">
-        {/* Anotações sobre o cliente */}
-      </TabsContent>
+
+      <TabsContent value="documents">{/* Documentos do cliente */}</TabsContent>
+
+      <TabsContent value="notes">{/* Anotações sobre o cliente */}</TabsContent>
     </Tabs>
   );
 };

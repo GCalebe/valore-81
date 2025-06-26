@@ -1,12 +1,17 @@
-
-import React from 'react';
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
-import { Contact } from '@/types/client';
-import { formatCurrency } from '@/utils/formatters';
+import { Contact } from "@/types/client";
+import { formatCurrency } from "@/utils/formatters";
 
 interface PrincipalTabProps {
   editContactData: Partial<Contact>;
@@ -15,7 +20,7 @@ interface PrincipalTabProps {
 
 const PrincipalTab: React.FC<PrincipalTabProps> = ({
   editContactData,
-  setEditContactData
+  setEditContactData,
 }) => {
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -25,8 +30,13 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Label htmlFor="responsible-user">Usuário responsável</Label>
           <Input
             id="responsible-user"
-            value={editContactData.responsibleUser || ''}
-            onChange={(e) => setEditContactData({...editContactData, responsibleUser: e.target.value})}
+            value={editContactData.responsibleUser || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                responsibleUser: e.target.value,
+              })
+            }
             placeholder="Gabriel Calebe"
           />
         </div>
@@ -36,8 +46,13 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Input
             id="sales"
             type="number"
-            value={editContactData.sales || ''}
-            onChange={(e) => setEditContactData({...editContactData, sales: parseFloat(e.target.value)})}
+            value={editContactData.sales || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                sales: parseFloat(e.target.value),
+              })
+            }
             placeholder="R$ 0"
           />
         </div>
@@ -45,8 +60,10 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
         <div>
           <Label htmlFor="client-type">Tipo de cliente</Label>
           <Select
-            value={editContactData.clientType || ''}
-            onValueChange={(value) => setEditContactData({...editContactData, clientType: value})}
+            value={editContactData.clientType || ""}
+            onValueChange={(value) =>
+              setEditContactData({ ...editContactData, clientType: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
@@ -61,8 +78,10 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
         <div>
           <Label htmlFor="client-sector">Setor do cliente</Label>
           <Select
-            value={editContactData.clientSector || ''}
-            onValueChange={(value) => setEditContactData({...editContactData, clientSector: value})}
+            value={editContactData.clientSector || ""}
+            onValueChange={(value) =>
+              setEditContactData({ ...editContactData, clientSector: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
@@ -81,8 +100,13 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Input
             id="budget"
             type="number"
-            value={editContactData.budget || ''}
-            onChange={(e) => setEditContactData({...editContactData, budget: parseFloat(e.target.value)})}
+            value={editContactData.budget || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                budget: parseFloat(e.target.value),
+              })
+            }
             placeholder="R$ 0,00"
           />
           {editContactData.budget && (
@@ -95,8 +119,10 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
         <div>
           <Label htmlFor="payment-method">Método de pagamento</Label>
           <Select
-            value={editContactData.paymentMethod || ''}
-            onValueChange={(value) => setEditContactData({...editContactData, paymentMethod: value})}
+            value={editContactData.paymentMethod || ""}
+            onValueChange={(value) =>
+              setEditContactData({ ...editContactData, paymentMethod: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
@@ -117,8 +143,13 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Label htmlFor="client-objective">Objetivo do cliente</Label>
           <Input
             id="client-objective"
-            value={editContactData.clientObjective || ''}
-            onChange={(e) => setEditContactData({...editContactData, clientObjective: e.target.value})}
+            value={editContactData.clientObjective || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                clientObjective: e.target.value,
+              })
+            }
             placeholder="..."
           />
         </div>
@@ -126,8 +157,10 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
         <div>
           <Label htmlFor="loss-reason">Motivo de perda</Label>
           <Select
-            value={editContactData.lossReason || ''}
-            onValueChange={(value) => setEditContactData({...editContactData, lossReason: value})}
+            value={editContactData.lossReason || ""}
+            onValueChange={(value) =>
+              setEditContactData({ ...editContactData, lossReason: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
@@ -145,8 +178,13 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Label htmlFor="contract-number">Número de contrato</Label>
           <Input
             id="contract-number"
-            value={editContactData.contractNumber || ''}
-            onChange={(e) => setEditContactData({...editContactData, contractNumber: e.target.value})}
+            value={editContactData.contractNumber || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                contractNumber: e.target.value,
+              })
+            }
             placeholder="..."
           />
         </div>
@@ -156,16 +194,23 @@ const PrincipalTab: React.FC<PrincipalTabProps> = ({
           <Input
             id="contract-date"
             type="date"
-            value={editContactData.contractDate || ''}
-            onChange={(e) => setEditContactData({...editContactData, contractDate: e.target.value})}
+            value={editContactData.contractDate || ""}
+            onChange={(e) =>
+              setEditContactData({
+                ...editContactData,
+                contractDate: e.target.value,
+              })
+            }
           />
         </div>
 
         <div>
           <Label htmlFor="payment">Pagamento</Label>
           <Select
-            value={editContactData.payment || ''}
-            onValueChange={(value) => setEditContactData({...editContactData, payment: value})}
+            value={editContactData.payment || ""}
+            onValueChange={(value) =>
+              setEditContactData({ ...editContactData, payment: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />

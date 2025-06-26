@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DollarSign } from "lucide-react";
 
 interface NegotiatedValueCardProps {
   totalValue: number;
@@ -12,18 +11,18 @@ interface NegotiatedValueCardProps {
   previousPeriodValue?: number;
 }
 
-const NegotiatedValueCard: React.FC<NegotiatedValueCardProps> = ({ 
-  totalValue, 
-  totalDeals = 0, 
-  averageValue, 
+const NegotiatedValueCard: React.FC<NegotiatedValueCardProps> = ({
+  totalValue,
+  totalDeals = 0,
+  averageValue,
   loading = false,
   trend,
-  previousPeriodValue
+  previousPeriodValue,
 }) => {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 

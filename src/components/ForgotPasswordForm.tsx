@@ -1,15 +1,14 @@
-
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Mail, ArrowLeft } from 'lucide-react';
-import { useThemeSettings } from '@/context/ThemeSettingsContext';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Mail, ArrowLeft } from "lucide-react";
+import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email({ message: "Email inválido" })
+  email: z.string().email({ message: "Email inválido" }),
 });
 
 interface ForgotPasswordFormProps {
@@ -19,21 +18,21 @@ interface ForgotPasswordFormProps {
 const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
   const { settings } = useThemeSettings();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState<string>('');
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     if (error) {
-      setError('');
+      setError("");
     }
   };
 
   const validateForm = () => {
     try {
       forgotPasswordSchema.parse({ email });
-      setError('');
+      setError("");
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -45,26 +44,26 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
-    
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo: `${window.location.origin}/reset-password`,
       });
-      
+
       if (error) {
-        console.error('Password reset error:', error);
-        toast.error('Erro ao enviar email de recuperação. Tente novamente.');
+        console.error("Password reset error:", error);
+        toast.error("Erro ao enviar email de recuperação. Tente novamente.");
       } else {
         setSuccess(true);
-        toast.success('Email de recuperação enviado com sucesso!');
+        toast.success("Email de recuperação enviado com sucesso!");
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
-      toast.error('Erro ao enviar email de recuperação. Tente novamente.');
+      console.error("Unexpected error:", error);
+      toast.error("Erro ao enviar email de recuperação. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -74,11 +73,10 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
     return (
       <div className="space-y-6 animate-fade-in">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            Email Enviado!
-          </h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Email Enviado!</h1>
           <p className="text-white/80 mb-6">
-            Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.
+            Verifique sua caixa de entrada e siga as instruções para redefinir
+            sua senha.
           </p>
           <Button
             onClick={onBack}
@@ -96,9 +94,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          Recuperar Senha
-        </h1>
+        <h1 className="text-2xl font-bold text-white mb-2">Recuperar Senha</h1>
         <p className="text-white/80 mb-6">
           Digite seu email para receber as instruções de recuperação
         </p>
@@ -113,7 +109,9 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
             placeholder="Digite seu email"
             value={email}
             onChange={handleChange}
-            className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${error ? 'border-red-400' : 'focus:border-valore-gold'}`}
+            className={`pl-10 h-12 bg-white/10 dark:bg-gray-700/50 border-white/20 text-white rounded-md transition-all duration-300 hover:border-valore-gold/50 ${
+              error ? "border-red-400" : "focus:border-valore-gold"
+            }`}
             disabled={isLoading}
           />
           {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
@@ -125,17 +123,17 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onBack }) => {
           type="submit"
           disabled={isLoading}
           className="w-full font-bold py-3 px-4 rounded-md transition-all duration-300"
-          style={{ 
+          style={{
             backgroundColor: settings.secondaryColor,
-            color: settings.accentColor
+            color: settings.accentColor,
           }}
         >
           {isLoading ? (
-            <div 
+            <div
               className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin mr-2"
-              style={{ 
+              style={{
                 borderColor: settings.accentColor,
-                borderTopColor: 'transparent'
+                borderTopColor: "transparent",
               }}
             ></div>
           ) : (

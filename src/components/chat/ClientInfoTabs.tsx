@@ -1,7 +1,7 @@
-import React from 'react';
-import { Contact } from '@/types/client';
-import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
-import ClientInfo from '@/components/clients/ClientInfo';
+import React from "react";
+import { Contact } from "@/types/client";
+import { DynamicCategory } from "@/components/clients/DynamicCategoryManager";
+import ClientInfo from "@/components/clients/ClientInfo";
 
 interface ClientInfoTabsProps {
   clientData: Contact | null;
@@ -22,7 +22,7 @@ interface ClientInfoTabsProps {
 const ClientInfoTabs: React.FC<ClientInfoTabsProps> = ({
   clientData,
   dynamicFields,
-  onFieldUpdate
+  onFieldUpdate,
 }) => {
   return (
     <div className="mt-4">
@@ -40,18 +40,18 @@ export default ClientInfoTabs;
 
 /**
  * Exemplo de uso no componente pai:
- * 
+ *
  * import ClientInfoTabs from './ClientInfoTabs';
- * 
+ *
  * // Substitua
- * <ClientInfoTabs 
+ * <ClientInfoTabs
  *   clientData={clientData}
  *   dynamicFields={dynamicFields}
  *   onFieldUpdate={handleFieldUpdate}
  * />
- * 
+ *
  * // Por
- * <ClientInfoTabs 
+ * <ClientInfoTabs
  *   clientData={clientData}
  *   dynamicFields={dynamicFields}
  *   onFieldUpdate={handleFieldUpdate}

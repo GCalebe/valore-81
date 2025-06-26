@@ -1,9 +1,9 @@
 export interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
   timestamp: Date;
-  type?: 'text' | 'image' | 'file';
+  type?: "text" | "image" | "file";
 }
 
 export interface Conversation {
@@ -54,7 +54,7 @@ export interface ChatMessage {
   data?: string;
   // Add properties that components expect
   content?: string;
-  role?: 'user' | 'assistant' | 'human' | 'ai' | 'unknown';
-  type?: 'text' | 'image' | 'file' | 'human' | 'ai';
+  role?: "user" | "assistant" | "human" | "ai" | "unknown";
+  type?: "text" | "image" | "file" | "human" | "ai";
   timestamp?: string;
 }

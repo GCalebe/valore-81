@@ -1,9 +1,8 @@
-
-import React, { useRef, useEffect } from 'react';
-import { MessageSquare } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChatMessage } from '@/types/chat';
-import MessageItem from './MessageItem';
+import React, { useRef, useEffect } from "react";
+import { MessageSquare } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChatMessage } from "@/types/chat";
+import MessageItem from "./MessageItem";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -17,7 +16,7 @@ const MessageList = ({ messages, loading }: MessageListProps) => {
   // Scroll to the bottom whenever messages change
   useEffect(() => {
     if (messages.length > 0 && lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 

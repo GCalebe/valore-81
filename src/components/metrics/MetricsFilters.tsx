@@ -1,6 +1,9 @@
-
 import * as React from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 
@@ -25,19 +28,43 @@ export function MetricsFilters({ customDate, setCustomDate }) {
           />
         </PopoverContent>
       </Popover>
-      <Button variant="outline" onClick={() => { setCustomDate(new Date()); setOpen(false); }}>Hoje</Button>
-      <Button variant="outline" onClick={() => {
-        const now = new Date();
-        const firstDayOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-        setCustomDate(firstDayOfWeek);
-        setOpen(false);
-      }}>Semana</Button>
-      <Button variant="outline" onClick={() => {
-        const now = new Date();
-        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        setCustomDate(firstDayOfMonth);
-        setOpen(false);
-      }}>Mês</Button>
+      <Button
+        variant="outline"
+        onClick={() => {
+          setCustomDate(new Date());
+          setOpen(false);
+        }}
+      >
+        Hoje
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => {
+          const now = new Date();
+          const firstDayOfWeek = new Date(
+            now.setDate(now.getDate() - now.getDay()),
+          );
+          setCustomDate(firstDayOfWeek);
+          setOpen(false);
+        }}
+      >
+        Semana
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => {
+          const now = new Date();
+          const firstDayOfMonth = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1,
+          );
+          setCustomDate(firstDayOfMonth);
+          setOpen(false);
+        }}
+      >
+        Mês
+      </Button>
     </div>
   );
 }

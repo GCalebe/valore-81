@@ -7,16 +7,19 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Janeiro
 
 #### Semana 1-2 (01/01 - 14/01)
+
 - **Concepção do Projeto**: Definição inicial do escopo e objetivos do Valore-81
 - **Análise de Requisitos**: Levantamento de requisitos com stakeholders
 - **Pesquisa de Mercado**: Análise de soluções similares e identificação de diferenciais
 
 #### Semana 3 (15/01 - 21/01)
+
 - **Decisão de Stack Tecnológico**: Escolha das tecnologias principais (React, TypeScript, Next.js, Supabase)
 - **Definição de Arquitetura**: Estabelecimento da arquitetura base do projeto
 - **Criação do Repositório**: Configuração inicial do repositório Git e estrutura de pastas
 
 #### Semana 4 (22/01 - 31/01)
+
 - **Setup do Ambiente**: Configuração do ambiente de desenvolvimento
 - **Prototipagem**: Criação de protótipos de baixa fidelidade das principais telas
 - **Planejamento de Sprint**: Definição das primeiras histórias de usuário e backlog inicial
@@ -24,11 +27,13 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Fevereiro
 
 #### Semana 5-6 (01/02 - 14/02)
+
 - **Desenvolvimento do Core**: Implementação da estrutura base do projeto
 - **Autenticação**: Implementação do sistema de autenticação com Supabase
 - **Layout Base**: Criação do layout base da aplicação (header, sidebar, footer)
 
 #### Semana 7-8 (15/02 - 28/02)
+
 - **Módulo de Usuários**: Implementação do CRUD de usuários
 - **Permissões**: Desenvolvimento do sistema de permissões e controle de acesso
 - **Testes Unitários**: Implementação dos primeiros testes unitários
@@ -36,11 +41,13 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Março
 
 #### Semana 9-10 (01/03 - 14/03)
+
 - **Módulo de Clientes**: Implementação do CRUD de clientes
 - **Listagem de Clientes**: Desenvolvimento da tabela de listagem de clientes
 - **Filtros e Ordenação**: Adição de funcionalidades de filtro e ordenação na listagem
 
 #### Semana 11-12 (15/03 - 31/03)
+
 - **Detalhes do Cliente**: Implementação da tela de detalhes do cliente
 - **Formulários**: Desenvolvimento dos formulários de criação e edição de clientes
 - **Validação**: Implementação de validação de formulários com Zod
@@ -48,11 +55,13 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Abril
 
 #### Semana 13-14 (01/04 - 14/04)
+
 - **Otimização de Performance**: Identificação e correção de problemas de performance
 - **Refatoração**: Refatoração de componentes para melhorar reusabilidade
 - **Testes de Integração**: Implementação de testes de integração
 
 #### Semana 15-16 (15/04 - 30/04)
+
 - **Módulo de Projetos**: Implementação do CRUD de projetos
 - **Associação Cliente-Projeto**: Desenvolvimento da funcionalidade de associação entre clientes e projetos
 - **Dashboard**: Criação do dashboard inicial com métricas principais
@@ -60,11 +69,13 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Maio
 
 #### Semana 17-18 (01/05 - 14/05)
+
 - **Módulo de Tarefas**: Implementação do CRUD de tarefas
 - **Kanban**: Desenvolvimento da visualização de tarefas em formato Kanban
 - **Drag and Drop**: Implementação de funcionalidade de arrastar e soltar para gerenciamento de tarefas
 
 #### Semana 19-20 (15/05 - 31/05)
+
 - **Notificações**: Implementação do sistema de notificações
 - **Tempo Real**: Adição de funcionalidades em tempo real com Supabase Realtime
 - **Melhorias de UX**: Refinamentos na experiência do usuário baseados em feedback
@@ -72,11 +83,13 @@ Este documento registra a evolução cronológica do projeto Valore-81, destacan
 ### Junho
 
 #### Semana 21-22 (01/06 - 14/06)
+
 - **Padronização de Componentes**: Início do processo de padronização de componentes
 - **Documentação**: Criação da documentação de componentes padronizados
 - **Refatoração de Clientes**: Refatoração dos componentes de cliente para seguir os novos padrões
 
 #### Semana 23-24 (15/06 - 30/06)
+
 - **Módulo de Documentos**: Implementação do sistema de gerenciamento de documentos
 - **Upload de Arquivos**: Desenvolvimento da funcionalidade de upload de arquivos
 - **Visualização de Documentos**: Implementação da visualização de documentos no navegador
@@ -156,4 +169,4 @@ A documentação contínua da evolução do projeto é essencial para preservar 
 
 ---
 
-*Última atualização: 24 de junho de 2025*
+_Última atualização: 24 de junho de 2025_

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,10 +9,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { CalendarEvent } from '@/hooks/useCalendarEvents';
-import { format } from 'date-fns';
-import { pt } from 'date-fns/locale';
-import { Trash2 } from 'lucide-react';
+import { CalendarEvent } from "@/hooks/useCalendarEvents";
+import { format } from "date-fns";
+import { pt } from "date-fns/locale";
+import { Trash2 } from "lucide-react";
 
 interface DeleteEventDialogProps {
   open: boolean;
@@ -28,42 +27,45 @@ export function DeleteEventDialog({
   onOpenChange,
   onConfirmDelete,
   event,
-  isDeleting
+  isDeleting,
 }: DeleteEventDialogProps) {
   if (!event) return null;
 
   const start = new Date(event.start);
-  
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Deseja realmente excluir este evento? Esta ação não pode ser desfeita.
+            Deseja realmente excluir este evento? Esta ação não pode ser
+            desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        
+
         <div className="py-4">
           <p className="font-medium">{event.summary}</p>
           <p className="text-sm text-muted-foreground">
             {format(start, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: pt })}
           </p>
-          {event.attendees?.some(a => a?.email) && (
+          {event.attendees?.some((a) => a?.email) && (
             <p className="text-sm text-muted-foreground">
-              Participante: {event.attendees.find(a => a?.email)?.email}
+              Participante: {event.attendees.find((a) => a?.email)?.email}
             </p>
           )}
         </div>
-        
+
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction 
+          <AlertDialogAction
             onClick={onConfirmDelete}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? 'Excluindo...' : (
+            {isDeleting ? (
+              "Excluindo..."
+            ) : (
               <>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Sim, excluir

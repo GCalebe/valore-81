@@ -1,16 +1,21 @@
-
-import React, { useState, useEffect } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UTMCampaignFilterProps {
   selectedCampaign: string;
   onCampaignChange: (campaign: string) => void;
 }
 
-const UTMCampaignFilter: React.FC<UTMCampaignFilterProps> = ({ 
-  selectedCampaign, 
-  onCampaignChange 
+const UTMCampaignFilter: React.FC<UTMCampaignFilterProps> = ({
+  selectedCampaign,
+  onCampaignChange,
 }) => {
   const [campaigns, setCampaigns] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,20 +24,22 @@ const UTMCampaignFilter: React.FC<UTMCampaignFilterProps> = ({
     const fetchCampaigns = async () => {
       try {
         const { data, error } = await supabase
-          .from('utm_tracking')
-          .select('utm_campaign')
-          .not('utm_campaign', 'is', null)
-          .not('utm_campaign', 'eq', '');
-        
+          .from("utm_tracking")
+          .select("utm_campaign")
+          .not("utm_campaign", "is", null)
+          .not("utm_campaign", "eq", "");
+
         if (error) {
-          console.error('Erro ao buscar campanhas:', error);
+          console.error("Erro ao buscar campanhas:", error);
           return;
         }
 
-        const uniqueCampaigns = [...new Set(data.map(item => item.utm_campaign))];
+        const uniqueCampaigns = [
+          ...new Set(data.map((item) => item.utm_campaign)),
+        ];
         setCampaigns(uniqueCampaigns);
       } catch (error) {
-        console.error('Erro ao buscar campanhas:', error);
+        console.error("Erro ao buscar campanhas:", error);
       } finally {
         setLoading(false);
       }
@@ -48,7 +55,9 @@ const UTMCampaignFilter: React.FC<UTMCampaignFilterProps> = ({
       </label>
       <Select value={selectedCampaign} onValueChange={onCampaignChange}>
         <SelectTrigger className="w-48">
-          <SelectValue placeholder={loading ? "Carregando..." : "Todas as campanhas"} />
+          <SelectValue
+            placeholder={loading ? "Carregando..." : "Todas as campanhas"}
+          />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todas as campanhas</SelectItem>

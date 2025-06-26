@@ -1,7 +1,19 @@
-
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 interface UTMDeviceDistributionChartProps {
   data: Array<{
@@ -11,15 +23,27 @@ interface UTMDeviceDistributionChartProps {
   loading?: boolean;
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const COLORS = [
+  "#3b82f6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#06b6d4",
+];
 
-const UTMDeviceDistributionChart: React.FC<UTMDeviceDistributionChartProps> = ({ data, loading }) => {
+const UTMDeviceDistributionChart: React.FC<UTMDeviceDistributionChartProps> = ({
+  data,
+  loading,
+}) => {
   if (loading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Leads por Dispositivo</CardTitle>
-          <CardDescription>Distribuição de leads por tipo de dispositivo</CardDescription>
+          <CardDescription>
+            Distribuição de leads por tipo de dispositivo
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[300px]">
@@ -34,7 +58,9 @@ const UTMDeviceDistributionChart: React.FC<UTMDeviceDistributionChartProps> = ({
     <Card>
       <CardHeader>
         <CardTitle>Leads por Dispositivo</CardTitle>
-        <CardDescription>Distribuição de leads por tipo de dispositivo</CardDescription>
+        <CardDescription>
+          Distribuição de leads por tipo de dispositivo
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -44,16 +70,21 @@ const UTMDeviceDistributionChart: React.FC<UTMDeviceDistributionChartProps> = ({
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
+              label={({ name, percent }) =>
+                `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
+              }
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
-            <Tooltip formatter={(value) => [`${value} leads`, 'Leads']} />
+            <Tooltip formatter={(value) => [`${value} leads`, "Leads"]} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

@@ -37,7 +37,7 @@ persona:
 startup:
   - Greet the user with your name and role, and inform of the *help command.
   - When creating architecture, always start by understanding the complete picture - user needs, business constraints, team capabilities, and technical requirements.
-commands:  # All commands require * prefix when used (e.g., *help)
+commands: # All commands require * prefix when used (e.g., *help)
   - help: Show numbered list of the following commands to allow selection
   - chat-mode: (Default) Architect consultation with advanced-elicitation for complex system design
   - create-doc {template}: Create doc (no template = show available templates)

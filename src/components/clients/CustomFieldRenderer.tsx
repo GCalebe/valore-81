@@ -1,10 +1,15 @@
-
-import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { CustomFieldWithValue } from '@/types/customFields';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { CustomFieldWithValue } from "@/types/customFields";
+import { AlertCircle } from "lucide-react";
 
 interface CustomFieldRendererProps {
   field: CustomFieldWithValue;
@@ -13,57 +18,94 @@ interface CustomFieldRendererProps {
   validationError?: string;
 }
 
-const CustomFieldRenderer = ({ field, value, onChange, validationError }: CustomFieldRendererProps) => {
+const CustomFieldRenderer = ({
+  field,
+  value,
+  onChange,
+  validationError,
+}: CustomFieldRendererProps) => {
   const renderField = () => {
     switch (field.field_type) {
-      case 'text':
+      case "text":
         return (
           <Input
-            value={value || ''}
+            value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder={`Digite ${field.field_name.toLowerCase()}`}
-            className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 ${validationError ? 'border-red-500 focus:border-red-500' : ''}`}
+            className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+              validationError ? "border-red-500 focus:border-red-500" : ""
+            }`}
           />
         );
 
-      case 'single_select':
+      case "single_select":
         return (
-          <Select value={value || 'none'} onValueChange={(val) => onChange(val === 'none' ? null : val)}>
-            <SelectTrigger className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${validationError ? 'border-red-500 focus:border-red-500' : ''}`}>
-              <SelectValue placeholder={`Selecione ${field.field_name.toLowerCase()}`} />
+          <Select
+            value={value || "none"}
+            onValueChange={(val) => onChange(val === "none" ? null : val)}
+          >
+            <SelectTrigger
+              className={`bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white ${
+                validationError ? "border-red-500 focus:border-red-500" : ""
+              }`}
+            >
+              <SelectValue
+                placeholder={`Selecione ${field.field_name.toLowerCase()}`}
+              />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
-              <SelectItem value="none" className="text-gray-900 dark:text-white">Nenhum</SelectItem>
-              {field.field_options && Array.isArray(field.field_options) && field.field_options.map((option) => (
-                <SelectItem key={option} value={option} className="text-gray-900 dark:text-white">
-                  {option}
-                </SelectItem>
-              ))}
+              <SelectItem
+                value="none"
+                className="text-gray-900 dark:text-white"
+              >
+                Nenhum
+              </SelectItem>
+              {field.field_options &&
+                Array.isArray(field.field_options) &&
+                field.field_options.map((option) => (
+                  <SelectItem
+                    key={option}
+                    value={option}
+                    className="text-gray-900 dark:text-white"
+                  >
+                    {option}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         );
 
-      case 'multi_select':
+      case "multi_select":
         const selectedValues = Array.isArray(value) ? value : [];
         return (
-          <div className={`space-y-2 ${validationError ? 'p-2 border border-red-500 rounded' : ''}`}>
-            {field.field_options && Array.isArray(field.field_options) && field.field_options.map((option) => (
-              <label key={option} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={selectedValues.includes(option)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      onChange([...selectedValues, option]);
-                    } else {
-                      onChange(selectedValues.filter((v: string) => v !== option));
-                    }
-                  }}
-                  className="rounded border-gray-300 dark:border-gray-600 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700"
-                />
-                <span className="text-sm text-gray-900 dark:text-white">{option}</span>
-              </label>
-            ))}
+          <div
+            className={`space-y-2 ${
+              validationError ? "p-2 border border-red-500 rounded" : ""
+            }`}
+          >
+            {field.field_options &&
+              Array.isArray(field.field_options) &&
+              field.field_options.map((option) => (
+                <label key={option} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedValues.includes(option)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onChange([...selectedValues, option]);
+                      } else {
+                        onChange(
+                          selectedValues.filter((v: string) => v !== option),
+                        );
+                      }
+                    }}
+                    className="rounded border-gray-300 dark:border-gray-600 text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700"
+                  />
+                  <span className="text-sm text-gray-900 dark:text-white">
+                    {option}
+                  </span>
+                </label>
+              ))}
           </div>
         );
 

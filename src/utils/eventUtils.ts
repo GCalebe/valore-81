@@ -1,8 +1,9 @@
-
 import { CalendarEvent } from "@/types/calendar";
 import { startOfDay, parseISO } from "date-fns";
 
-export const groupEventsByDay = (events: CalendarEvent[]): Map<string, CalendarEvent[]> => {
+export const groupEventsByDay = (
+  events: CalendarEvent[],
+): Map<string, CalendarEvent[]> => {
   const eventsByDay = new Map<string, CalendarEvent[]>();
   for (const event of events) {
     if (event.start) {

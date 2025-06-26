@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 interface ClientType {
   name: string;
@@ -15,7 +14,10 @@ interface ClientTypesChartProps {
   loading?: boolean;
 }
 
-const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = false }) => {
+const ClientTypesChart: React.FC<ClientTypesChartProps> = ({
+  data,
+  loading = false,
+}) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
@@ -38,7 +40,9 @@ const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = fal
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) =>
+                    `${name}: ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
@@ -47,13 +51,13 @@ const ClientTypesChart: React.FC<ClientTypesChartProps> = ({ data, loading = fal
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  formatter={(value) => [`${value} clientes`, 'Quantidade']}
+                <Tooltip
+                  formatter={(value) => [`${value} clientes`, "Quantidade"]}
                   contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    border: 'none',
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    border: "none",
                   }}
                 />
               </PieChart>

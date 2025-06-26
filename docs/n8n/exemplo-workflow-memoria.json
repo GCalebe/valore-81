@@ -10,10 +10,7 @@
       "name": "Webhook - Consultar Memória",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        250,
-        300
-      ]
+      "position": [250, 300]
     },
     {
       "parameters": {
@@ -22,10 +19,7 @@
       "name": "Preparar Parâmetros",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [
-        450,
-        300
-      ]
+      "position": [450, 300]
     },
     {
       "parameters": {
@@ -35,10 +29,7 @@
       "name": "Supabase - Consultar Memória",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        650,
-        300
-      ],
+      "position": [650, 300],
       "credentials": {
         "supabaseApi": {
           "id": "1",
@@ -53,10 +44,7 @@
       "name": "Formatar Memórias",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [
-        850,
-        300
-      ]
+      "position": [850, 300]
     },
     {
       "parameters": {
@@ -67,10 +55,7 @@
       "name": "Responder com Memórias",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        1050,
-        300
-      ]
+      "position": [1050, 300]
     },
     {
       "parameters": {
@@ -81,10 +66,7 @@
       "name": "Webhook - Armazenar Memória",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        250,
-        500
-      ]
+      "position": [250, 500]
     },
     {
       "parameters": {
@@ -93,10 +75,7 @@
       "name": "Preparar Memória",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [
-        450,
-        500
-      ]
+      "position": [450, 500]
     },
     {
       "parameters": {
@@ -109,10 +88,7 @@
       "name": "Supabase - Inserir Memória",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        650,
-        500
-      ],
+      "position": [650, 500],
       "credentials": {
         "supabaseApi": {
           "id": "1",
@@ -129,10 +105,7 @@
       "name": "Responder Sucesso",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        850,
-        500
-      ]
+      "position": [850, 500]
     },
     {
       "parameters": {
@@ -143,10 +116,7 @@
       "name": "Webhook - Limpar Memórias Expiradas",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        250,
-        700
-      ]
+      "position": [250, 700]
     },
     {
       "parameters": {
@@ -156,10 +126,7 @@
       "name": "Supabase - Remover Expiradas",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        450,
-        700
-      ],
+      "position": [450, 700],
       "credentials": {
         "supabaseApi": {
           "id": "1",
@@ -176,10 +143,7 @@
       "name": "Responder Limpeza",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        650,
-        700
-      ]
+      "position": [650, 700]
     }
   ],
   "connections": {
@@ -290,9 +254,5 @@
   "meta": {
     "instanceId": "1"
   },
-  "tags": [
-    "memoria",
-    "ia",
-    "supabase"
-  ]
+  "tags": ["memoria", "ia", "supabase"]
 }

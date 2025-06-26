@@ -1,8 +1,16 @@
-
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageCircle } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageCircle } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 interface ConversationData {
   date: string;
@@ -15,7 +23,10 @@ interface ConversationChartProps {
   loading?: boolean;
 }
 
-const ConversationChart: React.FC<ConversationChartProps> = ({ data, loading = false }) => {
+const ConversationChart: React.FC<ConversationChartProps> = ({
+  data,
+  loading = false,
+}) => {
   return (
     <Card className="dark:bg-gray-800 transition-all duration-300 hover:shadow-lg">
       <CardHeader>
@@ -36,38 +47,46 @@ const ConversationChart: React.FC<ConversationChartProps> = ({ data, loading = f
                 data={data}
                 margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 12 }} 
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  opacity={0.2}
                 />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    border: 'none',
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    border: "none",
                   }}
                 />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="respondidas" 
-                  stroke="#10B981" 
+                <Line
+                  type="monotone"
+                  dataKey="respondidas"
+                  stroke="#10B981"
                   strokeWidth={3}
                   name="Respondidas"
-                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                  dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="naoRespondidas" 
-                  stroke="#EF4444" 
+                <Line
+                  type="monotone"
+                  dataKey="naoRespondidas"
+                  stroke="#EF4444"
                   strokeWidth={3}
                   name="Não Respondidas"
-                  dot={{ fill: '#EF4444', strokeWidth: 2, r: 4 }}
+                  dot={{ fill: "#EF4444", strokeWidth: 2, r: 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>

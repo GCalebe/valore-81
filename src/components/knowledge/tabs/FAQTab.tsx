@@ -1,10 +1,9 @@
-
-import React, { useState } from 'react';
-import { Plus, Search, Download, Upload, Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from "react";
+import { Plus, Search, Download, Upload, Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface FAQItem {
   id: number;
@@ -30,42 +29,45 @@ interface FAQItem {
 
 const FAQTab = () => {
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<FAQItem | null>(null);
   const [faqItems, setFaqItems] = useState<FAQItem[]>([
     {
       id: 1,
-      question: 'Como funciona o sistema de agendamento?',
-      answer: 'Nosso sistema permite agendar consultas de forma automática através do chatbot. O cliente escolhe a data e horário disponível.',
-      category: 'Agendamento',
-      tags: ['agendamento', 'consulta'],
-      createdAt: '2024-01-15',
-      updatedAt: '2024-01-15'
+      question: "Como funciona o sistema de agendamento?",
+      answer:
+        "Nosso sistema permite agendar consultas de forma automática através do chatbot. O cliente escolhe a data e horário disponível.",
+      category: "Agendamento",
+      tags: ["agendamento", "consulta"],
+      createdAt: "2024-01-15",
+      updatedAt: "2024-01-15",
     },
     {
       id: 2,
-      question: 'Quais são os valores dos serviços?',
-      answer: 'Os valores variam conforme o tipo de consulta. Consulta simples: R$ 80, Consulta especializada: R$ 120, Exames: valores variados.',
-      category: 'Valores',
-      tags: ['preço', 'consulta', 'valores'],
-      createdAt: '2024-01-10',
-      updatedAt: '2024-01-10'
-    }
+      question: "Quais são os valores dos serviços?",
+      answer:
+        "Os valores variam conforme o tipo de consulta. Consulta simples: R$ 80, Consulta especializada: R$ 120, Exames: valores variados.",
+      category: "Valores",
+      tags: ["preço", "consulta", "valores"],
+      createdAt: "2024-01-10",
+      updatedAt: "2024-01-10",
+    },
   ]);
 
   const [newFAQ, setNewFAQ] = useState({
-    question: '',
-    answer: '',
-    category: '',
-    tags: ''
+    question: "",
+    answer: "",
+    category: "",
+    tags: "",
   });
 
-  const filteredFAQs = faqItems.filter(item =>
-    item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFAQs = faqItems.filter(
+    (item) =>
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleAddFAQ = () => {
@@ -82,16 +84,19 @@ const FAQTab = () => {
       id: Date.now(),
       question: newFAQ.question,
       answer: newFAQ.answer,
-      category: newFAQ.category || 'Geral',
-      tags: newFAQ.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0]
+      category: newFAQ.category || "Geral",
+      tags: newFAQ.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag),
+      createdAt: new Date().toISOString().split("T")[0],
+      updatedAt: new Date().toISOString().split("T")[0],
     };
 
     setFaqItems([...faqItems, faqItem]);
-    setNewFAQ({ question: '', answer: '', category: '', tags: '' });
+    setNewFAQ({ question: "", answer: "", category: "", tags: "" });
     setIsAddDialogOpen(false);
-    
+
     toast({
       title: "FAQ adicionado",
       description: "Item adicionado com sucesso!",
@@ -104,7 +109,7 @@ const FAQTab = () => {
       question: item.question,
       answer: item.answer,
       category: item.category,
-      tags: item.tags.join(', ')
+      tags: item.tags.join(", "),
     });
     setIsEditDialogOpen(true);
   };
@@ -116,19 +121,22 @@ const FAQTab = () => {
       ...editingItem,
       question: newFAQ.question,
       answer: newFAQ.answer,
-      category: newFAQ.category || 'Geral',
-      tags: newFAQ.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      updatedAt: new Date().toISOString().split('T')[0]
+      category: newFAQ.category || "Geral",
+      tags: newFAQ.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag),
+      updatedAt: new Date().toISOString().split("T")[0],
     };
 
-    setFaqItems(faqItems.map(item => 
-      item.id === editingItem.id ? updatedItem : item
-    ));
-    
-    setNewFAQ({ question: '', answer: '', category: '', tags: '' });
+    setFaqItems(
+      faqItems.map((item) => (item.id === editingItem.id ? updatedItem : item)),
+    );
+
+    setNewFAQ({ question: "", answer: "", category: "", tags: "" });
     setEditingItem(null);
     setIsEditDialogOpen(false);
-    
+
     toast({
       title: "FAQ atualizado",
       description: "Item atualizado com sucesso!",
@@ -136,7 +144,7 @@ const FAQTab = () => {
   };
 
   const handleDeleteFAQ = (id: number) => {
-    setFaqItems(faqItems.filter(item => item.id !== id));
+    setFaqItems(faqItems.filter((item) => item.id !== id));
     toast({
       title: "FAQ excluído",
       description: "Item removido com sucesso!",
@@ -146,14 +154,15 @@ const FAQTab = () => {
 
   const exportFAQs = () => {
     const dataStr = JSON.stringify(faqItems, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'faqs.json';
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    const dataUri =
+      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+
+    const exportFileDefaultName = "faqs.json";
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileDefaultName);
     linkElement.click();
-    
+
     toast({
       title: "FAQs exportados",
       description: "Arquivo JSON baixado com sucesso!",
@@ -182,13 +191,13 @@ const FAQTab = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={exportFAQs}>
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>
-          
+
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -210,7 +219,9 @@ const FAQTab = () => {
                     id="question"
                     placeholder="Digite a pergunta..."
                     value={newFAQ.question}
-                    onChange={(e) => setNewFAQ({...newFAQ, question: e.target.value})}
+                    onChange={(e) =>
+                      setNewFAQ({ ...newFAQ, question: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -219,7 +230,9 @@ const FAQTab = () => {
                     id="answer"
                     placeholder="Digite a resposta..."
                     value={newFAQ.answer}
-                    onChange={(e) => setNewFAQ({...newFAQ, answer: e.target.value})}
+                    onChange={(e) =>
+                      setNewFAQ({ ...newFAQ, answer: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -228,7 +241,9 @@ const FAQTab = () => {
                     id="category"
                     placeholder="ex: Agendamento, Valores..."
                     value={newFAQ.category}
-                    onChange={(e) => setNewFAQ({...newFAQ, category: e.target.value})}
+                    onChange={(e) =>
+                      setNewFAQ({ ...newFAQ, category: e.target.value })
+                    }
                   />
                 </div>
                 <div>
@@ -237,17 +252,20 @@ const FAQTab = () => {
                     id="tags"
                     placeholder="ex: agendamento, consulta, preço"
                     value={newFAQ.tags}
-                    onChange={(e) => setNewFAQ({...newFAQ, tags: e.target.value})}
+                    onChange={(e) =>
+                      setNewFAQ({ ...newFAQ, tags: e.target.value })
+                    }
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAddDialogOpen(false)}
+                >
                   Cancelar
                 </Button>
-                <Button onClick={handleAddFAQ}>
-                  Adicionar
-                </Button>
+                <Button onClick={handleAddFAQ}>Adicionar</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -260,9 +278,9 @@ const FAQTab = () => {
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <h3 className="text-lg font-medium mb-1">Nenhuma FAQ encontrada</h3>
             <p className="text-sm">
-              {searchQuery ? 
-                "Nenhuma FAQ corresponde à sua pesquisa." : 
-                "Comece adicionando perguntas frequentes."}
+              {searchQuery
+                ? "Nenhuma FAQ corresponde à sua pesquisa."
+                : "Comece adicionando perguntas frequentes."}
             </p>
           </div>
         ) : (
@@ -272,15 +290,15 @@ const FAQTab = () => {
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-base">{item.question}</CardTitle>
                   <div className="flex gap-1">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleEditFAQ(item)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteFAQ(item.id)}
                       className="text-red-500 hover:text-red-600"
@@ -291,7 +309,9 @@ const FAQTab = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">{item.answer}</p>
+                <p className="text-gray-600 dark:text-gray-300 mb-3">
+                  {item.answer}
+                </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{item.category}</Badge>
@@ -327,7 +347,9 @@ const FAQTab = () => {
                 id="edit-question"
                 placeholder="Digite a pergunta..."
                 value={newFAQ.question}
-                onChange={(e) => setNewFAQ({...newFAQ, question: e.target.value})}
+                onChange={(e) =>
+                  setNewFAQ({ ...newFAQ, question: e.target.value })
+                }
               />
             </div>
             <div>
@@ -336,7 +358,9 @@ const FAQTab = () => {
                 id="edit-answer"
                 placeholder="Digite a resposta..."
                 value={newFAQ.answer}
-                onChange={(e) => setNewFAQ({...newFAQ, answer: e.target.value})}
+                onChange={(e) =>
+                  setNewFAQ({ ...newFAQ, answer: e.target.value })
+                }
               />
             </div>
             <div>
@@ -345,7 +369,9 @@ const FAQTab = () => {
                 id="edit-category"
                 placeholder="ex: Agendamento, Valores..."
                 value={newFAQ.category}
-                onChange={(e) => setNewFAQ({...newFAQ, category: e.target.value})}
+                onChange={(e) =>
+                  setNewFAQ({ ...newFAQ, category: e.target.value })
+                }
               />
             </div>
             <div>
@@ -354,17 +380,18 @@ const FAQTab = () => {
                 id="edit-tags"
                 placeholder="ex: agendamento, consulta, preço"
                 value={newFAQ.tags}
-                onChange={(e) => setNewFAQ({...newFAQ, tags: e.target.value})}
+                onChange={(e) => setNewFAQ({ ...newFAQ, tags: e.target.value })}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancelar
             </Button>
-            <Button onClick={handleUpdateFAQ}>
-              Atualizar
-            </Button>
+            <Button onClick={handleUpdateFAQ}>Atualizar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

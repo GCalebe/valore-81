@@ -17,23 +17,23 @@ O Valore-81 utiliza uma combinação de APIs RESTful e serviços do Supabase par
 
 ```typescript
 // src/services/api.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and Anon Key must be defined');
+  throw new Error("Supabase URL and Anon Key must be defined");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Função auxiliar para lidar com erros de API
 export const handleApiError = (error: any) => {
-  console.error('API Error:', error);
+  console.error("API Error:", error);
   return {
     error: {
-      message: error.message || 'Ocorreu um erro na requisição',
+      message: error.message || "Ocorreu um erro na requisição",
       status: error.status || 500,
     },
   };
@@ -46,9 +46,13 @@ export const handleApiError = (error: any) => {
 
 ```typescript
 // src/services/auth.ts
-import { supabase, handleApiError } from './api';
+import { supabase, handleApiError } from "./api";
 
-export const registerUser = async (email: string, password: string, userData: any) => {
+export const registerUser = async (
+  email: string,
+  password: string,
+  userData: any,
+) => {
   try {
     // Registrar usuário no Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -60,19 +64,17 @@ export const registerUser = async (email: string, password: string, userData: an
 
     if (authData.user) {
       // Adicionar dados adicionais do usuário no perfil
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            id: authData.user.id,
-            nome: userData.nome,
-            cargo: userData.cargo,
-            departamento: userData.departamento,
-            telefone: userData.telefone,
-            perfil: userData.perfil || 'operador',
-            status: 'pendente',
-          },
-        ]);
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: authData.user.id,
+          nome: userData.nome,
+          cargo: userData.cargo,
+          departamento: userData.departamento,
+          telefone: userData.telefone,
+          perfil: userData.perfil || "operador",
+          status: "pendente",
+        },
+      ]);
 
       if (profileError) throw profileError;
     }
@@ -146,7 +148,10 @@ export const resetPassword = async (email: string) => {
 // src/services/auth.ts
 export const getCurrentUser = async () => {
   try {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
     if (error) throw error;
 
@@ -156,9 +161,9 @@ export const getCurrentUser = async () => {
 
     // Obter dados adicionais do perfil
     const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
+      .from("profiles")
+      .select("*")
+      .eq("id", session.user.id)
       .single();
 
     if (profileError) throw profileError;
@@ -182,8 +187,8 @@ export const getCurrentUser = async () => {
 
 ```typescript
 // src/services/clients.ts
-import { supabase, handleApiError } from './api';
-import { Cliente } from '../types/cliente';
+import { supabase, handleApiError } from "./api";
+import { Cliente } from "../types/cliente";
 
 export const listClients = async (filters?: {
   status?: string;
@@ -192,16 +197,16 @@ export const listClients = async (filters?: {
   limit?: number;
 }) => {
   try {
-    let query = supabase.from('clientes').select('*', { count: 'exact' });
+    let query = supabase.from("clientes").select("*", { count: "exact" });
 
     // Aplicar filtros
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
 
     if (filters?.search) {
       query = query.or(
-        `nome.ilike.%${filters.search}%,email.ilike.%${filters.search}%,cnpj.ilike.%${filters.search}%,cpf.ilike.%${filters.search}%`
+        `nome.ilike.%${filters.search}%,email.ilike.%${filters.search}%,cnpj.ilike.%${filters.search}%,cpf.ilike.%${filters.search}%`,
       );
     }
 
@@ -231,9 +236,9 @@ export const listClients = async (filters?: {
 export const getClientById = async (id: string) => {
   try {
     const { data, error } = await supabase
-      .from('clientes')
-      .select('*, contatos(*)')
-      .eq('id', id)
+      .from("clientes")
+      .select("*, contatos(*)")
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -249,9 +254,14 @@ export const getClientById = async (id: string) => {
 
 ```typescript
 // src/services/clients.ts
-export const createClient = async (client: Omit<Cliente, 'id' | 'created_at'>) => {
+export const createClient = async (
+  client: Omit<Cliente, "id" | "created_at">,
+) => {
   try {
-    const { data, error } = await supabase.from('clientes').insert([client]).select();
+    const { data, error } = await supabase
+      .from("clientes")
+      .insert([client])
+      .select();
 
     if (error) throw error;
 
@@ -269,9 +279,9 @@ export const createClient = async (client: Omit<Cliente, 'id' | 'created_at'>) =
 export const updateClient = async (id: string, client: Partial<Cliente>) => {
   try {
     const { data, error } = await supabase
-      .from('clientes')
+      .from("clientes")
       .update(client)
-      .eq('id', id)
+      .eq("id", id)
       .select();
 
     if (error) throw error;
@@ -289,7 +299,7 @@ export const updateClient = async (id: string, client: Partial<Cliente>) => {
 // src/services/clients.ts
 export const deleteClient = async (id: string) => {
   try {
-    const { error } = await supabase.from('clientes').delete().eq('id', id);
+    const { error } = await supabase.from("clientes").delete().eq("id", id);
 
     if (error) throw error;
 
@@ -306,8 +316,8 @@ export const deleteClient = async (id: string) => {
 
 ```typescript
 // src/services/projects.ts
-import { supabase, handleApiError } from './api';
-import { Projeto } from '../types/projeto';
+import { supabase, handleApiError } from "./api";
+import { Projeto } from "../types/projeto";
 
 export const listProjects = async (filters?: {
   cliente_id?: string;
@@ -319,24 +329,26 @@ export const listProjects = async (filters?: {
 }) => {
   try {
     let query = supabase
-      .from('projetos')
-      .select('*, clientes(nome), usuarios!responsavel_id(nome)', { count: 'exact' });
+      .from("projetos")
+      .select("*, clientes(nome), usuarios!responsavel_id(nome)", {
+        count: "exact",
+      });
 
     // Aplicar filtros
     if (filters?.cliente_id) {
-      query = query.eq('cliente_id', filters.cliente_id);
+      query = query.eq("cliente_id", filters.cliente_id);
     }
 
     if (filters?.responsavel_id) {
-      query = query.eq('responsavel_id', filters.responsavel_id);
+      query = query.eq("responsavel_id", filters.responsavel_id);
     }
 
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
 
     if (filters?.search) {
-      query = query.ilike('nome', `%${filters.search}%`);
+      query = query.ilike("nome", `%${filters.search}%`);
     }
 
     // Paginação
@@ -365,9 +377,9 @@ export const listProjects = async (filters?: {
 export const getProjectById = async (id: string) => {
   try {
     const { data, error } = await supabase
-      .from('projetos')
-      .select('*, clientes(*), usuarios!responsavel_id(*)')
-      .eq('id', id)
+      .from("projetos")
+      .select("*, clientes(*), usuarios!responsavel_id(*)")
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -383,9 +395,14 @@ export const getProjectById = async (id: string) => {
 
 ```typescript
 // src/services/projects.ts
-export const createProject = async (project: Omit<Projeto, 'id' | 'created_at'>) => {
+export const createProject = async (
+  project: Omit<Projeto, "id" | "created_at">,
+) => {
   try {
-    const { data, error } = await supabase.from('projetos').insert([project]).select();
+    const { data, error } = await supabase
+      .from("projetos")
+      .insert([project])
+      .select();
 
     if (error) throw error;
 
@@ -403,9 +420,9 @@ export const createProject = async (project: Omit<Projeto, 'id' | 'created_at'>)
 export const updateProject = async (id: string, project: Partial<Projeto>) => {
   try {
     const { data, error } = await supabase
-      .from('projetos')
+      .from("projetos")
       .update(project)
-      .eq('id', id)
+      .eq("id", id)
       .select();
 
     if (error) throw error;
@@ -423,7 +440,7 @@ export const updateProject = async (id: string, project: Partial<Projeto>) => {
 // src/services/projects.ts
 export const deleteProject = async (id: string) => {
   try {
-    const { error } = await supabase.from('projetos').delete().eq('id', id);
+    const { error } = await supabase.from("projetos").delete().eq("id", id);
 
     if (error) throw error;
 
@@ -440,8 +457,8 @@ export const deleteProject = async (id: string) => {
 
 ```typescript
 // src/services/tasks.ts
-import { supabase, handleApiError } from './api';
-import { Tarefa } from '../types/tarefa';
+import { supabase, handleApiError } from "./api";
+import { Tarefa } from "../types/tarefa";
 
 export const listTasks = async (filters?: {
   projeto_id?: string;
@@ -453,27 +470,27 @@ export const listTasks = async (filters?: {
 }) => {
   try {
     let query = supabase
-      .from('tarefas')
+      .from("tarefas")
       .select(
-        '*, projetos(id, nome), usuarios!responsavel_id(id, nome), usuarios!criador_id(id, nome)',
-        { count: 'exact' }
+        "*, projetos(id, nome), usuarios!responsavel_id(id, nome), usuarios!criador_id(id, nome)",
+        { count: "exact" },
       );
 
     // Aplicar filtros
     if (filters?.projeto_id) {
-      query = query.eq('projeto_id', filters.projeto_id);
+      query = query.eq("projeto_id", filters.projeto_id);
     }
 
     if (filters?.responsavel_id) {
-      query = query.eq('responsavel_id', filters.responsavel_id);
+      query = query.eq("responsavel_id", filters.responsavel_id);
     }
 
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
 
     if (filters?.search) {
-      query = query.ilike('titulo', `%${filters.search}%`);
+      query = query.ilike("titulo", `%${filters.search}%`);
     }
 
     // Paginação
@@ -502,10 +519,11 @@ export const listTasks = async (filters?: {
 export const getTaskById = async (id: string) => {
   try {
     const { data, error } = await supabase
-      .from('tarefas')
+      .from("tarefas")
       .select(
-        '*, projetos(*), usuarios!responsavel_id(*), usuarios!criador_id(*), subtarefas(*)')
-      .eq('id', id)
+        "*, projetos(*), usuarios!responsavel_id(*), usuarios!criador_id(*), subtarefas(*)",
+      )
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -521,9 +539,12 @@ export const getTaskById = async (id: string) => {
 
 ```typescript
 // src/services/tasks.ts
-export const createTask = async (task: Omit<Tarefa, 'id' | 'created_at'>) => {
+export const createTask = async (task: Omit<Tarefa, "id" | "created_at">) => {
   try {
-    const { data, error } = await supabase.from('tarefas').insert([task]).select();
+    const { data, error } = await supabase
+      .from("tarefas")
+      .insert([task])
+      .select();
 
     if (error) throw error;
 
@@ -541,9 +562,9 @@ export const createTask = async (task: Omit<Tarefa, 'id' | 'created_at'>) => {
 export const updateTask = async (id: string, task: Partial<Tarefa>) => {
   try {
     const { data, error } = await supabase
-      .from('tarefas')
+      .from("tarefas")
       .update(task)
-      .eq('id', id)
+      .eq("id", id)
       .select();
 
     if (error) throw error;
@@ -561,7 +582,7 @@ export const updateTask = async (id: string, task: Partial<Tarefa>) => {
 // src/services/tasks.ts
 export const deleteTask = async (id: string) => {
   try {
-    const { error } = await supabase.from('tarefas').delete().eq('id', id);
+    const { error } = await supabase.from("tarefas").delete().eq("id", id);
 
     if (error) throw error;
 
@@ -578,8 +599,8 @@ export const deleteTask = async (id: string) => {
 
 ```typescript
 // src/services/documents.ts
-import { supabase, handleApiError } from './api';
-import { Documento } from '../types/documento';
+import { supabase, handleApiError } from "./api";
+import { Documento } from "../types/documento";
 
 export const listDocuments = async (filters?: {
   cliente_id?: string;
@@ -591,28 +612,28 @@ export const listDocuments = async (filters?: {
 }) => {
   try {
     let query = supabase
-      .from('documentos')
+      .from("documentos")
       .select(
-        '*, clientes(id, nome), projetos(id, nome), usuarios!criador_id(id, nome)',
-        { count: 'exact' }
+        "*, clientes(id, nome), projetos(id, nome), usuarios!criador_id(id, nome)",
+        { count: "exact" },
       );
 
     // Aplicar filtros
     if (filters?.cliente_id) {
-      query = query.eq('cliente_id', filters.cliente_id);
+      query = query.eq("cliente_id", filters.cliente_id);
     }
 
     if (filters?.projeto_id) {
-      query = query.eq('projeto_id', filters.projeto_id);
+      query = query.eq("projeto_id", filters.projeto_id);
     }
 
     if (filters?.tipo) {
-      query = query.eq('tipo', filters.tipo);
+      query = query.eq("tipo", filters.tipo);
     }
 
     if (filters?.search) {
       query = query.or(
-        `nome.ilike.%${filters.search}%,descricao.ilike.%${filters.search}%,arquivo_nome.ilike.%${filters.search}%`
+        `nome.ilike.%${filters.search}%,descricao.ilike.%${filters.search}%,arquivo_nome.ilike.%${filters.search}%`,
       );
     }
 
@@ -642,9 +663,9 @@ export const listDocuments = async (filters?: {
 export const getDocumentById = async (id: string) => {
   try {
     const { data, error } = await supabase
-      .from('documentos')
-      .select('*, clientes(*), projetos(*), usuarios!criador_id(*)')
-      .eq('id', id)
+      .from("documentos")
+      .select("*, clientes(*), projetos(*), usuarios!criador_id(*)")
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -661,34 +682,40 @@ export const getDocumentById = async (id: string) => {
 ```typescript
 // src/services/documents.ts
 export const createDocument = async (
-  document: Omit<Documento, 'id' | 'created_at' | 'arquivo_url'>,
-  file: File
+  document: Omit<Documento, "id" | "created_at" | "arquivo_url">,
+  file: File,
 ) => {
   try {
     // 1. Upload do arquivo para o Storage
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Math.random()
+      .toString(36)
+      .substring(2, 15)}.${fileExt}`;
     const filePath = `documentos/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('files')
+      .from("files")
       .upload(filePath, file);
 
     if (uploadError) throw uploadError;
 
     // 2. Obter URL pública do arquivo
-    const { data: urlData } = supabase.storage.from('files').getPublicUrl(filePath);
+    const { data: urlData } = supabase.storage
+      .from("files")
+      .getPublicUrl(filePath);
 
     // 3. Criar registro do documento no banco
     const { data, error } = await supabase
-      .from('documentos')
-      .insert([{
-        ...document,
-        arquivo_url: urlData.publicUrl,
-        arquivo_nome: file.name,
-        arquivo_tipo: file.type,
-        arquivo_tamanho: file.size,
-      }])
+      .from("documentos")
+      .insert([
+        {
+          ...document,
+          arquivo_url: urlData.publicUrl,
+          arquivo_nome: file.name,
+          arquivo_tipo: file.type,
+          arquivo_tamanho: file.size,
+        },
+      ])
       .select();
 
     if (error) throw error;
@@ -707,7 +734,7 @@ export const createDocument = async (
 export const updateDocument = async (
   id: string,
   document: Partial<Documento>,
-  file?: File
+  file?: File,
 ) => {
   try {
     let documentData = { ...document };
@@ -715,18 +742,22 @@ export const updateDocument = async (
     // Se um novo arquivo foi fornecido, fazer upload
     if (file) {
       // 1. Upload do arquivo para o Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random()
+        .toString(36)
+        .substring(2, 15)}.${fileExt}`;
       const filePath = `documentos/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('files')
+        .from("files")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       // 2. Obter URL pública do arquivo
-      const { data: urlData } = supabase.storage.from('files').getPublicUrl(filePath);
+      const { data: urlData } = supabase.storage
+        .from("files")
+        .getPublicUrl(filePath);
 
       // 3. Atualizar dados do documento
       documentData = {
@@ -740,9 +771,9 @@ export const updateDocument = async (
 
     // 4. Atualizar registro do documento no banco
     const { data, error } = await supabase
-      .from('documentos')
+      .from("documentos")
       .update(documentData)
-      .eq('id', id)
+      .eq("id", id)
       .select();
 
     if (error) throw error;
@@ -762,27 +793,27 @@ export const deleteDocument = async (id: string) => {
   try {
     // 1. Obter informações do documento
     const { data: document, error: getError } = await supabase
-      .from('documentos')
-      .select('arquivo_url')
-      .eq('id', id)
+      .from("documentos")
+      .select("arquivo_url")
+      .eq("id", id)
       .single();
 
     if (getError) throw getError;
 
     // 2. Extrair o caminho do arquivo da URL
     const fileUrl = document.arquivo_url;
-    const filePath = fileUrl.split('/').pop();
+    const filePath = fileUrl.split("/").pop();
     const storagePath = `documentos/${filePath}`;
 
     // 3. Excluir o arquivo do Storage
     const { error: storageError } = await supabase.storage
-      .from('files')
+      .from("files")
       .remove([storagePath]);
 
     if (storageError) throw storageError;
 
     // 4. Excluir o registro do documento
-    const { error } = await supabase.from('documentos').delete().eq('id', id);
+    const { error } = await supabase.from("documentos").delete().eq("id", id);
 
     if (error) throw error;
 
@@ -799,7 +830,7 @@ export const deleteDocument = async (id: string) => {
 
 ```typescript
 // src/services/reports.ts
-import { supabase, handleApiError } from './api';
+import { supabase, handleApiError } from "./api";
 
 export const getProjectsByClientReport = async (filters?: {
   data_inicio?: string;
@@ -807,7 +838,7 @@ export const getProjectsByClientReport = async (filters?: {
   status?: string[];
 }) => {
   try {
-    let query = supabase.rpc('get_projects_by_client', {
+    let query = supabase.rpc("get_projects_by_client", {
       p_data_inicio: filters?.data_inicio || null,
       p_data_fim: filters?.data_fim || null,
       p_status: filters?.status || null,
@@ -834,7 +865,7 @@ export const getTasksByUserReport = async (filters?: {
   status?: string[];
 }) => {
   try {
-    let query = supabase.rpc('get_tasks_by_user', {
+    let query = supabase.rpc("get_tasks_by_user", {
       p_data_inicio: filters?.data_inicio || null,
       p_data_fim: filters?.data_fim || null,
       p_status: filters?.status || null,
@@ -860,7 +891,7 @@ export const getBillingByClientReport = async (filters?: {
   data_fim?: string;
 }) => {
   try {
-    let query = supabase.rpc('get_billing_by_client', {
+    let query = supabase.rpc("get_billing_by_client", {
       p_data_inicio: filters?.data_inicio || null,
       p_data_fim: filters?.data_fim || null,
     });
@@ -1073,14 +1104,14 @@ export class ApiError extends Error {
 
   constructor(message: string, status: number, code?: string) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.status = status;
     this.code = code;
   }
 }
 
 export const handleApiError = (error: any) => {
-  console.error('API Error:', error);
+  console.error("API Error:", error);
 
   if (error instanceof ApiError) {
     return {
@@ -1097,7 +1128,7 @@ export const handleApiError = (error: any) => {
     return {
       error: {
         message: error.message,
-        status: error.code.startsWith('23') ? 400 : 500, // Códigos 23xxx são erros de validação
+        status: error.code.startsWith("23") ? 400 : 500, // Códigos 23xxx são erros de validação
         code: error.code,
       },
     };
@@ -1106,7 +1137,7 @@ export const handleApiError = (error: any) => {
   // Erro genérico
   return {
     error: {
-      message: 'Ocorreu um erro inesperado',
+      message: "Ocorreu um erro inesperado",
       status: 500,
     },
   };

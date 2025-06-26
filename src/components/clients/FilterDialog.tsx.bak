@@ -14,18 +14,18 @@ export interface FilterDialogProps extends Omit<FilterComponentProps, 'className
    * Define se o diálogo está aberto
    */
   isOpen: boolean;
-  
+
   /**
    * Função chamada quando o diálogo é fechado
    */
   onClose: () => void;
-  
+
   /**
    * Título do diálogo
    * @default 'Filtros'
    */
   title?: string;
-  
+
   /**
    * Descrição do diálogo
    * @default 'Filtre os clientes por diferentes critérios'

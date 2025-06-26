@@ -244,15 +244,15 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const hasRequiredRole = () => {
     if (!requiredRole) return true;
     if (!user) return false;
-    
+
     const userRole = user.user_metadata.role;
-    
+
     // Hierarquia de funções
     if (userRole === 'admin') return true;
     if (userRole === 'gerente' && requiredRole !== 'admin') return true;
     if (userRole === 'usuario' && (requiredRole === 'usuario' || requiredRole === 'convidado')) return true;
     if (userRole === 'convidado' && requiredRole === 'convidado') return true;
-    
+
     return false;
   };
 

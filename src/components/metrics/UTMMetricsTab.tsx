@@ -1,19 +1,18 @@
-
-import React, { useState } from 'react';
-import { Share2, Users, Target, Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import StatCard from './StatCard';
-import UTMAdvancedMetrics from './UTMAdvancedMetrics';
-import UTMCampaignChart from './UTMCampaignChart';
-import UTMSourceChart from './UTMSourceChart';
-import UTMTrackingTable from './UTMTrackingTable';
-import UTMConfigPanel from './UTMConfigPanel';
-import UTMDeviceDistributionChart from './UTMDeviceDistributionChart';
-import UTMCampaignFilter from './UTMCampaignFilter';
-import UTMDeviceFilter from './UTMDeviceFilter';
-import UTMGeoHeatmap from './UTMGeoHeatmap';
-import UTMCampaignRanking from './UTMCampaignRanking';
-import UTMTimeMetrics from './UTMTimeMetrics';
+import React, { useState } from "react";
+import { Share2, Users, Target, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import StatCard from "./StatCard";
+import UTMAdvancedMetrics from "./UTMAdvancedMetrics";
+import UTMCampaignChart from "./UTMCampaignChart";
+import UTMSourceChart from "./UTMSourceChart";
+import UTMTrackingTable from "./UTMTrackingTable";
+import UTMConfigPanel from "./UTMConfigPanel";
+import UTMDeviceDistributionChart from "./UTMDeviceDistributionChart";
+import UTMCampaignFilter from "./UTMCampaignFilter";
+import UTMDeviceFilter from "./UTMDeviceFilter";
+import UTMGeoHeatmap from "./UTMGeoHeatmap";
+import UTMCampaignRanking from "./UTMCampaignRanking";
+import UTMTimeMetrics from "./UTMTimeMetrics";
 
 interface UTMMetricsTabProps {
   utmMetrics: {
@@ -39,14 +38,14 @@ interface UTMMetricsTabProps {
   onCampaignChange: (campaign: string) => void;
 }
 
-const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({ 
-  utmMetrics, 
-  utmLoading, 
-  selectedCampaign, 
-  onCampaignChange 
+const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
+  utmMetrics,
+  utmLoading,
+  selectedCampaign,
+  onCampaignChange,
 }) => {
   const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
-  const [selectedDevice, setSelectedDevice] = useState('all');
+  const [selectedDevice, setSelectedDevice] = useState("all");
 
   return (
     <div className="space-y-8">
@@ -56,11 +55,11 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
           Dashboard UTM Profissional
         </h3>
         <div className="flex items-center gap-4">
-          <UTMCampaignFilter 
+          <UTMCampaignFilter
             selectedCampaign={selectedCampaign}
             onCampaignChange={onCampaignChange}
           />
-          <UTMDeviceFilter 
+          <UTMDeviceFilter
             selectedDevice={selectedDevice}
             onDeviceChange={setSelectedDevice}
           />
@@ -80,10 +79,10 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
         <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
           📊 Visão Geral
         </h4>
-        
+
         {/* UTM KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StatCard 
+          <StatCard
             title="Campanhas Ativas"
             value={utmMetrics.totalCampaigns}
             icon={<Share2 />}
@@ -93,8 +92,8 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
             iconTextClass="text-cyan-600 dark:text-cyan-400"
             isStale={utmMetrics.isStale}
           />
-          
-          <StatCard 
+
+          <StatCard
             title="Leads via UTM"
             value={utmMetrics.totalLeads}
             icon={<Users />}
@@ -104,8 +103,8 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
             iconTextClass="text-emerald-600 dark:text-emerald-400"
             isStale={utmMetrics.isStale}
           />
-          
-          <StatCard 
+
+          <StatCard
             title="Taxa de Conversão UTM"
             value={`${utmMetrics.conversionRate}%`}
             icon={<Target />}
@@ -118,7 +117,7 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
         </div>
 
         {/* Métricas de Tempo */}
-        <UTMTimeMetrics 
+        <UTMTimeMetrics
           timeToConversion={utmMetrics.timeToConversion}
           loading={utmLoading}
         />
@@ -128,7 +127,7 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
           <h5 className="text-lg font-medium text-gray-700 dark:text-gray-300">
             📈 Métricas Avançadas
           </h5>
-          <UTMAdvancedMetrics 
+          <UTMAdvancedMetrics
             data={{
               ctr: 3.2,
               cpc: 1.45,
@@ -136,8 +135,8 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
               conversionValuePerLead: 250,
               sessionDuration: 145,
               bounceRate: 42,
-              topPerformingCampaign: 'black_friday_2024',
-              worstPerformingCampaign: 'summer_sale'
+              topPerformingCampaign: "black_friday_2024",
+              worstPerformingCampaign: "summer_sale",
             }}
             loading={utmLoading}
           />
@@ -149,33 +148,42 @@ const UTMMetricsTab: React.FC<UTMMetricsTabProps> = ({
         <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
           📈 Gráficos e Análises
         </h4>
-        
+
         <UTMCampaignChart data={utmMetrics.campaignData} loading={utmLoading} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
           <UTMSourceChart data={utmMetrics.sourceData} loading={utmLoading} />
-          <UTMDeviceDistributionChart data={utmMetrics.deviceData} loading={utmLoading} />
+          <UTMDeviceDistributionChart
+            data={utmMetrics.deviceData}
+            loading={utmLoading}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <UTMGeoHeatmap data={utmMetrics.geoData} loading={utmLoading} />
-          <UTMCampaignRanking data={utmMetrics.topCampaigns} loading={utmLoading} />
+          <UTMCampaignRanking
+            data={utmMetrics.topCampaigns}
+            loading={utmLoading}
+          />
         </div>
       </div>
-      
+
       {/* Bloco 3: Tabela Detalhada */}
       <div className="space-y-6">
         <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 border-b pb-2">
           📋 Tabela Detalhada
         </h4>
-        
+
         <div className="grid grid-cols-1 gap-6">
-          <UTMTrackingTable data={utmMetrics.recentTracking} loading={utmLoading} />
+          <UTMTrackingTable
+            data={utmMetrics.recentTracking}
+            loading={utmLoading}
+          />
         </div>
       </div>
 
       {/* UTM Config Panel */}
-      <UTMConfigPanel 
+      <UTMConfigPanel
         open={isConfigPanelOpen}
         onOpenChange={setIsConfigPanelOpen}
       />

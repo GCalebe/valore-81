@@ -1,10 +1,9 @@
-
-import React from 'react';
-import { ChatMessage, Conversation } from '@/types/chat';
-import ChatConversationHeader from './ChatConversationHeader';
-import MessageList from './MessageList';
-import MessageInput from './MessageInput';
-import NoSelectedChat from './NoSelectedChat';
+import React from "react";
+import { ChatMessage, Conversation } from "@/types/chat";
+import ChatConversationHeader from "./ChatConversationHeader";
+import MessageList from "./MessageList";
+import MessageInput from "./MessageInput";
+import NoSelectedChat from "./NoSelectedChat";
 
 interface ChatAreaProps {
   selectedChat: string | null;
@@ -13,7 +12,12 @@ interface ChatAreaProps {
   loading: boolean;
 }
 
-const ChatArea = ({ selectedChat, selectedConversation, messages, loading }: ChatAreaProps) => {
+const ChatArea = ({
+  selectedChat,
+  selectedConversation,
+  messages,
+  loading,
+}: ChatAreaProps) => {
   if (!selectedChat) {
     return <NoSelectedChat />;
   }
@@ -22,7 +26,7 @@ const ChatArea = ({ selectedChat, selectedConversation, messages, loading }: Cha
     <>
       <ChatConversationHeader selectedConversation={selectedConversation} />
       <MessageList messages={messages} loading={loading} />
-      <MessageInput 
+      <MessageInput
         selectedChat={selectedChat}
         selectedConversation={selectedConversation}
       />
@@ -31,4 +35,3 @@ const ChatArea = ({ selectedChat, selectedConversation, messages, loading }: Cha
 };
 
 export default ChatArea;
-

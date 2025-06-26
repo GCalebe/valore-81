@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
@@ -28,11 +27,13 @@ export function useKanbanStages() {
   const fetchStages = useCallback(async () => {
     setLoading(true);
     if (!user) {
-      setStages(DEFAULT_STAGES.map((stage, idx) => ({
-        id: String(idx),
-        title: stage,
-        ordering: idx,
-      })));
+      setStages(
+        DEFAULT_STAGES.map((stage, idx) => ({
+          id: String(idx),
+          title: stage,
+          ordering: idx,
+        })),
+      );
       setLoading(false);
       return;
     }
@@ -45,33 +46,37 @@ export function useKanbanStages() {
     if (error) {
       // fallback to default and log error
       console.error("Erro ao buscar etapas do Kanban:", error);
-      setStages(DEFAULT_STAGES.map((stage, idx) => ({
-        id: String(idx),
-        title: stage,
-        ordering: idx,
-      })));
+      setStages(
+        DEFAULT_STAGES.map((stage, idx) => ({
+          id: String(idx),
+          title: stage,
+          ordering: idx,
+        })),
+      );
     } else if (data && data.length > 0) {
       setStages(
         data.map((row: any) => ({
           id: row.id,
           title: row.title,
           ordering: row.ordering,
-        }))
+        })),
       );
     } else {
       // If user has no custom stages yet, use default and hydrate to supabase
-      setStages(DEFAULT_STAGES.map((stage, idx) => ({
-        id: String(idx),
-        title: stage,
-        ordering: idx,
-      })));
+      setStages(
+        DEFAULT_STAGES.map((stage, idx) => ({
+          id: String(idx),
+          title: stage,
+          ordering: idx,
+        })),
+      );
       // First time: insert
       await supabase.from("kanban_stages").insert(
         DEFAULT_STAGES.map((stage, idx) => ({
           user_id: user.id,
           title: stage,
           ordering: idx,
-        }))
+        })),
       );
       // Then reload
       fetchStages();
@@ -83,7 +88,8 @@ export function useKanbanStages() {
   const addStage = async (title: string) => {
     if (!user) return;
     // Prevent duplicates by title
-    if (stages.some((s) => s.title.toLowerCase() === title.toLowerCase())) return;
+    if (stages.some((s) => s.title.toLowerCase() === title.toLowerCase()))
+      return;
     const { data, error } = await supabase
       .from("kanban_stages")
       .insert({
@@ -94,11 +100,14 @@ export function useKanbanStages() {
       .select()
       .single();
     if (!error && data) {
-      setStages((prev) => [...prev, {
-        id: data.id,
-        title: data.title,
-        ordering: data.ordering,
-      }]);
+      setStages((prev) => [
+        ...prev,
+        {
+          id: data.id,
+          title: data.title,
+          ordering: data.ordering,
+        },
+      ]);
     }
   };
 
@@ -125,7 +134,10 @@ export function useKanbanStages() {
     }));
     // Use upsert to update each one by its PK
     for (const upd of updates) {
-      await supabase.from("kanban_stages").update({ ordering: upd.ordering }).eq("id", upd.id);
+      await supabase
+        .from("kanban_stages")
+        .update({ ordering: upd.ordering })
+        .eq("id", upd.id);
     }
   };
 

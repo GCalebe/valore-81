@@ -1,10 +1,9 @@
-
-import React, { useState } from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Plus, X } from "lucide-react";
 
 interface Note {
   id: string;
@@ -18,23 +17,23 @@ interface NotesFieldProps {
 
 const NotesField = ({ selectedChat }: NotesFieldProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
-  const [newNote, setNewNote] = useState('');
+  const [newNote, setNewNote] = useState("");
 
   const addNote = () => {
     if (!newNote.trim()) return;
-    
+
     const note: Note = {
       id: Date.now().toString(),
       content: newNote.trim(),
-      timestamp: new Date().toLocaleString('pt-BR'),
+      timestamp: new Date().toLocaleString("pt-BR"),
     };
-    
+
     setNotes([note, ...notes]);
-    setNewNote('');
+    setNewNote("");
   };
 
   const removeNote = (noteId: string) => {
-    setNotes(notes.filter(note => note.id !== noteId));
+    setNotes(notes.filter((note) => note.id !== noteId));
   };
 
   if (!selectedChat) {
@@ -43,8 +42,10 @@ const NotesField = ({ selectedChat }: NotesFieldProps) => {
 
   return (
     <Card className="p-4">
-      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Anotações</h3>
-      
+      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+        Anotações
+      </h3>
+
       {/* Add new note */}
       <div className="mb-4">
         <Textarea
@@ -53,9 +54,9 @@ const NotesField = ({ selectedChat }: NotesFieldProps) => {
           onChange={(e) => setNewNote(e.target.value)}
           className="min-h-[80px] mb-2"
         />
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={addNote}
           className="w-full"
         >
@@ -90,7 +91,7 @@ const NotesField = ({ selectedChat }: NotesFieldProps) => {
               </p>
             </div>
           ))}
-          
+
           {notes.length === 0 && (
             <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
               Nenhuma anotação ainda

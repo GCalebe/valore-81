@@ -1,22 +1,21 @@
-
-import React, { useState } from 'react';
-import SearchBar from '@/components/knowledge/SearchBar';
-import DocumentGrid from '@/components/knowledge/DocumentGrid';
-import AddDocumentDialog from '@/components/knowledge/AddDocumentDialog';
-import { useDocuments } from '@/hooks/useDocuments';
+import React, { useState } from "react";
+import SearchBar from "@/components/knowledge/SearchBar";
+import DocumentGrid from "@/components/knowledge/DocumentGrid";
+import AddDocumentDialog from "@/components/knowledge/AddDocumentDialog";
+import { useDocuments } from "@/hooks/useDocuments";
 
 const DocumentsTab = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddDocumentOpen, setIsAddDocumentOpen] = useState(false);
-  
-  const { 
-    documents, 
-    isLoading, 
-    isRefreshing, 
-    handleRefresh, 
+
+  const {
+    documents,
+    isLoading,
+    isRefreshing,
+    handleRefresh,
     handleDeleteDocument,
     uploadFileToWebhook,
-    clearAllDocuments
+    clearAllDocuments,
   } = useDocuments();
 
   const handleAddDocument = async (file: File, category: string) => {
@@ -42,7 +41,7 @@ const DocumentsTab = () => {
         </p>
       </div>
 
-      <SearchBar 
+      <SearchBar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onRefresh={handleRefresh}
@@ -51,13 +50,13 @@ const DocumentsTab = () => {
         isRefreshing={isRefreshing}
       />
 
-      <DocumentGrid 
+      <DocumentGrid
         documents={documents}
         searchQuery={searchQuery}
         onDeleteDocument={handleDeleteDocument}
       />
 
-      <AddDocumentDialog 
+      <AddDocumentDialog
         isOpen={isAddDocumentOpen}
         onOpenChange={setIsAddDocumentOpen}
         onAddDocument={handleAddDocument}

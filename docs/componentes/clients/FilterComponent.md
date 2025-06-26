@@ -8,15 +8,15 @@ O objetivo deste componente é eliminar a duplicação de código entre `FilterS
 
 ## Props
 
-| Prop | Tipo | Obrigatório | Padrão | Descrição |
-|------|------|-------------|--------|------------|
-| filters | ClientFilters | Sim | - | Estado atual dos filtros aplicados |
-| setFilters | (filters: ClientFilters) => void | Sim | - | Função para atualizar os filtros |
-| customFields | CustomField[] | Não | [] | Lista de campos personalizados disponíveis para filtro |
-| onApplyFilters | () => void | Sim | - | Função chamada quando os filtros são aplicados |
-| onResetFilters | () => void | Sim | - | Função chamada quando os filtros são resetados |
-| children | ReactNode | Não | null | Conteúdo adicional a ser renderizado no componente |
-| className | string | Não | '' | Classes CSS adicionais para o componente |
+| Prop           | Tipo                             | Obrigatório | Padrão | Descrição                                              |
+| -------------- | -------------------------------- | ----------- | ------ | ------------------------------------------------------ |
+| filters        | ClientFilters                    | Sim         | -      | Estado atual dos filtros aplicados                     |
+| setFilters     | (filters: ClientFilters) => void | Sim         | -      | Função para atualizar os filtros                       |
+| customFields   | CustomField[]                    | Não         | []     | Lista de campos personalizados disponíveis para filtro |
+| onApplyFilters | () => void                       | Sim         | -      | Função chamada quando os filtros são aplicados         |
+| onResetFilters | () => void                       | Sim         | -      | Função chamada quando os filtros são resetados         |
+| children       | ReactNode                        | Não         | null   | Conteúdo adicional a ser renderizado no componente     |
+| className      | string                           | Não         | ''     | Classes CSS adicionais para o componente               |
 
 ## Interface de Filtros
 
@@ -99,7 +99,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
   onApplyFilters,
   onResetFilters,
   children,
-  className = '',
+  className = "",
 }) => {
   // Lógica de filtro
   const handleStatusChange = (status: string[]) => {
@@ -110,11 +110,17 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
     setFilters({ ...filters, segment });
   };
 
-  const handleLastContactChange = (lastContact: { from: Date | null; to: Date | null }) => {
+  const handleLastContactChange = (lastContact: {
+    from: Date | null;
+    to: Date | null;
+  }) => {
     setFilters({ ...filters, lastContact });
   };
 
-  const handleCustomFieldChange = (fieldId: string, value: string | string[] | number | boolean | null) => {
+  const handleCustomFieldChange = (
+    fieldId: string,
+    value: string | string[] | number | boolean | null,
+  ) => {
     setFilters({
       ...filters,
       customFields: {
@@ -148,7 +154,9 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
       {children}
 
       <div className="filter-actions">
-        <Button variant="outline" onClick={onResetFilters}>Resetar</Button>
+        <Button variant="outline" onClick={onResetFilters}>
+          Resetar
+        </Button>
         <Button onClick={onApplyFilters}>Aplicar Filtros</Button>
       </div>
     </div>
@@ -178,7 +186,9 @@ const FilterSidePanel: React.FC<FilterSidePanelProps> = ({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Filtros</SheetTitle>
-          <SheetDescription>Filtre os clientes por diferentes critérios</SheetDescription>
+          <SheetDescription>
+            Filtre os clientes por diferentes critérios
+          </SheetDescription>
         </SheetHeader>
         <FilterComponent {...filterProps} />
       </SheetContent>
@@ -207,7 +217,9 @@ const FilterDialog: React.FC<FilterDialogProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Filtros</DialogTitle>
-          <DialogDescription>Filtre os clientes por diferentes critérios</DialogDescription>
+          <DialogDescription>
+            Filtre os clientes por diferentes critérios
+          </DialogDescription>
         </DialogHeader>
         <FilterComponent {...filterProps} />
       </DialogContent>
@@ -264,7 +276,7 @@ O componente `FilterDialog` foi atualizado para incluir um construtor de filtros
 
 ```typescript
 // Tipos de condição para grupos
-type ConditionType = 'AND' | 'OR';
+type ConditionType = "AND" | "OR";
 
 // Interface para uma regra de filtro
 interface FilterRule {

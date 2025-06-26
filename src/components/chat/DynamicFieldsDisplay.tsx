@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { DynamicCategory } from '@/components/clients/DynamicCategoryManager';
-import EditableDynamicField from './EditableDynamicField';
+import React from "react";
+import { DynamicCategory } from "@/components/clients/DynamicCategoryManager";
+import EditableDynamicField from "./EditableDynamicField";
 
 interface DynamicFieldsDisplayProps {
   fields: DynamicCategory[];
@@ -10,11 +9,11 @@ interface DynamicFieldsDisplayProps {
   readOnly?: boolean;
 }
 
-const DynamicFieldsDisplay = ({ 
-  fields, 
-  title, 
-  onFieldUpdate, 
-  readOnly = true 
+const DynamicFieldsDisplay = ({
+  fields,
+  title,
+  onFieldUpdate,
+  readOnly = true,
 }: DynamicFieldsDisplayProps) => {
   if (!fields || fields.length === 0) {
     return null;

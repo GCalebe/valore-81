@@ -20,10 +20,10 @@ O projeto segue uma estrutura de branches baseada no Git Flow, com algumas adapt
 
 - **main** - Branch principal que reflete o código em produção
 - **develop** - Branch de desenvolvimento, contém as funcionalidades prontas para a próxima release
-- **feature/*** - Branches para desenvolvimento de novas funcionalidades
-- **bugfix/*** - Branches para correção de bugs
-- **hotfix/*** - Branches para correções urgentes em produção
-- **release/*** - Branches para preparação de releases
+- **feature/\*** - Branches para desenvolvimento de novas funcionalidades
+- **bugfix/\*** - Branches para correção de bugs
+- **hotfix/\*** - Branches para correções urgentes em produção
+- **release/\*** - Branches para preparação de releases
 
 ## Ciclo de Vida de uma Feature
 
@@ -36,6 +36,7 @@ O projeto segue uma estrutura de branches baseada no Git Flow, com algumas adapt
 ### 2. Desenvolvimento
 
 1. O desenvolvedor cria uma branch a partir de `develop`:
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -46,12 +47,15 @@ O projeto segue uma estrutura de branches baseada no Git Flow, com algumas adapt
 
 3. Escreve testes unitários e de integração
 
-4. Realiza commits frequentes com mensagens descritivas seguindo o padrão de commits:
+4. Utiliza o pre-commit para garantir a qualidade do código antes de cada commit
+
+5. Realiza commits frequentes com mensagens descritivas seguindo o padrão de commits:
+
    ```bash
    git commit -m "feat: adiciona formulário de cadastro de clientes"
    ```
 
-5. Mantém a branch atualizada com `develop`:
+6. Mantém a branch atualizada com `develop`:
    ```bash
    git checkout develop
    git pull origin develop
@@ -64,6 +68,7 @@ O projeto segue uma estrutura de branches baseada no Git Flow, com algumas adapt
 1. Ao finalizar a implementação, o desenvolvedor cria um Pull Request (PR) para a branch `develop`
 
 2. Preenche o template de PR com:
+
    - Descrição da funcionalidade
    - Mudanças realizadas
    - Como testar
@@ -111,6 +116,7 @@ O projeto segue uma estrutura de branches baseada no Git Flow, com algumas adapt
 1. A implantação em produção é iniciada automaticamente após o merge em `main`
 
 2. O processo de implantação inclui:
+
    - Build da aplicação
    - Execução de testes automatizados
    - Implantação no ambiente de produção
@@ -245,8 +251,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --all-files
       - name: Install dependencies
         run: npm ci
       - name: Lint
@@ -278,8 +292,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
       - name: Install dependencies
         run: npm ci
       - name: Build

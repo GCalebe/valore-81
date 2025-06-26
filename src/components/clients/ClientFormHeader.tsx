@@ -1,7 +1,10 @@
-
-import React from 'react';
-import { UserPlus } from 'lucide-react';
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import React from "react";
+import { UserPlus } from "lucide-react";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const ClientFormHeader = () => {
   return (
@@ -11,7 +14,8 @@ const ClientFormHeader = () => {
         Adicionar Novo Cliente Náutico
       </DialogTitle>
       <DialogDescription className="text-gray-600 dark:text-gray-300">
-        Preencha as informações para adicionar um novo cliente náutico ao seu CRM.
+        Preencha as informações para adicionar um novo cliente náutico ao seu
+        CRM.
       </DialogDescription>
     </DialogHeader>
   );

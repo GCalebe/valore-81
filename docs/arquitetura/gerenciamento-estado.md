@@ -13,6 +13,7 @@ O gerenciamento de estado é uma parte crucial da arquitetura do Valore-81, perm
 Para estado isolado que pertence apenas a um componente específico, utilizamos o estado local do React através de `useState` e `useReducer`.
 
 **Quando usar:**
+
 - Estado temporário de UI (ex: abrir/fechar modal, expandir/colapsar seção)
 - Estado de formulários simples
 - Dados que não precisam ser compartilhados entre componentes
@@ -20,11 +21,17 @@ Para estado isolado que pertence apenas a um componente específico, utilizamos 
 **Exemplo:**
 
 ```tsx
-const ClientsTableStandardized: React.FC<ClientsTableProps> = ({ clients, isLoading, onViewDetails, onEdit, onDelete }) => {
+const ClientsTableStandardized: React.FC<ClientsTableProps> = ({
+  clients,
+  isLoading,
+  onViewDetails,
+  onEdit,
+  onDelete,
+}) => {
   // Estado local para ordenação
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Client;
-    direction: 'ascending' | 'descending';
+    direction: "ascending" | "descending";
   } | null>(null);
 
   // Estado local para paginação
@@ -37,10 +44,10 @@ const ClientsTableStandardized: React.FC<ClientsTableProps> = ({ clients, isLoad
     if (sortConfig !== null) {
       sortableClients.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
@@ -58,9 +65,13 @@ const ClientsTableStandardized: React.FC<ClientsTableProps> = ({ clients, isLoad
 
   // Handler para ordenação
   const requestSort = (key: keyof Client) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction: "ascending" | "descending" = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
@@ -74,6 +85,7 @@ const ClientsTableStandardized: React.FC<ClientsTableProps> = ({ clients, isLoad
 Para estado que precisa ser compartilhado entre múltiplos componentes em uma árvore de componentes, utilizamos a Context API do React.
 
 **Quando usar:**
+
 - Temas e preferências de UI
 - Dados de autenticação do usuário
 - Estado global que não requer lógica complexa
@@ -83,9 +95,9 @@ Para estado que precisa ser compartilhado entre múltiplos componentes em uma á
 
 ```tsx
 // src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import { User, Session } from '@supabase/supabase-js';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { User, Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: User | null;
@@ -99,7 +111,9 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,9 +121,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Verificar sessão atual
     const getSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) {
-        console.error('Erro ao obter sessão:', error.message);
+        console.error("Erro ao obter sessão:", error.message);
       }
       setSession(session);
       setUser(session?.user ?? null);
@@ -119,13 +136,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSession();
 
     // Configurar listener para mudanças de autenticação
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -133,7 +150,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     return { error };
   };
 
@@ -167,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
   return context;
 };
@@ -177,7 +197,7 @@ export const useAuth = () => {
 
 ```tsx
 // No componente raiz (ex: _app.tsx)
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider } from "../contexts/AuthContext";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -188,7 +208,7 @@ function MyApp({ Component, pageProps }) {
 }
 
 // Em qualquer componente que precise de acesso ao estado de autenticação
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AuthContext";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
@@ -212,6 +232,7 @@ const ProfilePage = () => {
 Para gerenciamento de estado do servidor e operações assíncronas, utilizamos o React Query (TanStack Query), que fornece cache, sincronização, atualização e gerenciamento de erros para dados remotos.
 
 **Quando usar:**
+
 - Busca, cache e atualização de dados do servidor
 - Gerenciamento de estado assíncrono
 - Operações de mutação (criar, atualizar, excluir)
@@ -221,7 +242,7 @@ Para gerenciamento de estado do servidor e operações assíncronas, utilizamos 
 
 ```tsx
 // src/lib/queryClient.ts
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -238,9 +259,9 @@ export const queryClient = new QueryClient({
 
 ```tsx
 // No componente raiz (ex: _app.tsx)
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { queryClient } from '../lib/queryClient';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient } from "../lib/queryClient";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -256,16 +277,16 @@ function MyApp({ Component, pageProps }) {
 
 ```tsx
 // src/hooks/useClients.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
-import { Client } from '../types/client';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "../lib/supabaseClient";
+import { Client } from "../types/client";
 
 // Chaves de consulta
 export const clientKeys = {
-  all: ['clients'] as const,
-  lists: () => [...clientKeys.all, 'list'] as const,
+  all: ["clients"] as const,
+  lists: () => [...clientKeys.all, "list"] as const,
   list: (filters: any) => [...clientKeys.lists(), filters] as const,
-  details: () => [...clientKeys.all, 'detail'] as const,
+  details: () => [...clientKeys.all, "detail"] as const,
   detail: (id: string) => [...clientKeys.details(), id] as const,
 };
 
@@ -274,25 +295,25 @@ export const useClients = (filters = {}) => {
   return useQuery(
     clientKeys.list(filters),
     async () => {
-      let query = supabase.from('clients').select('*');
+      let query = supabase.from("clients").select("*");
 
       // Aplicar filtros se existirem
       if (filters.search) {
-        query = query.ilike('nome', `%${filters.search}%`);
+        query = query.ilike("nome", `%${filters.search}%`);
       }
 
       if (filters.tipo) {
-        query = query.eq('tipo', filters.tipo);
+        query = query.eq("tipo", filters.tipo);
       }
 
-      const { data, error } = await query.order('nome');
+      const { data, error } = await query.order("nome");
 
       if (error) throw error;
       return data as Client[];
     },
     {
       keepPreviousData: true,
-    }
+    },
   );
 };
 
@@ -302,9 +323,9 @@ export const useClient = (id: string) => {
     clientKeys.detail(id),
     async () => {
       const { data, error } = await supabase
-        .from('clients')
-        .select('*')
-        .eq('id', id)
+        .from("clients")
+        .select("*")
+        .eq("id", id)
         .single();
 
       if (error) throw error;
@@ -312,7 +333,7 @@ export const useClient = (id: string) => {
     },
     {
       enabled: !!id, // Só executa se o ID for fornecido
-    }
+    },
   );
 };
 
@@ -321,8 +342,11 @@ export const useCreateClient = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (newClient: Omit<Client, 'id'>) => {
-      const { data, error } = await supabase.from('clients').insert(newClient).select();
+    async (newClient: Omit<Client, "id">) => {
+      const { data, error } = await supabase
+        .from("clients")
+        .insert(newClient)
+        .select();
 
       if (error) throw error;
       return data[0] as Client;
@@ -332,7 +356,7 @@ export const useCreateClient = () => {
         // Invalidar consultas para recarregar a lista de clientes
         queryClient.invalidateQueries(clientKeys.lists());
       },
-    }
+    },
   );
 };
 
@@ -343,9 +367,9 @@ export const useUpdateClient = () => {
   return useMutation(
     async ({ id, ...updates }: Client) => {
       const { data, error } = await supabase
-        .from('clients')
+        .from("clients")
         .update(updates)
-        .eq('id', id)
+        .eq("id", id)
         .select();
 
       if (error) throw error;
@@ -358,7 +382,7 @@ export const useUpdateClient = () => {
         // Invalidar a lista para garantir que está atualizada
         queryClient.invalidateQueries(clientKeys.lists());
       },
-    }
+    },
   );
 };
 
@@ -368,7 +392,7 @@ export const useDeleteClient = () => {
 
   return useMutation(
     async (id: string) => {
-      const { error } = await supabase.from('clients').delete().eq('id', id);
+      const { error } = await supabase.from("clients").delete().eq("id", id);
 
       if (error) throw error;
       return id;
@@ -380,7 +404,7 @@ export const useDeleteClient = () => {
         // Invalidar a lista
         queryClient.invalidateQueries(clientKeys.lists());
       },
-    }
+    },
   );
 };
 ```
@@ -389,27 +413,27 @@ export const useDeleteClient = () => {
 
 ```tsx
 // Em um componente de listagem de clientes
-import { useClients, useDeleteClient } from '../hooks/useClients';
-import { useState } from 'react';
+import { useClients, useDeleteClient } from "../hooks/useClients";
+import { useState } from "react";
 
 const ClientsList = () => {
-  const [filters, setFilters] = useState({ search: '', tipo: '' });
+  const [filters, setFilters] = useState({ search: "", tipo: "" });
   const { data: clients, isLoading, error } = useClients(filters);
   const deleteClient = useDeleteClient();
 
   const handleSearch = (e) => {
-    setFilters(prev => ({ ...prev, search: e.target.value }));
+    setFilters((prev) => ({ ...prev, search: e.target.value }));
   };
 
   const handleFilterByType = (e) => {
-    setFilters(prev => ({ ...prev, tipo: e.target.value }));
+    setFilters((prev) => ({ ...prev, tipo: e.target.value }));
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Tem certeza que deseja excluir este cliente?')) {
+    if (window.confirm("Tem certeza que deseja excluir este cliente?")) {
       try {
         await deleteClient.mutateAsync(id);
-        alert('Cliente excluído com sucesso!');
+        alert("Cliente excluído com sucesso!");
       } catch (error) {
         alert(`Erro ao excluir cliente: ${error.message}`);
       }
@@ -422,11 +446,11 @@ const ClientsList = () => {
   return (
     <div>
       <div className="filters">
-        <input 
-          type="text" 
-          placeholder="Buscar por nome" 
-          value={filters.search} 
-          onChange={handleSearch} 
+        <input
+          type="text"
+          placeholder="Buscar por nome"
+          value={filters.search}
+          onChange={handleSearch}
         />
         <select value={filters.tipo} onChange={handleFilterByType}>
           <option value="">Todos os tipos</option>
@@ -435,11 +459,15 @@ const ClientsList = () => {
         </select>
       </div>
 
-      <ClientsTableStandardized 
-        clients={clients || []} 
+      <ClientsTableStandardized
+        clients={clients || []}
         isLoading={isLoading}
-        onViewDetails={(id) => { /* ... */ }}
-        onEdit={(id) => { /* ... */ }}
+        onViewDetails={(id) => {
+          /* ... */
+        }}
+        onEdit={(id) => {
+          /* ... */
+        }}
         onDelete={handleDelete}
       />
     </div>
@@ -452,6 +480,7 @@ const ClientsList = () => {
 Para gerenciamento de estado global mais simples que não requer a complexidade do Redux, utilizamos o Zustand, uma biblioteca leve e fácil de usar.
 
 **Quando usar:**
+
 - Estado global que não está diretamente relacionado a dados do servidor
 - Estado de UI compartilhado entre rotas
 - Quando Context API se torna muito verboso para o caso de uso
@@ -460,32 +489,39 @@ Para gerenciamento de estado global mais simples que não requer a complexidade 
 
 ```tsx
 // src/stores/uiStore.ts
-import create from 'zustand';
+import create from "zustand";
 
 type UIState = {
   sidebarOpen: boolean;
-  theme: 'light' | 'dark';
-  notifications: Array<{ id: string; message: string; type: 'info' | 'success' | 'error' }>;
+  theme: "light" | "dark";
+  notifications: Array<{
+    id: string;
+    message: string;
+    type: "info" | "success" | "error";
+  }>;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
-  setTheme: (theme: 'light' | 'dark') => void;
-  addNotification: (message: string, type: 'info' | 'success' | 'error') => void;
+  setTheme: (theme: "light" | "dark") => void;
+  addNotification: (
+    message: string,
+    type: "info" | "success" | "error",
+  ) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
 };
 
 export const useUIStore = create<UIState>((set) => ({
   sidebarOpen: true,
-  theme: 'light',
+  theme: "light",
   notifications: [],
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   setTheme: (theme) => {
     set({ theme });
     // Persistir tema no localStorage
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
     // Aplicar classe ao elemento html
-    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(theme);
   },
   addNotification: (message, type) => {
@@ -508,8 +544,8 @@ export const useUIStore = create<UIState>((set) => ({
 }));
 
 // Inicializar tema do localStorage ao carregar a aplicação
-if (typeof window !== 'undefined') {
-  const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+if (typeof window !== "undefined") {
+  const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
   if (savedTheme) {
     useUIStore.getState().setTheme(savedTheme);
   }
@@ -520,7 +556,7 @@ if (typeof window !== 'undefined') {
 
 ```tsx
 // Em um componente de layout
-import { useUIStore } from '../stores/uiStore';
+import { useUIStore } from "../stores/uiStore";
 
 const Layout = ({ children }) => {
   const { sidebarOpen, toggleSidebar, theme, setTheme } = useUIStore();
@@ -529,15 +565,15 @@ const Layout = ({ children }) => {
     <div className={`app ${theme}`}>
       <header>
         <button onClick={toggleSidebar}>
-          {sidebarOpen ? 'Fechar Menu' : 'Abrir Menu'}
+          {sidebarOpen ? "Fechar Menu" : "Abrir Menu"}
         </button>
-        <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
           Alternar Tema
         </button>
       </header>
 
       <div className="content-area">
-        <aside className={sidebarOpen ? 'open' : 'closed'}>
+        <aside className={sidebarOpen ? "open" : "closed"}>
           {/* Conteúdo da sidebar */}
         </aside>
         <main>{children}</main>
@@ -547,7 +583,7 @@ const Layout = ({ children }) => {
 };
 
 // Em um componente de notificações
-import { useUIStore } from '../stores/uiStore';
+import { useUIStore } from "../stores/uiStore";
 
 const NotificationCenter = () => {
   const { notifications, removeNotification } = useUIStore();
@@ -555,7 +591,10 @@ const NotificationCenter = () => {
   return (
     <div className="notifications-container">
       {notifications.map((notification) => (
-        <div key={notification.id} className={`notification ${notification.type}`}>
+        <div
+          key={notification.id}
+          className={`notification ${notification.type}`}
+        >
           <p>{notification.message}</p>
           <button onClick={() => removeNotification(notification.id)}>×</button>
         </div>
@@ -599,13 +638,13 @@ Sempre tratamos o estado como imutável, criando novas cópias ao invés de modi
 ```tsx
 // Incorreto
 const updateUser = (user) => {
-  user.name = 'Novo Nome'; // Mutação direta
+  user.name = "Novo Nome"; // Mutação direta
   setUser(user);
 };
 
 // Correto
 const updateUser = (user) => {
-  setUser({ ...user, name: 'Novo Nome' }); // Cria nova cópia
+  setUser({ ...user, name: "Novo Nome" }); // Cria nova cópia
 };
 ```
 
@@ -617,12 +656,15 @@ Usamos seletores para acessar e derivar dados do estado, evitando cálculos redu
 // Com React Query
 const useActiveClients = () => {
   const { data: clients } = useClients();
-  return useMemo(() => clients?.filter(client => client.status === 'active') || [], [clients]);
+  return useMemo(
+    () => clients?.filter((client) => client.status === "active") || [],
+    [clients],
+  );
 };
 
 // Com Zustand
-const activeProjects = useProjectStore(state => 
-  state.projects.filter(project => project.status === 'active')
+const activeProjects = useProjectStore((state) =>
+  state.projects.filter((project) => project.status === "active"),
 );
 ```
 
@@ -632,33 +674,34 @@ Para estado que precisa persistir entre sessões, utilizamos localStorage ou ses
 
 ```tsx
 // Exemplo com Zustand e middleware persist
-import create from 'zustand';
-import { persist } from 'zustand/middleware';
+import create from "zustand";
+import { persist } from "zustand/middleware";
 
 type UserPreferences = {
   language: string;
   notifications: boolean;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   setLanguage: (language: string) => void;
   toggleNotifications: () => void;
-  setTheme: (theme: 'light' | 'dark') => void;
+  setTheme: (theme: "light" | "dark") => void;
 };
 
 export const useUserPreferences = create<UserPreferences>(
   persist(
     (set) => ({
-      language: 'pt-BR',
+      language: "pt-BR",
       notifications: true,
-      theme: 'light',
+      theme: "light",
       setLanguage: (language) => set({ language }),
-      toggleNotifications: () => set((state) => ({ notifications: !state.notifications })),
+      toggleNotifications: () =>
+        set((state) => ({ notifications: !state.notifications })),
       setTheme: (theme) => set({ theme }),
     }),
     {
-      name: 'user-preferences', // nome no localStorage
+      name: "user-preferences", // nome no localStorage
       getStorage: () => localStorage,
-    }
-  )
+    },
+  ),
 );
 ```
 
@@ -692,9 +735,12 @@ const sortedClients = useMemo(() => {
 }, [clients]);
 
 // Memoização de funções
-const handleDelete = useCallback((id: string) => {
-  deleteClient.mutate(id);
-}, [deleteClient]);
+const handleDelete = useCallback(
+  (id: string) => {
+    deleteClient.mutate(id);
+  },
+  [deleteClient],
+);
 
 // Memoização de componentes
 const ClientCard = React.memo(({ client, onEdit, onDelete }) => {
@@ -707,7 +753,7 @@ const ClientCard = React.memo(({ client, onEdit, onDelete }) => {
 Para listas longas, utilizamos virtualização para renderizar apenas os itens visíveis:
 
 ```tsx
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const VirtualizedClientList = ({ clients }) => {
   const parentRef = useRef(null);
@@ -719,22 +765,22 @@ const VirtualizedClientList = ({ clients }) => {
   });
 
   return (
-    <div ref={parentRef} style={{ height: '500px', overflow: 'auto' }}>
+    <div ref={parentRef} style={{ height: "500px", overflow: "auto" }}>
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
+          width: "100%",
+          position: "relative",
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => (
           <div
             key={virtualRow.index}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
+              width: "100%",
               height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start}px)`,
             }}
@@ -754,7 +800,9 @@ Carregamos componentes e dados apenas quando necessário:
 
 ```tsx
 // Lazy loading de componentes
-const ClientDetails = React.lazy(() => import('../components/clients/ClientDetails'));
+const ClientDetails = React.lazy(
+  () => import("../components/clients/ClientDetails"),
+);
 
 // Em um componente
 const ClientView = ({ clientId }) => {
@@ -766,13 +814,14 @@ const ClientView = ({ clientId }) => {
 };
 
 // Lazy loading de dados com React Query
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-  ['projects'],
-  ({ pageParam = 0 }) => fetchProjects(pageParam),
-  {
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-  }
-);
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  useInfiniteQuery(
+    ["projects"],
+    ({ pageParam = 0 }) => fetchProjects(pageParam),
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
 ```
 
 ## Depuração e Ferramentas
@@ -786,7 +835,7 @@ Utilizamos React DevTools para inspecionar a árvore de componentes e o estado l
 Para depurar consultas e mutações do React Query:
 
 ```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -803,15 +852,15 @@ function MyApp({ Component, pageProps }) {
 Para depurar stores do Zustand:
 
 ```tsx
-import { devtools } from 'zustand/middleware';
+import { devtools } from "zustand/middleware";
 
 export const useStore = create(
   devtools(
     (set) => ({
       // definição do store
     }),
-    { name: 'MyStore' } // nome no DevTools
-  )
+    { name: "MyStore" }, // nome no DevTools
+  ),
 );
 ```
 

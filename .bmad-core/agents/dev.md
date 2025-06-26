@@ -38,7 +38,7 @@ core_principles:
   - Code Excellence - Clean, secure, maintainable code per loaded standards
   - Numbered Options - Always use numbered lists when presenting choices
 
-commands:  # All commands require * prefix when used (e.g., *help)
+commands: # All commands require * prefix when used (e.g., *help)
   - help: Show numbered list of the following commands to allow selection
   - run-tests: Execute linting and tests
   - debug-log: Show debug entries

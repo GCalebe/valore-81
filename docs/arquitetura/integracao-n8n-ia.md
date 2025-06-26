@@ -32,6 +32,7 @@ export interface N8nChatHistory {
 ```
 
 Esta interface representa o histórico de chat armazenado no n8n, contendo:
+
 - Identificador único
 - ID da sessão para agrupar mensagens
 - Conteúdo da mensagem (formato flexível)
@@ -109,7 +110,7 @@ export async function fetchChatHistory(conversationId: string) {
 
 export function subscribeToChat(
   conversationId: string,
-  onInsert: (chatHistory: N8nChatHistory) => void
+  onInsert: (chatHistory: N8nChatHistory) => void,
 ) {
   // Implementação para assinatura em tempo real
 }
@@ -122,7 +123,7 @@ O arquivo `dateUtils.ts` contém funções para formatar datas para a API do n8n
 ```typescript
 export const formatDateForN8NApi = (date: Date, isEndOfDay = false): string => {
   // Implementação para formatar datas no padrão esperado pelo n8n
-}
+};
 ```
 
 #### 3.3 Processamento de Mensagens
@@ -132,7 +133,7 @@ O arquivo `chatUtils.ts` contém funções para processar mensagens do n8n:
 ```typescript
 export const parseMessage = (chatHistory: N8nChatHistory): ChatMessage[] => {
   // Implementação para converter mensagens do formato n8n para o formato interno
-}
+};
 ```
 
 ## Fluxo de Dados
@@ -142,6 +143,7 @@ export const parseMessage = (chatHistory: N8nChatHistory): ChatMessage[] => {
 2. **Armazenamento de Configurações**: As configurações são armazenadas no n8n para uso posterior.
 
 3. **Interação com Usuários**: Quando um usuário interage com a IA, o sistema:
+
    - Recupera as configurações relevantes
    - Identifica a etapa atual da conversação
    - Seleciona mensagens apropriadas com base no contexto
@@ -171,4 +173,4 @@ Atualmente, o sistema está parcialmente implementado, com algumas limitações:
 
 ---
 
-*Este documento representa o estado atual da arquitetura e pode ser atualizado conforme o sistema evolui.*
+_Este documento representa o estado atual da arquitetura e pode ser atualizado conforme o sistema evolui._

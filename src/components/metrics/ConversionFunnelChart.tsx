@@ -1,9 +1,8 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, AlertCircle } from 'lucide-react';
-import { FunnelChartSettings } from './FunnelChartSettings';
-import { useKanbanStages } from '@/hooks/useKanbanStages';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PieChart, AlertCircle } from "lucide-react";
+import { FunnelChartSettings } from "./FunnelChartSettings";
+import { useKanbanStages } from "@/hooks/useKanbanStages";
 
 interface FunnelData {
   name: string;
@@ -15,40 +14,44 @@ interface FunnelData {
 interface ConversionFunnelChartProps {
   data: FunnelData[];
   loading?: boolean;
-  onFilterChange?: (date: Date, stages: string[], showNoShowRate: boolean) => void;
+  onFilterChange?: (
+    date: Date,
+    stages: string[],
+    showNoShowRate: boolean,
+  ) => void;
   noShowRate?: number;
 }
 
-const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ 
-  data, 
+const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({
+  data,
   loading = false,
   onFilterChange,
-  noShowRate
+  noShowRate,
 }) => {
   const [customDate, setCustomDate] = useState<Date>(new Date());
   const [selectedStages, setSelectedStages] = useState<string[]>([]);
   const [showNoShowRate, setShowNoShowRate] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<FunnelData[]>(data);
   const { stages } = useKanbanStages();
-  
+
   // Cores predefinidas para os estágios do funil
   const stageColors = [
-    '#4f46e5', // indigo-600
-    '#0891b2', // cyan-600
-    '#059669', // emerald-600
-    '#65a30d', // lime-600
-    '#ca8a04', // yellow-600
-    '#ea580c', // orange-600
-    '#dc2626', // red-600
-    '#9333ea', // purple-600
-    '#2563eb', // blue-600
-    '#0d9488', // teal-600
+    "#4f46e5", // indigo-600
+    "#0891b2", // cyan-600
+    "#059669", // emerald-600
+    "#65a30d", // lime-600
+    "#ca8a04", // yellow-600
+    "#ea580c", // orange-600
+    "#dc2626", // red-600
+    "#9333ea", // purple-600
+    "#2563eb", // blue-600
+    "#0d9488", // teal-600
   ];
 
   // Inicializa os estágios selecionados com todos os estágios disponíveis
   useEffect(() => {
     if (stages.length > 0 && selectedStages.length === 0) {
-      setSelectedStages(stages.map(stage => stage.title));
+      setSelectedStages(stages.map((stage) => stage.title));
     }
   }, [stages]);
 
@@ -56,20 +59,20 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({
   useEffect(() => {
     if (data.length > 0) {
       let filtered = data;
-      
+
       // Filtra por estágios selecionados
       if (selectedStages.length > 0) {
-        filtered = data.filter(item => selectedStages.includes(item.name));
+        filtered = data.filter((item) => selectedStages.includes(item.name));
       }
-      
+
       // Aplica cores aos estágios
       filtered = filtered.map((item, index) => ({
         ...item,
-        color: item.color || stageColors[index % stageColors.length]
+        color: item.color || stageColors[index % stageColors.length],
       }));
-      
+
       setFilteredData(filtered);
-      
+
       // Notifica sobre mudanças nos filtros
       if (onFilterChange) {
         onFilterChange(customDate, selectedStages, showNoShowRate);
@@ -86,7 +89,7 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({
           <PieChart className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           Funil de Conversão de Leads
         </CardTitle>
-        <FunnelChartSettings 
+        <FunnelChartSettings
           selectedStages={selectedStages}
           onStagesChange={setSelectedStages}
           customDate={customDate}
@@ -155,25 +158,34 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({
                 </div>
               )}
             </div>
-            
+
             {/* Legenda de cores */}
             <div className="flex flex-wrap gap-3 pt-2">
               {filteredData.map((stage, index) => (
-                <div key={`legend-${index}`} className="flex items-center gap-1">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                <div
+                  key={`legend-${index}`}
+                  className="flex items-center gap-1"
+                >
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: stage.color }}
                   ></div>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{stage.name}</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    {stage.name}
+                  </span>
                 </div>
               ))}
             </div>
-            
+
             {/* Taxa de No-Show */}
             {showNoShowRate && noShowRate !== undefined && (
               <div className="flex items-center justify-between pt-2 mt-2 border-t border-gray-200 dark:border-gray-700">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Taxa de No-Show:</span>
-                <span className="text-sm font-bold text-red-600 dark:text-red-400">{noShowRate}%</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Taxa de No-Show:
+                </span>
+                <span className="text-sm font-bold text-red-600 dark:text-red-400">
+                  {noShowRate}%
+                </span>
               </div>
             )}
           </div>

@@ -1,14 +1,13 @@
-
-import React from 'react';
-import { FileText, Trash2 } from 'lucide-react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  CardFooter 
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { FileText, Trash2 } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 interface Document {
   id: number;
@@ -52,9 +51,9 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete }) => {
       <CardFooter className="flex justify-end">
         <Dialog>
           <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="text-red-500 hover:text-red-600"
             >
               <Trash2 className="h-4 w-4 mr-1" />
@@ -65,14 +64,17 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete }) => {
             <DialogHeader>
               <DialogTitle>Excluir Documento</DialogTitle>
               <DialogDescription>
-                Esta ação não pode ser desfeita. Tem certeza que deseja excluir o documento?
+                Esta ação não pode ser desfeita. Tem certeza que deseja excluir
+                o documento?
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button variant="outline">Cancelar</Button>
-              <Button 
-                variant="destructive" 
-                onClick={() => onDelete(document.id, document.titulo || document.name)}
+              <Button
+                variant="destructive"
+                onClick={() =>
+                  onDelete(document.id, document.titulo || document.name)
+                }
               >
                 Excluir
               </Button>

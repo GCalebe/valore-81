@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import PauseDurationDialog from '@/components/PauseDurationDialog';
-import { Contact } from '@/types/client';
+import PauseDurationDialog from "@/components/PauseDurationDialog";
+import { Contact } from "@/types/client";
 
 interface SendMessageDialogProps {
   selectedContact: Contact;
@@ -63,7 +62,11 @@ const SendMessageDialog = ({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
             <Button type="button" onClick={handleMessageSubmit}>
@@ -72,12 +75,12 @@ const SendMessageDialog = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      <PauseDurationDialog 
+
+      <PauseDurationDialog
         isOpen={isPauseDurationDialogOpen}
         onClose={() => setIsPauseDurationDialogOpen(false)}
         onConfirm={handlePauseDurationConfirm}
-        phoneNumber={selectedContact.phone || ''}
+        phoneNumber={selectedContact.phone || ""}
       />
     </>
   );

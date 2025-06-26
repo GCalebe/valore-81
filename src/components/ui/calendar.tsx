@@ -1,5 +1,5 @@
-import { DayPicker } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 
 interface CalendarProps {
   selected?: Date | null;
@@ -13,7 +13,7 @@ export function Calendar({ selected, onSelect, className }: CalendarProps) {
       mode="single"
       selected={selected}
       onSelect={onSelect}
-      className={`calendar ${className || ''}`}
+      className={`calendar ${className || ""}`}
     />
   );
 }

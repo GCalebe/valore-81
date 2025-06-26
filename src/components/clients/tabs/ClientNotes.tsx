@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlusIcon, TrashIcon, PencilIcon, CheckIcon, XIcon } from 'lucide-react';
-import { ClientNote } from '@/types/clientNote';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  PlusIcon,
+  TrashIcon,
+  PencilIcon,
+  CheckIcon,
+  XIcon,
+} from "lucide-react";
+import { ClientNote } from "@/types/clientNote";
 
 interface ClientNotesProps {
   /**
    * Lista de anotações do cliente
    */
   notes: ClientNote[];
-  
+
   /**
    * Função para adicionar uma nova anotação
    */
   onAddNote?: (content: string) => Promise<void>;
-  
+
   /**
    * Função para editar uma anotação existente
    */
   onEditNote?: (noteId: string, content: string) => Promise<void>;
-  
+
   /**
    * Função para remover uma anotação
    */
   onRemoveNote?: (noteId: string) => Promise<void>;
-  
+
   /**
    * Define se o componente deve ser exibido em modo compacto
    * @default false
@@ -44,22 +50,22 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
   onRemoveNote,
   compact = false,
 }) => {
-  const [newNote, setNewNote] = useState('');
+  const [newNote, setNewNote] = useState("");
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [editingContent, setEditingContent] = useState('');
+  const [editingContent, setEditingContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddNote = async () => {
     if (!newNote.trim() || !onAddNote) return;
-    
+
     try {
       setIsSubmitting(true);
       await onAddNote(newNote);
-      setNewNote('');
+      setNewNote("");
       setIsAddingNote(false);
     } catch (error) {
-      console.error('Erro ao adicionar anotação:', error);
+      console.error("Erro ao adicionar anotação:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -72,14 +78,14 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
 
   const handleSaveEdit = async () => {
     if (!editingNoteId || !editingContent.trim() || !onEditNote) return;
-    
+
     try {
       setIsSubmitting(true);
       await onEditNote(editingNoteId, editingContent);
       setEditingNoteId(null);
-      setEditingContent('');
+      setEditingContent("");
     } catch (error) {
-      console.error('Erro ao editar anotação:', error);
+      console.error("Erro ao editar anotação:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -87,35 +93,39 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
 
   const handleCancelEdit = () => {
     setEditingNoteId(null);
-    setEditingContent('');
+    setEditingContent("");
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
+      .split(" ")
       .map((n) => n[0])
-      .join('')
+      .join("")
       .toUpperCase()
       .substring(0, 2);
   };
 
   return (
-    <Card className={compact ? 'p-3' : 'p-4'}>
+    <Card className={compact ? "p-3" : "p-4"}>
       <CardHeader className="p-0 pb-3 flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Anotações</CardTitle>
         {onAddNote && !isAddingNote && (
-          <Button size="sm" variant="outline" onClick={() => setIsAddingNote(true)}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsAddingNote(true)}
+          >
             <PlusIcon className="h-4 w-4 mr-1" />
             Adicionar
           </Button>
@@ -144,7 +154,7 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
                 onClick={handleAddNote}
                 disabled={!newNote.trim() || isSubmitting}
               >
-                {isSubmitting ? 'Salvando...' : 'Salvar'}
+                {isSubmitting ? "Salvando..." : "Salvar"}
               </Button>
             </div>
           </div>
@@ -188,12 +198,21 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center space-x-2">
                         <Avatar className="h-6 w-6">
-                          <AvatarImage src={note.author.avatar} alt={note.author.name} />
-                          <AvatarFallback>{getInitials(note.author.name)}</AvatarFallback>
+                          <AvatarImage
+                            src={note.author.avatar}
+                            alt={note.author.name}
+                          />
+                          <AvatarFallback>
+                            {getInitials(note.author.name)}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="text-sm font-medium">{note.author.name}</p>
-                          <p className="text-xs text-gray-500">{formatDate(note.createdAt)}</p>
+                          <p className="text-sm font-medium">
+                            {note.author.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatDate(note.createdAt)}
+                          </p>
                         </div>
                       </div>
                       <div className="flex space-x-1">
@@ -221,7 +240,9 @@ export const ClientNotes: React.FC<ClientNotesProps> = ({
                         )}
                       </div>
                     </div>
-                    <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {note.content}
+                    </p>
                   </>
                 )}
               </div>
