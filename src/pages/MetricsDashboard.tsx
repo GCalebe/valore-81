@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { LineChart, MessageCircle, Share2 } from "lucide-react";
 import { useClientStats } from "@/hooks/useClientStats";
@@ -14,7 +15,7 @@ import UTMMetricsTab from "@/components/metrics/UTMMetricsTab";
 
 const MetricsDashboard = () => {
   const [dateFilter, setDateFilter] = useState("week");
-  const [customDate, setCustomDate] = useState<Date>();
+  const [customDate, setCustomDate] = useState<Date | null>(null);
   const { stats, loading: statsLoading, refetchStats } = useClientStats();
   const {
     metrics,
@@ -63,8 +64,8 @@ const MetricsDashboard = () => {
             Dashboard de Métricas
           </h2>
           <MetricsFilters
-            customDate={customDate}
-            setCustomDate={setCustomDate}
+            selectedDate={customDate}
+            onDateChange={setCustomDate}
           />
         </div>
 

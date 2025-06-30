@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -113,8 +114,15 @@ const ClientsDashboard = () => {
             segmentFilter={filter.segmentFilter}
             lastContactFilter={filter.lastContactFilter}
             customFieldFilters={customFieldFilters}
-            onContactClick={handleContactClick}
-            onEditClick={openEditModal}
+            onViewDetails={handleContactClick}
+            onSendMessage={(contactId: string) => {
+              const contact = contacts.find(c => c.id === contactId);
+              if (contact) {
+                setSelectedContact(contact);
+                handleMessageClick();
+              }
+            }}
+            onEditClient={openEditModal}
           />
         ) : (
           <KanbanView
