@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Select,
@@ -9,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { RefreshCcw, Filter } from "lucide-react";
 import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { useScheduleData } from "@/hooks/useScheduleData";
 
 interface ScheduleFiltersSectionProps {
   statusFilter?: string;
@@ -28,6 +30,10 @@ export const ScheduleFiltersSection = ({
   isRefreshing = false,
 }: ScheduleFiltersSectionProps) => {
   const { settings } = useThemeSettings();
+  
+  // Buscar dados para exibir contagem correta
+  const { events } = useScheduleData(hostFilter);
+  
   return (
     <div
       className="rounded-lg p-6 mt-8 mb-6 flex items-center gap-8"
@@ -61,19 +67,19 @@ export const ScheduleFiltersSection = ({
               value="corretor1"
               className="text-white hover:bg-slate-700"
             >
-              Agenda 1
+              Agenda 1 - João Silva
             </SelectItem>
             <SelectItem
               value="corretor2"
               className="text-white hover:bg-slate-700"
             >
-              Agenda 2
+              Agenda 2 - Maria Santos
             </SelectItem>
             <SelectItem
               value="corretor3"
               className="text-white hover:bg-slate-700"
             >
-              Agenda 3
+              Agenda 3 - Pedro Costa
             </SelectItem>
           </SelectContent>
         </Select>
@@ -89,30 +95,30 @@ export const ScheduleFiltersSection = ({
                   ? "Pendentes"
                   : statusFilter === "cancelado"
                     ? "Cancelados"
-                    : "Visualizando todos (4 eventos)"}
+                    : `Visualizando todos (${events.length} eventos)`}
             </span>
           </SelectTrigger>
           <SelectContent className="bg-slate-800 border-slate-600">
             <SelectItem value="all" className="text-white hover:bg-slate-700">
-              Visualizando todos (4 eventos)
+              Visualizando todos ({events.length} eventos)
             </SelectItem>
             <SelectItem
               value="confirmado"
               className="text-white hover:bg-slate-700"
             >
-              Confirmados
+              Confirmados ({events.filter(e => e.status === "confirmado").length})
             </SelectItem>
             <SelectItem
               value="pendente"
               className="text-white hover:bg-slate-700"
             >
-              Pendentes
+              Pendentes ({events.filter(e => e.status === "pendente").length})
             </SelectItem>
             <SelectItem
               value="cancelado"
               className="text-white hover:bg-slate-700"
             >
-              Cancelados
+              Cancelados ({events.filter(e => e.status === "cancelado").length})
             </SelectItem>
           </SelectContent>
         </Select>

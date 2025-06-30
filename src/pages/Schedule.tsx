@@ -18,6 +18,10 @@ const Schedule = () => {
   const { user, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
 
+  // Estados para filtros
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [hostFilter, setHostFilter] = useState("all");
+
   const {
     selectedDate,
     setSelectedDate,
@@ -70,12 +74,13 @@ const Schedule = () => {
     isSubmitting,
   } = useCalendarEvents(selectedDate, dateRange);
 
+  // Passar o hostFilter para o hook useScheduleData
   const {
     events: scheduleEvents,
     loading: isScheduleLoading,
     refreshing: isScheduleRefreshing,
     refetchScheduleData: refreshScheduleData,
-  } = useScheduleData();
+  } = useScheduleData(hostFilter);
 
   const isAnyLoading = isEventsLoading || isScheduleLoading;
   const isAnyRefreshing = isSubmitting || isScheduleRefreshing;
@@ -83,10 +88,6 @@ const Schedule = () => {
   const [calendarViewTab, setCalendarViewTab] = React.useState<
     "mes" | "semana" | "dia" | "agenda"
   >("mes");
-
-  // Estados para filtros
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [hostFilter, setHostFilter] = useState("all");
 
   const handleRefreshAll = useCallback(async () => {
     console.log("Atualizando todos os dados...");
@@ -219,9 +220,12 @@ const Schedule = () => {
         openDeleteEventDialog={openDeleteEventDialog}
         openEventLink={openEventLink}
         onPeriodChange={handlePeriodChange}
-        // new - sincronizar views
         calendarViewType={calendarViewTab}
         setCalendarViewType={setCalendarViewTab}
+        // Passar os eventos filtrados do schedule
+        scheduleEvents={scheduleEvents}
+        statusFilter={statusFilter}
+        hostFilter={hostFilter}
       />
 
       <ScheduleDialogs

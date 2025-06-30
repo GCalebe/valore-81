@@ -8,6 +8,7 @@ import {
   endOfMonth,
 } from "date-fns";
 import { CalendarEvent } from "@/hooks/useCalendarEvents";
+import { ScheduleEvent } from "@/hooks/useScheduleData";
 import { Appointment } from "@/types/calendar";
 import { ScheduleFilters } from "./ScheduleFilters";
 import { CalendarView } from "./CalendarView";
@@ -33,9 +34,11 @@ interface ScheduleContentProps {
   openDeleteEventDialog: (event: CalendarEvent) => void;
   openEventLink: (url: string) => void;
   onPeriodChange?: (start: Date, end: Date) => void;
-  // Novos props para controle externo da view:
   calendarViewType: "mes" | "semana" | "dia" | "agenda";
   setCalendarViewType: (v: "mes" | "semana" | "dia" | "agenda") => void;
+  scheduleEvents?: ScheduleEvent[];
+  statusFilter?: string;
+  hostFilter?: string;
 }
 
 export function ScheduleContent({
@@ -57,17 +60,46 @@ export function ScheduleContent({
   onPeriodChange,
   calendarViewType,
   setCalendarViewType,
+  scheduleEvents = [],
+  statusFilter = "all",
+  hostFilter = "all",
 }: ScheduleContentProps) {
   const { settings } = useThemeSettings();
-  const [viewMode, setViewMode] = React.useState<"calendar" | "list">(
-    "calendar",
-  );
-  // Remover estado local de calendarViewType
-  // const [calendarViewType, setCalendarViewType] = React.useState<"mes" | "semana" | "dia" | "agenda">("mes");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [viewMode, setViewMode] = React.useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState("all");
-  const [hostFilter, setHostFilter] = useState("all");
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
+
+  // Calcular métricas baseadas nos eventos filtrados
+  const getMetrics = useMemo(() => {
+    const today = new Date();
+    const todayEvents = scheduleEvents.filter(event => 
+      event.date.toDateString() === today.toDateString()
+    );
+    
+    const thisWeekStart = startOfWeek(today, { weekStartsOn: 0 });
+    const thisWeekEnd = endOfWeek(today, { weekStartsOn: 0 });
+    const thisWeekEvents = scheduleEvents.filter(event => 
+      isWithinInterval(event.date, { start: thisWeekStart, end: thisWeekEnd })
+    );
+    
+    const thisMonthStart = startOfMonth(today);
+    const thisMonthEnd = endOfMonth(today);
+    const thisMonthEvents = scheduleEvents.filter(event => 
+      isWithinInterval(event.date, { start: thisMonthStart, end: thisMonthEnd })
+    );
+    
+    const confirmedEvents = scheduleEvents.filter(event => 
+      event.status === "confirmado"
+    );
+
+    return {
+      today: todayEvents.length,
+      thisWeek: thisWeekEvents.length,
+      thisMonth: thisMonthEvents.length,
+      confirmed: confirmedEvents.length,
+      total: scheduleEvents.length
+    };
+  }, [scheduleEvents]);
 
   const goToPrevious = useCallback(() => {
     switch (calendarViewType) {
@@ -95,7 +127,6 @@ export function ScheduleContent({
           prevMonth.setMonth(prevMonth.getMonth() - 1);
           setCurrentMonth(prevMonth);
         } else {
-          // viewMode === 'calendar'
           const prevDay = new Date(selectedDate || new Date());
           prevDay.setDate(prevDay.getDate() - 1);
           setSelectedDate(prevDay);
@@ -138,7 +169,6 @@ export function ScheduleContent({
           nextMonth.setMonth(nextMonth.getMonth() + 1);
           setCurrentMonth(nextMonth);
         } else {
-          // viewMode === 'calendar'
           const nextDay = new Date(selectedDate || new Date());
           nextDay.setDate(nextDay.getDate() + 1);
           setSelectedDate(nextDay);
@@ -155,7 +185,6 @@ export function ScheduleContent({
     setSelectedDate,
   ]);
 
-  // Período de filtro do modo lista
   const getListModeFilterPeriod = useCallback(() => {
     const today = new Date();
     switch (calendarViewType) {
@@ -265,7 +294,6 @@ export function ScheduleContent({
     [openEditEventDialog],
   );
 
-  // Handler para adicionar evento
   const handleAddEventClick = useCallback(
     () => setIsAddEventDialogOpen(true),
     [setIsAddEventDialogOpen],
@@ -273,20 +301,19 @@ export function ScheduleContent({
 
   return (
     <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">
-      {/* <CalendarViewSwitcher ... /> REMOVIDO! */}
       <ScheduleFilters
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
+        onStatusFilterChange={() => {}}
         calendarFilter={calendarFilter}
         onCalendarFilterChange={setCalendarFilter}
         hostFilter={hostFilter}
-        onHostFilterChange={setHostFilter}
+        onHostFilterChange={() => {}}
         onAddEvent={handleAddEventClick}
       />
 
-      {/* Cards de Métricas */}
+      {/* Cards de Métricas - usando dados reais */}
       <div className="grid grid-cols-5 gap-4 px-4">
         <div
           className="rounded-lg p-4 flex items-center gap-3"
@@ -300,7 +327,7 @@ export function ScheduleContent({
           </div>
           <div>
             <p className="text-gray-200 text-sm">Hoje</p>
-            <p className="text-white text-xl font-bold">2</p>
+            <p className="text-white text-xl font-bold">{getMetrics.today}</p>
           </div>
         </div>
 
@@ -316,7 +343,7 @@ export function ScheduleContent({
           </div>
           <div>
             <p className="text-gray-200 text-sm">Esta Semana</p>
-            <p className="text-white text-xl font-bold">4</p>
+            <p className="text-white text-xl font-bold">{getMetrics.thisWeek}</p>
           </div>
         </div>
 
@@ -332,7 +359,7 @@ export function ScheduleContent({
           </div>
           <div>
             <p className="text-gray-200 text-sm">Este Mês</p>
-            <p className="text-white text-xl font-bold">4</p>
+            <p className="text-white text-xl font-bold">{getMetrics.thisMonth}</p>
           </div>
         </div>
 
@@ -348,7 +375,7 @@ export function ScheduleContent({
           </div>
           <div>
             <p className="text-gray-200 text-sm">Confirmados</p>
-            <p className="text-white text-xl font-bold">2</p>
+            <p className="text-white text-xl font-bold">{getMetrics.confirmed}</p>
           </div>
         </div>
 
@@ -364,10 +391,11 @@ export function ScheduleContent({
           </div>
           <div>
             <p className="text-gray-200 text-sm">Total</p>
-            <p className="text-white text-xl font-bold">4</p>
+            <p className="text-white text-xl font-bold">{getMetrics.total}</p>
           </div>
         </div>
       </div>
+      
       <div className="flex-1 w-full flex flex-col min-h-0">
         {viewMode === "calendar" ? (
           <CalendarView
