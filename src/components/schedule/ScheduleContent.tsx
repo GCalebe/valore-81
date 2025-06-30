@@ -1,21 +1,15 @@
-import React, { useState, useMemo, useCallback } from "react";
-import {
-  parseISO,
-  startOfWeek,
-  endOfWeek,
-  isWithinInterval,
-  startOfMonth,
-  endOfMonth,
-} from "date-fns";
+
+import React, { useState, useCallback } from "react";
 import { CalendarEvent } from "@/hooks/useCalendarEvents";
 import { ScheduleEvent } from "@/hooks/useScheduleData";
 import { Appointment } from "@/types/calendar";
 import { ScheduleFilters } from "./ScheduleFilters";
 import { CalendarView } from "./CalendarView";
 import { EventsTable } from "./EventsTable";
-import { CalendarViewSwitcher } from "./CalendarViewSwitcher";
 import { CalendarHeaderBar } from "./CalendarHeaderBar";
-import { useThemeSettings } from "@/context/ThemeSettingsContext";
+import { ScheduleMetricsCards } from "./ScheduleMetricsCards";
+import { useCalendarNavigation } from "@/hooks/useCalendarNavigation";
+import { useFilteredEvents } from "@/hooks/useFilteredEvents";
 
 interface ScheduleContentProps {
   selectedDate: Date | undefined;
@@ -64,214 +58,27 @@ export function ScheduleContent({
   statusFilter = "all",
   hostFilter = "all",
 }: ScheduleContentProps) {
-  const { settings } = useThemeSettings();
   const [viewMode, setViewMode] = React.useState<"calendar" | "list">("calendar");
   const [calendarFilter, setCalendarFilter] = useState("all");
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date());
 
-  // Calcular métricas baseadas nos eventos filtrados
-  const getMetrics = useMemo(() => {
-    const today = new Date();
-    const todayEvents = scheduleEvents.filter(event => 
-      event.date.toDateString() === today.toDateString()
-    );
-    
-    const thisWeekStart = startOfWeek(today, { weekStartsOn: 0 });
-    const thisWeekEnd = endOfWeek(today, { weekStartsOn: 0 });
-    const thisWeekEvents = scheduleEvents.filter(event => 
-      isWithinInterval(event.date, { start: thisWeekStart, end: thisWeekEnd })
-    );
-    
-    const thisMonthStart = startOfMonth(today);
-    const thisMonthEnd = endOfMonth(today);
-    const thisMonthEvents = scheduleEvents.filter(event => 
-      isWithinInterval(event.date, { start: thisMonthStart, end: thisMonthEnd })
-    );
-    
-    const confirmedEvents = scheduleEvents.filter(event => 
-      event.status === "confirmado"
-    );
-
-    return {
-      today: todayEvents.length,
-      thisWeek: thisWeekEvents.length,
-      thisMonth: thisMonthEvents.length,
-      confirmed: confirmedEvents.length,
-      total: scheduleEvents.length
-    };
-  }, [scheduleEvents]);
-
-  const goToPrevious = useCallback(() => {
-    switch (calendarViewType) {
-      case "mes": {
-        const prevMonth = new Date(currentMonth);
-        prevMonth.setMonth(prevMonth.getMonth() - 1);
-        setCurrentMonth(prevMonth);
-        break;
-      }
-      case "semana": {
-        const prevWeek = new Date(selectedDate || new Date());
-        prevWeek.setDate(prevWeek.getDate() - 7);
-        setSelectedDate(prevWeek);
-        break;
-      }
-      case "dia": {
-        const prevDay = new Date(selectedDate || new Date());
-        prevDay.setDate(prevDay.getDate() - 1);
-        setSelectedDate(prevDay);
-        break;
-      }
-      case "agenda": {
-        const prevMonth = new Date(currentMonth);
-        prevMonth.setMonth(prevMonth.getMonth() - 1);
-        setCurrentMonth(prevMonth);
-        break;
-      }
-    }
-  }, [
+  const { goToPrevious, goToNext } = useCalendarNavigation(
     calendarViewType,
     currentMonth,
     selectedDate,
     setCurrentMonth,
-    setSelectedDate,
-  ]);
+    setSelectedDate
+  );
 
-  const goToNext = useCallback(() => {
-    switch (calendarViewType) {
-      case "mes": {
-        const nextMonth = new Date(currentMonth);
-        nextMonth.setMonth(nextMonth.getMonth() + 1);
-        setCurrentMonth(nextMonth);
-        break;
-      }
-      case "semana": {
-        const nextWeek = new Date(selectedDate || new Date());
-        nextWeek.setDate(nextWeek.getDate() + 7);
-        setSelectedDate(nextWeek);
-        break;
-      }
-      case "dia": {
-        const nextDay = new Date(selectedDate || new Date());
-        nextDay.setDate(nextDay.getDate() + 1);
-        setSelectedDate(nextDay);
-        break;
-      }
-      case "agenda": {
-        const nextMonth = new Date(currentMonth);
-        nextMonth.setMonth(nextMonth.getMonth() + 1);
-        setCurrentMonth(nextMonth);
-        break;
-      }
-    }
-  }, [
+  const filteredEvents = useFilteredEvents(
+    events,
+    statusFilter,
+    viewMode,
     calendarViewType,
-    currentMonth,
+    searchTerm,
     selectedDate,
-    setCurrentMonth,
-    setSelectedDate,
-  ]);
-
-  const getListModeFilterPeriod = useCallback(() => {
-    const today = new Date();
-    switch (calendarViewType) {
-      case "dia":
-        if (selectedDate) {
-          return {
-            start: new Date(
-              selectedDate.getFullYear(),
-              selectedDate.getMonth(),
-              selectedDate.getDate(),
-            ),
-            end: new Date(
-              selectedDate.getFullYear(),
-              selectedDate.getMonth(),
-              selectedDate.getDate(),
-              23,
-              59,
-              59,
-            ),
-          };
-        }
-        return null;
-      case "semana":
-        const weekStart = startOfWeek(selectedDate || today, {
-          weekStartsOn: 0,
-        });
-        const weekEnd = endOfWeek(selectedDate || today, { weekStartsOn: 0 });
-        return { start: weekStart, end: weekEnd };
-      case "mes":
-      case "agenda":
-        return {
-          start: startOfMonth(currentMonth),
-          end: endOfMonth(currentMonth),
-        };
-      default:
-        return {
-          start: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-          ),
-          end: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-            23,
-            59,
-            59,
-          ),
-        };
-    }
-  }, [calendarViewType, selectedDate, currentMonth]);
-
-  const filteredEvents = useMemo(() => {
-    return events
-      .filter((event) => {
-        if (!event.start || typeof event.start !== "string") return false;
-        if (statusFilter !== "all" && event.status !== statusFilter)
-          return false;
-        if (viewMode === "list" || calendarViewType === "agenda") {
-          try {
-            const eventDate = parseISO(event.start);
-            if (isNaN(eventDate.getTime())) return false;
-            const filterPeriod = getListModeFilterPeriod();
-            if (!filterPeriod) return true;
-            return isWithinInterval(eventDate, {
-              start: filterPeriod.start,
-              end: filterPeriod.end,
-            });
-          } catch {
-            return false;
-          }
-        }
-        return true;
-      })
-      .filter((event) => {
-        if (!searchTerm) return true;
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          (event.summary &&
-            event.summary.toLowerCase().includes(searchLower)) ||
-          (event.description &&
-            event.description.toLowerCase().includes(searchLower)) ||
-          (event.attendees &&
-            event.attendees.some(
-              (attendee) =>
-                attendee?.email &&
-                attendee.email.toLowerCase().includes(searchLower),
-            ))
-        );
-      })
-      .sort((a, b) => {
-        try {
-          const dateA = a.start ? parseISO(a.start) : new Date(0);
-          const dateB = b.start ? parseISO(b.start) : new Date(0);
-          return dateA.getTime() - dateB.getTime();
-        } catch {
-          return 0;
-        }
-      });
-  }, [events, statusFilter, viewMode, calendarViewType, getListModeFilterPeriod, searchTerm]);
+    currentMonth
+  );
 
   const handleEventClick = useCallback(
     (event: CalendarEvent) => {
@@ -302,88 +109,7 @@ export function ScheduleContent({
         onAddEvent={handleAddEventClick}
       />
 
-      {/* Cards de Métricas - usando dados reais */}
-      <div className="grid grid-cols-5 gap-4 px-4">
-        <div
-          className="rounded-lg p-4 flex items-center gap-3"
-          style={{ backgroundColor: settings.primaryColor }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: settings.secondaryColor }}
-          >
-            <span className="text-white text-sm font-semibold">📅</span>
-          </div>
-          <div>
-            <p className="text-gray-200 text-sm">Hoje</p>
-            <p className="text-white text-xl font-bold">{getMetrics.today}</p>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-4 flex items-center gap-3"
-          style={{ backgroundColor: settings.primaryColor }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: settings.secondaryColor }}
-          >
-            <span className="text-white text-sm font-semibold">📊</span>
-          </div>
-          <div>
-            <p className="text-gray-200 text-sm">Esta Semana</p>
-            <p className="text-white text-xl font-bold">{getMetrics.thisWeek}</p>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-4 flex items-center gap-3"
-          style={{ backgroundColor: settings.primaryColor }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: settings.secondaryColor }}
-          >
-            <span className="text-white text-sm font-semibold">📈</span>
-          </div>
-          <div>
-            <p className="text-gray-200 text-sm">Este Mês</p>
-            <p className="text-white text-xl font-bold">{getMetrics.thisMonth}</p>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-4 flex items-center gap-3"
-          style={{ backgroundColor: settings.primaryColor }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: settings.secondaryColor }}
-          >
-            <span className="text-white text-sm font-semibold">✅</span>
-          </div>
-          <div>
-            <p className="text-gray-200 text-sm">Confirmados</p>
-            <p className="text-white text-xl font-bold">{getMetrics.confirmed}</p>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-4 flex items-center gap-3"
-          style={{ backgroundColor: settings.primaryColor }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: settings.secondaryColor }}
-          >
-            <span className="text-white text-sm font-semibold">🎯</span>
-          </div>
-          <div>
-            <p className="text-gray-200 text-sm">Total</p>
-            <p className="text-white text-xl font-bold">{getMetrics.total}</p>
-          </div>
-        </div>
-      </div>
+      <ScheduleMetricsCards scheduleEvents={scheduleEvents} />
       
       <div className="flex-1 w-full flex flex-col min-h-0">
         {effectiveViewMode === "calendar" ? (
