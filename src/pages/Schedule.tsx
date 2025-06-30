@@ -9,7 +9,6 @@ import {
 import { useScheduleData } from "@/hooks/useScheduleData";
 import { useScheduleState } from "@/hooks/useScheduleState";
 import ScheduleHeader from "@/components/schedule/ScheduleHeader";
-import ScheduleFiltersSection from "@/components/schedule/ScheduleFiltersSection";
 import { ScheduleContent } from "@/components/schedule/ScheduleContent";
 import { ScheduleDialogs } from "@/components/schedule/ScheduleDialogs";
 import { startOfMonth, endOfMonth } from "date-fns";
@@ -192,15 +191,10 @@ const Schedule = () => {
         view={calendarViewTab}
         onViewChange={setCalendarViewTab}
         onOpenFilter={() => {}}
-      />
-
-      <ScheduleFiltersSection
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
         hostFilter={hostFilter}
         onHostFilterChange={setHostFilter}
-        onRefresh={handleRefreshAll}
-        isRefreshing={isAnyRefreshing}
       />
 
       <ScheduleContent
@@ -222,7 +216,6 @@ const Schedule = () => {
         onPeriodChange={handlePeriodChange}
         calendarViewType={calendarViewTab}
         setCalendarViewType={setCalendarViewTab}
-        // Passar os eventos filtrados do schedule
         scheduleEvents={scheduleEvents}
         statusFilter={statusFilter}
         hostFilter={hostFilter}

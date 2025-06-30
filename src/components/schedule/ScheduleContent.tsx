@@ -72,7 +72,7 @@ export function ScheduleContent({
 
   const filteredEvents = useFilteredEvents(
     events,
-    scheduleEvents, // Agora passamos os scheduleEvents para o hook
+    scheduleEvents,
     statusFilter,
     viewMode,
     calendarViewType,
@@ -100,37 +100,27 @@ export function ScheduleContent({
   const effectiveViewMode = calendarViewType === "agenda" ? "list" : viewMode;
 
   return (
-    <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">
-      <ScheduleFilters
-        viewMode={effectiveViewMode}
-        onViewModeChange={calendarViewType === "agenda" ? () => {} : setViewMode}
-        statusFilter={statusFilter}
-        onStatusFilterChange={() => {}}
-        calendarFilter={calendarFilter}
-        onCalendarFilterChange={setCalendarFilter}
-        hostFilter={hostFilter}
-        onHostFilterChange={() => {}}
-        onAddEvent={handleAddEventClick}
-      />
-
+    <div className="w-full h-[calc(100vh-140px)] bg-white dark:bg-gray-900 flex flex-col gap-4 p-0 m-0 min-h-0">
       <ScheduleMetricsCards scheduleEvents={scheduleEvents} />
       
-      <div className="flex-1 w-full flex flex-col min-h-0">
+      <div className="flex-1 w-full flex flex-col min-h-0 px-6">
         {effectiveViewMode === "calendar" ? (
-          <CalendarView
-            selectedDate={selectedDate || new Date()}
-            onDateChange={(date) => setSelectedDate(date)}
-            events={filteredEvents}
-            currentMonth={currentMonth}
-            onMonthChange={setCurrentMonth}
-            view={calendarViewType}
-            onEventClick={handleEventClick}
-            onPeriodChange={onPeriodChange}
-            goToPrevious={goToPrevious}
-            goToNext={goToNext}
-          />
+          <div className="bg-white dark:bg-gray-800 border rounded-xl shadow-sm flex-1 overflow-hidden flex flex-col">
+            <CalendarView
+              selectedDate={selectedDate || new Date()}
+              onDateChange={(date) => setSelectedDate(date)}
+              events={filteredEvents}
+              currentMonth={currentMonth}
+              onMonthChange={setCurrentMonth}
+              view={calendarViewType}
+              onEventClick={handleEventClick}
+              onPeriodChange={onPeriodChange}
+              goToPrevious={goToPrevious}
+              goToNext={goToNext}
+            />
+          </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 border rounded-lg flex-1 overflow-auto flex flex-col">
+          <div className="bg-white dark:bg-gray-800 border rounded-xl shadow-sm flex-1 overflow-auto flex flex-col">
             <CalendarHeaderBar
               view={calendarViewType}
               currentMonth={currentMonth}
