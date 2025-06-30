@@ -72,6 +72,7 @@ export function ScheduleContent({
 
   const filteredEvents = useFilteredEvents(
     events,
+    scheduleEvents, // Agora passamos os scheduleEvents para o hook
     statusFilter,
     viewMode,
     calendarViewType,
@@ -79,6 +80,9 @@ export function ScheduleContent({
     selectedDate,
     currentMonth
   );
+
+  console.log("Schedule events recebidos:", scheduleEvents);
+  console.log("Eventos filtrados finais:", filteredEvents);
 
   const handleEventClick = useCallback(
     (event: CalendarEvent) => {

@@ -2,9 +2,12 @@
 import { useMemo, useCallback } from "react";
 import { parseISO, isWithinInterval, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 import { CalendarEvent } from "@/hooks/useCalendarEvents";
+import { ScheduleEvent } from "@/hooks/useScheduleData";
+import { convertScheduleEventsToCalendarEvents } from "@/utils/scheduleUtils";
 
 export function useFilteredEvents(
   events: CalendarEvent[],
+  scheduleEvents: ScheduleEvent[],
   statusFilter: string,
   viewMode: "calendar" | "list",
   calendarViewType: "mes" | "semana" | "dia" | "agenda",
@@ -66,7 +69,16 @@ export function useFilteredEvents(
   }, [calendarViewType, selectedDate, currentMonth]);
 
   const filteredEvents = useMemo(() => {
-    return events
+    // Converter eventos de agenda para o formato CalendarEvent
+    const convertedScheduleEvents = convertScheduleEventsToCalendarEvents(scheduleEvents);
+    
+    // Combinar eventos do calendário com eventos convertidos da agenda
+    const allEvents = [...events, ...convertedScheduleEvents];
+    
+    console.log("Eventos combinados:", allEvents);
+    console.log("Eventos de agenda convertidos:", convertedScheduleEvents);
+    
+    return allEvents
       .filter((event) => {
         if (!event.start || typeof event.start !== "string") return false;
         if (statusFilter !== "all" && event.status !== statusFilter)
@@ -112,7 +124,7 @@ export function useFilteredEvents(
           return 0;
         }
       });
-  }, [events, statusFilter, viewMode, calendarViewType, getListModeFilterPeriod, searchTerm]);
+  }, [events, scheduleEvents, statusFilter, viewMode, calendarViewType, getListModeFilterPeriod, searchTerm]);
 
   return filteredEvents;
 }
