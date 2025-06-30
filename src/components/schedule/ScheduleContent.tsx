@@ -122,21 +122,14 @@ export function ScheduleContent({
         break;
       }
       case "agenda": {
-        if (viewMode === "list") {
-          const prevMonth = new Date(currentMonth);
-          prevMonth.setMonth(prevMonth.getMonth() - 1);
-          setCurrentMonth(prevMonth);
-        } else {
-          const prevDay = new Date(selectedDate || new Date());
-          prevDay.setDate(prevDay.getDate() - 1);
-          setSelectedDate(prevDay);
-        }
+        const prevMonth = new Date(currentMonth);
+        prevMonth.setMonth(prevMonth.getMonth() - 1);
+        setCurrentMonth(prevMonth);
         break;
       }
     }
   }, [
     calendarViewType,
-    viewMode,
     currentMonth,
     selectedDate,
     setCurrentMonth,
@@ -164,21 +157,14 @@ export function ScheduleContent({
         break;
       }
       case "agenda": {
-        if (viewMode === "list") {
-          const nextMonth = new Date(currentMonth);
-          nextMonth.setMonth(nextMonth.getMonth() + 1);
-          setCurrentMonth(nextMonth);
-        } else {
-          const nextDay = new Date(selectedDate || new Date());
-          nextDay.setDate(nextDay.getDate() + 1);
-          setSelectedDate(nextDay);
-        }
+        const nextMonth = new Date(currentMonth);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        setCurrentMonth(nextMonth);
         break;
       }
     }
   }, [
     calendarViewType,
-    viewMode,
     currentMonth,
     selectedDate,
     setCurrentMonth,
@@ -244,7 +230,7 @@ export function ScheduleContent({
         if (!event.start || typeof event.start !== "string") return false;
         if (statusFilter !== "all" && event.status !== statusFilter)
           return false;
-        if (viewMode === "list") {
+        if (viewMode === "list" || calendarViewType === "agenda") {
           try {
             const eventDate = parseISO(event.start);
             if (isNaN(eventDate.getTime())) return false;
@@ -285,7 +271,7 @@ export function ScheduleContent({
           return 0;
         }
       });
-  }, [events, statusFilter, viewMode, getListModeFilterPeriod, searchTerm]);
+  }, [events, statusFilter, viewMode, calendarViewType, getListModeFilterPeriod, searchTerm]);
 
   const handleEventClick = useCallback(
     (event: CalendarEvent) => {
@@ -299,11 +285,14 @@ export function ScheduleContent({
     [setIsAddEventDialogOpen],
   );
 
+  // Para a view "agenda", sempre forçar o modo lista
+  const effectiveViewMode = calendarViewType === "agenda" ? "list" : viewMode;
+
   return (
     <div className="w-full h-[calc(100vh-48px)] bg-white dark:bg-gray-900 flex flex-col gap-2 p-0 m-0 min-h-0">
       <ScheduleFilters
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        viewMode={effectiveViewMode}
+        onViewModeChange={calendarViewType === "agenda" ? () => {} : setViewMode}
         statusFilter={statusFilter}
         onStatusFilterChange={() => {}}
         calendarFilter={calendarFilter}
@@ -397,7 +386,7 @@ export function ScheduleContent({
       </div>
       
       <div className="flex-1 w-full flex flex-col min-h-0">
-        {viewMode === "calendar" ? (
+        {effectiveViewMode === "calendar" ? (
           <CalendarView
             selectedDate={selectedDate || new Date()}
             onDateChange={(date) => setSelectedDate(date)}
