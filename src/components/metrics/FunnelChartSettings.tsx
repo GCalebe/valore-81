@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useKanbanStages } from "@/hooks/useKanbanStages";
-import { MetricsFilters } from "./MetricsFilters";
+import MetricsFilters from "./MetricsFilters";
 
 interface FunnelChartSettingsProps {
   selectedStages: string[];
@@ -93,8 +94,8 @@ export function FunnelChartSettings({
             <div className="space-y-2">
               <h4 className="text-sm font-medium">Período de Análise</h4>
               <MetricsFilters
-                customDate={customDate}
-                setCustomDate={setCustomDate}
+                selectedDate={customDate}
+                onDateChange={setCustomDate}
               />
             </div>
 

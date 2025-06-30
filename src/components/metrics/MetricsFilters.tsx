@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface MetricsFiltersProps {
-  selectedDate?: Date;
-  onDateChange?: (date: Date | undefined) => void;
+  selectedDate?: Date | null;
+  onDateChange?: (date: Date | null) => void;
   onApplyFilters?: () => void;
 }
 
@@ -24,7 +24,6 @@ const MetricsFilters: React.FC<MetricsFiltersProps> = ({
         <div>
           <label className="text-sm font-medium mb-2 block">Data</label>
           <Calendar
-            mode="single"
             selected={selectedDate}
             onSelect={onDateChange}
             className="rounded-md border"

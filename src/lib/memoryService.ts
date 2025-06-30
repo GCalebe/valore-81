@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import {
   N8nChatMemory,
@@ -24,9 +25,18 @@ export const memoryService = {
         memory.created_at = new Date().toISOString();
       }
 
+      // Convert arrays to JSON for database storage
+      const memoryData = {
+        ...memory,
+        entities: memory.entities ? JSON.stringify(memory.entities) : null,
+        relationships: memory.relationships ? JSON.stringify(memory.relationships) : null,
+        context: memory.context ? JSON.stringify(memory.context) : null,
+        metadata: memory.metadata ? JSON.stringify(memory.metadata) : null,
+      };
+
       const { data, error } = await supabase
         .from("n8n_chat_memory")
-        .insert(memory)
+        .insert(memoryData)
         .select()
         .single();
 
@@ -35,7 +45,14 @@ export const memoryService = {
         return null;
       }
 
-      return data as N8nChatMemory;
+      // Convert JSON back to objects for return
+      return {
+        ...data,
+        entities: data.entities ? JSON.parse(data.entities as string) : undefined,
+        relationships: data.relationships ? JSON.parse(data.relationships as string) : undefined,
+        context: data.context ? JSON.parse(data.context as string) : undefined,
+        metadata: data.metadata ? JSON.parse(data.metadata as string) : undefined,
+      } as N8nChatMemory;
     } catch (error) {
       console.error("Erro ao armazenar memória:", error);
       return null;
@@ -64,7 +81,14 @@ export const memoryService = {
         return [];
       }
 
-      return data as N8nChatMemory[];
+      // Convert JSON strings back to objects
+      return data.map(item => ({
+        ...item,
+        entities: item.entities ? JSON.parse(item.entities as string) : undefined,
+        relationships: item.relationships ? JSON.parse(item.relationships as string) : undefined,
+        context: item.context ? JSON.parse(item.context as string) : undefined,
+        metadata: item.metadata ? JSON.parse(item.metadata as string) : undefined,
+      })) as N8nChatMemory[];
     } catch (error) {
       console.error("Erro ao recuperar memórias:", error);
       return [];
@@ -93,7 +117,14 @@ export const memoryService = {
         return [];
       }
 
-      return data as N8nChatMemory[];
+      // Convert JSON strings back to objects
+      return data.map(item => ({
+        ...item,
+        entities: item.entities ? JSON.parse(item.entities as string) : undefined,
+        relationships: item.relationships ? JSON.parse(item.relationships as string) : undefined,
+        context: item.context ? JSON.parse(item.context as string) : undefined,
+        metadata: item.metadata ? JSON.parse(item.metadata as string) : undefined,
+      })) as N8nChatMemory[];
     } catch (error) {
       console.error("Erro ao recuperar memórias:", error);
       return [];
@@ -122,7 +153,14 @@ export const memoryService = {
         return [];
       }
 
-      return data as N8nChatMemory[];
+      // Convert JSON strings back to objects
+      return data.map(item => ({
+        ...item,
+        entities: item.entities ? JSON.parse(item.entities as string) : undefined,
+        relationships: item.relationships ? JSON.parse(item.relationships as string) : undefined,
+        context: item.context ? JSON.parse(item.context as string) : undefined,
+        metadata: item.metadata ? JSON.parse(item.metadata as string) : undefined,
+      })) as N8nChatMemory[];
     } catch (error) {
       console.error("Erro ao recuperar memórias por importância:", error);
       return [];
@@ -138,12 +176,12 @@ export const memoryService = {
     limit = 50,
   ): Promise<N8nChatMemory[]> => {
     try {
-      // Usando a função de pesquisa JSON do PostgreSQL
+      // Using JSON search with text matching for PostgreSQL
       const { data, error } = await supabase
         .from("n8n_chat_memory")
         .select("*")
         .eq("session_id", sessionId)
-        .filter("entities", "cs", `{"name":"${entityName}"}`)
+        .textSearch("entities", `"${entityName}"`)
         .limit(limit);
 
       if (error) {
@@ -151,7 +189,14 @@ export const memoryService = {
         return [];
       }
 
-      return data as N8nChatMemory[];
+      // Convert JSON strings back to objects
+      return data.map(item => ({
+        ...item,
+        entities: item.entities ? JSON.parse(item.entities as string) : undefined,
+        relationships: item.relationships ? JSON.parse(item.relationships as string) : undefined,
+        context: item.context ? JSON.parse(item.context as string) : undefined,
+        metadata: item.metadata ? JSON.parse(item.metadata as string) : undefined,
+      })) as N8nChatMemory[];
     } catch (error) {
       console.error("Erro ao buscar memórias por entidade:", error);
       return [];
@@ -222,7 +267,14 @@ export const memoryService = {
         return [];
       }
 
-      return data as N8nChatMemory[];
+      // Convert JSON strings back to objects
+      return data.map(item => ({
+        ...item,
+        entities: item.entities ? JSON.parse(item.entities as string) : undefined,
+        relationships: item.relationships ? JSON.parse(item.relationships as string) : undefined,
+        context: item.context ? JSON.parse(item.context as string) : undefined,
+        metadata: item.metadata ? JSON.parse(item.metadata as string) : undefined,
+      })) as N8nChatMemory[];
     } catch (error) {
       console.error("Erro ao recuperar histórico de chat:", error);
       return [];

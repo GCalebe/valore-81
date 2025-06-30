@@ -58,21 +58,10 @@ const ClientsModals = ({
           <ClientDetailSheet
             isOpen={isDetailSheetOpen}
             onClose={() => setIsDetailSheetOpen(false)}
-            selectedContact={selectedContact}
-            onEditClick={openEditModal}
-            onDeleteClick={() => setIsDeleteDialogOpen(true)}
-            onSendMessageClick={() => setIsMessageDialogOpen(true)}
-            isDeleteDialogOpen={isDeleteDialogOpen}
-            setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-            handleDeleteContact={handleDeleteContact}
-            isMessageDialogOpen={isMessageDialogOpen}
-            setIsMessageDialogOpen={setIsMessageDialogOpen}
-            messageText={messageText}
-            setMessageText={setMessageText}
-            handleMessageSubmit={handleMessageSubmit}
-            isPauseDurationDialogOpen={isPauseDurationDialogOpen}
-            setIsPauseDurationDialogOpen={setIsPauseDurationDialogOpen}
-            handlePauseDurationConfirm={handlePauseDurationConfirm}
+            contact={selectedContact}
+            onEditClient={openEditModal}
+            onDeleteClient={() => setIsDeleteDialogOpen(true)}
+            onSendMessage={() => setIsMessageDialogOpen(true)}
           />
           <EditClientForm
             isOpen={isEditModalOpen}
