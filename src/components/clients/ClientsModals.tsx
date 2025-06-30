@@ -1,10 +1,10 @@
+
 import React from "react";
 import { Contact } from "@/types/client";
 import ClientDetailSheet from "@/components/clients/ClientDetailSheet";
-import EditClientDialog from "@/components/clients/EditClientForm";
+import EditClientForm from "@/components/clients/EditClientForm";
 import SendMessageDialog from "@/components/clients/SendMessageDialog";
 import PauseDurationDialog from "@/components/PauseDurationDialog";
-// Atualizando para usar os componentes padronizados
 
 interface ClientsModalsProps {
   selectedContact: Contact | null;
@@ -57,7 +57,7 @@ const ClientsModals = ({
         <>
           <ClientDetailSheet
             isOpen={isDetailSheetOpen}
-            onOpenChange={setIsDetailSheetOpen}
+            onClose={() => setIsDetailSheetOpen(false)}
             selectedContact={selectedContact}
             onEditClick={openEditModal}
             onDeleteClick={() => setIsDeleteDialogOpen(true)}
@@ -74,13 +74,14 @@ const ClientsModals = ({
             setIsPauseDurationDialogOpen={setIsPauseDurationDialogOpen}
             handlePauseDurationConfirm={handlePauseDurationConfirm}
           />
-          <EditClientDialog
+          <EditClientForm
             isOpen={isEditModalOpen}
-            onOpenChange={setIsEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
             selectedContact={selectedContact}
-            editContactData={newContact}
-            setEditContactData={setNewContact}
-            handleEditContact={handleEditContact}
+            onSave={async (updatedContact: Contact) => {
+              // Handle the save logic here
+              handleEditContact();
+            }}
           />
           {isMessageDialogOpen && (
             <SendMessageDialog

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Anchor } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -5,9 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Conversation } from "@/types/chat";
 import { Contact } from "@/types/client";
 import { useThemeSettings } from "@/context/ThemeSettingsContext";
-import { useSupabase } from "@/context/SupabaseContext";
 import { useDynamicFields } from "@/hooks/useDynamicFields";
-import { validateKanbanStage } from "@/utils/clientDataUtils";
 import TagsField from "./TagsField";
 import NotesField from "./NotesField";
 import ClientInfo from "@/components/clients/ClientInfo";
@@ -41,16 +40,9 @@ const ClientInfoPanel = ({
 
       setLoading(true);
       try {
-        // Desativando busca do Supabase e usando apenas dados mockup
         console.log(
           "Buscando dados do cliente mockup para a sessão:",
           selectedConversation.sessionId,
-        );
-        console.log("Dados da conversa selecionada:", selectedConversation);
-        console.log("Clientes mockup disponíveis:", mockClients.length);
-        console.log(
-          "IDs dos clientes mockup:",
-          mockClients.map((c) => ({ id: c.id, sessionId: c.sessionId })),
         );
 
         // Encontrar o cliente mockup correspondente à sessão selecionada
@@ -66,7 +58,6 @@ const ClientInfoPanel = ({
             "Cliente mockup não encontrado para a sessão:",
             selectedConversation.sessionId,
           );
-          console.log("Verificando correspondência por ID...");
 
           // Tentar encontrar por ID como fallback
           const clientById = mockClients.find(
@@ -75,7 +66,6 @@ const ClientInfoPanel = ({
 
           if (clientById) {
             console.log("Cliente mockup encontrado por ID:", clientById.name);
-            // Atualizar o sessionId para garantir consistência
             const updatedClient = {
               ...clientById,
               sessionId: selectedConversation.sessionId,

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Contact } from "@/types/client";
@@ -41,6 +42,7 @@ const ClientInfo: React.FC<ClientInfoProps> = ({
       description: "Detalhes do cliente na conversa atual",
       showTabs: ["basic", "commercial", "utm", "custom", "docs"],
       readOnly: true,
+      compact: false,
     },
     table: {
       title: "Resumo do Cliente",
@@ -54,12 +56,14 @@ const ClientInfo: React.FC<ClientInfoProps> = ({
       description: "Informações completas",
       showTabs: ["basic", "commercial", "utm", "custom", "docs"],
       readOnly: true,
+      compact: false,
     },
     edit: {
       title: "Editar Cliente",
       description: "Edite as informações do cliente",
       showTabs: ["basic", "commercial", "utm", "custom", "docs"],
       readOnly: false,
+      compact: false,
     },
   };
 

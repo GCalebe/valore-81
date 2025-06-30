@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -32,14 +33,14 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
   const [contact, setContact] = useState<Contact | null>(null);
   const [activeTab, setActiveTab] = useState("principal");
   const [isSaving, setIsSaving] = useState(false);
-  const { dynamicFields, loadDynamicFields } = useDynamicFields();
+  const { dynamicFields, refetch } = useDynamicFields(selectedContact?.sessionId || null);
 
   useEffect(() => {
     if (isOpen && selectedContact) {
       setContact({ ...selectedContact });
-      loadDynamicFields();
+      refetch();
     }
-  }, [isOpen, selectedContact, loadDynamicFields]);
+  }, [isOpen, selectedContact, refetch]);
 
   const handleFieldUpdate = (fieldId: string, newValue: any) => {
     if (!contact) return;
@@ -98,7 +99,6 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={["basic", "commercial"]}
                 />
               )}
             </TabsContent>
@@ -120,7 +120,6 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={["custom"]}
                 />
               )}
             </TabsContent>
@@ -132,7 +131,6 @@ const EditClientForm: React.FC<EditClientFormProps> = ({
                   dynamicFields={dynamicFields}
                   onFieldUpdate={handleFieldUpdate}
                   context="edit"
-                  showTabs={["docs"]}
                 />
               )}
             </TabsContent>
